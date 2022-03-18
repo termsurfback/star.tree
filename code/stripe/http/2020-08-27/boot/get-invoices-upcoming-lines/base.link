@@ -21,6 +21,7 @@ load @drumwork/snow/stripe.com/2020-08-27/base/get-invoices-upcoming-lines-body
   take form get-invoices-upcoming-lines-body
 
 boot get-invoices-upcoming-lines, name <GetInvoicesUpcomingLines>
+  deed get
   note <When retrieving an upcoming invoice, you’ll get a **lines** property containing the total count of line items and the first handful of those items. There is also a URL where you can retrieve the full (paginated) list of line items.>
 
   take automatic-tax
@@ -30,11 +31,11 @@ boot get-invoices-upcoming-lines, name <GetInvoicesUpcomingLines>
     void take
   take coupon
     like native-string
-    note <The code of the coupon to apply. If `subscription` or `subscription_items` is provided, the invoice returned will preview updating or creating a subscription with that coupon. Otherwise, it will preview applying that coupon to the customer for the next upcoming invoice from among the customer&#39;s subscriptions. The invoice can be previewed without a coupon by passing this value as an empty string.>
+    note <The code of the coupon to apply. If `subscription` or `subscription_items` is provided, the invoice returned will preview updating or creating a subscription with that coupon. Otherwise, it will preview applying that coupon to the customer for the next upcoming invoice from among the customer's subscriptions. The invoice can be previewed without a coupon by passing this value as an empty string.>
     void take
   take customer
     like native-string
-    note <The identifier of the customer whose upcoming invoice you&#39;d like to retrieve.>
+    note <The identifier of the customer whose upcoming invoice you'd like to retrieve.>
     void take
   take customer-details
     like form
@@ -62,7 +63,7 @@ boot get-invoices-upcoming-lines, name <GetInvoicesUpcomingLines>
           take discount, name <discount>
             void take
       like native-string
-    note <The coupons to redeem into discounts for the invoice preview. If not specified, inherits the discount from the customer or subscription. Pass an empty string to avoid inheriting any discounts. To preview the upcoming invoice for a subscription that hasn&#39;t been created, use `coupon` instead.>
+    note <The coupons to redeem into discounts for the invoice preview. If not specified, inherits the discount from the customer or subscription. Pass an empty string to avoid inheriting any discounts. To preview the upcoming invoice for a subscription that hasn't been created, use `coupon` instead.>
     void take
   take ending-before
     like native-string
@@ -124,7 +125,7 @@ boot get-invoices-upcoming-lines, name <GetInvoicesUpcomingLines>
     void take
   take schedule
     like native-string
-    note <The identifier of the unstarted schedule whose upcoming invoice you&#39;d like to retrieve. Cannot be used with subscription or subscription fields.>
+    note <The identifier of the unstarted schedule whose upcoming invoice you'd like to retrieve. Cannot be used with subscription or subscription fields.>
     void take
   take starting-after
     like native-string
@@ -132,17 +133,19 @@ boot get-invoices-upcoming-lines, name <GetInvoicesUpcomingLines>
     void take
   take subscription
     like native-string
-    note <The identifier of the subscription for which you&#39;d like to retrieve the upcoming invoice. If not provided, but a `subscription_items` is provided, you will preview creating a subscription with those items. If neither `subscription` nor `subscription_items` is provided, you will retrieve the next upcoming invoice from among the customer&#39;s subscriptions.>
+    note <The identifier of the subscription for which you'd like to retrieve the upcoming invoice. If not provided, but a `subscription_items` is provided, you will preview creating a subscription with those items. If neither `subscription` nor `subscription_items` is provided, you will retrieve the next upcoming invoice from among the customer's subscriptions.>
     void take
   take subscription-billing-cycle-anchor
     like sink
       like native-string
       like native-integer
-    note <For new subscriptions, a future timestamp to anchor the subscription&#39;s [billing cycle](https://stripe.com/docs/subscriptions/billing-cycle). This is used to determine the date of the first full invoice, and, for plans with `month` or `year` intervals, the day of the month for subsequent invoices. For existing subscriptions, the value can only be set to `now` or `unchanged`.>
+        bind lace, lace unix-time
+    note <For new subscriptions, a future timestamp to anchor the subscription's [billing cycle](https://stripe.com/docs/subscriptions/billing-cycle). This is used to determine the date of the first full invoice, and, for plans with `month` or `year` intervals, the day of the month for subsequent invoices. For existing subscriptions, the value can only be set to `now` or `unchanged`.>
     void take
   take subscription-cancel-at
     like sink
       like native-integer
+        bind lace, lace unix-time
       like native-string
     note <Timestamp indicating when the subscription should be scheduled to cancel. Will prorate if within the current period and prorations have been enabled using `proration_behavior`.>
     void take
@@ -200,25 +203,28 @@ boot get-invoices-upcoming-lines, name <GetInvoicesUpcomingLines>
     void take
   take subscription-proration-behavior
     like native-string
-    note <Determines how to handle [prorations](https://stripe.com/docs/subscriptions/billing-cycle#prorations) when the billing cycle changes (e.g., when switching plans, resetting `billing_cycle_anchor=now`, or starting a trial), or if an item&#39;s `quantity` changes. Valid values are `create_prorations`, `none`, or `always_invoice`. Passing `create_prorations` will cause proration invoice items to be created when applicable. These proration items will only be invoiced immediately under [certain conditions](https://stripe.com/docs/subscriptions/upgrading-downgrading#immediate-payment). In order to always invoice immediately for prorations, pass `always_invoice`. Prorations can be disabled by passing `none`.>
+    note <Determines how to handle [prorations](https://stripe.com/docs/subscriptions/billing-cycle#prorations) when the billing cycle changes (e.g., when switching plans, resetting `billing_cycle_anchor=now`, or starting a trial), or if an item's `quantity` changes. Valid values are `create_prorations`, `none`, or `always_invoice`. Passing `create_prorations` will cause proration invoice items to be created when applicable. These proration items will only be invoiced immediately under [certain conditions](https://stripe.com/docs/subscriptions/upgrading-downgrading#immediate-payment). In order to always invoice immediately for prorations, pass `always_invoice`. Prorations can be disabled by passing `none`.>
     void take
   take subscription-proration-date
     like native-integer
-    note <If previewing an update to a subscription, and doing proration, `subscription_proration_date` forces the proration to be calculated as though the update was done at the specified time. The time given must be within the current subscription period, and cannot be before the subscription was on its current plan. If set, `subscription`, and one of `subscription_items`, or `subscription_trial_end` are required. Also, `subscription_proration_behavior` cannot be set to &#39;none&#39;.>
+      bind lace, lace unix-time
+    note <If previewing an update to a subscription, and doing proration, `subscription_proration_date` forces the proration to be calculated as though the update was done at the specified time. The time given must be within the current subscription period, and cannot be before the subscription was on its current plan. If set, `subscription`, and one of `subscription_items`, or `subscription_trial_end` are required. Also, `subscription_proration_behavior` cannot be set to 'none'.>
     void take
   take subscription-start-date
     like native-integer
+      bind lace, lace unix-time
     note <Date a subscription is intended to start (can be future or past)>
     void take
   take subscription-trial-end
     like sink
       like native-string
       like native-integer
+        bind lace, lace unix-time
     note <If provided, the invoice returned will preview updating or creating a subscription with that trial end. If set, one of `subscription_items` or `subscription` is required.>
     void take
   take subscription-trial-from-plan
     like native-boolean
-    note <Indicates if a plan&#39;s `trial_period_days` should be applied to the subscription. Setting `subscription_trial_end` per subscription is preferred, and this defaults to `false`. Setting this flag to `true` together with `subscription_trial_end` is not allowed.>
+    note <Indicates if a plan's `trial_period_days` should be applied to the subscription. Setting `subscription_trial_end` per subscription is preferred, and this defaults to `false`. Setting this flag to `true` together with `subscription_trial_end` is not allowed.>
     void take
   take get-invoices-upcoming-lines-body, like get-invoices-upcoming-lines-body
     void take
