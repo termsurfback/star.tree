@@ -1,0 +1,52 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/okta/base/verify-factor-request
+  take form verify-factor-request
+
+boot verify-factor, name <verifyFactor>
+  deed post
+  note <Verifies an OTP for a `token` or `token:hardware` factor>
+
+  take user-id
+    like native-string
+  take factor-id
+    like native-string
+  take x-forwarded-for
+    like native-string
+    void take
+  take user-agent
+    like native-string
+    void take
+  take accept-language
+    like native-string
+    void take
+  take template-id
+    like native-string
+    void take
+  take token-lifetime-seconds
+    like native-integer
+      bind lace, lace int32
+        fall <300>
+    void take
+  take body
+    like verify-factor-request
+    void take
+
+  line </api/v1/users/{user-id}/factors/{factor-id}/verify>
+
+  hint <X-Forwarded-For>, loan x-forwarded-for
+  hint <User-Agent>, loan user-agent
+  hint <Accept-Language>, loan accept-language
+
+  find <templateId>, loan template-id
+  find <tokenLifetimeSeconds>, loan token-lifetime-seconds
+
+  seed json, loan body
+
+  loot 200
+    note <Success>

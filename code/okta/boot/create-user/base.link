@@ -1,0 +1,40 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/okta/base/create-user-request
+  take form create-user-request
+
+boot create-user, name <createUser>
+  deed post
+  note <Creates a new user in your Okta organization with or without credentials.>
+
+  take activate
+    like native-boolean
+    note <Executes activation lifecycle operation when creating the user>
+    void take
+  take provider
+    like native-boolean
+    note <Indicates whether to create a user with a specified authentication provider>
+    void take
+  take next-login
+    like native-string
+        fall <>
+    note <With activate=true, set nextLogin to "changePassword" to have the password be EXPIRED, so user must change it the next time they log in.>
+    void take
+  take body
+    like create-user-request
+
+  line </api/v1/users>
+
+  find <activate>, loan activate
+  find <provider>, loan provider
+  find <nextLogin>, loan next-login
+
+  seed json, loan body
+
+  loot 200
+    note <Success>

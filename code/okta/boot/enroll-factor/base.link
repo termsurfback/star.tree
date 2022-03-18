@@ -1,0 +1,49 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/okta/base/user-factor
+  take form user-factor
+
+boot enroll-factor, name <enrollFactor>
+  deed post
+  note <Enrolls a user with a supported factor.>
+
+  take user-id
+    like native-string
+  take update-phone
+    like native-boolean
+    void take
+  take template-id
+    like native-string
+    note <id of SMS template (only for SMS factor)>
+    void take
+  take token-lifetime-seconds
+    like native-integer
+      bind lace, lace int32
+        fall <300>
+    void take
+  take activate
+    like native-boolean
+    void take
+  take body
+    like user-factor
+    note <Factor>
+
+  line </api/v1/users/{user-id}/factors>
+
+  find <updatePhone>, loan update-phone
+  find <templateId>, loan template-id
+  find <tokenLifetimeSeconds>, loan token-lifetime-seconds
+  find <activate>, loan activate
+
+  seed json, loan body
+
+  loot 200
+    note <Success>
