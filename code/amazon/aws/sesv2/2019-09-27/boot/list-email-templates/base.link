@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/sesv2/2019-09-27/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/sesv2/2019-09-27/base/list-email-templates-response
+  take form list-email-templates-response
+
+load @drumwork/snow/amazonaws.com/sesv2/2019-09-27/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-email-templates, name <ListEmailTemplates>
+  note <Lists the email templates present in your Amazon SES account in the current AWS Region.
+
+You can execute this operation no more than once per second.>
+
+  take next-token
+    like native-string
+    note <A token returned from a previous call to `ListEmailTemplates` to indicate the position in the list of email templates.>
+    void take
+  take page-size
+    like native-integer
+    note <The number of results to show in a single call to `ListEmailTemplates`. If the number of results is larger than the number you specified in this parameter, then the response includes a `NextToken` element, which you can use to obtain additional results.
+
+The value you specify has to be at least 1, and can be no more than 10.>
+    void take
+
+  line </v2/email/templates>
+
+  find <NextToken>, loan next-token
+  find <PageSize>, loan page-size
+
+  loot 200
+    seed json, like list-email-templates-response
+    note <Success>
+  loot 480
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 481
+    seed json, like bad-request-exception
+    note <BadRequestException>

@@ -1,0 +1,29 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/delete-experiment-response
+  take form delete-experiment-response
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-not-found
+  take form resource-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-experiment, name <DeleteExperiment>
+  note <Deletes an SageMaker experiment. All trials associated with the experiment must be deleted first. Use the ListTrials API to get a list of the trials associated with the experiment.>
+
+  take x-amz-target
+    like native-string
+  take delete-experiment-request, like delete-experiment-request
+
+  line </#X-Amz-Target=SageMaker.DeleteExperiment>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-experiment-request
+
+  loot 200
+    seed json, like delete-experiment-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found
+    note <ResourceNotFound>

@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-tag-fault
+  take form invalid-tag-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/resource-not-found-fault
+  take form resource-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-tags, name <POST_DeleteTags>
+  note <Deletes tags from a resource. You must provide the ARN of the resource from which you want to delete the tag or tags.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-tags-message, like delete-tags-message
+    void take
+
+  line </#Action=DeleteTags>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-tags-message
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like resource-not-found-fault
+    note <ResourceNotFoundFault>
+  loot 481
+    seed xml, like invalid-tag-fault
+    note <InvalidTagFault>

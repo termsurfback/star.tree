@@ -1,0 +1,91 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/drifted-stack-instances-count
+  take form drifted-stack-instances-count
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/failed-stack-instances-count
+  take form failed-stack-instances-count
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/in-progress-stack-instances-count
+  take form in-progress-stack-instances-count
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/in-sync-stack-instances-count
+  take form in-sync-stack-instances-count
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/stack-set-drift-detection-status
+  take form stack-set-drift-detection-status
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/stack-set-drift-status
+  take form stack-set-drift-status
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/timestamp
+  take form timestamp
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/total-stack-instances-count
+  take form total-stack-instances-count
+
+form stack-set-drift-detection-details, name <StackSetDriftDetectionDetails>
+  note <Detailed information about the drift status of the stack set.
+
+For stack sets, contains information about the last _completed_ drift operation performed on the stack set. Information about drift operations in-progress is not included.
+
+For stack set operations, includes information about drift operations currently being performed on the stack set.
+
+For more information, see [Detecting Unmanaged Changes in Stack Sets](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-drift.html) in the _CloudFormation User Guide_.>
+  take drift-status, name <DriftStatus>
+    like stack-set-drift-status
+    void take
+    note <Status of the stack set's actual configuration compared to its expected template and parameter configuration. A stack set is considered to have drifted if one or more of its stack instances have drifted from their expected template and parameter configuration.
+
+- `DRIFTED`: One or more of the stack instances belonging to the stack set stack differs from the expected template and parameter configuration. A stack instance is considered to have drifted if one or more of the resources in the associated stack have drifted.
+
+- `NOT_CHECKED`: CloudFormation has not checked the stack set for drift.
+
+- `IN_SYNC`: All of the stack instances belonging to the stack set stack match from the expected template and parameter configuration.>
+  take drift-detection-status, name <DriftDetectionStatus>
+    like stack-set-drift-detection-status
+    void take
+    note <The status of the stack set drift detection operation.
+
+- `COMPLETED`: The drift detection operation completed without failing on any stack instances.
+
+- `FAILED`: The drift detection operation exceeded the specified failure tolerance.
+
+- `PARTIAL_SUCCESS`: The drift detection operation completed without exceeding the failure tolerance for the operation.
+
+- `IN_PROGRESS`: The drift detection operation is currently being performed.
+
+- `STOPPED`: The user has cancelled the drift detection operation.>
+  take last-drift-check-timestamp, name <LastDriftCheckTimestamp>
+    like timestamp
+    void take
+    note <Most recent time when CloudFormation performed a drift detection operation on the stack set. This value will be `NULL` for any stack set on which drift detection has not yet been performed.>
+  take total-stack-instances-count, name <TotalStackInstancesCount>
+    like total-stack-instances-count
+    void take
+    note <The total number of stack instances belonging to this stack set.
+
+The total number of stack instances is equal to the total of:
+
+- Stack instances that match the stack set configuration.
+
+- Stack instances that have drifted from the stack set configuration.
+
+- Stack instances where the drift detection operation has failed.
+
+- Stack instances currently being checked for drift.>
+  take drifted-stack-instances-count, name <DriftedStackInstancesCount>
+    like drifted-stack-instances-count
+    void take
+    note <The number of stack instances that have drifted from the expected template and parameter configuration of the stack set. A stack instance is considered to have drifted if one or more of the resources in the associated stack do not match their expected configuration.>
+  take in-sync-stack-instances-count, name <InSyncStackInstancesCount>
+    like in-sync-stack-instances-count
+    void take
+    note <The number of stack instances which match the expected template and parameter configuration of the stack set.>
+  take in-progress-stack-instances-count, name <InProgressStackInstancesCount>
+    like in-progress-stack-instances-count
+    void take
+    note <The number of stack instances that are currently being checked for drift.>
+  take failed-stack-instances-count, name <FailedStackInstancesCount>
+    like failed-stack-instances-count
+    void take
+    note <The number of stack instances for which the drift detection operation failed.>

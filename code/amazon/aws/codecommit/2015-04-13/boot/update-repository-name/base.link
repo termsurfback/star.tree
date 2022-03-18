@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/codecommit/2015-04-13/base/invalid-repository-name-exception
+  take form invalid-repository-name-exception
+
+load @drumwork/snow/amazonaws.com/codecommit/2015-04-13/base/repository-does-not-exist-exception
+  take form repository-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/codecommit/2015-04-13/base/repository-name-exists-exception
+  take form repository-name-exists-exception
+
+load @drumwork/snow/amazonaws.com/codecommit/2015-04-13/base/repository-name-required-exception
+  take form repository-name-required-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-repository-name, name <UpdateRepositoryName>
+  note <Renames a repository. The repository name must be unique across the calling AWS account. Repository names are limited to 100 alphanumeric, dash, and underscore characters, and cannot include certain characters. The suffix .git is prohibited. For more information about the limits on repository names, see [Limits](https://docs.aws.amazon.com/codecommit/latest/userguide/limits.html) in the AWS CodeCommit User Guide.>
+
+  take x-amz-target
+    like native-string
+  take update-repository-name-input, like update-repository-name-input
+
+  line </#X-Amz-Target=CodeCommit_20150413.UpdateRepositoryName>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-repository-name-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like repository-does-not-exist-exception
+    note <RepositoryDoesNotExistException>
+  loot 481
+    seed json, like repository-name-exists-exception
+    note <RepositoryNameExistsException>
+  loot 482
+    seed json, like repository-name-required-exception
+    note <RepositoryNameRequiredException>
+  loot 483
+    seed json, like invalid-repository-name-exception
+    note <InvalidRepositoryNameException>

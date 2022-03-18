@@ -1,0 +1,35 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/cloudresourcemanager/v3/base/search-organizations-response
+  take form search-organizations-response
+
+boot cloudresourcemanager-organizations-search, name <cloudresourcemanager.organizations.search>
+  note <Searches organization resources that are visible to the user and satisfy the specified filter. This method returns organizations in an unspecified order. New organizations do not necessarily appear at the end of the results, and may take a small amount of time to appear. Search will only return organizations on which the user has the permission `resourcemanager.organizations.get`>
+
+  take page-size
+    like native-integer
+    note <Optional. The maximum number of organizations to return in the response. The server can return fewer organizations than requested. If unspecified, server picks an appropriate default.>
+    void take
+  take page-token
+    like native-string
+    note <Optional. A pagination token returned from a previous call to `SearchOrganizations` that indicates from where listing should continue.>
+    void take
+  take query
+    like native-string
+    note <Optional. An optional query string used to filter the Organizations to return in the response. Query rules are case-insensitive. ``` | Field | Description | |------------------|--------------------------------------------| | directoryCustomerId, owner.directoryCustomerId | Filters by directory customer id. | | domain | Filters by domain. | ``` Organizations may be queried by `directoryCustomerId` or by `domain`, where the domain is a G Suite domain, for example: * Query `directorycustomerid:123456789` returns Organization resources with `owner.directory_customer_id` equal to `123456789`. * Query `domain:google.com` returns Organization resources corresponding to the domain `google.com`.>
+    void take
+
+  line </v3/organizations:search>
+
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+  find <query>, loan query
+
+  loot 200
+    seed json, like search-organizations-response
+    note <Successful response>

@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/service-update-not-found-fault
+  take form service-update-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/update-action-results-message
+  take form update-action-results-message
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-batch-stop-update-action, name <POST_BatchStopUpdateAction>
+  note <Stop the service update. For more information on service updates and stopping them, see [Stopping Service Updates](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/stopping-self-service-updates.html).>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take batch-stop-update-action-message, like batch-stop-update-action-message
+    void take
+
+  line </#Action=BatchStopUpdateAction>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan batch-stop-update-action-message
+
+  loot 200
+    seed xml, like update-action-results-message
+    note <Success>
+  loot 480
+    seed xml, like service-update-not-found-fault
+    note <ServiceUpdateNotFoundFault>
+  loot 481
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>

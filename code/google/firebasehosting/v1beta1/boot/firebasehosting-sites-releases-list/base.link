@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/firebasehosting/v1beta1/base/list-releases-response
+  take form list-releases-response
+
+boot firebasehosting-sites-releases-list, name <firebasehosting.sites.releases.list>
+  note <Lists the releases that have been created for the specified site or channel. When used to list releases for a site, this list includes releases for both the default `live` channel and any active preview channels for the specified site.>
+
+  take parent
+    like native-string
+    note <Required. The site or channel for which to list releases, in either of the following formats: - sites/SITE_ID - sites/SITE_ID/channels/CHANNEL_ID>
+  take page-size
+    like native-integer
+    note <The maximum number of releases to return. The service may return a lower number if fewer releases exist than this maximum number. If unspecified, defaults to 100.>
+    void take
+  take page-token
+    like native-string
+    note <A token from a previous call to `releases.list` or `channels.releases.list` that tells the server where to resume listing.>
+    void take
+
+  line </v1beta1/{parent}/releases>
+
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-releases-response
+    note <Successful response>

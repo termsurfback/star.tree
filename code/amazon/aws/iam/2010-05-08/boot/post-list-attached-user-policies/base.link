@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/list-attached-user-policies-response
+  take form list-attached-user-policies-response
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-list-attached-user-policies, name <POST_ListAttachedUserPolicies>
+  note <Lists all managed policies that are attached to the specified IAM user.
+
+An IAM user can also have inline policies embedded with it. To list the inline policies for a user, use ListUserPolicies. For information about policies, see [Managed policies and inline policies](https://docs.aws.amazon.com/IAM/latest/UserGuide/policies-managed-vs-inline.html) in the _IAM User Guide_.
+
+You can paginate the results using the `MaxItems` and `Marker` parameters. You can use the `PathPrefix` parameter to limit the list of policies to only those matching the specified path prefix. If there are no policies attached to the specified group (or none that match the specified path prefix), the operation returns an empty list.>
+
+  take max-items
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take list-attached-user-policies-request, like list-attached-user-policies-request
+    void take
+
+  line </#Action=ListAttachedUserPolicies>
+
+  find <MaxItems>, loan max-items
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan list-attached-user-policies-request
+
+  loot 200
+    seed xml, like list-attached-user-policies-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like invalid-input-exception
+    note <InvalidInputException>
+  loot 482
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

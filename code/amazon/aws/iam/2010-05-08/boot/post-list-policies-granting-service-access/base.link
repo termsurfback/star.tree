@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/list-policies-granting-service-access-response
+  take form list-policies-granting-service-access-response
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-list-policies-granting-service-access, name <POST_ListPoliciesGrantingServiceAccess>
+  note <Retrieves a list of policies that the IAM identity (user, group, or role) can use to access each specified service.
+
+This operation does not use other policy types when determining whether a resource could access a service. These other policy types include resource-based policies, access control lists, Organizations policies, IAM permissions boundaries, and STS assume role policies. It only applies permissions policy logic. For more about the evaluation of policy types, see [Evaluating policies](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html#policy-eval-basics) in the _IAM User Guide_.
+
+The list of policies returned by the operation depends on the ARN of the identity that you provide.
+
+- **User** - The list of policies includes the managed and inline policies that are attached to the user directly. The list also includes any additional managed and inline policies that are attached to the group to which the user belongs.
+
+- **Group** - The list of policies includes only the managed and inline policies that are attached to the group directly. Policies that are attached to the group’s user are not included.
+
+- **Role** - The list of policies includes only the managed and inline policies that are attached to the role.
+
+For each managed policy, this operation returns the ARN and policy name. For each inline policy, it returns the policy name and the entity to which it is attached. Inline policies do not have an ARN. For more information about these policy types, see [Managed policies and inline policies](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_managed-vs-inline.html) in the _IAM User Guide_.
+
+Policies that are attached to users and roles as permissions boundaries are not returned. To view which managed policy is currently used to set the permissions boundary for a user or role, use the GetUser or GetRole operations.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take list-policies-granting-service-access-request, like list-policies-granting-service-access-request
+    void take
+
+  line </#Action=ListPoliciesGrantingServiceAccess>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan list-policies-granting-service-access-request
+
+  loot 200
+    seed xml, like list-policies-granting-service-access-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like invalid-input-exception
+    note <InvalidInputException>

@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/scaling-activity-in-progress-fault
+  take form scaling-activity-in-progress-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-set-desired-capacity, name <POST_SetDesiredCapacity>
+  note <Sets the size of the specified Auto Scaling group.
+
+If a scale-in activity occurs as a result of a new `DesiredCapacity` value that is lower than the current size of the group, the Auto Scaling group uses its termination policy to determine which instances to terminate.
+
+For more information, see [Manual scaling](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-manual-scaling.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take set-desired-capacity-type, like set-desired-capacity-type
+    void take
+
+  line </#Action=SetDesiredCapacity>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan set-desired-capacity-type
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like scaling-activity-in-progress-fault
+    note <ScalingActivityInProgressFault>
+  loot 481
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

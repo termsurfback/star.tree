@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/bundle-instance-result
+  take form bundle-instance-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/s3-storage
+  take form s3-storage
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-bundle-instance, name <GET_BundleInstance>
+  note <Bundles an Amazon instance store-backed Windows instance.
+
+During bundling, only the root device volume (C:\) is bundled. Data on other instance store volumes is not preserved.
+
+This action is not applicable for Linux/Unix instances or Windows instances that are backed by Amazon EBS.>
+
+  take instance-id
+    like native-string
+    note <The ID of the instance to bundle.
+
+Type: String
+
+Default: None
+
+Required: Yes>
+  take storage
+    like form
+      take s3, name <S3>
+        like s3-storage
+        void take
+        note <An Amazon S3 storage location.>
+    note <The bucket in which to store the AMI. You can specify a bucket that you already own or a new bucket that Amazon EC2 creates on your behalf. If you specify a bucket that belongs to someone else, Amazon EC2 returns an error.>
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=BundleInstance>
+
+  find <InstanceId>, loan instance-id
+  find <Storage>, loan storage
+  find <DryRun>, loan dry-run
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like bundle-instance-result
+    note <Success>

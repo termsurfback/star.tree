@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/data-unavailable-exception
+  take form data-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/get-savings-plans-utilization-response
+  take form get-savings-plans-utilization-response
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-savings-plans-utilization, name <GetSavingsPlansUtilization>
+  note <Retrieves the Savings Plans utilization for your account across date ranges with daily or monthly granularity. Management account in an organization have access to member accounts. You can use `GetDimensionValues` in `SAVINGS_PLANS` to determine the possible dimension values.
+
+You cannot group by any dimension values for `GetSavingsPlansUtilization`.>
+
+  take x-amz-target
+    like native-string
+  take get-savings-plans-utilization-request, like get-savings-plans-utilization-request
+
+  line </#X-Amz-Target=AWSInsightsIndexService.GetSavingsPlansUtilization>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-savings-plans-utilization-request
+
+  loot 200
+    seed json, like get-savings-plans-utilization-response
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed json, like data-unavailable-exception
+    note <DataUnavailableException>

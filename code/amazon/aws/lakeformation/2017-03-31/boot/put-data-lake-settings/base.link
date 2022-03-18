@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/lakeformation/2017-03-31/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/lakeformation/2017-03-31/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/lakeformation/2017-03-31/base/put-data-lake-settings-response
+  take form put-data-lake-settings-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-data-lake-settings, name <PutDataLakeSettings>
+  note <Sets the list of data lake administrators who have admin privileges on all resources managed by Lake Formation. For more information on admin privileges, see [Granting Lake Formation Permissions](https://docs.aws.amazon.com/lake-formation/latest/dg/lake-formation-permissions.html).
+
+This API replaces the current list of data lake admins with the new list being passed. To add an admin, fetch the current list and add the new admin to that list and pass that list in this API.>
+
+  take x-amz-target
+    like native-string
+  take put-data-lake-settings-request, like put-data-lake-settings-request
+
+  line </#X-Amz-Target=AWSLakeFormation.PutDataLakeSettings>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan put-data-lake-settings-request
+
+  loot 200
+    seed json, like put-data-lake-settings-response
+    note <Success>
+  loot 480
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 481
+    seed json, like invalid-input-exception
+    note <InvalidInputException>

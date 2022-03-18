@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/runtime.lex.v2/2020-08-07/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/runtime.lex.v2/2020-08-07/base/get-session-response
+  take form get-session-response
+
+load @drumwork/snow/amazonaws.com/runtime.lex.v2/2020-08-07/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/runtime.lex.v2/2020-08-07/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/runtime.lex.v2/2020-08-07/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/runtime.lex.v2/2020-08-07/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-session, name <GetSession>
+  note <Returns session information for a specified bot, alias, and user.
+
+For example, you can use this operation to retrieve session information for a user that has left a long-running session in use.
+
+If the bot, alias, or session identifier doesn't exist, Amazon Lex V2 returns a `BadRequestException`. If the locale doesn't exist or is not enabled for the alias, you receive a `BadRequestException`.>
+
+  take bot-id
+    like native-string
+    note <The identifier of the bot that contains the session data.>
+  take bot-alias-id
+    like native-string
+    note <The alias identifier in use for the bot that contains the session data.>
+  take locale-id
+    like native-string
+    note <The locale where the session is in use.>
+  take session-id
+    like native-string
+    note <The identifier of the session to return.>
+
+  line </bots/{bot-id}/botAliases/{bot-alias-id}/botLocales/{locale-id}/sessions/{session-id}>
+
+  loot 200
+    seed json, like get-session-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like internal-server-exception
+    note <InternalServerException>

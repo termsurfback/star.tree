@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/direct-connect-client-exception
+  take form direct-connect-client-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/direct-connect-server-exception
+  take form direct-connect-server-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/duplicate-tag-keys-exception
+  take form duplicate-tag-keys-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/lag
+  take form lag
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/too-many-tags-exception
+  take form too-many-tags-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-lag, name <CreateLag>
+  note <Creates a link aggregation group (LAG) with the specified number of bundled physical dedicated connections between the customer network and a specific Direct Connect location. A LAG is a logical interface that uses the Link Aggregation Control Protocol (LACP) to aggregate multiple interfaces, enabling you to treat them as a single interface.
+
+All connections in a LAG must use the same bandwidth (either 1Gbps or 10Gbps) and must terminate at the same Direct Connect endpoint.
+
+You can have up to 10 dedicated connections per LAG. Regardless of this limit, if you request more connections for the LAG than Direct Connect can allocate on a single endpoint, no LAG is created.
+
+You can specify an existing physical dedicated connection or interconnect to include in the LAG (which counts towards the total number of connections). Doing so interrupts the current physical dedicated connection, and re-establishes them as a member of the LAG. The LAG will be created on the same Direct Connect endpoint to which the dedicated connection terminates. Any virtual interfaces associated with the dedicated connection are automatically disassociated and re-associated with the LAG. The connection ID does not change.
+
+If the account used to create a LAG is a registered Direct Connect Partner, the LAG is automatically enabled to host sub-connections. For a LAG owned by a partner, any associated virtual interfaces cannot be directly configured.>
+
+  take x-amz-target
+    like native-string
+  take create-lag-request, like create-lag-request
+
+  line </#X-Amz-Target=OvertureService.CreateLag>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-lag-request
+
+  loot 200
+    seed json, like lag
+    note <Success>
+  loot 480
+    seed json, like duplicate-tag-keys-exception
+    note <DuplicateTagKeysException>
+  loot 481
+    seed json, like too-many-tags-exception
+    note <TooManyTagsException>
+  loot 482
+    seed json, like direct-connect-server-exception
+    note <DirectConnectServerException>
+  loot 483
+    seed json, like direct-connect-client-exception
+    note <DirectConnectClientException>

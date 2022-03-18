@@ -1,0 +1,54 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/storage/v1beta2/base/object
+  take form object
+
+boot storage-objects-insert, name <storage.objects.insert>
+  note <Stores new data blobs and associated metadata.>
+
+  take bucket
+    like native-string
+    note <Name of the bucket in which to store the new object. Overrides the provided object metadata's bucket value, if any.>
+  take if-generation-match
+    like native-string
+    note <Makes the operation conditional on whether the object's current generation matches the given value.>
+    void take
+  take if-generation-not-match
+    like native-string
+    note <Makes the operation conditional on whether the object's current generation does not match the given value.>
+    void take
+  take if-metageneration-match
+    like native-string
+    note <Makes the operation conditional on whether the object's current metageneration matches the given value.>
+    void take
+  take if-metageneration-not-match
+    like native-string
+    note <Makes the operation conditional on whether the object's current metageneration does not match the given value.>
+    void take
+  take name
+    like native-string
+    note <Name of the object. Required when the object metadata is not otherwise provided. Overrides the object metadata's name value, if any.>
+    void take
+  take projection
+    like native-string
+    note <Set of properties to return. Defaults to noAcl, unless the object resource specifies the acl property, when it defaults to full.>
+    void take
+  take object, like object
+    void take
+
+  line </b/{bucket}/o>
+
+  find <ifGenerationMatch>, loan if-generation-match
+  find <ifGenerationNotMatch>, loan if-generation-not-match
+  find <ifMetagenerationMatch>, loan if-metageneration-match
+  find <ifMetagenerationNotMatch>, loan if-metageneration-not-match
+  find <name>, loan name
+  find <projection>, loan projection
+
+  seed octet-stream, loan object
+
+  loot 200
+    seed json, like object
+    note <Successful response>

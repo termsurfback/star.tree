@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/sqs/2012-11-05/base/list-queues-result
+  take form list-queues-result
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-list-queues, name <GET_ListQueues>
+  note <Returns a list of your queues in the current region. The response includes a maximum of 1,000 results. If you specify a value for the optional `QueueNamePrefix` parameter, only queues with a name that begins with the specified value are returned.
+
+The `listQueues` methods supports pagination. Set parameter `MaxResults` in the request to specify the maximum number of results to be returned in the response. If you do not set `MaxResults`, the response includes a maximum of 1,000 results. If you set `MaxResults` and there are additional results to display, the response includes a value for `NextToken`. Use `NextToken` as a parameter in your next request to `listQueues` to receive the next page of results.
+
+Cross-account permissions don't apply to this action. For more information, see [Grant cross-account permissions to a role and a user name](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-customer-managed-policy-examples.html#grant-cross-account-permissions-to-role-and-user-name) in the _Amazon SQS Developer Guide_.>
+
+  take queue-name-prefix
+    like native-string
+    note <A string to use for filtering the list results. Only those queues whose name begins with the specified string are returned.
+
+Queue URLs and names are case-sensitive.>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token to request the next set of results.>
+    void take
+  take max-results
+    like native-integer
+    note <Maximum number of results to include in the response. Value range is 1 to 1000. You must set `MaxResults` to receive a value for `NextToken` in the response.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ListQueues>
+
+  find <QueueNamePrefix>, loan queue-name-prefix
+  find <NextToken>, loan next-token
+  find <MaxResults>, loan max-results
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like list-queues-result
+    note <Success>

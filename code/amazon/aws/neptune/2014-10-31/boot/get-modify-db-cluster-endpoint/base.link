@@ -1,0 +1,80 @@
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-endpoint-not-found-fault
+  take form db-cluster-endpoint-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-cluster-endpoint-state-fault
+  take form invalid-db-cluster-endpoint-state-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-instance-state-fault
+  take form invalid-db-instance-state-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/modify-db-cluster-endpoint-output
+  take form modify-db-cluster-endpoint-output
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-modify-db-cluster-endpoint, name <GET_ModifyDBClusterEndpoint>
+  note <Modifies the properties of an endpoint in an Amazon Neptune DB cluster.>
+
+  take db-cluster-endpoint-identifier
+    like native-string
+    note <The identifier of the endpoint to modify. This parameter is stored as a lowercase string.>
+  take endpoint-type
+    like native-string
+    note <The type of the endpoint. One of: `READER`, `WRITER`, `ANY`.>
+    void take
+  take static-members
+    like list
+      like string
+    note <List of DB instance identifiers that are part of the custom endpoint group.>
+    void take
+  take excluded-members
+    like list
+      like string
+    note <List of DB instance identifiers that aren't part of the custom endpoint group. All other eligible instances are reachable through the custom endpoint. Only relevant if the list of static members is empty.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyDBClusterEndpoint>
+
+  find <DBClusterEndpointIdentifier>, loan db-cluster-endpoint-identifier
+  find <EndpointType>, loan endpoint-type
+  find <StaticMembers>, loan static-members
+  find <ExcludedMembers>, loan excluded-members
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-db-cluster-endpoint-output
+    note <Success>
+  loot 480
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>
+  loot 481
+    seed xml, like invalid-db-cluster-endpoint-state-fault
+    note <InvalidDBClusterEndpointStateFault>
+  loot 482
+    seed xml, like db-cluster-endpoint-not-found-fault
+    note <DBClusterEndpointNotFoundFault>
+  loot 483
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>
+  loot 484
+    seed xml, like invalid-db-instance-state-fault
+    note <InvalidDBInstanceStateFault>

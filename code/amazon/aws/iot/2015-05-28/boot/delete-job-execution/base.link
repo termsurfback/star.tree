@@ -1,0 +1,80 @@
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-state-transition-exception
+  take form invalid-state-transition-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-job-execution, name <DeleteJobExecution>
+  note <Deletes a job execution.
+
+Requires permission to access the [DeleteJobExecution](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiot.html#awsiot-actions-as-permissions) action.>
+
+  take job-id
+    like native-string
+    note <The ID of the job whose execution on a particular device will be deleted.>
+  take thing-name
+    like native-string
+    note <The name of the thing whose job execution will be deleted.>
+  take execution-number
+    like native-integer
+    note <The ID of the job execution to be deleted. The `executionNumber` refers to the execution of a particular job on a particular device.
+
+Note that once a job execution is deleted, the `executionNumber` may be reused by IoT, so be sure you get and use the correct value here.>
+  take force
+    like native-boolean
+    note <(Optional) When true, you can delete a job execution which is "IN_PROGRESS". Otherwise, you can only delete a job execution which is in a terminal state ("SUCCEEDED", "FAILED", "REJECTED", "REMOVED" or "CANCELED") or an exception will occur. The default is false.
+
+Deleting a job execution which is "IN_PROGRESS", will cause the device to be unable to access job information or update the job execution status. Use caution and ensure that the device is able to recover to a valid state.>
+    void take
+  take namespace-id
+    like native-string
+    note <The namespace used to indicate that a job is a customer-managed job.
+
+When you specify a value for this parameter, Amazon Web Services IoT Core sends jobs notifications to MQTT topics that contain the value in the following format.
+
+`$aws/things/_THING_NAME_/jobs/_JOB_ID_/notify-namespace-_NAMESPACE_ID_/`
+
+The `namespaceId` feature is in public preview.>
+    void take
+
+  line </things/{thing-name}/jobs/{job-id}/executionNumber/{execution-number}>
+
+  find <force>, loan force
+  find <namespaceId>, loan namespace-id
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like invalid-state-transition-exception
+    note <InvalidStateTransitionException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

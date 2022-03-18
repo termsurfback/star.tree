@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/describe-queries-response
+  take form describe-queries-response
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-queries, name <DescribeQueries>
+  note <Returns a list of CloudWatch Logs Insights queries that are scheduled, executing, or have been executed recently in this account. You can request all queries or limit it to queries of a specific log group or queries with a certain status.>
+
+  take x-amz-target
+    like native-string
+  take describe-queries-request, like describe-queries-request
+
+  line </#X-Amz-Target=Logs_20140328.DescribeQueries>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-queries-request
+
+  loot 200
+    seed json, like describe-queries-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

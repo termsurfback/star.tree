@@ -1,0 +1,50 @@
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-role-not-found-fault
+  take form db-cluster-role-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-remove-role-from-db-cluster, name <GET_RemoveRoleFromDBCluster>
+  note <Disassociates an Identity and Access Management (IAM) role from a DB cluster.>
+
+  take db-cluster-identifier
+    like native-string
+    note <The name of the DB cluster to disassociate the IAM role from.>
+  take role-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the IAM role to disassociate from the DB cluster, for example `arn:aws:iam::123456789012:role/NeptuneAccessRole`.>
+  take feature-name
+    like native-string
+    note <The name of the feature for the DB cluster that the IAM role is to be disassociated from. For the list of supported feature names, see DBEngineVersion.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=RemoveRoleFromDBCluster>
+
+  find <DBClusterIdentifier>, loan db-cluster-identifier
+  find <RoleArn>, loan role-arn
+  find <FeatureName>, loan feature-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>
+  loot 481
+    seed xml, like db-cluster-role-not-found-fault
+    note <DBClusterRoleNotFoundFault>
+  loot 482
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>

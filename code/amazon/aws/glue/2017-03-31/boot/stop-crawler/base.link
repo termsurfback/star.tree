@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/crawler-not-running-exception
+  take form crawler-not-running-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/crawler-stopping-exception
+  take form crawler-stopping-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/entity-not-found-exception
+  take form entity-not-found-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/operation-timeout-exception
+  take form operation-timeout-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/stop-crawler-response
+  take form stop-crawler-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot stop-crawler, name <StopCrawler>
+  note <If the specified crawler is running, stops the crawl.>
+
+  take x-amz-target
+    like native-string
+  take stop-crawler-request, like stop-crawler-request
+
+  line </#X-Amz-Target=AWSGlue.StopCrawler>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan stop-crawler-request
+
+  loot 200
+    seed json, like stop-crawler-response
+    note <Success>
+  loot 480
+    seed json, like entity-not-found-exception
+    note <EntityNotFoundException>
+  loot 481
+    seed json, like crawler-not-running-exception
+    note <CrawlerNotRunningException>
+  loot 482
+    seed json, like crawler-stopping-exception
+    note <CrawlerStoppingException>
+  loot 483
+    seed json, like operation-timeout-exception
+    note <OperationTimeoutException>

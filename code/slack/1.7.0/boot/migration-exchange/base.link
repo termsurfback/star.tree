@@ -1,0 +1,63 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-team
+  take form defs-team
+
+boot migration-exchange, name <migration_exchange>
+  note <For Enterprise Grid workspaces, map local user IDs to global user IDs>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `tokens.basic`>
+  take users
+    like native-string
+    note <A comma-separated list of user ids, up to 400 per request>
+  take team-id
+    like native-string
+    note <Specify team_id starts with `T` in case of Org Token>
+    void take
+  take to-old
+    like native-boolean
+    note <Specify `true` to convert `W` global user IDs to workspace-specific `U` IDs. Defaults to `false`.>
+    void take
+
+  line </migration.exchange>
+
+  find <token>, loan token
+  find <users>, loan users
+  find <team_id>, loan team-id
+  find <to_old>, loan to-old
+
+  loot 200
+    seed json
+      like form
+        take enterprise-id, name <enterprise_id>
+        take invalid-user-ids, name <invalid_user_ids>
+          void take
+        take ok, name <ok>
+          like defs-ok-true
+        take team-id, name <team_id>
+          like defs-team
+        take user-id-map, name <user_id_map>
+          void take
+    note <Typical success response when mappings exist for the specified user IDs>
+  loot fall
+    seed json
+      like form
+        take callstack, name <callstack>
+          void take
+        take error, name <error>
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response when there are no mappings to provide>

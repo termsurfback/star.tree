@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-remove-client-id-from-open-id-connect-provider, name <GET_RemoveClientIDFromOpenIDConnectProvider>
+  note <Removes the specified client ID (also known as audience) from the list of client IDs registered for the specified IAM OpenID Connect (OIDC) provider resource object.
+
+This operation is idempotent; it does not fail or return an error if you try to remove a client ID that does not exist.>
+
+  take open-id-connect-provider-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the IAM OIDC provider resource to remove the client ID from. You can get a list of OIDC provider ARNs by using the ListOpenIDConnectProviders operation.
+
+For more information about ARNs, see [Amazon Resource Names (ARNs)](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html) in the _Amazon Web Services General Reference_.>
+  take client-id
+    like native-string
+    note <The client ID (also known as audience) to remove from the IAM OIDC provider resource. For more information about client IDs, see CreateOpenIDConnectProvider.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=RemoveClientIDFromOpenIDConnectProvider>
+
+  find <OpenIDConnectProviderArn>, loan open-id-connect-provider-arn
+  find <ClientID>, loan client-id
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 482
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

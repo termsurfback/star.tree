@@ -1,0 +1,73 @@
+
+load @drumwork/snow/amazonaws.com/nimble/2020-08-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/nimble/2020-08-01/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/nimble/2020-08-01/base/create-launch-profile-body
+  take form create-launch-profile-body
+
+load @drumwork/snow/amazonaws.com/nimble/2020-08-01/base/create-launch-profile-response
+  take form create-launch-profile-response
+
+load @drumwork/snow/amazonaws.com/nimble/2020-08-01/base/internal-server-error-exception
+  take form internal-server-error-exception
+
+load @drumwork/snow/amazonaws.com/nimble/2020-08-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/nimble/2020-08-01/base/service-quota-exceeded-exception
+  take form service-quota-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/nimble/2020-08-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/nimble/2020-08-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-launch-profile, name <CreateLaunchProfile>
+  note <Create a launch profile.>
+
+  take studio-id
+    like native-string
+    note <The studio ID.>
+  take x-amz-client-token
+    like native-string
+    note <To make an idempotent API request using one of these actions, specify a client token in the request. You should not reuse the same client token for other API requests. If you retry a request that completed successfully using the same client token and the same parameters, the retry succeeds without performing any further actions. If you retry a successful request using the same client token, but one or more of the parameters are different, the retry fails with a ValidationException error.>
+    void take
+  take create-launch-profile-body, like create-launch-profile-body
+
+  line </2020-08-01/studios/{studio-id}/launch-profiles>
+
+  hint <X-Amz-Client-Token>, loan x-amz-client-token
+
+  seed json, loan create-launch-profile-body
+
+  loot 200
+    seed json, like create-launch-profile-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like internal-server-error-exception
+    note <InternalServerErrorException>
+  loot 482
+    seed json, like service-quota-exceeded-exception
+    note <ServiceQuotaExceededException>
+  loot 483
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 484
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 485
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 486
+    seed json, like conflict-exception
+    note <ConflictException>

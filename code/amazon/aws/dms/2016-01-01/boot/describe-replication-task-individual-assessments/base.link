@@ -1,0 +1,42 @@
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/describe-replication-task-individual-assessments-response
+  take form describe-replication-task-individual-assessments-response
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/resource-not-found-fault
+  take form resource-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-replication-task-individual-assessments, name <DescribeReplicationTaskIndividualAssessments>
+  note <Returns a paginated list of individual assessments based on filter settings.
+
+These filter settings can specify a combination of premigration assessment runs, migration tasks, and assessment status values.>
+
+  take x-amz-target
+    like native-string
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-replication-task-individual-assessments-message, like describe-replication-task-individual-assessments-message
+
+  line </#X-Amz-Target=AmazonDMSv20160101.DescribeReplicationTaskIndividualAssessments>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+
+  seed json, loan describe-replication-task-individual-assessments-message
+
+  loot 200
+    seed json, like describe-replication-task-individual-assessments-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-fault
+    note <ResourceNotFoundFault>

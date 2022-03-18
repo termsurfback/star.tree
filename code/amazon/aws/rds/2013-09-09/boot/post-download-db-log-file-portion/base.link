@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/rds/2013-09-09/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-09-09/base/db-log-file-not-found-fault
+  take form db-log-file-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-09-09/base/download-db-log-file-portion-details
+  take form download-db-log-file-portion-details
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-download-db-log-file-portion, name <POST_DownloadDBLogFilePortion>
+  take number-of-lines
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take download-db-log-file-portion-message, like download-db-log-file-portion-message
+    void take
+
+  line </#Action=DownloadDBLogFilePortion>
+
+  find <NumberOfLines>, loan number-of-lines
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan download-db-log-file-portion-message
+
+  loot 200
+    seed xml, like download-db-log-file-portion-details
+    note <Success>
+  loot 480
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>
+  loot 481
+    seed xml, like db-log-file-not-found-fault
+    note <DBLogFileNotFoundFault>

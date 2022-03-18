@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/secretmanager/v1beta1/base/list-secrets-response
+  take form list-secrets-response
+
+boot secretmanager-projects-secrets-list, name <secretmanager.projects.secrets.list>
+  note <Lists Secrets.>
+
+  take parent
+    like native-string
+    note <Required. The resource name of the project associated with the Secrets, in the format `projects/*`.>
+  take page-size
+    like native-integer
+    note <Optional. The maximum number of results to be returned in a single page. If set to 0, the server decides the number of results to return. If the number is greater than 25000, it is capped at 25000.>
+    void take
+  take page-token
+    like native-string
+    note <Optional. Pagination token, returned earlier via ListSecretsResponse.next_page_token.>
+    void take
+
+  line </v1beta1/{parent}/secrets>
+
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-secrets-response
+    note <Successful response>

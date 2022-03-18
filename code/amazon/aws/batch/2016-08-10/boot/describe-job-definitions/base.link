@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/describe-job-definitions-body
+  take form describe-job-definitions-body
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/describe-job-definitions-response
+  take form describe-job-definitions-response
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-job-definitions, name <DescribeJobDefinitions>
+  note <Describes a list of job definitions. You can specify a `status` (such as `ACTIVE`) to only return job definitions that match that status.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-job-definitions-body, like describe-job-definitions-body
+
+  line </v1/describejobdefinitions>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan describe-job-definitions-body
+
+  loot 200
+    seed json, like describe-job-definitions-response
+    note <Success>
+  loot 480
+    seed json, like client-exception
+    note <ClientException>
+  loot 481
+    seed json, like server-exception
+    note <ServerException>

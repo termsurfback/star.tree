@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/describe-job-execution-response
+  take form describe-job-execution-response
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-job-execution, name <DescribeJobExecution>
+  note <Describes a job execution.
+
+Requires permission to access the [DescribeJobExecution](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiot.html#awsiot-actions-as-permissions) action.>
+
+  take job-id
+    like native-string
+    note <The unique identifier you assigned to this job when it was created.>
+  take thing-name
+    like native-string
+    note <The name of the thing on which the job execution is running.>
+  take execution-number
+    like native-integer
+    note <A string (consisting of the digits "0" through "9" which is used to specify a particular job execution on a particular device.>
+    void take
+
+  line </things/{thing-name}/jobs/{job-id}>
+
+  find <executionNumber>, loan execution-number
+
+  loot 200
+    seed json, like describe-job-execution-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

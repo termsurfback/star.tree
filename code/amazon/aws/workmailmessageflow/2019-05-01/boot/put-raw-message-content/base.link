@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/workmailmessageflow/2019-05-01/base/invalid-content-location
+  take form invalid-content-location
+
+load @drumwork/snow/amazonaws.com/workmailmessageflow/2019-05-01/base/message-frozen
+  take form message-frozen
+
+load @drumwork/snow/amazonaws.com/workmailmessageflow/2019-05-01/base/message-rejected
+  take form message-rejected
+
+load @drumwork/snow/amazonaws.com/workmailmessageflow/2019-05-01/base/put-raw-message-content-body
+  take form put-raw-message-content-body
+
+load @drumwork/snow/amazonaws.com/workmailmessageflow/2019-05-01/base/put-raw-message-content-response
+  take form put-raw-message-content-response
+
+load @drumwork/snow/amazonaws.com/workmailmessageflow/2019-05-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-raw-message-content, name <PutRawMessageContent>
+  note <Updates the raw content of an in-transit email message, in MIME format.
+
+This example describes how to update in-transit email message. For more information and examples for using this API, see [Updating message content with AWS Lambda](https://docs.aws.amazon.com/workmail/latest/adminguide/update-with-lambda.html).
+
+Updates to an in-transit message only appear when you call `PutRawMessageContent` from an AWS Lambda function configured with a synchronous [Run Lambda](https://docs.aws.amazon.com/workmail/latest/adminguide/lambda.html#synchronous-rules) rule. If you call `PutRawMessageContent` on a delivered or sent message, the message remains unchanged, even though [GetRawMessageContent](https://docs.aws.amazon.com/workmail/latest/APIReference/API_messageflow_GetRawMessageContent.html) returns an updated message.>
+
+  take message-id
+    like native-string
+    note <The identifier of the email message being updated.>
+  take put-raw-message-content-body, like put-raw-message-content-body
+
+  line </messages/{message-id}>
+
+  seed json, loan put-raw-message-content-body
+
+  loot 200
+    seed json, like put-raw-message-content-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-content-location
+    note <InvalidContentLocation>
+  loot 482
+    seed json, like message-rejected
+    note <MessageRejected>
+  loot 483
+    seed json, like message-frozen
+    note <MessageFrozen>

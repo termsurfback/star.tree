@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/delete-conflict-exception
+  take form delete-conflict-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-server-certificate, name <POST_DeleteServerCertificate>
+  note <Deletes the specified server certificate.
+
+For more information about working with server certificates, see [Working with server certificates](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_server-certs.html) in the _IAM User Guide_. This topic also includes a list of Amazon Web Services services that can use the server certificates that you manage with IAM.
+
+If you are using a server certificate with Elastic Load Balancing, deleting the certificate could have implications for your application. If Elastic Load Balancing doesn't detect the deletion of bound certificates, it may continue to use the certificates. This could cause Elastic Load Balancing to stop accepting traffic. We recommend that you remove the reference to the certificate from Elastic Load Balancing before using this command to delete the certificate. For more information, see [DeleteLoadBalancerListeners](https://docs.aws.amazon.com/ElasticLoadBalancing/latest/APIReference/API_DeleteLoadBalancerListeners.html) in the _Elastic Load Balancing API Reference_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-server-certificate-request, like delete-server-certificate-request
+    void take
+
+  line </#Action=DeleteServerCertificate>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-server-certificate-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like delete-conflict-exception
+    note <DeleteConflictException>
+  loot 482
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 483
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

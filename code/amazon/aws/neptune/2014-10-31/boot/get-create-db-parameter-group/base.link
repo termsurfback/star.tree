@@ -1,0 +1,73 @@
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/create-db-parameter-group-result
+  take form create-db-parameter-group-result
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-parameter-group-already-exists-fault
+  take form db-parameter-group-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-parameter-group-quota-exceeded-fault
+  take form db-parameter-group-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/tag
+  take form tag
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-db-parameter-group, name <GET_CreateDBParameterGroup>
+  note <Creates a new DB parameter group.
+
+A DB parameter group is initially created with the default parameters for the database engine used by the DB instance. To provide custom values for any of the parameters, you must modify the group after creating it using _ModifyDBParameterGroup_. Once you've created a DB parameter group, you need to associate it with your DB instance using _ModifyDBInstance_. When you associate a new DB parameter group with a running DB instance, you need to reboot the DB instance without failover for the new DB parameter group and associated settings to take effect.
+
+After you create a DB parameter group, you should wait at least 5 minutes before creating your first DB instance that uses that DB parameter group as the default parameter group. This allows Amazon Neptune to fully complete the create action before the parameter group is used as the default for a new DB instance. This is especially important for parameters that are critical when creating the default database for a DB instance, such as the character set for the default database defined by the `character_set_database` parameter. You can use the _Parameter Groups_ option of the Amazon Neptune console or the _DescribeDBParameters_ command to verify that your DB parameter group has been created or modified.>
+
+  take db-parameter-group-name
+    like native-string
+    note <The name of the DB parameter group.
+
+Constraints:
+
+- Must be 1 to 255 letters, numbers, or hyphens.
+
+- First character must be a letter
+
+- Cannot end with a hyphen or contain two consecutive hyphens
+
+This value is stored as a lowercase string.>
+  take db-parameter-group-family
+    like native-string
+    note <The DB parameter group family name. A DB parameter group can be associated with one and only one DB parameter group family, and can be applied only to a DB instance running a database engine and engine version compatible with that DB parameter group family.>
+  take description
+    like native-string
+    note <The description for the DB parameter group.>
+  take tags
+    like list
+      like tag
+    note <The tags to be assigned to the new DB parameter group.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateDBParameterGroup>
+
+  find <DBParameterGroupName>, loan db-parameter-group-name
+  find <DBParameterGroupFamily>, loan db-parameter-group-family
+  find <Description>, loan description
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-db-parameter-group-result
+    note <Success>
+  loot 480
+    seed xml, like db-parameter-group-quota-exceeded-fault
+    note <DBParameterGroupQuotaExceededFault>
+  loot 481
+    seed xml, like db-parameter-group-already-exists-fault
+    note <DBParameterGroupAlreadyExistsFault>

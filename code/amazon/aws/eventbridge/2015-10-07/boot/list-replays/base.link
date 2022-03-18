@@ -1,0 +1,29 @@
+
+load @drumwork/snow/amazonaws.com/eventbridge/2015-10-07/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/eventbridge/2015-10-07/base/list-replays-response
+  take form list-replays-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-replays, name <ListReplays>
+  note <Lists your replays. You can either list all the replays or you can provide a prefix to match to the replay names. Filter parameters are exclusive.>
+
+  take x-amz-target
+    like native-string
+  take list-replays-request, like list-replays-request
+
+  line </#X-Amz-Target=AWSEvents.ListReplays>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-replays-request
+
+  loot 200
+    seed json, like list-replays-response
+    note <Success>
+  loot 480
+    seed json, like internal-exception
+    note <InternalException>

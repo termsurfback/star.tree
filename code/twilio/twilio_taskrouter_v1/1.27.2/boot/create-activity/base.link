@@ -1,0 +1,24 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_taskrouter_v1/1.27.2/base/create-activity-body
+  take form create-activity-body
+
+load @drumwork/snow/twilio.com/twilio_taskrouter_v1/1.27.2/base/taskrouter-v1-workspace-activity
+  take form taskrouter-v1-workspace-activity
+
+boot create-activity, name <CreateActivity>
+  take workspace-sid
+    like native-string
+    note <The SID of the Workspace that the new Activity belongs to.>
+  take create-activity-body, like create-activity-body
+    void take
+
+  line </v1/Workspaces/{workspace-sid}/Activities>
+
+  seed x-www-form-urlencoded, loan create-activity-body
+
+  loot 201
+    seed json, like taskrouter-v1-workspace-activity
+    note <Created>

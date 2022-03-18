@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/get-named-query-output
+  take form get-named-query-output
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-named-query, name <GetNamedQuery>
+  note <Returns information about a single query. Requires that you have access to the workgroup in which the query was saved.>
+
+  take x-amz-target
+    like native-string
+  take get-named-query-input, like get-named-query-input
+
+  line </#X-Amz-Target=AmazonAthena.GetNamedQuery>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-named-query-input
+
+  loot 200
+    seed json, like get-named-query-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

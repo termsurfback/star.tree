@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/codestar-notifications/2019-10-15/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/codestar-notifications/2019-10-15/base/list-notification-rules-body
+  take form list-notification-rules-body
+
+load @drumwork/snow/amazonaws.com/codestar-notifications/2019-10-15/base/list-notification-rules-result
+  take form list-notification-rules-result
+
+load @drumwork/snow/amazonaws.com/codestar-notifications/2019-10-15/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-notification-rules, name <ListNotificationRules>
+  note <Returns a list of the notification rules for an AWS account.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-notification-rules-body, like list-notification-rules-body
+
+  line </listNotificationRules>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-notification-rules-body
+
+  loot 200
+    seed json, like list-notification-rules-result
+    note <Success>
+  loot 480
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>

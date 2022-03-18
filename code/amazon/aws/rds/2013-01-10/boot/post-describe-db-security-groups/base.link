@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/db-security-group-message
+  take form db-security-group-message
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/db-security-group-not-found-fault
+  take form db-security-group-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-db-security-groups, name <POST_DescribeDBSecurityGroups>
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-db-security-groups-message, like describe-db-security-groups-message
+    void take
+
+  line </#Action=DescribeDBSecurityGroups>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-db-security-groups-message
+
+  loot 200
+    seed xml, like db-security-group-message
+    note <Success>
+  loot 480
+    seed xml, like db-security-group-not-found-fault
+    note <DBSecurityGroupNotFoundFault>

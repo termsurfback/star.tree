@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/data-share
+  take form data-share
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-data-share-fault
+  take form invalid-data-share-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-namespace-fault
+  take form invalid-namespace-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-associate-data-share-consumer, name <POST_AssociateDataShareConsumer>
+  note <From a datashare consumer account, associates a datashare with the account (AssociateEntireAccount) or the specified namespace (ConsumerArn). If you make this association, the consumer can consume the datashare.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take associate-data-share-consumer-message, like associate-data-share-consumer-message
+    void take
+
+  line </#Action=AssociateDataShareConsumer>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan associate-data-share-consumer-message
+
+  loot 200
+    seed xml, like data-share
+    note <Success>
+  loot 480
+    seed xml, like invalid-data-share-fault
+    note <InvalidDataShareFault>
+  loot 481
+    seed xml, like invalid-namespace-fault
+    note <InvalidNamespaceFault>

@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/s3/2006-03-01/base/put-bucket-inventory-configuration-body
+  take form put-bucket-inventory-configuration-body
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-bucket-inventory-configuration, name <PutBucketInventoryConfiguration>
+  note <This implementation of the `PUT` action adds an inventory configuration (identified by the inventory ID) to the bucket. You can have up to 1,000 inventory configurations per bucket.
+
+Amazon S3 inventory generates inventories of the objects in the bucket on a daily or weekly basis, and the results are published to a flat file. The bucket that is inventoried is called the _source_ bucket, and the bucket where the inventory flat file is stored is called the _destination_ bucket. The _destination_ bucket must be in the same Amazon Web Services Region as the _source_ bucket.
+
+When you configure an inventory for a _source_ bucket, you specify the _destination_ bucket where you want the inventory to be stored, and whether to generate the inventory daily or weekly. You can also configure what object metadata to include and whether to inventory all object versions or only current versions. For more information, see [Amazon S3 Inventory](https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-inventory.html) in the Amazon S3 User Guide.
+
+You must create a bucket policy on the _destination_ bucket to grant permissions to Amazon S3 to write objects to the bucket in the defined location. For an example policy, see [Granting Permissions for Amazon S3 Inventory and Storage Class Analysis](https://docs.aws.amazon.com/AmazonS3/latest/dev/example-bucket-policies.html#example-bucket-policies-use-case-9).
+
+To use this operation, you must have permissions to perform the `s3:PutInventoryConfiguration` action. The bucket owner has this permission by default and can grant this permission to others. For more information about permissions, see [Permissions Related to Bucket Subresource Operations](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources) and [Managing Access Permissions to Your Amazon S3 Resources](https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html) in the Amazon S3 User Guide.
+
+**Special Errors** - **HTTP 400 Bad Request Error** - _Code:_ InvalidArgument
+
+  - _Cause:_ Invalid Argument
+
+- **HTTP 400 Bad Request Error** - _Code:_ TooManyConfigurations
+
+  - _Cause:_ You are attempting to create a new configuration but have already reached the 1,000-configuration limit.
+
+- **HTTP 403 Forbidden Error** - _Code:_ AccessDenied
+
+  - _Cause:_ You are not the owner of the specified bucket, or you do not have the `s3:PutInventoryConfiguration` bucket permission to set the configuration on the bucket.
+
+**Related Resources** - [GetBucketInventoryConfiguration](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetBucketInventoryConfiguration.html)
+
+- [DeleteBucketInventoryConfiguration](https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteBucketInventoryConfiguration.html)
+
+- [ListBucketInventoryConfigurations](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListBucketInventoryConfigurations.html)>
+
+  take bucket
+    like native-string
+    note <The name of the bucket where the inventory configuration will be stored.>
+  take x-amz-expected-bucket-owner
+    like native-string
+    note <The account ID of the expected bucket owner. If the bucket is owned by a different account, the request will fail with an HTTP `403 (Access Denied)` error.>
+    void take
+  take id
+    like native-string
+    note <The ID used to identify the inventory configuration.>
+  take inventory
+    like native-boolean
+  take put-bucket-inventory-configuration-body, like put-bucket-inventory-configuration-body
+
+  line </{bucket}#inventory&id>
+
+  hint <x-amz-expected-bucket-owner>, loan x-amz-expected-bucket-owner
+
+  find <id>, loan id
+  find <inventory>, loan inventory
+
+  seed xml, loan put-bucket-inventory-configuration-body
+
+  loot 200
+    note <Success>

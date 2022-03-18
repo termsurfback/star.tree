@@ -1,0 +1,66 @@
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/access-point-not-found
+  take form access-point-not-found
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/bad-request
+  take form bad-request
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/describe-access-points-response
+  take form describe-access-points-response
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/file-system-not-found
+  take form file-system-not-found
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-access-points, name <DescribeAccessPoints>
+  note <Returns the description of a specific Amazon EFS access point if the `AccessPointId` is provided. If you provide an EFS `FileSystemId`, it returns descriptions of all access points for that file system. You can provide either an `AccessPointId` or a `FileSystemId` in the request, but not both.
+
+This operation requires permissions for the `elasticfilesystem:DescribeAccessPoints` action.>
+
+  take max-results
+    like native-integer
+    note <(Optional) When retrieving all access points for a file system, you can optionally specify the `MaxItems` parameter to limit the number of objects returned in a response. The default value is 100.>
+    void take
+  take next-token
+    like native-string
+    note <`NextToken` is present if the response is paginated. You can use `NextMarker` in the subsequent request to fetch the next page of access point descriptions.>
+    void take
+  take access-point-id
+    like native-string
+    note <(Optional) Specifies an EFS access point to describe in the response; mutually exclusive with `FileSystemId`.>
+    void take
+  take file-system-id
+    like native-string
+    note <(Optional) If you provide a `FileSystemId`, EFS returns all access points for that file system; mutually exclusive with `AccessPointId`.>
+    void take
+
+  line </2015-02-01/access-points>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <AccessPointId>, loan access-point-id
+  find <FileSystemId>, loan file-system-id
+
+  loot 200
+    seed json, like describe-access-points-response
+    note <Success>
+  loot 480
+    seed json, like bad-request
+    note <BadRequest>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 482
+    seed json, like file-system-not-found
+    note <FileSystemNotFound>
+  loot 483
+    seed json, like access-point-not-found
+    note <AccessPointNotFound>

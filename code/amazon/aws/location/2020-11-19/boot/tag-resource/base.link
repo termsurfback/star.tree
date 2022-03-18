@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/tag-resource-body
+  take form tag-resource-body
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/tag-resource-response
+  take form tag-resource-response
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot tag-resource, name <TagResource>
+  note <Assigns one or more tags (key-value pairs) to the specified Amazon Location Service resource.
+
+     &lt;p&gt;Tags can help you organize and categorize your resources. You can also use them to scope user permissions, by granting a user permission to access or change only resources with certain tag values.&lt;/p&gt; &lt;p&gt;You can use the &lt;code&gt;TagResource&lt;/code&gt; operation with an Amazon Location Service resource that already has tags. If you specify a new tag key for the resource, this tag is appended to the tags already associated with the resource. If you specify a tag key that's already associated with the resource, the new tag value that you specify replaces the previous value for that tag. &lt;/p&gt; &lt;p&gt;You can associate up to 50 tags with a resource.&lt;/p&gt;>
+
+  take resource-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the resource whose tags you want to update.
+
+- Format example: `arn:aws:geo:region:account-id:resourcetype/ExampleResource`>
+  take tag-resource-body, like tag-resource-body
+
+  line </tags/{resource-arn}>
+
+  seed json, loan tag-resource-body
+
+  loot 200
+    seed json, like tag-resource-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 483
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 484
+    seed json, like throttling-exception
+    note <ThrottlingException>

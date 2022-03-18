@@ -1,0 +1,50 @@
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/get-query-results-output
+  take form get-query-results-output
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-query-results, name <GetQueryResults>
+  note <Streams the results of a single query execution specified by `QueryExecutionId` from the Athena query results location in Amazon S3. For more information, see [Query Results](https://docs.aws.amazon.com/athena/latest/ug/querying.html) in the _Amazon Athena User Guide_. This request does not execute the query but returns results. Use StartQueryExecution to run a query.
+
+To stream query results successfully, the IAM principal with permission to call `GetQueryResults` also must have permissions to the Amazon S3 `GetObject` action for the Athena query results location.
+
+IAM principals with permission to the Amazon S3 `GetObject` action for the query results location are able to retrieve query results from Amazon S3 even if permission to the `GetQueryResults` action is denied. To restrict user or role access, ensure that Amazon S3 permissions to the Athena query location are denied.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-query-results-input, like get-query-results-input
+
+  line </#X-Amz-Target=AmazonAthena.GetQueryResults>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan get-query-results-input
+
+  loot 200
+    seed json, like get-query-results-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

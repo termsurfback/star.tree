@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/service-update-not-found-fault
+  take form service-update-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/update-action-results-message
+  take form update-action-results-message
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-batch-apply-update-action, name <GET_BatchApplyUpdateAction>
+  note <Apply the service update. For more information on service updates and applying them, see [Applying Service Updates](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/applying-updates.html).>
+
+  take replication-group-ids
+    like list
+      like string
+    note <The replication group IDs>
+    void take
+  take cache-cluster-ids
+    like list
+      like string
+    note <The cache cluster IDs>
+    void take
+  take service-update-name
+    like native-string
+    note <The unique ID of the service update>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=BatchApplyUpdateAction>
+
+  find <ReplicationGroupIds>, loan replication-group-ids
+  find <CacheClusterIds>, loan cache-cluster-ids
+  find <ServiceUpdateName>, loan service-update-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like update-action-results-message
+    note <Success>
+  loot 480
+    seed xml, like service-update-not-found-fault
+    note <ServiceUpdateNotFoundFault>
+  loot 481
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>

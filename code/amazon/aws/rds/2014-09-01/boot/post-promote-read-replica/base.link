@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/invalid-db-instance-state-fault
+  take form invalid-db-instance-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/promote-read-replica-result
+  take form promote-read-replica-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-promote-read-replica, name <POST_PromoteReadReplica>
+  take action
+    like native-string
+  take version
+    like native-string
+  take promote-read-replica-message, like promote-read-replica-message
+    void take
+
+  line </#Action=PromoteReadReplica>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan promote-read-replica-message
+
+  loot 200
+    seed xml, like promote-read-replica-result
+    note <Success>
+  loot 480
+    seed xml, like invalid-db-instance-state-fault
+    note <InvalidDBInstanceStateFault>
+  loot 481
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>

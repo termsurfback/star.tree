@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/environment-descriptions-message
+  take form environment-descriptions-message
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/insufficient-privileges-exception
+  take form insufficient-privileges-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/too-many-environments-exception
+  take form too-many-environments-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/version-label
+  take form version-label
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-compose-environments, name <GET_ComposeEnvironments>
+  note <Create or update a group of environments that each run a separate component of a single application. Takes a list of version labels that specify application source bundles for each of the environments to create or update. The name of each environment and other required information must be included in the source bundles in an environment manifest named `env.yaml`. See [Compose Environments](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/environment-mgmt-compose.html) for details.>
+
+  take application-name
+    like native-string
+    note <The name of the application to which the specified source bundles belong.>
+    void take
+  take group-name
+    like native-string
+    note <The name of the group to which the target environments belong. Specify a group name only if the environment name defined in each target environment's manifest ends with a + (plus) character. See [Environment Manifest (env.yaml)](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/environment-cfg-manifest.html) for details.>
+    void take
+  take version-labels
+    like list
+      like version-label
+    note <A list of version labels, specifying one or more application source bundles that belong to the target application. Each source bundle must include an environment manifest that specifies the name of the environment and the name of the solution stack to use, and optionally can specify environment links to create.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ComposeEnvironments>
+
+  find <ApplicationName>, loan application-name
+  find <GroupName>, loan group-name
+  find <VersionLabels>, loan version-labels
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like environment-descriptions-message
+    note <Success>
+  loot 480
+    seed xml, like too-many-environments-exception
+    note <TooManyEnvironmentsException>
+  loot 481
+    seed xml, like insufficient-privileges-exception
+    note <InsufficientPrivilegesException>

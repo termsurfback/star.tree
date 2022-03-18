@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/androidenterprise/v1/base/entitlement
+  take form entitlement
+
+boot androidenterprise-entitlements-update, name <androidenterprise.entitlements.update>
+  note <Adds or updates an entitlement to an app for a user.>
+
+  take enterprise-id
+    like native-string
+    note <The ID of the enterprise.>
+  take user-id
+    like native-string
+    note <The ID of the user.>
+  take entitlement-id
+    like native-string
+    note <The ID of the entitlement (a product ID), e.g. "app:com.google.android.gm".>
+  take install
+    like native-boolean
+    note <Set to true to also install the product on all the user's devices where possible. Failure to install on one or more devices will not prevent this operation from returning successfully, as long as the entitlement was successfully assigned to the user.>
+    void take
+  take entitlement, like entitlement
+    void take
+
+  line </androidenterprise/v1/enterprises/{enterprise-id}/users/{user-id}/entitlements/{entitlement-id}>
+
+  find <install>, loan install
+
+  seed json, loan entitlement
+
+  loot 200
+    seed json, like entitlement
+    note <Successful response>

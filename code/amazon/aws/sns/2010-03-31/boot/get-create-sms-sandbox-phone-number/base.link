@@ -1,0 +1,70 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/create-sms-sandbox-phone-number-result
+  take form create-sms-sandbox-phone-number-result
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/opted-out-exception
+  take form opted-out-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/throttled-exception
+  take form throttled-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/user-error-exception
+  take form user-error-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-sms-sandbox-phone-number, name <GET_CreateSMSSandboxPhoneNumber>
+  note <Adds a destination phone number to an account in the SMS sandbox and sends a one-time password (OTP) to that phone number.
+
+When you start using Amazon SNS to send SMS messages, your account is in the _SMS sandbox_. The SMS sandbox provides a safe environment for you to try Amazon SNS features without risking your reputation as an SMS sender. While your account is in the SMS sandbox, you can use all of the features of Amazon SNS. However, you can send SMS messages only to verified destination phone numbers. For more information, including how to move out of the sandbox to send messages without restrictions, see [SMS sandbox](https://docs.aws.amazon.com/sns/latest/dg/sns-sms-sandbox.html) in the _Amazon SNS Developer Guide_.>
+
+  take phone-number
+    like native-string
+    note <The destination phone number to verify. On verification, Amazon SNS adds this phone number to the list of verified phone numbers that you can send SMS messages to.>
+  take language-code
+    like native-string
+    note <The language to use for sending the OTP. The default value is `en-US`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateSMSSandboxPhoneNumber>
+
+  find <PhoneNumber>, loan phone-number
+  find <LanguageCode>, loan language-code
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-sms-sandbox-phone-number-result
+    note <Success>
+  loot 480
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>
+  loot 481
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 482
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 483
+    seed xml, like opted-out-exception
+    note <OptedOutException>
+  loot 484
+    seed xml, like user-error-exception
+    note <UserErrorException>
+  loot 485
+    seed xml, like throttled-exception
+    note <ThrottledException>

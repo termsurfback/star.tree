@@ -1,0 +1,79 @@
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/associate-vpc-with-hosted-zone-body
+  take form associate-vpc-with-hosted-zone-body
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/associate-vpc-with-hosted-zone-response
+  take form associate-vpc-with-hosted-zone-response
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/conflicting-domain-exists
+  take form conflicting-domain-exists
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-vpc-id
+  take form invalid-vpc-id
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/limits-exceeded
+  take form limits-exceeded
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/no-such-hosted-zone
+  take form no-such-hosted-zone
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/not-authorized-exception
+  take form not-authorized-exception
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/prior-request-not-complete
+  take form prior-request-not-complete
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/public-zone-vpc-association
+  take form public-zone-vpc-association
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot associate-vpc-with-hosted-zone, name <AssociateVPCWithHostedZone>
+  note <Associates an Amazon VPC with a private hosted zone.
+
+To perform the association, the VPC and the private hosted zone must already exist. You can't convert a public hosted zone into a private hosted zone.
+
+If you want to associate a VPC that was created by using one Amazon Web Services account with a private hosted zone that was created by using a different account, the Amazon Web Services account that created the private hosted zone must first submit a `CreateVPCAssociationAuthorization` request. Then the account that created the VPC must submit an `AssociateVPCWithHostedZone` request.>
+
+  take id
+    like native-string
+    note <The ID of the private hosted zone that you want to associate an Amazon VPC with.
+
+Note that you can't associate a VPC with a hosted zone that doesn't have an existing VPC association.>
+  take associate-vpc-with-hosted-zone-body, like associate-vpc-with-hosted-zone-body
+
+  line </2013-04-01/hostedzone/{id}/associatevpc>
+
+  seed xml, loan associate-vpc-with-hosted-zone-body
+
+  loot 200
+    seed xml, like associate-vpc-with-hosted-zone-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-hosted-zone
+    note <NoSuchHostedZone>
+  loot 481
+    seed xml, like not-authorized-exception
+    note <NotAuthorizedException>
+  loot 482
+    seed xml, like invalid-vpc-id
+    note <InvalidVPCId>
+  loot 483
+    seed xml, like invalid-input
+    note <InvalidInput>
+  loot 484
+    seed xml, like public-zone-vpc-association
+    note <PublicZoneVPCAssociation>
+  loot 485
+    seed xml, like conflicting-domain-exists
+    note <ConflictingDomainExists>
+  loot 486
+    seed xml, like limits-exceeded
+    note <LimitsExceeded>
+  loot 487
+    seed xml, like prior-request-not-complete
+    note <PriorRequestNotComplete>

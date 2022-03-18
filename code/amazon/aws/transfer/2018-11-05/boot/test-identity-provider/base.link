@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/test-identity-provider-response
+  take form test-identity-provider-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot test-identity-provider, name <TestIdentityProvider>
+  note <If the `IdentityProviderType` of a file transfer protocol-enabled server is `AWS_DIRECTORY_SERVICE` or `API_Gateway`, tests whether your identity provider is set up successfully. We highly recommend that you call this operation to test your authentication method as soon as you create your server. By doing so, you can troubleshoot issues with the identity provider integration to ensure that your users can successfully use the service.
+
+The `ServerId` and `UserName` parameters are required. The `ServerProtocol`, `SourceIp`, and `UserPassword` are all optional.
+
+You cannot use `TestIdentityProvider` if the `IdentityProviderType` of your server is `SERVICE_MANAGED`.
+
+- If you provide any incorrect values for any parameters, the `Response` field is empty.
+
+- If you provide a server ID for a server that uses service-managed users, you get an error:
+
+  `An error occurred (InvalidRequestException) when calling the TestIdentityProvider operation: s-_server-ID_ not configured for external auth`
+
+- If you enter a Server ID for the `--server-id` parameter that does not identify an actual Transfer server, you receive the following error:
+
+  `An error occurred (ResourceNotFoundException) when calling the TestIdentityProvider operation: Unknown server`>
+
+  take x-amz-target
+    like native-string
+  take test-identity-provider-request, like test-identity-provider-request
+
+  line </#X-Amz-Target=TransferService.TestIdentityProvider>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan test-identity-provider-request
+
+  loot 200
+    seed json, like test-identity-provider-response
+    note <Success>
+  loot 480
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 481
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 482
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

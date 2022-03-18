@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/create-image-version-response
+  take form create-image-version-response
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-in-use
+  take form resource-in-use
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-limit-exceeded
+  take form resource-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-not-found
+  take form resource-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-image-version, name <CreateImageVersion>
+  note <Creates a version of the SageMaker image specified by `ImageName`. The version represents the Amazon Container Registry (ECR) container image specified by `BaseImage`.>
+
+  take x-amz-target
+    like native-string
+  take create-image-version-request, like create-image-version-request
+
+  line </#X-Amz-Target=SageMaker.CreateImageVersion>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-image-version-request
+
+  loot 200
+    seed json, like create-image-version-response
+    note <Success>
+  loot 480
+    seed json, like resource-in-use
+    note <ResourceInUse>
+  loot 481
+    seed json, like resource-limit-exceeded
+    note <ResourceLimitExceeded>
+  loot 482
+    seed json, like resource-not-found
+    note <ResourceNotFound>

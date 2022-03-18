@@ -1,0 +1,24 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_voice_v1/1.27.2/base/create-connection-policy-target-body
+  take form create-connection-policy-target-body
+
+load @drumwork/snow/twilio.com/twilio_voice_v1/1.27.2/base/voice-v1-connection-policy-connection-policy-target
+  take form voice-v1-connection-policy-connection-policy-target
+
+boot create-connection-policy-target, name <CreateConnectionPolicyTarget>
+  take connection-policy-sid
+    like native-string
+    note <The SID of the Connection Policy that owns the Target.>
+  take create-connection-policy-target-body, like create-connection-policy-target-body
+    void take
+
+  line </v1/ConnectionPolicies/{connection-policy-sid}/Targets>
+
+  seed x-www-form-urlencoded, loan create-connection-policy-target-body
+
+  loot 201
+    seed json, like voice-v1-connection-policy-connection-policy-target
+    note <Created>

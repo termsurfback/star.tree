@@ -1,0 +1,71 @@
+
+load @drumwork/snow/amazonaws.com/cloudfront/2016-11-25/base/access-denied
+  take form access-denied
+
+load @drumwork/snow/amazonaws.com/cloudfront/2016-11-25/base/invalid-if-match-version
+  take form invalid-if-match-version
+
+load @drumwork/snow/amazonaws.com/cloudfront/2016-11-25/base/no-such-streaming-distribution
+  take form no-such-streaming-distribution
+
+load @drumwork/snow/amazonaws.com/cloudfront/2016-11-25/base/precondition-failed
+  take form precondition-failed
+
+load @drumwork/snow/amazonaws.com/cloudfront/2016-11-25/base/streaming-distribution-not-disabled
+  take form streaming-distribution-not-disabled
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-streaming-distribution2016-11-25, name <DeleteStreamingDistribution2016_11_25>
+  note <Delete a streaming distribution. To delete an RTMP distribution using the CloudFront API, perform the following steps.
+
+**To delete an RTMP distribution using the CloudFront API**:
+
+1. Disable the RTMP distribution.
+
+2. Submit a `GET Streaming Distribution Config` request to get the current configuration and the `Etag` header for the distribution.
+
+3. Update the XML document that was returned in the response to your `GET Streaming Distribution Config` request to change the value of `Enabled` to `false`.
+
+4. Submit a `PUT Streaming Distribution Config` request to update the configuration for your distribution. In the request body, include the XML document that you updated in Step 3. Then set the value of the HTTP `If-Match` header to the value of the `ETag` header that CloudFront returned when you submitted the `GET Streaming Distribution Config` request in Step 2.
+
+5. Review the response to the `PUT Streaming Distribution Config` request to confirm that the distribution was successfully disabled.
+
+6. Submit a `GET Streaming Distribution Config` request to confirm that your changes have propagated. When propagation is complete, the value of `Status` is `Deployed`.
+
+7. Submit a `DELETE Streaming Distribution` request. Set the value of the HTTP `If-Match` header to the value of the `ETag` header that CloudFront returned when you submitted the `GET Streaming Distribution Config` request in Step 2.
+
+8. Review the response to your `DELETE Streaming Distribution` request to confirm that the distribution was successfully deleted.
+
+For information about deleting a distribution using the CloudFront console, see [Deleting a Distribution](http://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/HowToDeleteDistribution.html) in the _Amazon CloudFront Developer Guide_.>
+
+  take id
+    like native-string
+    note <The distribution ID.>
+  take if-match
+    like native-string
+    note <The value of the `ETag` header that you received when you disabled the streaming distribution. For example: `E2QWRUHAPOMQZL`.>
+    void take
+
+  line </2016-11-25/streaming-distribution/{id}>
+
+  hint <If-Match>, loan if-match
+
+  loot 204
+    note <Success>
+  loot 480
+    seed xml, like access-denied
+    note <AccessDenied>
+  loot 481
+    seed xml, like streaming-distribution-not-disabled
+    note <StreamingDistributionNotDisabled>
+  loot 482
+    seed xml, like invalid-if-match-version
+    note <InvalidIfMatchVersion>
+  loot 483
+    seed xml, like no-such-streaming-distribution
+    note <NoSuchStreamingDistribution>
+  loot 484
+    seed xml, like precondition-failed
+    note <PreconditionFailed>

@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/list-trails-response
+  take form list-trails-response
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/operation-not-permitted-exception
+  take form operation-not-permitted-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/unsupported-operation-exception
+  take form unsupported-operation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-trails, name <ListTrails>
+  note <Lists trails that are in the current account.>
+
+  take x-amz-target
+    like native-string
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-trails-request, like list-trails-request
+
+  line </#X-Amz-Target=com.amazonaws.cloudtrail.v20131101.CloudTrail_20131101.ListTrails>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <NextToken>, loan next-token
+
+  seed json, loan list-trails-request
+
+  loot 200
+    seed json, like list-trails-response
+    note <Success>
+  loot 480
+    seed json, like unsupported-operation-exception
+    note <UnsupportedOperationException>
+  loot 481
+    seed json, like operation-not-permitted-exception
+    note <OperationNotPermittedException>

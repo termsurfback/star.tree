@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/list-imports-body
+  take form list-imports-body
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/list-imports-response
+  take form list-imports-response
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-imports, name <ListImports>
+  note <Lists the imports for a bot or bot locale. Imports are kept in the list for 7 days.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-imports-body, like list-imports-body
+
+  line </imports/>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-imports-body
+
+  loot 200
+    seed json, like list-imports-response
+    note <Success>
+  loot 480
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

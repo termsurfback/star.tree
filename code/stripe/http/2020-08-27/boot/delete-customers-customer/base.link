@@ -1,0 +1,31 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/delete-customers-customer-body
+  take form delete-customers-customer-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/deleted-customer
+  take form deleted-customer
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+boot delete-customers-customer, name <DeleteCustomersCustomer>
+  note <Permanently deletes a customer. It cannot be undone. Also immediately cancels any active subscriptions on the customer.>
+
+  take customer
+    like native-string
+  take delete-customers-customer-body, like delete-customers-customer-body
+    void take
+
+  line </v1/customers/{customer}>
+
+  seed x-www-form-urlencoded, loan delete-customers-customer-body
+
+  loot 200
+    seed json, like deleted-customer
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

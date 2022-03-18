@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/delete-classifier-response
+  take form delete-classifier-response
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/entity-not-found-exception
+  take form entity-not-found-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/operation-timeout-exception
+  take form operation-timeout-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-classifier, name <DeleteClassifier>
+  note <Removes a classifier from the Data Catalog.>
+
+  take x-amz-target
+    like native-string
+  take delete-classifier-request, like delete-classifier-request
+
+  line </#X-Amz-Target=AWSGlue.DeleteClassifier>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-classifier-request
+
+  loot 200
+    seed json, like delete-classifier-response
+    note <Success>
+  loot 480
+    seed json, like entity-not-found-exception
+    note <EntityNotFoundException>
+  loot 481
+    seed json, like operation-timeout-exception
+    note <OperationTimeoutException>

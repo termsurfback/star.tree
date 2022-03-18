@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/get-role-policy-response
+  take form get-role-policy-response
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-get-role-policy, name <GET_GetRolePolicy>
+  note <Retrieves the specified inline policy document that is embedded with the specified IAM role.
+
+Policies returned by this operation are URL-encoded compliant with [RFC 3986](https://tools.ietf.org/html/rfc3986). You can use a URL decoding method to convert the policy back to plain JSON text. For example, if you use Java, you can use the `decode` method of the `java.net.URLDecoder` utility class in the Java SDK. Other languages and SDKs provide similar functionality.
+
+An IAM role can also have managed policies attached to it. To retrieve a managed policy document that is attached to a role, use GetPolicy to determine the policy's default version, then use GetPolicyVersion to retrieve the policy document.
+
+For more information about policies, see [Managed policies and inline policies](https://docs.aws.amazon.com/IAM/latest/UserGuide/policies-managed-vs-inline.html) in the _IAM User Guide_.
+
+For more information about roles, see [Using roles to delegate permissions and federate identities](https://docs.aws.amazon.com/IAM/latest/UserGuide/roles-toplevel.html).>
+
+  take role-name
+    like native-string
+    note <The name of the role associated with the policy.
+
+This parameter allows (through its [regex pattern](http://wikipedia.org/wiki/regex)) a string of characters consisting of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: _+=,.@->
+  take policy-name
+    like native-string
+    note <The name of the policy document to get.
+
+This parameter allows (through its [regex pattern](http://wikipedia.org/wiki/regex)) a string of characters consisting of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: _+=,.@->
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=GetRolePolicy>
+
+  find <RoleName>, loan role-name
+  find <PolicyName>, loan policy-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like get-role-policy-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

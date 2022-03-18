@@ -1,0 +1,91 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/create-db-proxy-endpoint-response
+  take form create-db-proxy-endpoint-response
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-endpoint-already-exists-fault
+  take form db-proxy-endpoint-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-endpoint-quota-exceeded-fault
+  take form db-proxy-endpoint-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-not-found-fault
+  take form db-proxy-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-proxy-state-fault
+  take form invalid-db-proxy-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-subnet
+  take form invalid-subnet
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/tag
+  take form tag
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-create-db-proxy-endpoint, name <GET_CreateDBProxyEndpoint>
+  note <Creates a `DBProxyEndpoint`. Only applies to proxies that are associated with Aurora DB clusters. You can use DB proxy endpoints to specify read/write or read-only access to the DB cluster. You can also use DB proxy endpoints to access a DB proxy through a different VPC than the proxy's default VPC.>
+
+  take db-proxy-name
+    like native-string
+    note <The name of the DB proxy associated with the DB proxy endpoint that you create.>
+  take db-proxy-endpoint-name
+    like native-string
+    note <The name of the DB proxy endpoint to create.>
+  take vpc-subnet-ids
+    like list
+      like string
+    note <The VPC subnet IDs for the DB proxy endpoint that you create. You can specify a different set of subnet IDs than for the original DB proxy.>
+  take vpc-security-group-ids
+    like list
+      like string
+    note <The VPC security group IDs for the DB proxy endpoint that you create. You can specify a different set of security group IDs than for the original DB proxy. The default is the default security group for the VPC.>
+    void take
+  take target-role
+    like native-string
+    note <A value that indicates whether the DB proxy endpoint can be used for read/write or read-only operations. The default is `READ_WRITE`.>
+    void take
+  take tags
+    like list
+      like tag
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateDBProxyEndpoint>
+
+  find <DBProxyName>, loan db-proxy-name
+  find <DBProxyEndpointName>, loan db-proxy-endpoint-name
+  find <VpcSubnetIds>, loan vpc-subnet-ids
+  find <VpcSecurityGroupIds>, loan vpc-security-group-ids
+  find <TargetRole>, loan target-role
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-db-proxy-endpoint-response
+    note <Success>
+  loot 480
+    seed xml, like invalid-subnet
+    note <InvalidSubnet>
+  loot 481
+    seed xml, like db-proxy-not-found-fault
+    note <DBProxyNotFoundFault>
+  loot 482
+    seed xml, like db-proxy-endpoint-already-exists-fault
+    note <DBProxyEndpointAlreadyExistsFault>
+  loot 483
+    seed xml, like db-proxy-endpoint-quota-exceeded-fault
+    note <DBProxyEndpointQuotaExceededFault>
+  loot 484
+    seed xml, like invalid-db-proxy-state-fault
+    note <InvalidDBProxyStateFault>

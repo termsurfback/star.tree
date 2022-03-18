@@ -1,0 +1,90 @@
+
+load @drumwork/snow/amazonaws.com/runtime.lex.v2/2020-08-07/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/runtime.lex.v2/2020-08-07/base/bad-gateway-exception
+  take form bad-gateway-exception
+
+load @drumwork/snow/amazonaws.com/runtime.lex.v2/2020-08-07/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/runtime.lex.v2/2020-08-07/base/dependency-failed-exception
+  take form dependency-failed-exception
+
+load @drumwork/snow/amazonaws.com/runtime.lex.v2/2020-08-07/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/runtime.lex.v2/2020-08-07/base/put-session-body
+  take form put-session-body
+
+load @drumwork/snow/amazonaws.com/runtime.lex.v2/2020-08-07/base/put-session-response
+  take form put-session-response
+
+load @drumwork/snow/amazonaws.com/runtime.lex.v2/2020-08-07/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/runtime.lex.v2/2020-08-07/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/runtime.lex.v2/2020-08-07/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-session, name <PutSession>
+  note <Creates a new session or modifies an existing session with an Amazon Lex V2 bot. Use this operation to enable your application to set the state of the bot.>
+
+  take bot-id
+    like native-string
+    note <The identifier of the bot that receives the session data.>
+  take bot-alias-id
+    like native-string
+    note <The alias identifier of the bot that receives the session data.>
+  take locale-id
+    like native-string
+    note <The locale where the session is in use.>
+  take session-id
+    like native-string
+    note <The identifier of the session that receives the session data.>
+  take response-content-type
+    like native-string
+    note <The message that Amazon Lex V2 returns in the response can be either text or speech depending on the value of this parameter.
+
+- If the value is `text/plain; charset=utf-8`, Amazon Lex V2 returns text in the response.>
+    void take
+  take put-session-body, like put-session-body
+
+  line </bots/{bot-id}/botAliases/{bot-alias-id}/botLocales/{locale-id}/sessions/{session-id}>
+
+  hint <ResponseContentType>, loan response-content-type
+
+  seed json, loan put-session-body
+
+  loot 200
+    seed json, like put-session-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 485
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 486
+    seed json, like dependency-failed-exception
+    note <DependencyFailedException>
+  loot 487
+    seed json, like bad-gateway-exception
+    note <BadGatewayException>

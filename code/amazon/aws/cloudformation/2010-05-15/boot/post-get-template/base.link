@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/change-set-not-found-exception
+  take form change-set-not-found-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/get-template-output
+  take form get-template-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-get-template, name <POST_GetTemplate>
+  note <Returns the template body for a specified stack. You can get the template for running or deleted stacks.
+
+For deleted stacks, GetTemplate returns the template for up to 90 days after the stack has been deleted.
+
+If the template does not exist, a `ValidationError` is returned.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take get-template-input, like get-template-input
+    void take
+
+  line </#Action=GetTemplate>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan get-template-input
+
+  loot 200
+    seed xml, like get-template-output
+    note <Success>
+  loot 480
+    seed xml, like change-set-not-found-exception
+    note <ChangeSetNotFoundException>

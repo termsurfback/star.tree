@@ -1,0 +1,85 @@
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/invalid-argument-exception
+  take form invalid-argument-exception
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/kms-access-denied-exception
+  take form kms-access-denied-exception
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/kms-disabled-exception
+  take form kms-disabled-exception
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/kms-invalid-state-exception
+  take form kms-invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/kms-not-found-exception
+  take form kms-not-found-exception
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/kms-opt-in-required
+  take form kms-opt-in-required
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/kms-throttling-exception
+  take form kms-throttling-exception
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-stream-encryption, name <StartStreamEncryption>
+  note <Enables or updates server-side encryption using an AWS KMS key for a specified stream.
+
+Starting encryption is an asynchronous operation. Upon receiving the request, Kinesis Data Streams returns immediately and sets the status of the stream to `UPDATING`. After the update is complete, Kinesis Data Streams sets the status of the stream back to `ACTIVE`. Updating or applying encryption normally takes a few seconds to complete, but it can take minutes. You can continue to read and write data to your stream while its status is `UPDATING`. Once the status of the stream is `ACTIVE`, encryption begins for records written to the stream.
+
+API Limits: You can successfully apply a new AWS KMS key for server-side encryption 25 times in a rolling 24-hour period.
+
+Note: It can take up to 5 seconds after the stream is in an `ACTIVE` status before all records written to the stream are encrypted. After you enable encryption, you can verify that encryption is applied by inspecting the API response from `PutRecord` or `PutRecords`.>
+
+  take x-amz-target
+    like native-string
+  take start-stream-encryption-input, like start-stream-encryption-input
+
+  line </#X-Amz-Target=Kinesis_20131202.StartStreamEncryption>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan start-stream-encryption-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like invalid-argument-exception
+    note <InvalidArgumentException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 484
+    seed json, like kms-disabled-exception
+    note <KMSDisabledException>
+  loot 485
+    seed json, like kms-invalid-state-exception
+    note <KMSInvalidStateException>
+  loot 486
+    seed json, like kms-access-denied-exception
+    note <KMSAccessDeniedException>
+  loot 487
+    seed json, like kms-not-found-exception
+    note <KMSNotFoundException>
+  loot 488
+    seed json, like kms-opt-in-required
+    note <KMSOptInRequired>
+  loot 489
+    seed json, like kms-throttling-exception
+    note <KMSThrottlingException>

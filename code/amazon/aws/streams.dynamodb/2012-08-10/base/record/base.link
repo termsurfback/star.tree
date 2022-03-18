@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/streams.dynamodb/2012-08-10/base/identity
+  take form identity
+
+load @drumwork/snow/amazonaws.com/streams.dynamodb/2012-08-10/base/operation-type
+  take form operation-type
+
+load @drumwork/snow/amazonaws.com/streams.dynamodb/2012-08-10/base/stream-record
+  take form stream-record
+
+load @drumwork/snow/base/string
+  take form string
+
+form record, name <Record>
+  note <A description of a unique event within a stream.>
+  take event-id, name <eventID>
+    like string
+    void take
+    note <A globally unique identifier for the event that was recorded in this stream record.>
+  take event-name, name <eventName>
+    like operation-type
+    void take
+    note <The type of data modification that was performed on the DynamoDB table:
+
+- `INSERT` - a new item was added to the table.
+
+- `MODIFY` - one or more of an existing item's attributes were modified.
+
+- `REMOVE` - the item was deleted from the table>
+  take event-version, name <eventVersion>
+    like string
+    void take
+    note <The version number of the stream record format. This number is updated whenever the structure of `Record` is modified.
+
+Client applications must not assume that `eventVersion` will remain at a particular value, as this number is subject to change at any time. In general, `eventVersion` will only increase as the low-level DynamoDB Streams API evolves.>
+  take event-source, name <eventSource>
+    like string
+    void take
+    note <The AWS service from which the stream record originated. For DynamoDB Streams, this is `aws:dynamodb`.>
+  take aws-region, name <awsRegion>
+    like string
+    void take
+    note <The region in which the `GetRecords` request was received.>
+  take dynamodb, name <dynamodb>
+    like stream-record
+    void take
+    note <The main body of the stream record, containing all of the DynamoDB-specific fields.>
+  take user-identity, name <userIdentity>
+    like identity
+    void take
+    note <Items that are deleted by the Time to Live process after expiration have the following fields:
+
+- Records[].userIdentity.type
+
+  "Service"
+
+- Records[].userIdentity.principalId
+
+  "dynamodb.amazonaws.com">

@@ -1,0 +1,99 @@
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/cloud-hsm-cluster-invalid-configuration-exception
+  take form cloud-hsm-cluster-invalid-configuration-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/cloud-hsm-cluster-not-active-exception
+  take form cloud-hsm-cluster-not-active-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/cloud-hsm-cluster-not-found-exception
+  take form cloud-hsm-cluster-not-found-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/cloud-hsm-cluster-not-related-exception
+  take form cloud-hsm-cluster-not-related-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/custom-key-store-invalid-state-exception
+  take form custom-key-store-invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/custom-key-store-name-in-use-exception
+  take form custom-key-store-name-in-use-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/custom-key-store-not-found-exception
+  take form custom-key-store-not-found-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-internal-exception
+  take form kms-internal-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/update-custom-key-store-response
+  take form update-custom-key-store-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-custom-key-store, name <UpdateCustomKeyStore>
+  note <Changes the properties of a custom key store. Use the `CustomKeyStoreId` parameter to identify the custom key store you want to edit. Use the remaining parameters to change the properties of the custom key store.
+
+You can only update a custom key store that is disconnected. To disconnect the custom key store, use DisconnectCustomKeyStore. To reconnect the custom key store after the update completes, use ConnectCustomKeyStore. To find the connection state of a custom key store, use the DescribeCustomKeyStores operation.
+
+Use the parameters of `UpdateCustomKeyStore` to edit your keystore settings.
+
+- Use the **NewCustomKeyStoreName** parameter to change the friendly name of the custom key store to the value that you specify.
+
+- Use the **KeyStorePassword** parameter tell KMS the current password of the [`kmsuser` crypto user (CU)](https://docs.aws.amazon.com/kms/latest/developerguide/key-store-concepts.html#concept-kmsuser) in the associated CloudHSM cluster. You can use this parameter to [fix connection failures](https://docs.aws.amazon.com/kms/latest/developerguide/fix-keystore.html#fix-keystore-password) that occur when KMS cannot log into the associated cluster because the `kmsuser` password has changed. This value does not change the password in the CloudHSM cluster.
+
+- Use the **CloudHsmClusterId** parameter to associate the custom key store with a different, but related, CloudHSM cluster. You can use this parameter to repair a custom key store if its CloudHSM cluster becomes corrupted or is deleted, or when you need to create or restore a cluster from a backup.
+
+If the operation succeeds, it returns a JSON object with no properties.
+
+This operation is part of the [Custom Key Store feature](https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html) feature in KMS, which combines the convenience and extensive integration of KMS with the isolation and control of a single-tenant key store.
+
+**Cross-account use**: No. You cannot perform this operation on a custom key store in a different Amazon Web Services account.
+
+**Required permissions**: [kms:UpdateCustomKeyStore](https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html) (IAM policy)
+
+**Related operations:** - ConnectCustomKeyStore
+
+- CreateCustomKeyStore
+
+- DeleteCustomKeyStore
+
+- DescribeCustomKeyStores
+
+- DisconnectCustomKeyStore>
+
+  take x-amz-target
+    like native-string
+  take update-custom-key-store-request, like update-custom-key-store-request
+
+  line </#X-Amz-Target=TrentService.UpdateCustomKeyStore>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-custom-key-store-request
+
+  loot 200
+    seed json, like update-custom-key-store-response
+    note <Success>
+  loot 480
+    seed json, like custom-key-store-not-found-exception
+    note <CustomKeyStoreNotFoundException>
+  loot 481
+    seed json, like custom-key-store-name-in-use-exception
+    note <CustomKeyStoreNameInUseException>
+  loot 482
+    seed json, like cloud-hsm-cluster-not-found-exception
+    note <CloudHsmClusterNotFoundException>
+  loot 483
+    seed json, like cloud-hsm-cluster-not-related-exception
+    note <CloudHsmClusterNotRelatedException>
+  loot 484
+    seed json, like custom-key-store-invalid-state-exception
+    note <CustomKeyStoreInvalidStateException>
+  loot 485
+    seed json, like kms-internal-exception
+    note <KMSInternalException>
+  loot 486
+    seed json, like cloud-hsm-cluster-not-active-exception
+    note <CloudHsmClusterNotActiveException>
+  loot 487
+    seed json, like cloud-hsm-cluster-invalid-configuration-exception
+    note <CloudHsmClusterInvalidConfigurationException>

@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/delete-job-queue-body
+  take form delete-job-queue-body
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/delete-job-queue-response
+  take form delete-job-queue-response
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/server-exception
+  take form server-exception
+
+boot delete-job-queue, name <DeleteJobQueue>
+  note <Deletes the specified job queue. You must first disable submissions for a queue with the UpdateJobQueue operation. All jobs in the queue are eventually terminated when you delete a job queue. The jobs are terminated at a rate of about 16 jobs each second.
+
+It's not necessary to disassociate compute environments from a queue before submitting a `DeleteJobQueue` request.>
+
+  take delete-job-queue-body, like delete-job-queue-body
+
+  line </v1/deletejobqueue>
+
+  seed json, loan delete-job-queue-body
+
+  loot 200
+    seed json, like delete-job-queue-response
+    note <Success>
+  loot 480
+    seed json, like client-exception
+    note <ClientException>
+  loot 481
+    seed json, like server-exception
+    note <ServerException>

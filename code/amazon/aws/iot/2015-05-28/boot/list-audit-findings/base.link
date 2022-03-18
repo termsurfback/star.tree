@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/list-audit-findings-body
+  take form list-audit-findings-body
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/list-audit-findings-response
+  take form list-audit-findings-response
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-audit-findings, name <ListAuditFindings>
+  note <Lists the findings (results) of a Device Defender audit or of the audits performed during a specified time period. (Findings are retained for 90 days.)
+
+Requires permission to access the [ListAuditFindings](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiot.html#awsiot-actions-as-permissions) action.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-audit-findings-body, like list-audit-findings-body
+
+  line </audit/findings>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-audit-findings-body
+
+  loot 200
+    seed json, like list-audit-findings-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

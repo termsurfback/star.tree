@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/fms/2018-01-01/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/fms/2018-01-01/base/invalid-operation-exception
+  take form invalid-operation-exception
+
+load @drumwork/snow/amazonaws.com/fms/2018-01-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot disassociate-admin-account, name <DisassociateAdminAccount>
+  note <Disassociates the account that has been set as the Firewall Manager administrator account. To set a different account as the administrator account, you must submit an `AssociateAdminAccount` request.>
+
+  take x-amz-target
+    like native-string
+  take disassociate-admin-account-request, like disassociate-admin-account-request
+
+  line </#X-Amz-Target=AWSFMS_20180101.DisassociateAdminAccount>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan disassociate-admin-account-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like invalid-operation-exception
+    note <InvalidOperationException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-error-exception
+    note <InternalErrorException>

@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/create-workteam-response
+  take form create-workteam-response
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-in-use
+  take form resource-in-use
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-limit-exceeded
+  take form resource-limit-exceeded
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-workteam, name <CreateWorkteam>
+  note <Creates a new work team for labeling your data. A work team is defined by one or more Amazon Cognito user pools. You must first create the user pools before you can create a work team.
+
+You cannot create more than 25 work teams in an account and region.>
+
+  take x-amz-target
+    like native-string
+  take create-workteam-request, like create-workteam-request
+
+  line </#X-Amz-Target=SageMaker.CreateWorkteam>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-workteam-request
+
+  loot 200
+    seed json, like create-workteam-response
+    note <Success>
+  loot 480
+    seed json, like resource-in-use
+    note <ResourceInUse>
+  loot 481
+    seed json, like resource-limit-exceeded
+    note <ResourceLimitExceeded>

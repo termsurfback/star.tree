@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/exchange-rate
+  take form exchange-rate
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-exchange-rates-rate-id-body
+  take form get-exchange-rates-rate-id-body
+
+boot get-exchange-rates-rate-id, name <GetExchangeRatesRateId>
+  note <Retrieves the exchange rates from the given currency to every supported currency.>
+
+  take rate-id
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-exchange-rates-rate-id-body, like get-exchange-rates-rate-id-body
+    void take
+
+  line </v1/exchange_rates/{rate-id}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-exchange-rates-rate-id-body
+
+  loot 200
+    seed json, like exchange-rate
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

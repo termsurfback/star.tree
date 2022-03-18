@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/eventbridge/2015-10-07/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/eventbridge/2015-10-07/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/eventbridge/2015-10-07/base/operation-disabled-exception
+  take form operation-disabled-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-partner-event-source, name <DeletePartnerEventSource>
+  note <This operation is used by SaaS partners to delete a partner event source. This operation is not used by Amazon Web Services customers.
+
+When you delete an event source, the status of the corresponding partner event bus in the Amazon Web Services customer account becomes DELETED.>
+
+  take x-amz-target
+    like native-string
+  take delete-partner-event-source-request, like delete-partner-event-source-request
+
+  line </#X-Amz-Target=AWSEvents.DeletePartnerEventSource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-partner-event-source-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like internal-exception
+    note <InternalException>
+  loot 481
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>
+  loot 482
+    seed json, like operation-disabled-exception
+    note <OperationDisabledException>

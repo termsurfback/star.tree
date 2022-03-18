@@ -1,0 +1,31 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/get-default-patch-baseline-result
+  take form get-default-patch-baseline-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-default-patch-baseline, name <GetDefaultPatchBaseline>
+  note <Retrieves the default patch baseline. Amazon Web Services Systems Manager supports creating multiple default patch baselines. For example, you can create a default patch baseline for each operating system.
+
+If you don't specify an operating system value, the default patch baseline for Windows is returned.>
+
+  take x-amz-target
+    like native-string
+  take get-default-patch-baseline-request, like get-default-patch-baseline-request
+
+  line </#X-Amz-Target=AmazonSSM.GetDefaultPatchBaseline>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-default-patch-baseline-request
+
+  loot 200
+    seed json, like get-default-patch-baseline-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>

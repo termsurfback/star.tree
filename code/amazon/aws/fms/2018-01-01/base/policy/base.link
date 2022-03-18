@@ -1,0 +1,95 @@
+
+load @drumwork/snow/amazonaws.com/fms/2018-01-01/base/customer-policy-scope-map
+  take form customer-policy-scope-map
+
+load @drumwork/snow/amazonaws.com/fms/2018-01-01/base/policy-id
+  take form policy-id
+
+load @drumwork/snow/amazonaws.com/fms/2018-01-01/base/policy-update-token
+  take form policy-update-token
+
+load @drumwork/snow/amazonaws.com/fms/2018-01-01/base/resource-name
+  take form resource-name
+
+load @drumwork/snow/amazonaws.com/fms/2018-01-01/base/resource-tags
+  take form resource-tags
+
+load @drumwork/snow/amazonaws.com/fms/2018-01-01/base/resource-type
+  take form resource-type
+
+load @drumwork/snow/amazonaws.com/fms/2018-01-01/base/resource-type-list
+  take form resource-type-list
+
+load @drumwork/snow/amazonaws.com/fms/2018-01-01/base/security-service-policy-data
+  take form security-service-policy-data
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+form policy, name <Policy>
+  note <An Firewall Manager policy.>
+  take policy-id, name <PolicyId>
+    like policy-id
+    void take
+    note <The ID of the Firewall Manager policy.>
+  take policy-name, name <PolicyName>
+    like resource-name
+    note <The name of the Firewall Manager policy.>
+  take policy-update-token, name <PolicyUpdateToken>
+    like policy-update-token
+    void take
+    note <A unique identifier for each update to the policy. When issuing a `PutPolicy` request, the `PolicyUpdateToken` in the request must match the `PolicyUpdateToken` of the current policy version. To get the `PolicyUpdateToken` of the current policy version, use a `GetPolicy` request.>
+  take security-service-policy-data, name <SecurityServicePolicyData>
+    like security-service-policy-data
+    note <Details about the security service that is being used to protect the resources.>
+  take resource-type, name <ResourceType>
+    like resource-type
+    note <The type of resource protected by or in scope of the policy. This is in the format shown in the [Amazon Web Services Resource Types Reference](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html). To apply this policy to multiple resource types, specify a resource type of `ResourceTypeList` and then specify the resource types in a `ResourceTypeList`.
+
+For WAF and Shield Advanced, example resource types include `AWS::ElasticLoadBalancingV2::LoadBalancer` and `AWS::CloudFront::Distribution`. For a security group common policy, valid values are `AWS::EC2::NetworkInterface` and `AWS::EC2::Instance`. For a security group content audit policy, valid values are `AWS::EC2::SecurityGroup`, `AWS::EC2::NetworkInterface`, and `AWS::EC2::Instance`. For a security group usage audit policy, the value is `AWS::EC2::SecurityGroup`. For an Network Firewall policy or DNS Firewall policy, the value is `AWS::EC2::VPC`.>
+  take resource-type-list, name <ResourceTypeList>
+    like resource-type-list
+    void take
+    note <An array of `ResourceType` objects. Use this only to specify multiple resource types. To specify a single resource type, use `ResourceType`.>
+  take resource-tags, name <ResourceTags>
+    like resource-tags
+    void take
+    note <An array of `ResourceTag` objects.>
+  take exclude-resource-tags, name <ExcludeResourceTags>
+    like boolean
+    note <If set to `True`, resources with the tags that are specified in the `ResourceTag` array are not in scope of the policy. If set to `False`, and the `ResourceTag` array is not null, only resources with the specified tags are in scope of the policy.>
+  take remediation-enabled, name <RemediationEnabled>
+    like boolean
+    note <Indicates if the policy should be automatically applied to new resources.>
+  take delete-unused-fm-managed-resources, name <DeleteUnusedFMManagedResources>
+    like boolean
+    void take
+    note <Indicates whether Firewall Manager should delete Firewall Manager managed resources, such as web ACLs and security groups, when they are not in use by the Firewall Manager policy. By default, Firewall Manager doesn't delete unused Firewall Manager managed resources. This option is not available for Shield Advanced or WAF Classic policies.>
+  take include-map, name <IncludeMap>
+    like customer-policy-scope-map
+    void take
+    note <Specifies the Amazon Web Services account IDs and Organizations organizational units (OUs) to include in the policy. Specifying an OU is the equivalent of specifying all accounts in the OU and in any of its child OUs, including any child OUs and accounts that are added at a later time.
+
+You can specify inclusions or exclusions, but not both. If you specify an `IncludeMap`, Firewall Manager applies the policy to all accounts specified by the `IncludeMap`, and does not evaluate any `ExcludeMap` specifications. If you do not specify an `IncludeMap`, then Firewall Manager applies the policy to all accounts except for those specified by the `ExcludeMap`.
+
+You can specify account IDs, OUs, or a combination:
+
+- Specify account IDs by setting the key to `ACCOUNT`. For example, the following is a valid map: `{“ACCOUNT” : [“accountID1”, “accountID2”]}`.
+
+- Specify OUs by setting the key to `ORG_UNIT`. For example, the following is a valid map: `{“ORG_UNIT” : [“ouid111”, “ouid112”]}`.
+
+- Specify accounts and OUs together in a single map, separated with a comma. For example, the following is a valid map: `{“ACCOUNT” : [“accountID1”, “accountID2”], “ORG_UNIT” : [“ouid111”, “ouid112”]}`.>
+  take exclude-map, name <ExcludeMap>
+    like customer-policy-scope-map
+    void take
+    note <Specifies the Amazon Web Services account IDs and Organizations organizational units (OUs) to exclude from the policy. Specifying an OU is the equivalent of specifying all accounts in the OU and in any of its child OUs, including any child OUs and accounts that are added at a later time.
+
+You can specify inclusions or exclusions, but not both. If you specify an `IncludeMap`, Firewall Manager applies the policy to all accounts specified by the `IncludeMap`, and does not evaluate any `ExcludeMap` specifications. If you do not specify an `IncludeMap`, then Firewall Manager applies the policy to all accounts except for those specified by the `ExcludeMap`.
+
+You can specify account IDs, OUs, or a combination:
+
+- Specify account IDs by setting the key to `ACCOUNT`. For example, the following is a valid map: `{“ACCOUNT” : [“accountID1”, “accountID2”]}`.
+
+- Specify OUs by setting the key to `ORG_UNIT`. For example, the following is a valid map: `{“ORG_UNIT” : [“ouid111”, “ouid112”]}`.
+
+- Specify accounts and OUs together in a single map, separated with a comma. For example, the following is a valid map: `{“ACCOUNT” : [“accountID1”, “accountID2”], “ORG_UNIT” : [“ouid111”, “ouid112”]}`.>

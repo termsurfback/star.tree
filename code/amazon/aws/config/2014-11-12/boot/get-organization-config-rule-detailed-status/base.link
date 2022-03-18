@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/get-organization-config-rule-detailed-status-response
+  take form get-organization-config-rule-detailed-status-response
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-limit-exception
+  take form invalid-limit-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/no-such-organization-config-rule-exception
+  take form no-such-organization-config-rule-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/organization-access-denied-exception
+  take form organization-access-denied-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-organization-config-rule-detailed-status, name <GetOrganizationConfigRuleDetailedStatus>
+  note <Returns detailed status for each member account within an organization for a given organization config rule.>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-organization-config-rule-detailed-status-request, like get-organization-config-rule-detailed-status-request
+
+  line </#X-Amz-Target=StarlingDoveService.GetOrganizationConfigRuleDetailedStatus>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <Limit>, loan limit
+  find <NextToken>, loan next-token
+
+  seed json, loan get-organization-config-rule-detailed-status-request
+
+  loot 200
+    seed json, like get-organization-config-rule-detailed-status-response
+    note <Success>
+  loot 480
+    seed json, like no-such-organization-config-rule-exception
+    note <NoSuchOrganizationConfigRuleException>
+  loot 481
+    seed json, like invalid-limit-exception
+    note <InvalidLimitException>
+  loot 482
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 483
+    seed json, like organization-access-denied-exception
+    note <OrganizationAccessDeniedException>

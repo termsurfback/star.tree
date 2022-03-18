@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/access-denied
+  take form access-denied
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/illegal-update
+  take form illegal-update
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/invalid-argument
+  take form invalid-argument
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/no-such-distribution
+  take form no-such-distribution
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/too-many-distribution-cnam-es
+  take form too-many-distribution-cnam-es
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot associate-alias2020-05-31, name <AssociateAlias2020_05_31>
+  note <Associates an alias (also known as a CNAME or an alternate domain name) with a CloudFront distribution.
+
+With this operation you can move an alias that’s already in use on a CloudFront distribution to a different distribution in one step. This prevents the downtime that could occur if you first remove the alias from one distribution and then separately add the alias to another distribution.
+
+To use this operation to associate an alias with a distribution, you provide the alias and the ID of the target distribution for the alias. For more information, including how to set up the target distribution, prerequisites that you must complete, and other restrictions, see [Moving an alternate domain name to a different distribution](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CNAMEs.html#alternate-domain-names-move) in the _Amazon CloudFront Developer Guide_.>
+
+  take target-distribution-id
+    like native-string
+    note <The ID of the distribution that you’re associating the alias with.>
+  take alias
+    like native-string
+    note <The alias (also known as a CNAME) to add to the target distribution.>
+
+  line </2020-05-31/distribution/{target-distribution-id}/associate-alias#Alias>
+
+  find <Alias>, loan alias
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like invalid-argument
+    note <InvalidArgument>
+  loot 481
+    seed xml, like no-such-distribution
+    note <NoSuchDistribution>
+  loot 482
+    seed xml, like too-many-distribution-cnam-es
+    note <TooManyDistributionCNAMEs>
+  loot 483
+    seed xml, like illegal-update
+    note <IllegalUpdate>
+  loot 484
+    seed xml, like access-denied
+    note <AccessDenied>

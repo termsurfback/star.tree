@@ -1,0 +1,29 @@
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/describe-sessions-result
+  take form describe-sessions-result
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-sessions, name <DescribeSessions>
+  note <Retrieves a list that describes the streaming sessions for a specified stack and fleet. If a UserId is provided for the stack and fleet, only streaming sessions for that user are described. If an authentication type is not provided, the default is to authenticate users using a streaming URL.>
+
+  take x-amz-target
+    like native-string
+  take describe-sessions-request, like describe-sessions-request
+
+  line </#X-Amz-Target=PhotonAdminProxyService.DescribeSessions>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-sessions-request
+
+  loot 200
+    seed json, like describe-sessions-result
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

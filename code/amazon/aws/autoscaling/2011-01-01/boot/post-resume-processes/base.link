@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-in-use-fault
+  take form resource-in-use-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-resume-processes, name <POST_ResumeProcesses>
+  note <Resumes the specified suspended auto scaling processes, or all suspended process, for the specified Auto Scaling group.
+
+For more information, see [Suspending and resuming scaling processes](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-suspend-resume-processes.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take scaling-process-query, like scaling-process-query
+    void take
+
+  line </#Action=ResumeProcesses>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan scaling-process-query
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like resource-in-use-fault
+    note <ResourceInUseFault>
+  loot 481
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

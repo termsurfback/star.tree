@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/get-log-events-response
+  take form get-log-events-response
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-log-events, name <GetLogEvents>
+  note <Lists log events from the specified log stream. You can list all of the log events or filter using a time range.
+
+By default, this operation returns as many log events as can fit in a response size of 1MB (up to 10,000 log events). You can get additional log events by specifying one of the tokens in a subsequent call. This operation can return empty results while there are more log events available through the token.>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-log-events-request, like get-log-events-request
+
+  line </#X-Amz-Target=Logs_20140328.GetLogEvents>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <limit>, loan limit
+  find <nextToken>, loan next-token
+
+  seed json, loan get-log-events-request
+
+  loot 200
+    seed json, like get-log-events-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

@@ -1,0 +1,32 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/account
+  take form account
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-accounts-account-reject-body
+  take form post-accounts-account-reject-body
+
+boot post-accounts-account-reject, name <PostAccountsAccountReject>
+  note <With [Connect](/docs/connect), you may flag accounts as suspicious.
+
+Test-mode Custom and Express accounts can be rejected at any time. Accounts created using live-mode keys may only be rejected once all balances are zero.>
+
+  take account
+    like native-string
+  take post-accounts-account-reject-body, like post-accounts-account-reject-body
+
+  line </v1/accounts/{account}/reject>
+
+  seed x-www-form-urlencoded, loan post-accounts-account-reject-body
+
+  loot 200
+    seed json, like account
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/rollback-stack-output
+  take form rollback-stack-output
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/token-already-exists-exception
+  take form token-already-exists-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-rollback-stack, name <POST_RollbackStack>
+  note <When specifying `RollbackStack`, you preserve the state of previously provisioned resources when an operation fails. You can check the status of the stack through the DescribeStacks API.
+
+Rolls back the specified stack to the last known stable state from `CREATE_FAILED` or `UPDATE_FAILED` stack statuses.
+
+This operation will delete a stack if it doesn't contain a last known stable state. A last known stable state includes any status in a `*_COMPLETE`. This includes the following stack statuses.
+
+- `CREATE_COMPLETE`
+
+- `UPDATE_COMPLETE`
+
+- `UPDATE_ROLLBACK_COMPLETE`
+
+- `IMPORT_COMPLETE`
+
+- `IMPORT_ROLLBACK_COMPLETE`>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take rollback-stack-input, like rollback-stack-input
+    void take
+
+  line </#Action=RollbackStack>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan rollback-stack-input
+
+  loot 200
+    seed xml, like rollback-stack-output
+    note <Success>
+  loot 480
+    seed xml, like token-already-exists-exception
+    note <TokenAlreadyExistsException>

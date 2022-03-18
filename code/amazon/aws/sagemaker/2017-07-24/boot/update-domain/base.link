@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-in-use
+  take form resource-in-use
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-limit-exceeded
+  take form resource-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-not-found
+  take form resource-not-found
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/update-domain-response
+  take form update-domain-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-domain, name <UpdateDomain>
+  note <Updates the default settings for new user profiles in the domain.>
+
+  take x-amz-target
+    like native-string
+  take update-domain-request, like update-domain-request
+
+  line </#X-Amz-Target=SageMaker.UpdateDomain>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-domain-request
+
+  loot 200
+    seed json, like update-domain-response
+    note <Success>
+  loot 480
+    seed json, like resource-limit-exceeded
+    note <ResourceLimitExceeded>
+  loot 481
+    seed json, like resource-in-use
+    note <ResourceInUse>
+  loot 482
+    seed json, like resource-not-found
+    note <ResourceNotFound>

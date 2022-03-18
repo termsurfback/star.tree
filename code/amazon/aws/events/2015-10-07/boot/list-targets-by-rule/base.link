@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/list-targets-by-rule-response
+  take form list-targets-by-rule-response
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-targets-by-rule, name <ListTargetsByRule>
+  note <Lists the targets assigned to the specified rule.>
+
+  take x-amz-target
+    like native-string
+  take list-targets-by-rule-request, like list-targets-by-rule-request
+
+  line </#X-Amz-Target=AWSEvents.ListTargetsByRule>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-targets-by-rule-request
+
+  loot 200
+    seed json, like list-targets-by-rule-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like internal-exception
+    note <InternalException>

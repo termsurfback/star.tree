@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/argument-exception
+  take form argument-exception
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/not-eligible-exception
+  take form not-eligible-exception
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/purchase-offering-result
+  take form purchase-offering-result
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/service-account-exception
+  take form service-account-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot purchase-offering, name <PurchaseOffering>
+  note <Immediately purchases offerings for an AWS account. Offerings renew with the latest total purchased quantity for an offering, unless the renewal was overridden. The API returns a `NotEligible` error if the user is not permitted to invoke the operation. If you must be able to invoke this operation, contact [aws-devicefarm-support@amazon.com](mailto:aws-devicefarm-support@amazon.com).>
+
+  take x-amz-target
+    like native-string
+  take purchase-offering-request, like purchase-offering-request
+
+  line </#X-Amz-Target=DeviceFarm_20150623.PurchaseOffering>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan purchase-offering-request
+
+  loot 200
+    seed json, like purchase-offering-result
+    note <Success>
+  loot 480
+    seed json, like argument-exception
+    note <ArgumentException>
+  loot 481
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 482
+    seed json, like not-eligible-exception
+    note <NotEligibleException>
+  loot 483
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 484
+    seed json, like service-account-exception
+    note <ServiceAccountException>

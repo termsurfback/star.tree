@@ -1,0 +1,138 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/cooldown
+  take form cooldown
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/estimated-instance-warmup
+  take form estimated-instance-warmup
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/min-adjustment-magnitude
+  take form min-adjustment-magnitude
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/min-adjustment-step
+  take form min-adjustment-step
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/policy-increment
+  take form policy-increment
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/predictive-scaling-configuration
+  take form predictive-scaling-configuration
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/scaling-policy-enabled
+  take form scaling-policy-enabled
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/step-adjustments
+  take form step-adjustments
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/target-tracking-configuration
+  take form target-tracking-configuration
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/xml-string-max-len255
+  take form xml-string-max-len255
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/xml-string-max-len32
+  take form xml-string-max-len32
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/xml-string-max-len64
+  take form xml-string-max-len64
+
+form put-scaling-policy-type, name <PutScalingPolicyType>
+  take auto-scaling-group-name, name <AutoScalingGroupName>
+    like xml-string-max-len255
+    note <The name of the Auto Scaling group.>
+  take policy-name, name <PolicyName>
+    like xml-string-max-len255
+    note <The name of the policy.>
+  take policy-type, name <PolicyType>
+    like xml-string-max-len64
+    void take
+    note <One of the following policy types:
+
+- `TargetTrackingScaling`
+
+- `StepScaling`
+
+- `SimpleScaling` (default)
+
+- `PredictiveScaling`>
+  take adjustment-type, name <AdjustmentType>
+    like xml-string-max-len255
+    void take
+    note <Specifies how the scaling adjustment is interpreted (for example, an absolute number or a percentage). The valid values are `ChangeInCapacity`, `ExactCapacity`, and `PercentChangeInCapacity`.
+
+Required if the policy type is `StepScaling` or `SimpleScaling`. For more information, see [Scaling adjustment types](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-scaling-simple-step.html#as-scaling-adjustment) in the _Amazon EC2 Auto Scaling User Guide_.>
+  take min-adjustment-step, name <MinAdjustmentStep>
+    like min-adjustment-step
+    void take
+    note <Available for backward compatibility. Use `MinAdjustmentMagnitude` instead.>
+  take min-adjustment-magnitude, name <MinAdjustmentMagnitude>
+    like min-adjustment-magnitude
+    void take
+    note <The minimum value to scale by when the adjustment type is `PercentChangeInCapacity`. For example, suppose that you create a step scaling policy to scale out an Auto Scaling group by 25 percent and you specify a `MinAdjustmentMagnitude` of 2. If the group has 4 instances and the scaling policy is performed, 25 percent of 4 is 1. However, because you specified a `MinAdjustmentMagnitude` of 2, Amazon EC2 Auto Scaling scales out the group by 2 instances.
+
+Valid only if the policy type is `StepScaling` or `SimpleScaling`. For more information, see [Scaling adjustment types](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-scaling-simple-step.html#as-scaling-adjustment) in the _Amazon EC2 Auto Scaling User Guide_.
+
+Some Auto Scaling groups use instance weights. In this case, set the `MinAdjustmentMagnitude` to a value that is at least as large as your largest instance weight.>
+  take scaling-adjustment, name <ScalingAdjustment>
+    like policy-increment
+    void take
+    note <The amount by which to scale, based on the specified adjustment type. A positive value adds to the current capacity while a negative number removes from the current capacity. For exact capacity, you must specify a positive value.
+
+Required if the policy type is `SimpleScaling`. (Not used with any other policy type.)>
+  take cooldown, name <Cooldown>
+    like cooldown
+    void take
+    note <The duration of the policy's cooldown period, in seconds. When a cooldown period is specified here, it overrides the default cooldown period defined for the Auto Scaling group.
+
+Valid only if the policy type is `SimpleScaling`. For more information, see [Scaling cooldowns for Amazon EC2 Auto Scaling](https://docs.aws.amazon.com/autoscaling/ec2/userguide/Cooldown.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+  take metric-aggregation-type, name <MetricAggregationType>
+    like xml-string-max-len32
+    void take
+    note <The aggregation type for the CloudWatch metrics. The valid values are `Minimum`, `Maximum`, and `Average`. If the aggregation type is null, the value is treated as `Average`.
+
+Valid only if the policy type is `StepScaling`.>
+  take step-adjustments, name <StepAdjustments>
+    like step-adjustments
+    void take
+    note <A set of adjustments that enable you to scale based on the size of the alarm breach.
+
+Required if the policy type is `StepScaling`. (Not used with any other policy type.)>
+  take estimated-instance-warmup, name <EstimatedInstanceWarmup>
+    like estimated-instance-warmup
+    void take
+    note <The estimated time, in seconds, until a newly launched instance can contribute to the CloudWatch metrics. If not provided, the default is to use the value from the default cooldown period for the Auto Scaling group.
+
+Valid only if the policy type is `TargetTrackingScaling` or `StepScaling`.>
+  take target-tracking-configuration, name <TargetTrackingConfiguration>
+    like target-tracking-configuration
+    void take
+    note <A target tracking scaling policy. Provides support for predefined or customized metrics.
+
+The following predefined metrics are available:
+
+- `ASGAverageCPUUtilization`
+
+- `ASGAverageNetworkIn`
+
+- `ASGAverageNetworkOut`
+
+- `ALBRequestCountPerTarget`
+
+If you specify `ALBRequestCountPerTarget` for the metric, you must specify the `ResourceLabel` parameter with the `PredefinedMetricSpecification`.
+
+For more information, see [TargetTrackingConfiguration](https://docs.aws.amazon.com/autoscaling/ec2/APIReference/API_TargetTrackingConfiguration.html) in the _Amazon EC2 Auto Scaling API Reference_.
+
+Required if the policy type is `TargetTrackingScaling`.>
+  take enabled, name <Enabled>
+    like scaling-policy-enabled
+    void take
+    note <Indicates whether the scaling policy is enabled or disabled. The default is enabled. For more information, see [Disabling a scaling policy for an Auto Scaling group](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-enable-disable-scaling-policy.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+  take predictive-scaling-configuration, name <PredictiveScalingConfiguration>
+    like predictive-scaling-configuration
+    void take
+    note <A predictive scaling policy. Provides support for only predefined metrics.
+
+Predictive scaling works with CPU utilization, network in/out, and the Application Load Balancer request count.
+
+For more information, see [PredictiveScalingConfiguration](https://docs.aws.amazon.com/autoscaling/ec2/APIReference/API_PredictiveScalingConfiguration.html) in the _Amazon EC2 Auto Scaling API Reference_.
+
+Required if the policy type is `PredictiveScaling`.>

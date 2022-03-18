@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/dynamodb/2011-12-05/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/dynamodb/2011-12-05/base/provisioned-throughput-exceeded-exception
+  take form provisioned-throughput-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2011-12-05/base/request-limit-exceeded
+  take form request-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/dynamodb/2011-12-05/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2011-12-05/base/scan-output
+  take form scan-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot scan, name <Scan>
+  note <Retrieves one or more items and its attributes by performing a full scan of a table.
+
+Provide a `ScanFilter` to get more specific results.>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take exclusive-start-key
+    like native-string
+    note <Pagination token>
+    void take
+  take scan-input, like scan-input
+
+  line </#X-Amz-Target=DynamoDB_20111205.Scan>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <Limit>, loan limit
+  find <ExclusiveStartKey>, loan exclusive-start-key
+
+  seed json, loan scan-input
+
+  loot 200
+    seed json, like scan-output
+    note <Success>
+  loot 480
+    seed json, like provisioned-throughput-exceeded-exception
+    note <ProvisionedThroughputExceededException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like request-limit-exceeded
+    note <RequestLimitExceeded>
+  loot 483
+    seed json, like internal-server-error
+    note <InternalServerError>

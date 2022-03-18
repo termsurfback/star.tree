@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/list-pipeline-execution-steps-response
+  take form list-pipeline-execution-steps-response
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-not-found
+  take form resource-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-pipeline-execution-steps, name <ListPipelineExecutionSteps>
+  note <Gets a list of `PipeLineExecutionStep` objects.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-pipeline-execution-steps-request, like list-pipeline-execution-steps-request
+
+  line </#X-Amz-Target=SageMaker.ListPipelineExecutionSteps>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-pipeline-execution-steps-request
+
+  loot 200
+    seed json, like list-pipeline-execution-steps-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found
+    note <ResourceNotFound>

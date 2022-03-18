@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/inspector/2016-02-16/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/inspector/2016-02-16/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/inspector/2016-02-16/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/inspector/2016-02-16/base/list-rules-packages-response
+  take form list-rules-packages-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-rules-packages, name <ListRulesPackages>
+  note <Lists all available Amazon Inspector rules packages.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-rules-packages-request, like list-rules-packages-request
+
+  line </#X-Amz-Target=InspectorService.ListRulesPackages>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-rules-packages-request
+
+  loot 200
+    seed json, like list-rules-packages-response
+    note <Success>
+  loot 480
+    seed json, like internal-exception
+    note <InternalException>
+  loot 481
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

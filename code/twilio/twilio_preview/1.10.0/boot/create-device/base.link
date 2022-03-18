@@ -1,0 +1,25 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_preview/1.10.0/base/create-device-body
+  take form create-device-body
+
+load @drumwork/snow/twilio.com/twilio_preview/1.10.0/base/preview-deployed-devices-fleet-device
+  take form preview-deployed-devices-fleet-device
+
+boot create-device, name <CreateDevice>
+  note <Create a new Device in the Fleet, optionally giving it a unique name, friendly name, and assigning to a Deployment and/or human identity.>
+
+  take fleet-sid
+    like native-string
+  take create-device-body, like create-device-body
+    void take
+
+  line </DeployedDevices/Fleets/{fleet-sid}/Devices>
+
+  seed x-www-form-urlencoded, loan create-device-body
+
+  loot 201
+    seed json, like preview-deployed-devices-fleet-device
+    note <Created>

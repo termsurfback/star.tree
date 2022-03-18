@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/ssm-contacts/2021-05-03/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/ssm-contacts/2021-05-03/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/ssm-contacts/2021-05-03/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ssm-contacts/2021-05-03/base/stop-engagement-result
+  take form stop-engagement-result
+
+load @drumwork/snow/amazonaws.com/ssm-contacts/2021-05-03/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/ssm-contacts/2021-05-03/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot stop-engagement, name <StopEngagement>
+  note <Stops an engagement before it finishes the final stage of the escalation plan or engagement plan. Further contacts aren't engaged.>
+
+  take x-amz-target
+    like native-string
+  take stop-engagement-request, like stop-engagement-request
+
+  line </#X-Amz-Target=SSMContacts.StopEngagement>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan stop-engagement-request
+
+  loot 200
+    seed json, like stop-engagement-result
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like internal-server-exception
+    note <InternalServerException>

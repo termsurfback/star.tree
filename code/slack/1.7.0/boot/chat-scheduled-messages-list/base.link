@@ -1,0 +1,73 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-number
+  take form native-number
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+boot chat-scheduled-messages-list, name <chat_scheduledMessages_list>
+  note <Returns a list of scheduled messages.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `none`>
+    void take
+  take channel
+    like native-string
+    note <The channel of the scheduled messages>
+    void take
+  take latest
+    like native-number
+    note <A UNIX timestamp of the latest value in the time range>
+    void take
+  take oldest
+    like native-number
+    note <A UNIX timestamp of the oldest value in the time range>
+    void take
+  take limit
+    like native-integer
+    note <Maximum number of original entries to return.>
+    void take
+  take cursor
+    like native-string
+    note <For pagination purposes, this is the `cursor` value returned from a previous call to `chat.scheduledmessages.list` indicating where you want to start this call from.>
+    void take
+
+  line </chat.scheduledMessages.list>
+
+  hint <token>, loan token
+
+  find <channel>, loan channel
+  find <latest>, loan latest
+  find <oldest>, loan oldest
+  find <limit>, loan limit
+  find <cursor>, loan cursor
+
+  loot 200
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-true
+        take response-metadata, name <response_metadata>
+          like form
+            take next-cursor, name <next_cursor>
+        take scheduled-messages, name <scheduled_messages>
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take callstack, name <callstack>
+          void take
+        take error, name <error>
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response if the channel passed is invalid>

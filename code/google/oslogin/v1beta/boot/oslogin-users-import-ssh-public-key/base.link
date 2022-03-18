@@ -1,0 +1,34 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/oslogin/v1beta/base/import-ssh-public-key-response
+  take form import-ssh-public-key-response
+
+boot oslogin-users-import-ssh-public-key, name <oslogin.users.importSshPublicKey>
+  note <Adds an SSH public key and returns the profile information. Default POSIX account information is set when no username and UID exist as part of the login profile.>
+
+  take parent
+    like native-string
+    note <The unique ID for the user in format `users/{user}`.>
+  take project-id
+    like native-string
+    note <The project ID of the Google Cloud Platform project.>
+    void take
+  take view
+    like native-string
+    note <The view configures whether to retrieve security keys information.>
+    void take
+  take ssh-public-key, like ssh-public-key
+    void take
+
+  line </v1beta/{parent}:importSshPublicKey>
+
+  find <projectId>, loan project-id
+  find <view>, loan view
+
+  seed json, loan ssh-public-key
+
+  loot 200
+    seed json, like import-ssh-public-key-response
+    note <Successful response>

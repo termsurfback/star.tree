@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-snapshot-not-found-fault
+  take form db-cluster-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-cluster-snapshot-state-fault
+  take form invalid-db-cluster-snapshot-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/modify-db-cluster-snapshot-attribute-result
+  take form modify-db-cluster-snapshot-attribute-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/shared-snapshot-quota-exceeded-fault
+  take form shared-snapshot-quota-exceeded-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-modify-db-cluster-snapshot-attribute, name <POST_ModifyDBClusterSnapshotAttribute>
+  note <Adds an attribute and values to, or removes an attribute and values from, a manual DB cluster snapshot.
+
+To share a manual DB cluster snapshot with other Amazon Web Services accounts, specify `restore` as the `AttributeName` and use the `ValuesToAdd` parameter to add a list of IDs of the Amazon Web Services accounts that are authorized to restore the manual DB cluster snapshot. Use the value `all` to make the manual DB cluster snapshot public, which means that it can be copied or restored by all Amazon Web Services accounts.
+
+Don't add the `all` value for any manual DB cluster snapshots that contain private information that you don't want available to all Amazon Web Services accounts.
+
+If a manual DB cluster snapshot is encrypted, it can be shared, but only by specifying a list of authorized Amazon Web Services account IDs for the `ValuesToAdd` parameter. You can't use `all` as a value for that parameter in this case.
+
+To view which Amazon Web Services accounts have access to copy or restore a manual DB cluster snapshot, or whether a manual DB cluster snapshot is public or private, use the DescribeDBClusterSnapshotAttributes API action. The accounts are returned as values for the `restore` attribute.
+
+This action only applies to Aurora DB clusters.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take modify-db-cluster-snapshot-attribute-message, like modify-db-cluster-snapshot-attribute-message
+    void take
+
+  line </#Action=ModifyDBClusterSnapshotAttribute>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan modify-db-cluster-snapshot-attribute-message
+
+  loot 200
+    seed xml, like modify-db-cluster-snapshot-attribute-result
+    note <Success>
+  loot 480
+    seed xml, like db-cluster-snapshot-not-found-fault
+    note <DBClusterSnapshotNotFoundFault>
+  loot 481
+    seed xml, like invalid-db-cluster-snapshot-state-fault
+    note <InvalidDBClusterSnapshotStateFault>
+  loot 482
+    seed xml, like shared-snapshot-quota-exceeded-fault
+    note <SharedSnapshotQuotaExceededFault>

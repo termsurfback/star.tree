@@ -1,0 +1,29 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/insufficient-privileges-exception
+  take form insufficient-privileges-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-rebuild-environment, name <POST_RebuildEnvironment>
+  note <Deletes and recreates all of the AWS resources (for example: the Auto Scaling group, load balancer, etc.) for a specified environment and forces a restart.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take rebuild-environment-message, like rebuild-environment-message
+    void take
+
+  line </#Action=RebuildEnvironment>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan rebuild-environment-message
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like insufficient-privileges-exception
+    note <InsufficientPrivilegesException>

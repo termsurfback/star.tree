@@ -1,0 +1,75 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/dimension-filter
+  take form dimension-filter
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/internal-service-fault
+  take form internal-service-fault
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/list-metrics-output
+  take form list-metrics-output
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-list-metrics, name <GET_ListMetrics>
+  note <List the specified metrics. You can use the returned metrics with [GetMetricData](https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_GetMetricData.html) or [GetMetricStatistics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_GetMetricStatistics.html) to obtain statistical data.
+
+Up to 500 results are returned for any one call. To retrieve additional results, use the returned token with subsequent calls.
+
+After you create a metric, allow up to 15 minutes before the metric appears. You can see statistics about the metric sooner by using [GetMetricData](https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_GetMetricData.html) or [GetMetricStatistics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_GetMetricStatistics.html).
+
+`ListMetrics` doesn't return information about metrics if those metrics haven't reported data in the past two weeks. To retrieve those metrics, use [GetMetricData](https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_GetMetricData.html) or [GetMetricStatistics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_GetMetricStatistics.html).>
+
+  take namespace
+    like native-string
+    note <The metric namespace to filter against. Only the namespace that matches exactly will be returned.>
+    void take
+  take metric-name
+    like native-string
+    note <The name of the metric to filter against. Only the metrics with names that match exactly will be returned.>
+    void take
+  take dimensions
+    like list
+      like dimension-filter
+    note <The dimensions to filter against. Only the dimensions that match exactly will be returned.>
+    void take
+  take next-token
+    like native-string
+    note <The token returned by a previous call to indicate that there is more data available.>
+    void take
+  take recently-active
+    like native-string
+    note <To filter the results to show only metrics that have had data points published in the past three hours, specify this parameter with a value of `PT3H`. This is the only valid value for this parameter.
+
+The results that are returned are an approximation of the value you specify. There is a low probability that the returned results include metrics with last published data as much as 40 minutes more than the specified time interval.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ListMetrics>
+
+  find <Namespace>, loan namespace
+  find <MetricName>, loan metric-name
+  find <Dimensions>, loan dimensions
+  find <NextToken>, loan next-token
+  find <RecentlyActive>, loan recently-active
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like list-metrics-output
+    note <Success>
+  loot 480
+    seed xml, like internal-service-fault
+    note <InternalServiceFault>
+  loot 481
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>

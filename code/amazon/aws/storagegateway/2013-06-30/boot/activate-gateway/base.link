@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/activate-gateway-output
+  take form activate-gateway-output
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot activate-gateway, name <ActivateGateway>
+  note <Activates the gateway you previously deployed on your host. In the activation process, you specify information such as the Region that you want to use for storing snapshots or tapes, the time zone for scheduled snapshots the gateway snapshot schedule window, an activation key, and a name for your gateway. The activation process also associates your gateway with your account. For more information, see UpdateGatewayInformation.
+
+You must turn on the gateway VM before you can activate your gateway.>
+
+  take x-amz-target
+    like native-string
+  take activate-gateway-input, like activate-gateway-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.ActivateGateway>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan activate-gateway-input
+
+  loot 200
+    seed json, like activate-gateway-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

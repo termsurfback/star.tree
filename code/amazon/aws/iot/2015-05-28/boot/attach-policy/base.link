@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/attach-policy-body
+  take form attach-policy-body
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot attach-policy, name <AttachPolicy>
+  note <Attaches the specified policy to the specified principal (certificate or other credential).
+
+Requires permission to access the [AttachPolicy](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiot.html#awsiot-actions-as-permissions) action.>
+
+  take policy-name
+    like native-string
+    note <The name of the policy to attach.>
+  take attach-policy-body, like attach-policy-body
+
+  line </target-policies/{policy-name}>
+
+  seed json, loan attach-policy-body
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 484
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 485
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 486
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>

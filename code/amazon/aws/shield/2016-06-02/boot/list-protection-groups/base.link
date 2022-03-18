@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/invalid-pagination-token-exception
+  take form invalid-pagination-token-exception
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/list-protection-groups-response
+  take form list-protection-groups-response
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-protection-groups, name <ListProtectionGroups>
+  note <Retrieves the ProtectionGroup objects for the account.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-protection-groups-request, like list-protection-groups-request
+
+  line </#X-Amz-Target=AWSShield_20160616.ListProtectionGroups>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-protection-groups-request
+
+  loot 200
+    seed json, like list-protection-groups-response
+    note <Success>
+  loot 480
+    seed json, like internal-error-exception
+    note <InternalErrorException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like invalid-pagination-token-exception
+    note <InvalidPaginationTokenException>

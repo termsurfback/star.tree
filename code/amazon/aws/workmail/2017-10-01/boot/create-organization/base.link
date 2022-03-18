@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/create-organization-response
+  take form create-organization-response
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/directory-in-use-exception
+  take form directory-in-use-exception
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/directory-unavailable-exception
+  take form directory-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/name-availability-exception
+  take form name-availability-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-organization, name <CreateOrganization>
+  note <Creates a new Amazon WorkMail organization. Optionally, you can choose to associate an existing AWS Directory Service directory with your organization. If an AWS Directory Service directory ID is specified, the organization alias must match the directory alias. If you choose not to associate an existing directory with your organization, then we create a new Amazon WorkMail directory for you. For more information, see [Adding an organization](https://docs.aws.amazon.com/workmail/latest/adminguide/add_new_organization.html) in the _Amazon WorkMail Administrator Guide_.
+
+You can associate multiple email domains with an organization, then set your default email domain from the Amazon WorkMail console. You can also associate a domain that is managed in an Amazon Route 53 public hosted zone. For more information, see [Adding a domain](https://docs.aws.amazon.com/workmail/latest/adminguide/add_domain.html) and [Choosing the default domain](https://docs.aws.amazon.com/workmail/latest/adminguide/default_domain.html) in the _Amazon WorkMail Administrator Guide_.
+
+Optionally, you can use a customer managed master key from AWS Key Management Service (AWS KMS) to encrypt email for your organization. If you don't associate an AWS KMS key, Amazon WorkMail creates a default AWS managed master key for you.>
+
+  take x-amz-target
+    like native-string
+  take create-organization-request, like create-organization-request
+
+  line </#X-Amz-Target=WorkMailService.CreateOrganization>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-organization-request
+
+  loot 200
+    seed json, like create-organization-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like directory-in-use-exception
+    note <DirectoryInUseException>
+  loot 482
+    seed json, like directory-unavailable-exception
+    note <DirectoryUnavailableException>
+  loot 483
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 484
+    seed json, like name-availability-exception
+    note <NameAvailabilityException>

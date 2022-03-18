@@ -1,0 +1,29 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_verify_v2/1.27.2/base/create-bucket-body
+  take form create-bucket-body
+
+load @drumwork/snow/twilio.com/twilio_verify_v2/1.27.2/base/verify-v2-service-rate-limit-bucket
+  take form verify-v2-service-rate-limit-bucket
+
+boot create-bucket, name <CreateBucket>
+  note <Create a new Bucket for a Rate Limit>
+
+  take service-sid
+    like native-string
+    note <The SID of the \[Service\](https://www.twilio.com/docs/verify/api/service) the resource is associated with.>
+  take rate-limit-sid
+    like native-string
+    note <The Twilio-provided string that uniquely identifies the Rate Limit resource.>
+  take create-bucket-body, like create-bucket-body
+    void take
+
+  line </v2/Services/{service-sid}/RateLimits/{rate-limit-sid}/Buckets>
+
+  seed x-www-form-urlencoded, loan create-bucket-body
+
+  loot 201
+    seed json, like verify-v2-service-rate-limit-bucket
+    note <Created>

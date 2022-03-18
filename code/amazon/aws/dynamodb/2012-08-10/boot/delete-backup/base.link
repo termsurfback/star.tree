@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/backup-in-use-exception
+  take form backup-in-use-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/backup-not-found-exception
+  take form backup-not-found-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/delete-backup-output
+  take form delete-backup-output
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-backup, name <DeleteBackup>
+  note <Deletes an existing backup of a table.
+
+You can call `DeleteBackup` at a maximum rate of 10 times per second.>
+
+  take x-amz-target
+    like native-string
+  take delete-backup-input, like delete-backup-input
+
+  line </#X-Amz-Target=DynamoDB_20120810.DeleteBackup>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-backup-input
+
+  loot 200
+    seed json, like delete-backup-output
+    note <Success>
+  loot 480
+    seed json, like backup-not-found-exception
+    note <BackupNotFoundException>
+  loot 481
+    seed json, like backup-in-use-exception
+    note <BackupInUseException>
+  loot 482
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 483
+    seed json, like internal-server-error
+    note <InternalServerError>

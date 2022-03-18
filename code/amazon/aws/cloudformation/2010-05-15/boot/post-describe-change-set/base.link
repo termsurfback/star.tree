@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/change-set-not-found-exception
+  take form change-set-not-found-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/describe-change-set-output
+  take form describe-change-set-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-change-set, name <POST_DescribeChangeSet>
+  note <Returns the inputs for the change set and a list of changes that CloudFormation will make if you execute the change set. For more information, see [Updating Stacks Using Change Sets](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-changesets.html) in the CloudFormation User Guide.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-change-set-input, like describe-change-set-input
+    void take
+
+  line </#Action=DescribeChangeSet>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-change-set-input
+
+  loot 200
+    seed xml, like describe-change-set-output
+    note <Success>
+  loot 480
+    seed xml, like change-set-not-found-exception
+    note <ChangeSetNotFoundException>

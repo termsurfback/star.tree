@@ -1,0 +1,31 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/db-parameter-group-details
+  take form db-parameter-group-details
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/db-parameter-group-not-found-fault
+  take form db-parameter-group-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-db-parameters, name <POST_DescribeDBParameters>
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-db-parameters-message, like describe-db-parameters-message
+    void take
+
+  line </#Action=DescribeDBParameters>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-db-parameters-message
+
+  loot 200
+    seed xml, like db-parameter-group-details
+    note <Success>
+  loot 480
+    seed xml, like db-parameter-group-not-found-fault
+    note <DBParameterGroupNotFoundFault>

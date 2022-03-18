@@ -1,0 +1,29 @@
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/payout
+  take form payout
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-payouts-body
+  take form post-payouts-body
+
+boot post-payouts, name <PostPayouts>
+  note <To send funds to your own bank account, you create a new payout object. Your [Stripe balance](#balance) must be able to cover the payout amount, or you’ll receive an “Insufficient Funds” error.
+
+If your API key is in test mode, money won’t actually be sent, though everything else will occur as if in live mode.
+
+If you are creating a manual payout on a Stripe account that uses multiple payment source types, you’ll need to specify the source type balance that the payout should draw from. The [balance object](#balance_object) details available and pending amounts by source type.>
+
+  take post-payouts-body, like post-payouts-body
+
+  line </v1/payouts>
+
+  seed x-www-form-urlencoded, loan post-payouts-body
+
+  loot 200
+    seed json, like payout
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/parameter-not-found
+  take form parameter-not-found
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/parameter-version-not-found
+  take form parameter-version-not-found
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/too-many-updates
+  take form too-many-updates
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/unlabel-parameter-version-result
+  take form unlabel-parameter-version-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot unlabel-parameter-version, name <UnlabelParameterVersion>
+  note <Remove a label or labels from a parameter.>
+
+  take x-amz-target
+    like native-string
+  take unlabel-parameter-version-request, like unlabel-parameter-version-request
+
+  line </#X-Amz-Target=AmazonSSM.UnlabelParameterVersion>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan unlabel-parameter-version-request
+
+  loot 200
+    seed json, like unlabel-parameter-version-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like too-many-updates
+    note <TooManyUpdates>
+  loot 482
+    seed json, like parameter-not-found
+    note <ParameterNotFound>
+  loot 483
+    seed json, like parameter-version-not-found
+    note <ParameterVersionNotFound>

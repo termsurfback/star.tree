@@ -1,0 +1,39 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/admin-usergroups-remove-channels-body
+  take form admin-usergroups-remove-channels-body
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+boot admin-usergroups-remove-channels, name <admin_usergroups_removeChannels>
+  note <Remove one or more default channels from an org-level IDP group (user group).>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `admin.usergroups:write`>
+  take admin-usergroups-remove-channels-body, like admin-usergroups-remove-channels-body
+
+  line </admin.usergroups.removeChannels>
+
+  hint <token>, loan token
+
+  seed x-www-form-urlencoded, loan admin-usergroups-remove-channels-body
+
+  loot 200
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-true
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response if the token provided is not associated with an Org Admin or Owner>

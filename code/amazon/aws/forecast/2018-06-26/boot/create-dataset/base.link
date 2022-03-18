@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/forecast/2018-06-26/base/create-dataset-response
+  take form create-dataset-response
+
+load @drumwork/snow/amazonaws.com/forecast/2018-06-26/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/forecast/2018-06-26/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/forecast/2018-06-26/base/resource-already-exists-exception
+  take form resource-already-exists-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-dataset, name <CreateDataset>
+  note <Creates an Amazon Forecast dataset. The information about the dataset that you provide helps Forecast understand how to consume the data for model training. This includes the following:
+
+- _`DataFrequency`_ - How frequently your historical time-series data is collected.
+
+- _`Domain`_ and _`DatasetType`_ - Each dataset has an associated dataset domain and a type within the domain. Amazon Forecast provides a list of predefined domains and types within each domain. For each unique dataset domain and type within the domain, Amazon Forecast requires your data to include a minimum set of predefined fields.
+
+- _`Schema`_ - A schema specifies the fields in the dataset, including the field name and data type.
+
+After creating a dataset, you import your training data into it and add the dataset to a dataset group. You use the dataset group to create a predictor. For more information, see howitworks-datasets-groups.
+
+To get a list of all your datasets, use the ListDatasets operation.
+
+For example Forecast datasets, see the [Amazon Forecast Sample GitHub repository](https://github.com/aws-samples/amazon-forecast-samples).
+
+The `Status` of a dataset must be `ACTIVE` before you can import training data. Use the DescribeDataset operation to get the status.>
+
+  take x-amz-target
+    like native-string
+  take create-dataset-request, like create-dataset-request
+
+  line </#X-Amz-Target=AmazonForecast.CreateDataset>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-dataset-request
+
+  loot 200
+    seed json, like create-dataset-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like resource-already-exists-exception
+    note <ResourceAlreadyExistsException>
+  loot 482
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>

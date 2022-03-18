@@ -1,0 +1,96 @@
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/integer-min0-max65534
+  take form integer-min0-max65534
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/nielsen-active-watermark-process-type
+  take form nielsen-active-watermark-process-type
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/nielsen-source-watermark-status-type
+  take form nielsen-source-watermark-status-type
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/nielsen-unique-tic-per-audio-track-type
+  take form nielsen-unique-tic-per-audio-track-type
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/string-min1-max20
+  take form string-min1-max20
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/string-min1-max50
+  take form string-min1-max50
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/string-pattern-https
+  take form string-pattern-https
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/string-pattern-s3
+  take form string-pattern-s3
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/string-pattern0x-a-fa-f0908190908
+  take form string-pattern0x-a-fa-f0908190908
+
+form nielsen-non-linear-watermark-settings, name <NielsenNonLinearWatermarkSettings>
+  note <Ignore these settings unless you are using Nielsen non-linear watermarking. Specify the values that MediaConvert uses to generate and place Nielsen watermarks in your output audio. In addition to specifying these values, you also need to set up your cloud TIC server. These settings apply to every output in your job. The MediaConvert implementation is currently with the following Nielsen versions: Nielsen Watermark SDK Version 5.2.1 Nielsen NLM Watermark Engine Version 1.2.7 Nielsen Watermark Authenticator [SID_TIC] Version [5.0.0]>
+  take active-watermark-process, name <ActiveWatermarkProcess>
+    like nielsen-active-watermark-process-type
+    void take
+    note <Choose the type of Nielsen watermarks that you want in your outputs. When you choose NAES 2 and NW (NAES2_AND_NW), you must provide a value for the setting SID (sourceId). When you choose CBET (CBET), you must provide a value for the setting CSID (cbetSourceId). When you choose NAES 2, NW, and CBET (NAES2_AND_NW_AND_CBET), you must provide values for both of these settings.>
+    host xml
+      host name, text <activeWatermarkProcess>
+  take adi-filename, name <AdiFilename>
+    like string-pattern-s3
+    void take
+    note <Optional. Use this setting when you want the service to include an ADI file in the Nielsen metadata .zip file. To provide an ADI file, store it in Amazon S3 and provide a URL to it here. The URL should be in the following format: S3://bucket/path/ADI-file. For more information about the metadata .zip file, see the setting Metadata destination (metadataDestination).>
+    host xml
+      host name, text <adiFilename>
+  take asset-id, name <AssetId>
+    like string-min1-max20
+    void take
+    note <Use the asset ID that you provide to Nielsen to uniquely identify this asset. Required for all Nielsen non-linear watermarking.>
+    host xml
+      host name, text <assetId>
+  take asset-name, name <AssetName>
+    like string-min1-max50
+    void take
+    note <Use the asset name that you provide to Nielsen for this asset. Required for all Nielsen non-linear watermarking.>
+    host xml
+      host name, text <assetName>
+  take cbet-source-id, name <CbetSourceId>
+    like string-pattern0x-a-fa-f0908190908
+    void take
+    note <Use the CSID that Nielsen provides to you. This CBET source ID should be unique to your Nielsen account but common to all of your output assets that have CBET watermarking. Required when you choose a value for the setting Watermark types (ActiveWatermarkProcess) that includes CBET.>
+    host xml
+      host name, text <cbetSourceId>
+  take episode-id, name <EpisodeId>
+    like string-min1-max20
+    void take
+    note <Optional. If this asset uses an episode ID with Nielsen, provide it here.>
+    host xml
+      host name, text <episodeId>
+  take metadata-destination, name <MetadataDestination>
+    like string-pattern-s3
+    void take
+    note <Specify the Amazon S3 location where you want MediaConvert to save your Nielsen non-linear metadata .zip file. This Amazon S3 bucket must be in the same Region as the one where you do your MediaConvert transcoding. If you want to include an ADI file in this .zip file, use the setting ADI file (adiFilename) to specify it. MediaConvert delivers the Nielsen metadata .zip files only to your metadata destination Amazon S3 bucket. It doesn't deliver the .zip files to Nielsen. You are responsible for delivering the metadata .zip files to Nielsen.>
+    host xml
+      host name, text <metadataDestination>
+  take source-id, name <SourceId>
+    like integer-min0-max65534
+    void take
+    note <Use the SID that Nielsen provides to you. This source ID should be unique to your Nielsen account but common to all of your output assets. Required for all Nielsen non-linear watermarking. This ID should be unique to your Nielsen account but common to all of your output assets. Required for all Nielsen non-linear watermarking.>
+    host xml
+      host name, text <sourceId>
+  take source-watermark-status, name <SourceWatermarkStatus>
+    like nielsen-source-watermark-status-type
+    void take
+    note <Required. Specify whether your source content already contains Nielsen non-linear watermarks. When you set this value to Watermarked (WATERMARKED), the service fails the job. Nielsen requires that you add non-linear watermarking to only clean content that doesn't already have non-linear Nielsen watermarks.>
+    host xml
+      host name, text <sourceWatermarkStatus>
+  take tic-server-url, name <TicServerUrl>
+    like string-pattern-https
+    void take
+    note <Specify the endpoint for the TIC server that you have deployed and configured in the AWS Cloud. Required for all Nielsen non-linear watermarking. MediaConvert can't connect directly to a TIC server. Instead, you must use API Gateway to provide a RESTful interface between MediaConvert and a TIC server that you deploy in your AWS account. For more information on deploying a TIC server in your AWS account and the required API Gateway, contact Nielsen support.>
+    host xml
+      host name, text <ticServerUrl>
+  take unique-tic-per-audio-track, name <UniqueTicPerAudioTrack>
+    like nielsen-unique-tic-per-audio-track-type
+    void take
+    note <To create assets that have the same TIC values in each audio track, keep the default value Share TICs (SAME_TICS_PER_TRACK). To create assets that have unique TIC values for each audio track, choose Use unique TICs (RESERVE_UNIQUE_TICS_PER_TRACK).>
+    host xml
+      host name, text <uniqueTicPerAudioTrack>

@@ -1,0 +1,34 @@
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/get-group-certificate-authority-response
+  take form get-group-certificate-authority-response
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/internal-server-error-exception
+  take form internal-server-error-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-group-certificate-authority, name <GetGroupCertificateAuthority>
+  note <Retreives the CA associated with a group. Returns the public key of the CA.>
+
+  take certificate-authority-id
+    like native-string
+    note <The ID of the certificate authority.>
+  take group-id
+    like native-string
+    note <The ID of the Greengrass group.>
+
+  line </greengrass/groups/{group-id}/certificateauthorities/{certificate-authority-id}>
+
+  loot 200
+    seed json, like get-group-certificate-authority-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like internal-server-error-exception
+    note <InternalServerErrorException>

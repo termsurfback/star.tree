@@ -1,0 +1,25 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/cloudidentity/v1/base/check-transitive-membership-response
+  take form check-transitive-membership-response
+
+boot cloudidentity-groups-memberships-check-transitive-membership, name <cloudidentity.groups.memberships.checkTransitiveMembership>
+  note <Check a potential member for membership in a group. **Note:** This feature is only available to Google Workspace Enterprise Standard, Enterprise Plus, and Enterprise for Education; and Cloud Identity Premium accounts. If the account of the member is not one of these, a 403 (PERMISSION_DENIED) HTTP status code will be returned. A member has membership to a group as long as there is a single viewable transitive membership between the group and the member. The actor must have view permissions to at least one transitive membership between the member and group.>
+
+  take parent
+    like native-string
+    note <[Resource name](https://cloud.google.com/apis/design/resource_names) of the group to check the transitive membership in. Format: `groups/{group}`, where `group` is the unique id assigned to the Group to which the Membership belongs to.>
+  take query
+    like native-string
+    note <Required. A CEL expression that MUST include member specification. This is a `required` field. Certain groups are uniquely identified by both a 'member_key_id' and a 'member_key_namespace', which requires an additional query input: 'member_key_namespace'. Example query: `member_key_id == 'member_key_id_value'`>
+    void take
+
+  line </v1/{parent}/memberships:checkTransitiveMembership>
+
+  find <query>, loan query
+
+  loot 200
+    seed json, like check-transitive-membership-response
+    note <Successful response>

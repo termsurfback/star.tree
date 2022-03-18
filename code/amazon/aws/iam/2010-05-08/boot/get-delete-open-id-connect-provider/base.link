@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-open-id-connect-provider, name <GET_DeleteOpenIDConnectProvider>
+  note <Deletes an OpenID Connect identity provider (IdP) resource object in IAM.
+
+Deleting an IAM OIDC provider resource does not update any roles that reference the provider as a principal in their trust policies. Any attempt to assume a role that references a deleted provider fails.
+
+This operation is idempotent; it does not fail or return an error if you call the operation for a provider that does not exist.>
+
+  take open-id-connect-provider-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the IAM OpenID Connect provider resource object to delete. You can get a list of OpenID Connect provider resource ARNs by using the ListOpenIDConnectProviders operation.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteOpenIDConnectProvider>
+
+  find <OpenIDConnectProviderArn>, loan open-id-connect-provider-arn
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 482
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/cannot-delete-exception
+  take form cannot-delete-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/delete-receipt-rule-set-response
+  take form delete-receipt-rule-set-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-receipt-rule-set, name <GET_DeleteReceiptRuleSet>
+  note <Deletes the specified receipt rule set and all of the receipt rules it contains.
+
+The currently active rule set cannot be deleted.
+
+For information about managing receipt rule sets, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-managing-receipt-rule-sets.html).
+
+You can execute this operation no more than once per second.>
+
+  take rule-set-name
+    like native-string
+    note <The name of the receipt rule set to delete.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteReceiptRuleSet>
+
+  find <RuleSetName>, loan rule-set-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-receipt-rule-set-response
+    note <Success>
+  loot 480
+    seed xml, like cannot-delete-exception
+    note <CannotDeleteException>

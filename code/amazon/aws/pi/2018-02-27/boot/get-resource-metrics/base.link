@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/pi/2018-02-27/base/get-resource-metrics-response
+  take form get-resource-metrics-response
+
+load @drumwork/snow/amazonaws.com/pi/2018-02-27/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/pi/2018-02-27/base/invalid-argument-exception
+  take form invalid-argument-exception
+
+load @drumwork/snow/amazonaws.com/pi/2018-02-27/base/not-authorized-exception
+  take form not-authorized-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-resource-metrics, name <GetResourceMetrics>
+  note <Retrieve Performance Insights metrics for a set of data sources, over a time period. You can provide specific dimension groups and dimensions, and provide aggregation and filtering criteria for each group.
+
+Each response element returns a maximum of 500 bytes. For larger elements, such as SQL statements, only the first 500 bytes are returned.>
+
+  take x-amz-target
+    like native-string
+  take get-resource-metrics-request, like get-resource-metrics-request
+
+  line </#X-Amz-Target=PerformanceInsightsv20180227.GetResourceMetrics>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-resource-metrics-request
+
+  loot 200
+    seed json, like get-resource-metrics-response
+    note <Success>
+  loot 480
+    seed json, like invalid-argument-exception
+    note <InvalidArgumentException>
+  loot 481
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 482
+    seed json, like not-authorized-exception
+    note <NotAuthorizedException>

@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-resource-id
+  take form invalid-resource-id
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-resource-type
+  take form invalid-resource-type
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/list-tags-for-resource-result
+  take form list-tags-for-resource-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-tags-for-resource, name <ListTagsForResource>
+  note <Returns a list of the tags assigned to the specified resource.
+
+For information about the ID format for each supported resource type, see AddTagsToResource.>
+
+  take x-amz-target
+    like native-string
+  take list-tags-for-resource-request, like list-tags-for-resource-request
+
+  line </#X-Amz-Target=AmazonSSM.ListTagsForResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-tags-for-resource-request
+
+  loot 200
+    seed json, like list-tags-for-resource-result
+    note <Success>
+  loot 480
+    seed json, like invalid-resource-type
+    note <InvalidResourceType>
+  loot 481
+    seed json, like invalid-resource-id
+    note <InvalidResourceId>
+  loot 482
+    seed json, like internal-server-error
+    note <InternalServerError>

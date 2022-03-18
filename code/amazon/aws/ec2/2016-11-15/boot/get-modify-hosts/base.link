@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/dedicated-host-id
+  take form dedicated-host-id
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/modify-hosts-result
+  take form modify-hosts-result
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-modify-hosts, name <GET_ModifyHosts>
+  note <Modify the auto-placement setting of a Dedicated Host. When auto-placement is enabled, any instances that you launch with a tenancy of `host` but without a specific host ID are placed onto any available Dedicated Host in your account that has auto-placement enabled. When auto-placement is disabled, you need to provide a host ID to have the instance launch onto a specific host. If no host ID is provided, the instance is launched onto a suitable host with auto-placement enabled.
+
+You can also use this API action to modify a Dedicated Host to support either multiple instance types in an instance family, or to support a specific instance type only.>
+
+  take auto-placement
+    like native-string
+    note <Specify whether to enable or disable auto-placement.>
+    void take
+  take host-id
+    like list
+      like dedicated-host-id
+    note <The IDs of the Dedicated Hosts to modify.>
+  take host-recovery
+    like native-string
+    note <Indicates whether to enable or disable host recovery for the Dedicated Host. For more information, see [Host recovery](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/dedicated-hosts-recovery.html) in the _Amazon EC2 User Guide_.>
+    void take
+  take instance-type
+    like native-string
+    note <Specifies the instance type to be supported by the Dedicated Host. Specify this parameter to modify a Dedicated Host to support only a specific instance type.
+
+If you want to modify a Dedicated Host to support multiple instance types in its current instance family, omit this parameter and specify **InstanceFamily** instead. You cannot specify **InstanceType** and **InstanceFamily** in the same request.>
+    void take
+  take instance-family
+    like native-string
+    note <Specifies the instance family to be supported by the Dedicated Host. Specify this parameter to modify a Dedicated Host to support multiple instance types within its current instance family.
+
+If you want to modify a Dedicated Host to support a specific instance type only, omit this parameter and specify **InstanceType** instead. You cannot specify **InstanceFamily** and **InstanceType** in the same request.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyHosts>
+
+  find <AutoPlacement>, loan auto-placement
+  find <HostId>, loan host-id
+  find <HostRecovery>, loan host-recovery
+  find <InstanceType>, loan instance-type
+  find <InstanceFamily>, loan instance-family
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-hosts-result
+    note <Success>

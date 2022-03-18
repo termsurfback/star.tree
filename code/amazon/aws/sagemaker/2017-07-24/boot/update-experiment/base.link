@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-not-found
+  take form resource-not-found
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/update-experiment-response
+  take form update-experiment-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-experiment, name <UpdateExperiment>
+  note <Adds, updates, or removes the description of an experiment. Updates the display name of an experiment.>
+
+  take x-amz-target
+    like native-string
+  take update-experiment-request, like update-experiment-request
+
+  line </#X-Amz-Target=SageMaker.UpdateExperiment>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-experiment-request
+
+  loot 200
+    seed json, like update-experiment-response
+    note <Success>
+  loot 480
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 481
+    seed json, like resource-not-found
+    note <ResourceNotFound>

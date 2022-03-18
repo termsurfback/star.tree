@@ -1,0 +1,29 @@
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/apply-pending-maintenance-action-response
+  take form apply-pending-maintenance-action-response
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/resource-not-found-fault
+  take form resource-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot apply-pending-maintenance-action, name <ApplyPendingMaintenanceAction>
+  note <Applies a pending maintenance action to a resource (for example, to a replication instance).>
+
+  take x-amz-target
+    like native-string
+  take apply-pending-maintenance-action-message, like apply-pending-maintenance-action-message
+
+  line </#X-Amz-Target=AmazonDMSv20160101.ApplyPendingMaintenanceAction>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan apply-pending-maintenance-action-message
+
+  loot 200
+    seed json, like apply-pending-maintenance-action-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-fault
+    note <ResourceNotFoundFault>

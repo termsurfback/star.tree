@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/delete-listener-output
+  take form delete-listener-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/listener-not-found-exception
+  take form listener-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-listener, name <GET_DeleteListener>
+  note <Deletes the specified listener.
+
+Alternatively, your listener is deleted when you delete the load balancer to which it is attached.>
+
+  take listener-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the listener.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteListener>
+
+  find <ListenerArn>, loan listener-arn
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-listener-output
+    note <Success>
+  loot 480
+    seed xml, like listener-not-found-exception
+    note <ListenerNotFoundException>

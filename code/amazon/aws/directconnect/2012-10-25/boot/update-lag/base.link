@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/direct-connect-client-exception
+  take form direct-connect-client-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/direct-connect-server-exception
+  take form direct-connect-server-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/lag
+  take form lag
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-lag, name <UpdateLag>
+  note <Updates the attributes of the specified link aggregation group (LAG).
+
+You can update the following LAG attributes:
+
+- The name of the LAG.
+
+- The value for the minimum number of connections that must be operational for the LAG itself to be operational.
+
+- The LAG's MACsec encryption mode.
+
+  Amazon Web Services assigns this value to each connection which is part of the LAG.
+
+- The tags
+
+If you adjust the threshold value for the minimum number of operational connections, ensure that the new value does not cause the LAG to fall below the threshold and become non-operational.>
+
+  take x-amz-target
+    like native-string
+  take update-lag-request, like update-lag-request
+
+  line </#X-Amz-Target=OvertureService.UpdateLag>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-lag-request
+
+  loot 200
+    seed json, like lag
+    note <Success>
+  loot 480
+    seed json, like direct-connect-server-exception
+    note <DirectConnectServerException>
+  loot 481
+    seed json, like direct-connect-client-exception
+    note <DirectConnectClientException>

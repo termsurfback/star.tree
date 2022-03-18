@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/personalize-runtime/2018-05-22/base/get-personalized-ranking-body
+  take form get-personalized-ranking-body
+
+load @drumwork/snow/amazonaws.com/personalize-runtime/2018-05-22/base/get-personalized-ranking-response
+  take form get-personalized-ranking-response
+
+load @drumwork/snow/amazonaws.com/personalize-runtime/2018-05-22/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/personalize-runtime/2018-05-22/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+boot get-personalized-ranking, name <GetPersonalizedRanking>
+  note <Re-ranks a list of recommended items for the given user. The first item in the list is deemed the most likely item to be of interest to the user.
+
+The solution backing the campaign must have been created using a recipe of type PERSONALIZED_RANKING.>
+
+  take get-personalized-ranking-body, like get-personalized-ranking-body
+
+  line </personalize-ranking>
+
+  seed json, loan get-personalized-ranking-body
+
+  loot 200
+    seed json, like get-personalized-ranking-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

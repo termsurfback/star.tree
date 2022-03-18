@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/application-does-not-exist-exception
+  take form application-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/application-name-required-exception
+  take form application-name-required-exception
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/batch-get-applications-output
+  take form batch-get-applications-output
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/batch-limit-exceeded-exception
+  take form batch-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/invalid-application-name-exception
+  take form invalid-application-name-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot batch-get-applications, name <BatchGetApplications>
+  note <Gets information about one or more applications. The maximum number of applications that can be returned is 100.>
+
+  take x-amz-target
+    like native-string
+  take batch-get-applications-input, like batch-get-applications-input
+
+  line </#X-Amz-Target=CodeDeploy_20141006.BatchGetApplications>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan batch-get-applications-input
+
+  loot 200
+    seed json, like batch-get-applications-output
+    note <Success>
+  loot 480
+    seed json, like application-name-required-exception
+    note <ApplicationNameRequiredException>
+  loot 481
+    seed json, like invalid-application-name-exception
+    note <InvalidApplicationNameException>
+  loot 482
+    seed json, like application-does-not-exist-exception
+    note <ApplicationDoesNotExistException>
+  loot 483
+    seed json, like batch-limit-exceeded-exception
+    note <BatchLimitExceededException>

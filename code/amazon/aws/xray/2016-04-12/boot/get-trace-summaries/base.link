@@ -1,0 +1,50 @@
+
+load @drumwork/snow/amazonaws.com/xray/2016-04-12/base/get-trace-summaries-body
+  take form get-trace-summaries-body
+
+load @drumwork/snow/amazonaws.com/xray/2016-04-12/base/get-trace-summaries-result
+  take form get-trace-summaries-result
+
+load @drumwork/snow/amazonaws.com/xray/2016-04-12/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/xray/2016-04-12/base/throttled-exception
+  take form throttled-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-trace-summaries, name <GetTraceSummaries>
+  note <Retrieves IDs and annotations for traces available for a specified time frame using an optional filter. To get the full traces, pass the trace IDs to `BatchGetTraces`.
+
+A filter expression can target traced requests that hit specific service nodes or edges, have errors, or come from a known user. For example, the following filter expression targets traces that pass through `api.example.com`:
+
+`service("api.example.com")`
+
+This filter expression finds traces that have an annotation named `account` with the value `12345`:
+
+`annotation.account = "12345"`
+
+For a full list of indexed fields and keywords that you can use in filter expressions, see [Using Filter Expressions](https://docs.aws.amazon.com/xray/latest/devguide/xray-console-filters.html) in the _Amazon Web Services X-Ray Developer Guide_.>
+
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-trace-summaries-body, like get-trace-summaries-body
+
+  line </TraceSummaries>
+
+  find <NextToken>, loan next-token
+
+  seed json, loan get-trace-summaries-body
+
+  loot 200
+    seed json, like get-trace-summaries-result
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like throttled-exception
+    note <ThrottledException>

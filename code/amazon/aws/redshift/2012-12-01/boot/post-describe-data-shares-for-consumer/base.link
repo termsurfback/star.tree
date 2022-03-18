@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/describe-data-shares-for-consumer-result
+  take form describe-data-shares-for-consumer-result
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-namespace-fault
+  take form invalid-namespace-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-data-shares-for-consumer, name <POST_DescribeDataSharesForConsumer>
+  note <Returns a list of datashares where the account identifier being called is a consumer account identifier.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-data-shares-for-consumer-message, like describe-data-shares-for-consumer-message
+    void take
+
+  line </#Action=DescribeDataSharesForConsumer>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-data-shares-for-consumer-message
+
+  loot 200
+    seed xml, like describe-data-shares-for-consumer-result
+    note <Success>
+  loot 480
+    seed xml, like invalid-namespace-fault
+    note <InvalidNamespaceFault>

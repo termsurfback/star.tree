@@ -1,0 +1,76 @@
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/endpoint-state
+  take form endpoint-state
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/endpoint-type
+  take form endpoint-type
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/list-managed-endpoints-response
+  take form list-managed-endpoints-response
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-managed-endpoints, name <ListManagedEndpoints>
+  note <Lists managed endpoints based on a set of parameters. A managed endpoint is a gateway that connects EMR Studio to Amazon EMR on EKS so that EMR Studio can communicate with your virtual cluster.>
+
+  take virtual-cluster-id
+    like native-string
+    note <The ID of the virtual cluster.>
+  take created-before
+    like native-string
+    note <The date and time before which the endpoints are created.>
+    void take
+  take created-after
+    like native-string
+    note <The date and time after which the endpoints are created.>
+    void take
+  take types
+    like list
+      like endpoint-type
+    note <The types of the managed endpoints.>
+    void take
+  take states
+    like list
+      like endpoint-state
+    note <The states of the managed endpoints.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of managed endpoints that can be listed.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next set of managed endpoints to return.>
+    void take
+
+  line </virtualclusters/{virtual-cluster-id}/endpoints>
+
+  find <createdBefore>, loan created-before
+  find <createdAfter>, loan created-after
+  find <types>, loan types
+  find <states>, loan states
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  loot 200
+    seed json, like list-managed-endpoints-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>

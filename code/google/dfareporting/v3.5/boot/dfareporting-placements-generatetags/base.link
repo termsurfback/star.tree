@@ -1,0 +1,40 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/dfareporting/v3.5/base/placements-generate-tags-response
+  take form placements-generate-tags-response
+
+boot dfareporting-placements-generatetags, name <dfareporting.placements.generatetags>
+  note <Generates tags for a placement.>
+
+  take profile-id
+    like native-string
+    note <User profile ID associated with this request.>
+  take campaign-id
+    like native-string
+    note <Generate placements belonging to this campaign. This is a required field.>
+    void take
+  take placement-ids
+    like list
+      like native-string
+    note <Generate tags for these placements.>
+    void take
+  take tag-formats
+    like list
+      like native-string
+    note <Tag formats to generate for these placements. *Note:* PLACEMENT_TAG_STANDARD can only be generated for 1x1 placements.>
+    void take
+
+  line </dfareporting/v3.5/userprofiles/{profile-id}/placements/generatetags>
+
+  find <campaignId>, loan campaign-id
+  find <placementIds>, loan placement-ids
+  find <tagFormats>, loan tag-formats
+
+  loot 200
+    seed json, like placements-generate-tags-response
+    note <Successful response>

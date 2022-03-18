@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/activity-does-not-exist
+  take form activity-does-not-exist
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/activity-worker-limit-exceeded
+  take form activity-worker-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/get-activity-task-output
+  take form get-activity-task-output
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/invalid-arn
+  take form invalid-arn
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-activity-task, name <GetActivityTask>
+  note <Used by workers to retrieve a task (with the specified activity ARN) which has been scheduled for execution by a running state machine. This initiates a long poll, where the service holds the HTTP connection open and responds as soon as a task becomes available (i.e. an execution of a task of this type is needed.) The maximum time the service holds on to the request before responding is 60 seconds. If no task is available within 60 seconds, the poll returns a `taskToken` with a null string.
+
+Workers should set their client side socket timeout to at least 65 seconds (5 seconds higher than the maximum time the service may hold the poll request).
+
+Polling with `GetActivityTask` can cause latency in some implementations. See [Avoid Latency When Polling for Activity Tasks](https://docs.aws.amazon.com/step-functions/latest/dg/bp-activity-pollers.html) in the Step Functions Developer Guide.>
+
+  take x-amz-target
+    like native-string
+  take get-activity-task-input, like get-activity-task-input
+
+  line </#X-Amz-Target=AWSStepFunctions.GetActivityTask>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-activity-task-input
+
+  loot 200
+    seed json, like get-activity-task-output
+    note <Success>
+  loot 480
+    seed json, like activity-does-not-exist
+    note <ActivityDoesNotExist>
+  loot 481
+    seed json, like activity-worker-limit-exceeded
+    note <ActivityWorkerLimitExceeded>
+  loot 482
+    seed json, like invalid-arn
+    note <InvalidArn>

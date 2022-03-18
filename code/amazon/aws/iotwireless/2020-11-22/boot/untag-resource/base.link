@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/iotwireless/2020-11-22/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/iotwireless/2020-11-22/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/iotwireless/2020-11-22/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iotwireless/2020-11-22/base/tag-key
+  take form tag-key
+
+load @drumwork/snow/amazonaws.com/iotwireless/2020-11-22/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/iotwireless/2020-11-22/base/untag-resource-response
+  take form untag-resource-response
+
+load @drumwork/snow/amazonaws.com/iotwireless/2020-11-22/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot untag-resource, name <UntagResource>
+  note <Removes one or more tags from a resource.>
+
+  take resource-arn
+    like native-string
+    note <The ARN of the resource to remove tags from.>
+  take tag-keys
+    like list
+      like tag-key
+    note <A list of the keys of the tags to remove from the resource.>
+
+  line </tags#resourceArn&tagKeys>
+
+  find <resourceArn>, loan resource-arn
+  find <tagKeys>, loan tag-keys
+
+  loot 204
+    seed json, like untag-resource-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 483
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 484
+    seed json, like throttling-exception
+    note <ThrottlingException>

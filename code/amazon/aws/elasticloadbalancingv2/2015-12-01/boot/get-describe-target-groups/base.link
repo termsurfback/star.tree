@@ -1,0 +1,74 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/describe-target-groups-output
+  take form describe-target-groups-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/load-balancer-not-found-exception
+  take form load-balancer-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/target-group-arn
+  take form target-group-arn
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/target-group-name
+  take form target-group-name
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/target-group-not-found-exception
+  take form target-group-not-found-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-target-groups, name <GET_DescribeTargetGroups>
+  note <Describes the specified target groups or all of your target groups. By default, all target groups are described. Alternatively, you can specify one of the following to filter the results: the ARN of the load balancer, the names of one or more target groups, or the ARNs of one or more target groups.>
+
+  take load-balancer-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the load balancer.>
+    void take
+  take target-group-arns
+    like list
+      like target-group-arn
+    note <The Amazon Resource Names (ARN) of the target groups.>
+    void take
+  take names
+    like list
+      like target-group-name
+    note <The names of the target groups.>
+    void take
+  take marker
+    like native-string
+    note <The marker for the next set of results. (You received this marker from a previous call.)>
+    void take
+  take page-size
+    like native-integer
+    note <The maximum number of results to return with this call.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeTargetGroups>
+
+  find <LoadBalancerArn>, loan load-balancer-arn
+  find <TargetGroupArns>, loan target-group-arns
+  find <Names>, loan names
+  find <Marker>, loan marker
+  find <PageSize>, loan page-size
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-target-groups-output
+    note <Success>
+  loot 480
+    seed xml, like load-balancer-not-found-exception
+    note <LoadBalancerNotFoundException>
+  loot 481
+    seed xml, like target-group-not-found-exception
+    note <TargetGroupNotFoundException>

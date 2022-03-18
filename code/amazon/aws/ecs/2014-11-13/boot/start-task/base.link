@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/cluster-not-found-exception
+  take form cluster-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/start-task-response
+  take form start-task-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-task, name <StartTask>
+  note <Starts a new task from the specified task definition on the specified container instance or instances.
+
+Alternatively, you can use RunTask to place tasks for you. For more information, see [Scheduling Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/scheduling_tasks.html) in the _Amazon Elastic Container Service Developer Guide_.>
+
+  take x-amz-target
+    like native-string
+  take start-task-request, like start-task-request
+
+  line </#X-Amz-Target=AmazonEC2ContainerServiceV20141113.StartTask>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan start-task-request
+
+  loot 200
+    seed json, like start-task-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like client-exception
+    note <ClientException>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 483
+    seed json, like cluster-not-found-exception
+    note <ClusterNotFoundException>

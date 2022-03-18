@@ -1,0 +1,91 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/xml-string-max-len255
+  take form xml-string-max-len255
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-enable-metrics-collection, name <GET_EnableMetricsCollection>
+  note <Enables group metrics for the specified Auto Scaling group. For more information, see [Monitoring CloudWatch metrics for your Auto Scaling groups and instances](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-instance-monitoring.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+
+  take auto-scaling-group-name
+    like native-string
+    note <The name of the Auto Scaling group.>
+  take metrics
+    like list
+      like xml-string-max-len255
+    note <Specifies which group-level metrics to start collecting. You can specify one or more of the following metrics:
+
+- `GroupMinSize`
+
+- `GroupMaxSize`
+
+- `GroupDesiredCapacity`
+
+- `GroupInServiceInstances`
+
+- `GroupPendingInstances`
+
+- `GroupStandbyInstances`
+
+- `GroupTerminatingInstances`
+
+- `GroupTotalInstances`
+
+The instance weighting feature supports the following additional metrics:
+
+- `GroupInServiceCapacity`
+
+- `GroupPendingCapacity`
+
+- `GroupStandbyCapacity`
+
+- `GroupTerminatingCapacity`
+
+- `GroupTotalCapacity`
+
+The warm pools feature supports the following additional metrics:
+
+- `WarmPoolDesiredCapacity`
+
+- `WarmPoolWarmedCapacity`
+
+- `WarmPoolPendingCapacity`
+
+- `WarmPoolTerminatingCapacity`
+
+- `WarmPoolTotalCapacity`
+
+- `GroupAndWarmPoolDesiredCapacity`
+
+- `GroupAndWarmPoolTotalCapacity`
+
+If you omit this parameter, all metrics are enabled.>
+    void take
+  take granularity
+    like native-string
+    note <The granularity to associate with the metrics to collect. The only valid value is `1Minute`.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=EnableMetricsCollection>
+
+  find <AutoScalingGroupName>, loan auto-scaling-group-name
+  find <Metrics>, loan metrics
+  find <Granularity>, loan granularity
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

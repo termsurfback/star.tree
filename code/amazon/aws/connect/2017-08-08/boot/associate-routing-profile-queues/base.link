@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/associate-routing-profile-queues-body
+  take form associate-routing-profile-queues-body
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot associate-routing-profile-queues, name <AssociateRoutingProfileQueues>
+  note <Associates a set of queues with a routing profile.>
+
+  take instance-id
+    like native-string
+    note <The identifier of the Amazon Connect instance. You can find the instanceId in the ARN of the instance.>
+  take routing-profile-id
+    like native-string
+    note <The identifier of the routing profile.>
+  take associate-routing-profile-queues-body, like associate-routing-profile-queues-body
+
+  line </routing-profiles/{instance-id}/{routing-profile-id}/associate-queues>
+
+  seed json, loan associate-routing-profile-queues-body
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like internal-service-exception
+    note <InternalServiceException>

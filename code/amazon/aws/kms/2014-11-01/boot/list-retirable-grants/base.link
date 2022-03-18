@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/dependency-timeout-exception
+  take form dependency-timeout-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-arn-exception
+  take form invalid-arn-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-marker-exception
+  take form invalid-marker-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-internal-exception
+  take form kms-internal-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/list-grants-response
+  take form list-grants-response
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-retirable-grants, name <ListRetirableGrants>
+  note <Returns information about all grants in the Amazon Web Services account and Region that have the specified retiring principal.
+
+You can specify any principal in your Amazon Web Services account. The grants that are returned include grants for KMS keys in your Amazon Web Services account and other Amazon Web Services accounts. You might use this operation to determine which grants you may retire. To retire a grant, use the RetireGrant operation.
+
+For detailed information about grants, including grant terminology, see [Using grants](https://docs.aws.amazon.com/kms/latest/developerguide/grants.html) in the __Key Management Service Developer Guide__ . For examples of working with grants in several programming languages, see [Programming grants](https://docs.aws.amazon.com/kms/latest/developerguide/programming-grants.html).
+
+**Cross-account use**: You must specify a principal in your Amazon Web Services account. However, this operation can return grants in any Amazon Web Services account. You do not need `kms:ListRetirableGrants` permission (or any other additional permission) in any Amazon Web Services account other than your own.
+
+**Required permissions**: [kms:ListRetirableGrants](https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html) (IAM policy) in your Amazon Web Services account.
+
+**Related operations:** - CreateGrant
+
+- ListGrants
+
+- RetireGrant
+
+- RevokeGrant>
+
+  take x-amz-target
+    like native-string
+  take list-retirable-grants-request, like list-retirable-grants-request
+
+  line </#X-Amz-Target=TrentService.ListRetirableGrants>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-retirable-grants-request
+
+  loot 200
+    seed json, like list-grants-response
+    note <Success>
+  loot 480
+    seed json, like dependency-timeout-exception
+    note <DependencyTimeoutException>
+  loot 481
+    seed json, like invalid-marker-exception
+    note <InvalidMarkerException>
+  loot 482
+    seed json, like invalid-arn-exception
+    note <InvalidArnException>
+  loot 483
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 484
+    seed json, like kms-internal-exception
+    note <KMSInternalException>

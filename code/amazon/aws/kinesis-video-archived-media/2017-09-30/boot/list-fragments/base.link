@@ -1,0 +1,71 @@
+
+load @drumwork/snow/amazonaws.com/kinesis-video-archived-media/2017-09-30/base/client-limit-exceeded-exception
+  take form client-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/kinesis-video-archived-media/2017-09-30/base/invalid-argument-exception
+  take form invalid-argument-exception
+
+load @drumwork/snow/amazonaws.com/kinesis-video-archived-media/2017-09-30/base/list-fragments-body
+  take form list-fragments-body
+
+load @drumwork/snow/amazonaws.com/kinesis-video-archived-media/2017-09-30/base/list-fragments-output
+  take form list-fragments-output
+
+load @drumwork/snow/amazonaws.com/kinesis-video-archived-media/2017-09-30/base/not-authorized-exception
+  take form not-authorized-exception
+
+load @drumwork/snow/amazonaws.com/kinesis-video-archived-media/2017-09-30/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-fragments, name <ListFragments>
+  note <Returns a list of Fragment objects from the specified stream and timestamp range within the archived data.
+
+Listing fragments is eventually consistent. This means that even if the producer receives an acknowledgment that a fragment is persisted, the result might not be returned immediately from a request to `ListFragments`. However, results are typically available in less than one second.
+
+You must first call the `GetDataEndpoint` API to get an endpoint. Then send the `ListFragments` requests to this endpoint using the [--endpoint-url parameter](https://docs.aws.amazon.com/cli/latest/reference/).
+
+If an error is thrown after invoking a Kinesis Video Streams archived media API, in addition to the HTTP status code and the response body, it includes the following pieces of information:
+
+- `x-amz-ErrorType` HTTP header - contains a more specific error type in addition to what the HTTP status code provides.
+
+- `x-amz-RequestId` HTTP header - if you want to report an issue to AWS, the support team can better diagnose the problem if given the Request Id.
+
+Both the HTTP status code and the ErrorType header can be utilized to make programmatic decisions about whether errors are retry-able and under what conditions, as well as provide information on what actions the client programmer might need to take in order to successfully try again.
+
+For more information, see the **Errors** section at the bottom of this topic, as well as [Common Errors](https://docs.aws.amazon.com/kinesisvideostreams/latest/dg/CommonErrors.html).>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-fragments-body, like list-fragments-body
+
+  line </listFragments>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-fragments-body
+
+  loot 200
+    seed json, like list-fragments-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-argument-exception
+    note <InvalidArgumentException>
+  loot 482
+    seed json, like client-limit-exceeded-exception
+    note <ClientLimitExceededException>
+  loot 483
+    seed json, like not-authorized-exception
+    note <NotAuthorizedException>

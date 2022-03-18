@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/create-anomaly-subscription-response
+  take form create-anomaly-subscription-response
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/unknown-monitor-exception
+  take form unknown-monitor-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-anomaly-subscription, name <CreateAnomalySubscription>
+  note <Adds a subscription to a cost anomaly detection monitor. You can use each subscription to define subscribers with email or SNS notifications. Email subscribers can set a dollar threshold and a time frequency for receiving notifications.>
+
+  take x-amz-target
+    like native-string
+  take create-anomaly-subscription-request, like create-anomaly-subscription-request
+
+  line </#X-Amz-Target=AWSInsightsIndexService.CreateAnomalySubscription>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-anomaly-subscription-request
+
+  loot 200
+    seed json, like create-anomaly-subscription-response
+    note <Success>
+  loot 480
+    seed json, like unknown-monitor-exception
+    note <UnknownMonitorException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>

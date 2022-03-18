@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/iotfleethub/2020-11-03/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iotfleethub/2020-11-03/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iotfleethub/2020-11-03/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iotfleethub/2020-11-03/base/tag-resource-body
+  take form tag-resource-body
+
+load @drumwork/snow/amazonaws.com/iotfleethub/2020-11-03/base/tag-resource-response
+  take form tag-resource-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot tag-resource, name <TagResource>
+  note <Adds to or modifies the tags of the specified resource. Tags are metadata which can be used to manage a resource.
+
+Fleet Hub for AWS IoT Device Management is in public preview and is subject to change.>
+
+  take resource-arn
+    like native-string
+    note <The ARN of the resource.>
+  take tag-resource-body, like tag-resource-body
+
+  line </tags/{resource-arn}>
+
+  seed json, loan tag-resource-body
+
+  loot 200
+    seed json, like tag-resource-response
+    note <Success>
+  loot 480
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

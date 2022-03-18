@@ -1,0 +1,228 @@
+
+load @drumwork/snow/amazonaws.com/s3/2006-03-01/base/put-object-body
+  take form put-object-body
+
+load @drumwork/snow/amazonaws.com/s3/2006-03-01/base/put-object-output
+  take form put-object-output
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-object, name <PutObject>
+  note <Adds an object to a bucket. You must have WRITE permissions on a bucket to add an object to it.
+
+Amazon S3 never adds partial objects; if you receive a success response, Amazon S3 added the entire object to the bucket.
+
+Amazon S3 is a distributed system. If it receives multiple write requests for the same object simultaneously, it overwrites all but the last object written. Amazon S3 does not provide object locking; if you need this, make sure to build it into your application layer or use versioning instead.
+
+To ensure that data is not corrupted traversing the network, use the `Content-MD5` header. When you use this header, Amazon S3 checks the object against the provided MD5 value and, if they do not match, returns an error. Additionally, you can calculate the MD5 while putting an object to Amazon S3 and compare the returned ETag to the calculated MD5 value.
+
+- To successfully complete the `PutObject` request, you must have the `s3:PutObject` in your IAM permissions.
+
+- To successfully change the objects acl of your `PutObject` request, you must have the `s3:PutObjectAcl` in your IAM permissions.
+
+- The `Content-MD5` header is required for any request to upload an object with a retention period configured using Amazon S3 Object Lock. For more information about Amazon S3 Object Lock, see [Amazon S3 Object Lock Overview](https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lock-overview.html) in the _Amazon S3 User Guide_.
+
+**Server-side Encryption** You can optionally request server-side encryption. With server-side encryption, Amazon S3 encrypts your data as it writes it to disks in its data centers and decrypts the data when you access it. You have the option to provide your own encryption key or use Amazon Web Services managed encryption keys (SSE-S3 or SSE-KMS). For more information, see [Using Server-Side Encryption](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingServerSideEncryption.html).
+
+If you request server-side encryption using Amazon Web Services Key Management Service (SSE-KMS), you can enable an S3 Bucket Key at the object-level. For more information, see [Amazon S3 Bucket Keys](https://docs.aws.amazon.com/AmazonS3/latest/dev/bucket-key.html) in the _Amazon S3 User Guide_.
+
+**Access Control List (ACL)-Specific Request Headers** You can use headers to grant ACL- based permissions. By default, all objects are private. Only the owner has full access control. When adding a new object, you can grant permissions to individual Amazon Web Services accounts or to predefined groups defined by Amazon S3. These permissions are then added to the ACL on the object. For more information, see [Access Control List (ACL) Overview](https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html) and [Managing ACLs Using the REST API](https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-using-rest-api.html).
+
+**Storage Class Options** By default, Amazon S3 uses the STANDARD Storage Class to store newly created objects. The STANDARD storage class provides high durability and high availability. Depending on performance needs, you can specify a different Storage Class. Amazon S3 on Outposts only uses the OUTPOSTS Storage Class. For more information, see [Storage Classes](https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-class-intro.html) in the _Amazon S3 User Guide_.
+
+**Versioning** If you enable versioning for a bucket, Amazon S3 automatically generates a unique version ID for the object being stored. Amazon S3 returns this ID in the response. When you enable versioning for a bucket, if Amazon S3 receives multiple write requests for the same object simultaneously, it stores all of the objects.
+
+For more information about versioning, see [Adding Objects to Versioning Enabled Buckets](https://docs.aws.amazon.com/AmazonS3/latest/dev/AddingObjectstoVersioningEnabledBuckets.html). For information about returning the versioning state of a bucket, see [GetBucketVersioning](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetBucketVersioning.html).
+
+**Related Resources** - [CopyObject](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CopyObject.html)
+
+- [DeleteObject](https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObject.html)>
+
+  take bucket
+    like native-string
+    note <The bucket name to which the PUT action was initiated.
+
+When using this action with an access point, you must direct requests to the access point hostname. The access point hostname takes the form _AccessPointName_-_AccountId_.s3-accesspoint._Region_.amazonaws.com. When using this action with an access point through the Amazon Web Services SDKs, you provide the access point ARN in place of the bucket name. For more information about access point ARNs, see [Using access points](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-access-points.html) in the _Amazon S3 User Guide_.
+
+When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form _AccessPointName_-_AccountId_._outpostID_.s3-outposts._Region_.amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see [Using S3 on Outposts](https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html) in the _Amazon S3 User Guide_.>
+  take key
+    like native-string
+    note <Object key for which the PUT action was initiated.>
+  take x-amz-acl
+    like native-string
+    note <The canned ACL to apply to the object. For more information, see [Canned ACL](https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#CannedACL).
+
+This action is not supported by Amazon S3 on Outposts.>
+    void take
+  take cache-control
+    like native-string
+    note <Can be used to specify caching behavior along the request/reply chain. For more information, see [http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.9](http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.9).>
+    void take
+  take content-disposition
+    like native-string
+    note <Specifies presentational information for the object. For more information, see [http://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html#sec19.5.1](http://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html#sec19.5.1).>
+    void take
+  take content-encoding
+    like native-string
+    note <Specifies what content encodings have been applied to the object and thus what decoding mechanisms must be applied to obtain the media-type referenced by the Content-Type header field. For more information, see [http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.11](http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.11).>
+    void take
+  take content-language
+    like native-string
+    note <The language the content is in.>
+    void take
+  take content-length
+    like native-integer
+    note <Size of the body in bytes. This parameter is useful when the size of the body cannot be determined automatically. For more information, see [http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.13](http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.13).>
+    void take
+  take content-md5
+    like native-string
+    note <The base64-encoded 128-bit MD5 digest of the message (without the headers) according to RFC 1864. This header can be used as a message integrity check to verify that the data is the same data that was originally sent. Although it is optional, we recommend using the Content-MD5 mechanism as an end-to-end integrity check. For more information about REST request authentication, see [REST Authentication](https://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html).>
+    void take
+  take content-type
+    like native-string
+    note <A standard MIME type describing the format of the contents. For more information, see [http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17](http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17).>
+    void take
+  take expires
+    like native-string
+    note <The date and time at which the object is no longer cacheable. For more information, see [http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.21](http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.21).>
+    void take
+  take x-amz-grant-full-control
+    like native-string
+    note <Gives the grantee READ, READ_ACP, and WRITE_ACP permissions on the object.
+
+This action is not supported by Amazon S3 on Outposts.>
+    void take
+  take x-amz-grant-read
+    like native-string
+    note <Allows grantee to read the object data and its metadata.
+
+This action is not supported by Amazon S3 on Outposts.>
+    void take
+  take x-amz-grant-read-acp
+    like native-string
+    note <Allows grantee to read the object ACL.
+
+This action is not supported by Amazon S3 on Outposts.>
+    void take
+  take x-amz-grant-write-acp
+    like native-string
+    note <Allows grantee to write the ACL for the applicable object.
+
+This action is not supported by Amazon S3 on Outposts.>
+    void take
+  take x-amz-server-side-encryption
+    like native-string
+    note <The server-side encryption algorithm used when storing this object in Amazon S3 (for example, AES256, aws:kms).>
+    void take
+  take x-amz-storage-class
+    like native-string
+    note <By default, Amazon S3 uses the STANDARD Storage Class to store newly created objects. The STANDARD storage class provides high durability and high availability. Depending on performance needs, you can specify a different Storage Class. Amazon S3 on Outposts only uses the OUTPOSTS Storage Class. For more information, see [Storage Classes](https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-class-intro.html) in the _Amazon S3 User Guide_.>
+    void take
+  take x-amz-website-redirect-location
+    like native-string
+    note <If the bucket is configured as a website, redirects requests for this object to another object in the same bucket or to an external URL. Amazon S3 stores the value of this header in the object metadata. For information about object metadata, see [Object Key and Metadata](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html).
+
+In the following example, the request header sets the redirect to an object (anotherPage.html) in the same bucket:
+
+`x-amz-website-redirect-location: /anotherPage.html`
+
+In the following example, the request header sets the object redirect to another website:
+
+`x-amz-website-redirect-location: http://www.example.com/`
+
+For more information about website hosting in Amazon S3, see [Hosting Websites on Amazon S3](https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html) and [How to Configure Website Page Redirects](https://docs.aws.amazon.com/AmazonS3/latest/dev/how-to-page-redirect.html).>
+    void take
+  take x-amz-server-side-encryption-customer-algorithm
+    like native-string
+    note <Specifies the algorithm to use to when encrypting the object (for example, AES256).>
+    void take
+  take x-amz-server-side-encryption-customer-key
+    like native-string
+    note <Specifies the customer-provided encryption key for Amazon S3 to use in encrypting data. This value is used to store the object and then it is discarded; Amazon S3 does not store the encryption key. The key must be appropriate for use with the algorithm specified in the `x-amz-server-side-encryption-customer-algorithm` header.>
+    void take
+  take x-amz-server-side-encryption-customer-key-md5
+    like native-string
+    note <Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure that the encryption key was transmitted without error.>
+    void take
+  take x-amz-server-side-encryption-aws-kms-key-id
+    like native-string
+    note <If `x-amz-server-side-encryption` is present and has the value of `aws:kms`, this header specifies the ID of the Amazon Web Services Key Management Service (Amazon Web Services KMS) symmetrical customer managed key that was used for the object. If you specify `x-amz-server-side-encryption:aws:kms`, but do not provide `x-amz-server-side-encryption-aws-kms-key-id`, Amazon S3 uses the Amazon Web Services managed key to protect the data. If the KMS key does not exist in the same account issuing the command, you must use the full ARN and not just the ID.>
+    void take
+  take x-amz-server-side-encryption-context
+    like native-string
+    note <Specifies the Amazon Web Services KMS Encryption Context to use for object encryption. The value of this header is a base64-encoded UTF-8 string holding JSON with the encryption context key-value pairs.>
+    void take
+  take x-amz-server-side-encryption-bucket-key-enabled
+    like native-boolean
+    note <Specifies whether Amazon S3 should use an S3 Bucket Key for object encryption with server-side encryption using AWS KMS (SSE-KMS). Setting this header to `true` causes Amazon S3 to use an S3 Bucket Key for object encryption with SSE-KMS.
+
+Specifying this header with a PUT action doesn’t affect bucket-level settings for S3 Bucket Key.>
+    void take
+  take x-amz-request-payer
+    like native-string
+    void take
+  take x-amz-tagging
+    like native-string
+    note <The tag-set for the object. The tag-set must be encoded as URL Query parameters. (For example, "Key1=Value1")>
+    void take
+  take x-amz-object-lock-mode
+    like native-string
+    note <The Object Lock mode that you want to apply to this object.>
+    void take
+  take x-amz-object-lock-retain-until-date
+    like native-string
+    note <The date and time when you want this object's Object Lock to expire. Must be formatted as a timestamp parameter.>
+    void take
+  take x-amz-object-lock-legal-hold
+    like native-string
+    note <Specifies whether a legal hold will be applied to this object. For more information about S3 Object Lock, see [Object Lock](https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lock.html).>
+    void take
+  take x-amz-expected-bucket-owner
+    like native-string
+    note <The account ID of the expected bucket owner. If the bucket is owned by a different account, the request will fail with an HTTP `403 (Access Denied)` error.>
+    void take
+  take put-object-body, like put-object-body
+
+  line </{bucket}/{key}>
+
+  hint <x-amz-acl>, loan x-amz-acl
+  hint <Cache-Control>, loan cache-control
+  hint <Content-Disposition>, loan content-disposition
+  hint <Content-Encoding>, loan content-encoding
+  hint <Content-Language>, loan content-language
+  hint <Content-Length>, loan content-length
+  hint <Content-MD5>, loan content-md5
+  hint <Content-Type>, loan content-type
+  hint <Expires>, loan expires
+  hint <x-amz-grant-full-control>, loan x-amz-grant-full-control
+  hint <x-amz-grant-read>, loan x-amz-grant-read
+  hint <x-amz-grant-read-acp>, loan x-amz-grant-read-acp
+  hint <x-amz-grant-write-acp>, loan x-amz-grant-write-acp
+  hint <x-amz-server-side-encryption>, loan x-amz-server-side-encryption
+  hint <x-amz-storage-class>, loan x-amz-storage-class
+  hint <x-amz-website-redirect-location>, loan x-amz-website-redirect-location
+  hint <x-amz-server-side-encryption-customer-algorithm>, loan x-amz-server-side-encryption-customer-algorithm
+  hint <x-amz-server-side-encryption-customer-key>, loan x-amz-server-side-encryption-customer-key
+  hint <x-amz-server-side-encryption-customer-key-MD5>, loan x-amz-server-side-encryption-customer-key-md5
+  hint <x-amz-server-side-encryption-aws-kms-key-id>, loan x-amz-server-side-encryption-aws-kms-key-id
+  hint <x-amz-server-side-encryption-context>, loan x-amz-server-side-encryption-context
+  hint <x-amz-server-side-encryption-bucket-key-enabled>, loan x-amz-server-side-encryption-bucket-key-enabled
+  hint <x-amz-request-payer>, loan x-amz-request-payer
+  hint <x-amz-tagging>, loan x-amz-tagging
+  hint <x-amz-object-lock-mode>, loan x-amz-object-lock-mode
+  hint <x-amz-object-lock-retain-until-date>, loan x-amz-object-lock-retain-until-date
+  hint <x-amz-object-lock-legal-hold>, loan x-amz-object-lock-legal-hold
+  hint <x-amz-expected-bucket-owner>, loan x-amz-expected-bucket-owner
+
+  seed xml, loan put-object-body
+
+  loot 200
+    seed xml, like put-object-output
+    note <Success>

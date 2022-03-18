@@ -1,0 +1,29 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/firestore/v1beta2/base/google-longrunning-operation
+  take form google-longrunning-operation
+
+boot firestore-projects-databases-collection-groups-fields-patch, name <firestore.projects.databases.collectionGroups.fields.patch>
+  note <Updates a field configuration. Currently, field updates apply only to single field index configuration. However, calls to FirestoreAdmin.UpdateField should provide a field mask to avoid changing any configuration that the caller isn't aware of. The field mask should be specified as: `{ paths: "index_config" }`. This call returns a google.longrunning.Operation which may be used to track the status of the field update. The metadata for the operation will be the type FieldOperationMetadata. To configure the default field settings for the database, use the special `Field` with resource name: `projects/{project_id}/databases/{database_id}/collectionGroups/__default__/fields/*`.>
+
+  take name
+    like native-string
+    note <A field name of the form `projects/{project_id}/databases/{database_id}/collectionGroups/{collection_id}/fields/{field_path}` A field path may be a simple field name, e.g. `address` or a path to fields within map_value , e.g. `address.city`, or a special field path. The only valid special field is `*`, which represents any field. Field paths may be quoted using ` (backtick). The only character that needs to be escaped within a quoted field path is the backtick character itself, escaped using a backslash. Special characters in field paths that must be quoted include: `*`, `.`, ``` (backtick), `[`, `]`, as well as any ascii symbolic characters. Examples: (Note: Comments here are written in markdown syntax, so there is an additional layer of backticks to represent a code block) `\`address.city\`` represents a field named `address.city`, not the map key `city` in the field `address`. `\`*\`` represents a field named `*`, not any field. A special `Field` contains the default indexing settings for all fields. This field's resource name is: `projects/{project_id}/databases/{database_id}/collectionGroups/__default__/fields/*` Indexes defined on this `Field` will be applied to all fields which do not have their own `Field` index configuration.>
+  take update-mask
+    like native-string
+    note <A mask, relative to the field. If specified, only configuration specified by this field_mask will be updated in the field.>
+    void take
+  take google-firestore-admin-v1beta2-field, like google-firestore-admin-v1beta2-field
+    void take
+
+  line </v1beta2/{name}>
+
+  find <updateMask>, loan update-mask
+
+  seed json, loan google-firestore-admin-v1beta2-field
+
+  loot 200
+    seed json, like google-longrunning-operation
+    note <Successful response>

@@ -1,0 +1,126 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/internal-service-fault
+  take form internal-service-fault
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/metric-stream-filter
+  take form metric-stream-filter
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/missing-required-parameter-exception
+  take form missing-required-parameter-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/put-metric-stream-output
+  take form put-metric-stream-output
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/tag
+  take form tag
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-put-metric-stream, name <GET_PutMetricStream>
+  note <Creates or updates a metric stream. Metric streams can automatically stream CloudWatch metrics to Amazon Web Services destinations including Amazon S3 and to many third-party solutions.
+
+For more information, see [Using Metric Streams](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Metric-Streams.html).
+
+To create a metric stream, you must be logged on to an account that has the `iam:PassRole` permission and either the `CloudWatchFullAccess` policy or the `cloudwatch:PutMetricStream` permission.
+
+When you create or update a metric stream, you choose one of the following:
+
+- Stream metrics from all metric namespaces in the account.
+
+- Stream metrics from all metric namespaces in the account, except for the namespaces that you list in `ExcludeFilters`.
+
+- Stream metrics from only the metric namespaces that you list in `IncludeFilters`.
+
+When you use `PutMetricStream` to create a new metric stream, the stream is created in the `running` state. If you use it to update an existing stream, the state of the stream is not changed.>
+
+  take name
+    like native-string
+    note <If you are creating a new metric stream, this is the name for the new stream. The name must be different than the names of other metric streams in this account and Region.
+
+If you are updating a metric stream, specify the name of that stream here.
+
+Valid characters are A-Z, a-z, 0-9, "-" and "_".>
+  take include-filters
+    like list
+      like metric-stream-filter
+    note <If you specify this parameter, the stream sends only the metrics from the metric namespaces that you specify here.
+
+You cannot include `IncludeFilters` and `ExcludeFilters` in the same operation.>
+    void take
+  take exclude-filters
+    like list
+      like metric-stream-filter
+    note <If you specify this parameter, the stream sends metrics from all metric namespaces except for the namespaces that you specify here.
+
+You cannot include `ExcludeFilters` and `IncludeFilters` in the same operation.>
+    void take
+  take firehose-arn
+    like native-string
+    note <The ARN of the Amazon Kinesis Firehose delivery stream to use for this metric stream. This Amazon Kinesis Firehose delivery stream must already exist and must be in the same account as the metric stream.>
+  take role-arn
+    like native-string
+    note <The ARN of an IAM role that this metric stream will use to access Amazon Kinesis Firehose resources. This IAM role must already exist and must be in the same account as the metric stream. This IAM role must include the following permissions:
+
+- firehose:PutRecord
+
+- firehose:PutRecordBatch>
+  take output-format
+    like native-string
+    note <The output format for the stream. Valid values are `json` and `opentelemetry0.7`. For more information about metric stream output formats, see [Metric streams output formats](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-metric-streams-formats.html).>
+  take tags
+    like list
+      like tag
+    note <A list of key-value pairs to associate with the metric stream. You can associate as many as 50 tags with a metric stream.
+
+Tags can help you organize and categorize your resources. You can also use them to scope user permissions by granting a user permission to access or change only resources with certain tag values.
+
+You can use this parameter only when you are creating a new metric stream. If you are using this operation to update an existing metric stream, any tags you specify in this parameter are ignored. To change the tags of an existing metric stream, use [TagResource](https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_TagResource.html) or [UntagResource](https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_UntagResource.html).>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=PutMetricStream>
+
+  find <Name>, loan name
+  find <IncludeFilters>, loan include-filters
+  find <ExcludeFilters>, loan exclude-filters
+  find <FirehoseArn>, loan firehose-arn
+  find <RoleArn>, loan role-arn
+  find <OutputFormat>, loan output-format
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like put-metric-stream-output
+    note <Success>
+  loot 480
+    seed xml, like concurrent-modification-exception
+    note <ConcurrentModificationException>
+  loot 481
+    seed xml, like internal-service-fault
+    note <InternalServiceFault>
+  loot 482
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed xml, like missing-required-parameter-exception
+    note <MissingRequiredParameterException>
+  loot 484
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

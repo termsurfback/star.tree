@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/list-fargate-profiles-response
+  take form list-fargate-profiles-response
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-fargate-profiles, name <ListFargateProfiles>
+  note <Lists the Fargate profiles associated with the specified cluster in your Amazon Web Services account in the specified Region.>
+
+  take name
+    like native-string
+    note <The name of the Amazon EKS cluster that you would like to list Fargate profiles in.>
+  take max-results
+    like native-integer
+    note <The maximum number of Fargate profile results returned by `ListFargateProfiles` in paginated output. When you use this parameter, `ListFargateProfiles` returns only `maxResults` results in a single page along with a `nextToken` response element. You can see the remaining results of the initial request by sending another `ListFargateProfiles` request with the returned `nextToken` value. This value can be between 1 and 100. If you don't use this parameter, `ListFargateProfiles` returns up to 100 results and a `nextToken` value if applicable.>
+    void take
+  take next-token
+    like native-string
+    note <The `nextToken` value returned from a previous paginated `ListFargateProfiles` request where `maxResults` was used and the results exceeded the value of that parameter. Pagination continues from the end of the previous results that returned the `nextToken` value.>
+    void take
+
+  line </clusters/{name}/fargate-profiles>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  loot 200
+    seed json, like list-fargate-profiles-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like client-exception
+    note <ClientException>
+  loot 483
+    seed json, like server-exception
+    note <ServerException>

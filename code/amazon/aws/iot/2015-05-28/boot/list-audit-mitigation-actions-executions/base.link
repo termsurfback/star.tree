@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/list-audit-mitigation-actions-executions-response
+  take form list-audit-mitigation-actions-executions-response
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-audit-mitigation-actions-executions, name <ListAuditMitigationActionsExecutions>
+  note <Gets the status of audit mitigation action tasks that were executed.
+
+Requires permission to access the [ListAuditMitigationActionsExecutions](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiot.html#awsiot-actions-as-permissions) action.>
+
+  take task-id
+    like native-string
+    note <Specify this filter to limit results to actions for a specific audit mitigation actions task.>
+  take action-status
+    like native-string
+    note <Specify this filter to limit results to those with a specific status.>
+    void take
+  take finding-id
+    like native-string
+    note <Specify this filter to limit results to those that were applied to a specific audit finding.>
+  take max-results
+    like native-integer
+    note <The maximum number of results to return at one time. The default is 25.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next set of results.>
+    void take
+
+  line </audit/mitigationactions/executions#taskId&findingId>
+
+  find <taskId>, loan task-id
+  find <actionStatus>, loan action-status
+  find <findingId>, loan finding-id
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  loot 200
+    seed json, like list-audit-mitigation-actions-executions-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/internal-service-fault
+  take form internal-service-fault
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/tag-resource-output
+  take form tag-resource-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-tag-resource, name <POST_TagResource>
+  note <Assigns one or more tags (key-value pairs) to the specified CloudWatch resource. Currently, the only CloudWatch resources that can be tagged are alarms and Contributor Insights rules.
+
+Tags can help you organize and categorize your resources. You can also use them to scope user permissions by granting a user permission to access or change only resources with certain tag values.
+
+Tags don't have any semantic meaning to Amazon Web Services and are interpreted strictly as strings of characters.
+
+You can use the `TagResource` action with an alarm that already has tags. If you specify a new tag key for the alarm, this tag is appended to the list of tags associated with the alarm. If you specify a tag key that is already associated with the alarm, the new tag value that you specify replaces the previous value for that tag.
+
+You can associate as many as 50 tags with a CloudWatch resource.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take tag-resource-input, like tag-resource-input
+    void take
+
+  line </#Action=TagResource>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan tag-resource-input
+
+  loot 200
+    seed xml, like tag-resource-output
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 481
+    seed xml, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed xml, like concurrent-modification-exception
+    note <ConcurrentModificationException>
+  loot 483
+    seed xml, like internal-service-fault
+    note <InternalServiceFault>

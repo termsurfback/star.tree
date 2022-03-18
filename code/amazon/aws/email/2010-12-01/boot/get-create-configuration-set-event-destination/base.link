@@ -1,0 +1,120 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/cloud-watch-destination
+  take form cloud-watch-destination
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/configuration-set-does-not-exist-exception
+  take form configuration-set-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/create-configuration-set-event-destination-response
+  take form create-configuration-set-event-destination-response
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/enabled
+  take form enabled
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/event-destination-already-exists-exception
+  take form event-destination-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/event-destination-name
+  take form event-destination-name
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/event-types
+  take form event-types
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/invalid-cloud-watch-destination-exception
+  take form invalid-cloud-watch-destination-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/invalid-firehose-destination-exception
+  take form invalid-firehose-destination-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/invalid-sns-destination-exception
+  take form invalid-sns-destination-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/kinesis-firehose-destination
+  take form kinesis-firehose-destination
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/sns-destination
+  take form sns-destination
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-configuration-set-event-destination, name <GET_CreateConfigurationSetEventDestination>
+  note <Creates a configuration set event destination.
+
+When you create or update an event destination, you must provide one, and only one, destination. The destination can be CloudWatch, Amazon Kinesis Firehose, or Amazon Simple Notification Service (Amazon SNS).
+
+An event destination is the AWS service to which Amazon SES publishes the email sending events associated with a configuration set. For information about using configuration sets, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/monitor-sending-activity.html).
+
+You can execute this operation no more than once per second.>
+
+  take configuration-set-name
+    like native-string
+    note <The name of the configuration set that the event destination should be associated with.>
+  take event-destination
+    like form
+      take name, name <Name>
+        like event-destination-name
+        note <The name of the event destination. The name must:
+
+- This value can only contain ASCII letters (a-z, A-Z), numbers (0-9), underscores (_), or dashes (-).
+
+- Contain less than 64 characters.>
+      take enabled, name <Enabled>
+        like enabled
+        void take
+        note <Sets whether Amazon SES publishes events to this destination when you send an email with the associated configuration set. Set to `true` to enable publishing to this destination; set to `false` to prevent publishing to this destination. The default value is `false`.>
+      take matching-event-types, name <MatchingEventTypes>
+        like event-types
+        note <The type of email sending events to publish to the event destination.>
+      take kinesis-firehose-destination, name <KinesisFirehoseDestination>
+        like kinesis-firehose-destination
+        void take
+        note <An object that contains the delivery stream ARN and the IAM role ARN associated with an Amazon Kinesis Firehose event destination.>
+      take cloud-watch-destination, name <CloudWatchDestination>
+        like cloud-watch-destination
+        void take
+        note <An object that contains the names, default values, and sources of the dimensions associated with an Amazon CloudWatch event destination.>
+      take sns-destination, name <SNSDestination>
+        like sns-destination
+        void take
+        note <An object that contains the topic ARN associated with an Amazon Simple Notification Service (Amazon SNS) event destination.>
+    note <An object that describes the AWS service that email sending event information will be published to.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateConfigurationSetEventDestination>
+
+  find <ConfigurationSetName>, loan configuration-set-name
+  find <EventDestination>, loan event-destination
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-configuration-set-event-destination-response
+    note <Success>
+  loot 480
+    seed xml, like configuration-set-does-not-exist-exception
+    note <ConfigurationSetDoesNotExistException>
+  loot 481
+    seed xml, like event-destination-already-exists-exception
+    note <EventDestinationAlreadyExistsException>
+  loot 482
+    seed xml, like invalid-cloud-watch-destination-exception
+    note <InvalidCloudWatchDestinationException>
+  loot 483
+    seed xml, like invalid-firehose-destination-exception
+    note <InvalidFirehoseDestinationException>
+  loot 484
+    seed xml, like invalid-sns-destination-exception
+    note <InvalidSNSDestinationException>
+  loot 485
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>

@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/already-exists-exception
+  take form already-exists-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/create-classifier-response
+  take form create-classifier-response
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/operation-timeout-exception
+  take form operation-timeout-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-classifier, name <CreateClassifier>
+  note <Creates a classifier in the user's account. This can be a `GrokClassifier`, an `XMLClassifier`, a `JsonClassifier`, or a `CsvClassifier`, depending on which field of the request is present.>
+
+  take x-amz-target
+    like native-string
+  take create-classifier-request, like create-classifier-request
+
+  line </#X-Amz-Target=AWSGlue.CreateClassifier>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-classifier-request
+
+  loot 200
+    seed json, like create-classifier-response
+    note <Success>
+  loot 480
+    seed json, like already-exists-exception
+    note <AlreadyExistsException>
+  loot 481
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 482
+    seed json, like operation-timeout-exception
+    note <OperationTimeoutException>

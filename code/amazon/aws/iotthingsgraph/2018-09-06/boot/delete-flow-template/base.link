@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/delete-flow-template-response
+  take form delete-flow-template-response
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-flow-template, name <DeleteFlowTemplate>
+  note <Deletes a workflow. Any new system or deployment that contains this workflow will fail to update or deploy. Existing deployments that contain the workflow will continue to run (since they use a snapshot of the workflow taken at the time of deployment).>
+
+  take x-amz-target
+    like native-string
+  take delete-flow-template-request, like delete-flow-template-request
+
+  line </#X-Amz-Target=IotThingsGraphFrontEndService.DeleteFlowTemplate>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-flow-template-request
+
+  loot 200
+    seed json, like delete-flow-template-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 483
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>

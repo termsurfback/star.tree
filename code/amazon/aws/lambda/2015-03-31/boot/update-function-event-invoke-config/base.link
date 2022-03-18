@@ -1,0 +1,71 @@
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/function-event-invoke-config
+  take form function-event-invoke-config
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/resource-conflict-exception
+  take form resource-conflict-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/update-function-event-invoke-config-body
+  take form update-function-event-invoke-config-body
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-function-event-invoke-config, name <UpdateFunctionEventInvokeConfig>
+  note <Updates the configuration for asynchronous invocation for a function, version, or alias.
+
+To configure options for asynchronous invocation, use PutFunctionEventInvokeConfig.>
+
+  take function-name
+    like native-string
+    note <The name of the Lambda function, version, or alias.
+
+**Name formats** - **Function name** - `my-function` (name-only), `my-function:v1` (with alias).
+
+- **Function ARN** - `arn:aws:lambda:us-west-2:123456789012:function:my-function`.
+
+- **Partial ARN** - `123456789012:function:my-function`.
+
+You can append a version number or alias to any of the formats. The length constraint applies only to the full ARN. If you specify only the function name, it is limited to 64 characters in length.>
+  take qualifier
+    like native-string
+    note <A version number or alias name.>
+    void take
+  take update-function-event-invoke-config-body, like update-function-event-invoke-config-body
+
+  line </2019-09-25/functions/{function-name}/event-invoke-config>
+
+  find <Qualifier>, loan qualifier
+
+  seed json, loan update-function-event-invoke-config-body
+
+  loot 200
+    seed json, like function-event-invoke-config
+    note <Success>
+  loot 480
+    seed json, like service-exception
+    note <ServiceException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 484
+    seed json, like resource-conflict-exception
+    note <ResourceConflictException>

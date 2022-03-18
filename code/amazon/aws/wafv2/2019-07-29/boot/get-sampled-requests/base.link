@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/get-sampled-requests-response
+  take form get-sampled-requests-response
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-internal-error-exception
+  take form waf-internal-error-exception
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-invalid-parameter-exception
+  take form waf-invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-nonexistent-item-exception
+  take form waf-nonexistent-item-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-sampled-requests, name <GetSampledRequests>
+  note <Gets detailed information about a specified number of requests--a sample--that WAF randomly selects from among the first 5,000 requests that your Amazon Web Services resource received during a time range that you choose. You can specify a sample size of up to 500 requests, and you can specify any time range in the previous three hours.
+
+`GetSampledRequests` returns a time range, which is usually the time range that you specified. However, if your resource (such as a CloudFront distribution) received 5,000 requests before the specified time range elapsed, `GetSampledRequests` returns an updated time range. This new time range indicates the actual period during which WAF selected the requests in the sample.>
+
+  take x-amz-target
+    like native-string
+  take get-sampled-requests-request, like get-sampled-requests-request
+
+  line </#X-Amz-Target=AWSWAF_20190729.GetSampledRequests>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-sampled-requests-request
+
+  loot 200
+    seed json, like get-sampled-requests-response
+    note <Success>
+  loot 480
+    seed json, like waf-nonexistent-item-exception
+    note <WAFNonexistentItemException>
+  loot 481
+    seed json, like waf-internal-error-exception
+    note <WAFInternalErrorException>
+  loot 482
+    seed json, like waf-invalid-parameter-exception
+    note <WAFInvalidParameterException>

@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/guardduty/2017-11-28/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/guardduty/2017-11-28/base/internal-server-error-exception
+  take form internal-server-error-exception
+
+load @drumwork/snow/amazonaws.com/guardduty/2017-11-28/base/update-threat-intel-set-body
+  take form update-threat-intel-set-body
+
+load @drumwork/snow/amazonaws.com/guardduty/2017-11-28/base/update-threat-intel-set-response
+  take form update-threat-intel-set-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-threat-intel-set, name <UpdateThreatIntelSet>
+  note <Updates the ThreatIntelSet specified by the ThreatIntelSet ID.>
+
+  take detector-id
+    like native-string
+    note <The detectorID that specifies the GuardDuty service whose ThreatIntelSet you want to update.>
+  take threat-intel-set-id
+    like native-string
+    note <The unique ID that specifies the ThreatIntelSet that you want to update.>
+  take update-threat-intel-set-body, like update-threat-intel-set-body
+
+  line </detector/{detector-id}/threatintelset/{threat-intel-set-id}>
+
+  seed json, loan update-threat-intel-set-body
+
+  loot 200
+    seed json, like update-threat-intel-set-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like internal-server-error-exception
+    note <InternalServerErrorException>

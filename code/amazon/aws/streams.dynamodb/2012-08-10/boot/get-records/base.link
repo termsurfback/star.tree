@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/streams.dynamodb/2012-08-10/base/expired-iterator-exception
+  take form expired-iterator-exception
+
+load @drumwork/snow/amazonaws.com/streams.dynamodb/2012-08-10/base/get-records-output
+  take form get-records-output
+
+load @drumwork/snow/amazonaws.com/streams.dynamodb/2012-08-10/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/streams.dynamodb/2012-08-10/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/streams.dynamodb/2012-08-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/streams.dynamodb/2012-08-10/base/trimmed-data-access-exception
+  take form trimmed-data-access-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-records, name <GetRecords>
+  note <Retrieves the stream records from a given shard.
+
+Specify a shard iterator using the `ShardIterator` parameter. The shard iterator specifies the position in the shard from which you want to start reading stream records sequentially. If there are no stream records available in the portion of the shard that the iterator points to, `GetRecords` returns an empty list. Note that it might take multiple calls to get to a portion of the shard that contains stream records.
+
+`GetRecords` can retrieve a maximum of 1 MB of data or 1000 stream records, whichever comes first.>
+
+  take x-amz-target
+    like native-string
+  take get-records-input, like get-records-input
+
+  line </#X-Amz-Target=DynamoDBStreams_20120810.GetRecords>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-records-input
+
+  loot 200
+    seed json, like get-records-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 483
+    seed json, like expired-iterator-exception
+    note <ExpiredIteratorException>
+  loot 484
+    seed json, like trimmed-data-access-exception
+    note <TrimmedDataAccessException>

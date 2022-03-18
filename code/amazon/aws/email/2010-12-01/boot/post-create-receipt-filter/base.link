@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/already-exists-exception
+  take form already-exists-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/create-receipt-filter-response
+  take form create-receipt-filter-response
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-receipt-filter, name <POST_CreateReceiptFilter>
+  note <Creates a new IP address filter.
+
+For information about setting up IP address filters, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-ip-filters.html).
+
+You can execute this operation no more than once per second.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-receipt-filter-request, like create-receipt-filter-request
+    void take
+
+  line </#Action=CreateReceiptFilter>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-receipt-filter-request
+
+  loot 200
+    seed xml, like create-receipt-filter-response
+    note <Success>
+  loot 480
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed xml, like already-exists-exception
+    note <AlreadyExistsException>

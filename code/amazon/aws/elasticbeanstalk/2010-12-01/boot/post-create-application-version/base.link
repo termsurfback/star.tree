@@ -1,0 +1,67 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/application-version-description-message
+  take form application-version-description-message
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/code-build-not-in-service-region-exception
+  take form code-build-not-in-service-region-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/insufficient-privileges-exception
+  take form insufficient-privileges-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/s3-location-not-in-service-region-exception
+  take form s3-location-not-in-service-region-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/too-many-application-versions-exception
+  take form too-many-application-versions-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/too-many-applications-exception
+  take form too-many-applications-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-application-version, name <POST_CreateApplicationVersion>
+  note <Creates an application version for the specified application. You can create an application version from a source bundle in Amazon S3, a commit in AWS CodeCommit, or the output of an AWS CodeBuild build as follows:
+
+Specify a commit in an AWS CodeCommit repository with `SourceBuildInformation`.
+
+Specify a build in an AWS CodeBuild with `SourceBuildInformation` and `BuildConfiguration`.
+
+Specify a source bundle in S3 with `SourceBundle`
+
+Omit both `SourceBuildInformation` and `SourceBundle` to use the default sample application.
+
+After you create an application version with a specified Amazon S3 bucket and key location, you can't change that Amazon S3 location. If you change the Amazon S3 location, you receive an exception when you attempt to launch an environment from the application version.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-application-version-message, like create-application-version-message
+    void take
+
+  line </#Action=CreateApplicationVersion>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-application-version-message
+
+  loot 200
+    seed xml, like application-version-description-message
+    note <Success>
+  loot 480
+    seed xml, like too-many-applications-exception
+    note <TooManyApplicationsException>
+  loot 481
+    seed xml, like too-many-application-versions-exception
+    note <TooManyApplicationVersionsException>
+  loot 482
+    seed xml, like insufficient-privileges-exception
+    note <InsufficientPrivilegesException>
+  loot 483
+    seed xml, like s3-location-not-in-service-region-exception
+    note <S3LocationNotInServiceRegionException>
+  loot 484
+    seed xml, like code-build-not-in-service-region-exception
+    note <CodeBuildNotInServiceRegionException>

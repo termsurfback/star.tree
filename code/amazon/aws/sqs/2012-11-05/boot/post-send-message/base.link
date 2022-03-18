@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/sqs/2012-11-05/base/invalid-message-contents
+  take form invalid-message-contents
+
+load @drumwork/snow/amazonaws.com/sqs/2012-11-05/base/send-message-result
+  take form send-message-result
+
+load @drumwork/snow/amazonaws.com/sqs/2012-11-05/base/unsupported-operation
+  take form unsupported-operation
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-send-message, name <POST_SendMessage>
+  note <Delivers a message to the specified queue.
+
+A message can include only XML, JSON, and unformatted text. The following Unicode characters are allowed:
+
+`#x9` | `#xA` | `#xD` | `#x20` to `#xD7FF` | `#xE000` to `#xFFFD` | `#x10000` to `#x10FFFF`
+
+Any characters not included in this list will be rejected. For more information, see the [W3C specification for characters](http://www.w3.org/TR/REC-xml/#charsets).>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take send-message-request, like send-message-request
+    void take
+
+  line </#Action=SendMessage>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan send-message-request
+
+  loot 200
+    seed xml, like send-message-result
+    note <Success>
+  loot 480
+    seed xml, like invalid-message-contents
+    note <InvalidMessageContents>
+  loot 481
+    seed xml, like unsupported-operation
+    note <UnsupportedOperation>

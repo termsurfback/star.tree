@@ -1,0 +1,75 @@
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/list-findings-reports-response
+  take form list-findings-reports-response
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-findings-reports, name <ListFindingsReports>
+  note <List the available reports for a given profiling group and time range.>
+
+  take profiling-group-name
+    like native-string
+    note <The name of the profiling group from which to search for analysis data.>
+  take daily-reports-only
+    like native-boolean
+    note <A `Boolean` value indicating whether to only return reports from daily profiles. If set to `True`, only analysis data from daily profiles is returned. If set to `False`, analysis data is returned from smaller time windows (for example, one hour).>
+    void take
+  take end-time
+    like native-string
+    note <The end time of the profile to get analysis data about. You must specify `startTime` and `endTime`. This is specified using the ISO 8601 format. For example, 2020-06-01T13:15:02.001Z represents 1 millisecond past June 1, 2020 1:15:02 PM UTC.>
+  take max-results
+    like native-integer
+    note <The maximum number of report results returned by `ListFindingsReports` in paginated output. When this parameter is used, `ListFindingsReports` only returns `maxResults` results in a single page along with a `nextToken` response element. The remaining results of the initial request can be seen by sending another `ListFindingsReports` request with the returned `nextToken` value.>
+    void take
+  take next-token
+    like native-string
+    note <The `nextToken` value returned from a previous paginated `ListFindingsReportsRequest` request where `maxResults` was used and the results exceeded the value of that parameter. Pagination continues from the end of the previous results that returned the `nextToken` value.
+
+This token should be treated as an opaque identifier that is only used to retrieve the next items in a list and not for other programmatic purposes.>
+    void take
+  take start-time
+    like native-string
+    note <The start time of the profile to get analysis data about. You must specify `startTime` and `endTime`. This is specified using the ISO 8601 format. For example, 2020-06-01T13:15:02.001Z represents 1 millisecond past June 1, 2020 1:15:02 PM UTC.>
+
+  line </internal/profilingGroups/{profiling-group-name}/findingsReports#endTime&startTime>
+
+  find <dailyReportsOnly>, loan daily-reports-only
+  find <endTime>, loan end-time
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+  find <startTime>, loan start-time
+
+  loot 200
+    seed json, like list-findings-reports-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

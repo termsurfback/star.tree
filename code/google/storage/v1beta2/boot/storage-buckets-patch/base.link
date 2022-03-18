@@ -1,0 +1,39 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/storage/v1beta2/base/bucket
+  take form bucket
+
+boot storage-buckets-patch, name <storage.buckets.patch>
+  note <Updates a bucket. This method supports patch semantics.>
+
+  take bucket
+    like native-string
+    note <Name of a bucket.>
+  take if-metageneration-match
+    like native-string
+    note <Makes the return of the bucket metadata conditional on whether the bucket's current metageneration matches the given value.>
+    void take
+  take if-metageneration-not-match
+    like native-string
+    note <Makes the return of the bucket metadata conditional on whether the bucket's current metageneration does not match the given value.>
+    void take
+  take projection
+    like native-string
+    note <Set of properties to return. Defaults to full.>
+    void take
+  take bucket, like bucket
+    void take
+
+  line </b/{bucket}>
+
+  find <ifMetagenerationMatch>, loan if-metageneration-match
+  find <ifMetagenerationNotMatch>, loan if-metageneration-not-match
+  find <projection>, loan projection
+
+  seed json, loan bucket
+
+  loot 200
+    seed json, like bucket
+    note <Successful response>

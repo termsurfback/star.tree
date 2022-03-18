@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/describe-stack-instance-output
+  take form describe-stack-instance-output
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/stack-instance-not-found-exception
+  take form stack-instance-not-found-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/stack-set-not-found-exception
+  take form stack-set-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-stack-instance, name <POST_DescribeStackInstance>
+  note <Returns the stack instance that's associated with the specified stack set, Amazon Web Services account, and Region.
+
+For a list of stack instances that are associated with a specific stack set, use ListStackInstances.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-stack-instance-input, like describe-stack-instance-input
+    void take
+
+  line </#Action=DescribeStackInstance>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-stack-instance-input
+
+  loot 200
+    seed xml, like describe-stack-instance-output
+    note <Success>
+  loot 480
+    seed xml, like stack-set-not-found-exception
+    note <StackSetNotFoundException>
+  loot 481
+    seed xml, like stack-instance-not-found-exception
+    note <StackInstanceNotFoundException>

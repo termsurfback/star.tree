@@ -1,0 +1,47 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/deleted-recipient
+  take form deleted-recipient
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-recipients-id-body
+  take form get-recipients-id-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/recipient
+  take form recipient
+
+boot get-recipients-id, name <GetRecipientsId>
+  note <Retrieves the details of an existing recipient. You need only supply the unique recipient identifier that was returned upon recipient creation.>
+
+  take id
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-recipients-id-body, like get-recipients-id-body
+    void take
+
+  line </v1/recipients/{id}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-recipients-id-body
+
+  loot 200
+    seed json
+      like sink
+        like recipient
+        like deleted-recipient
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-snapshot-already-exists-fault
+  take form db-snapshot-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/delete-db-instance-result
+  take form delete-db-instance-result
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/invalid-db-instance-state-fault
+  take form invalid-db-instance-state-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/snapshot-quota-exceeded-fault
+  take form snapshot-quota-exceeded-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-db-instance, name <GET_DeleteDBInstance>
+  note <Deletes a previously provisioned instance.>
+
+  take db-instance-identifier
+    like native-string
+    note <The instance identifier for the instance to be deleted. This parameter isn't case sensitive.
+
+Constraints:
+
+- Must match the name of an existing instance.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteDBInstance>
+
+  find <DBInstanceIdentifier>, loan db-instance-identifier
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-db-instance-result
+    note <Success>
+  loot 480
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>
+  loot 481
+    seed xml, like invalid-db-instance-state-fault
+    note <InvalidDBInstanceStateFault>
+  loot 482
+    seed xml, like db-snapshot-already-exists-fault
+    note <DBSnapshotAlreadyExistsFault>
+  loot 483
+    seed xml, like snapshot-quota-exceeded-fault
+    note <SnapshotQuotaExceededFault>
+  loot 484
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>

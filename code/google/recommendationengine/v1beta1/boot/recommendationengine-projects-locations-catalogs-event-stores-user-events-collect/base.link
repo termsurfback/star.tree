@@ -1,0 +1,35 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/recommendationengine/v1beta1/base/google-api-http-body
+  take form google-api-http-body
+
+boot recommendationengine-projects-locations-catalogs-event-stores-user-events-collect, name <recommendationengine.projects.locations.catalogs.eventStores.userEvents.collect>
+  note <Writes a single user event from the browser. This uses a GET request to due to browser restriction of POST-ing to a 3rd party domain. This method is used only by the Recommendations AI JavaScript pixel. Users should not call this method directly.>
+
+  take parent
+    like native-string
+    note <Required. The parent eventStore name, such as `projects/1234/locations/global/catalogs/default_catalog/eventStores/default_event_store`.>
+  take ets
+    like native-string
+    note <Optional. The event timestamp in milliseconds. This prevents browser caching of otherwise identical get requests. The name is abbreviated to reduce the payload bytes.>
+    void take
+  take uri
+    like native-string
+    note <Optional. The url including cgi-parameters but excluding the hash fragment. The URL must be truncated to 1.5K bytes to conservatively be under the 2K bytes. This is often more useful than the referer url, because many browsers only send the domain for 3rd party requests.>
+    void take
+  take user-event
+    like native-string
+    note <Required. URL encoded UserEvent proto.>
+    void take
+
+  line </v1beta1/{parent}/userEvents:collect>
+
+  find <ets>, loan ets
+  find <uri>, loan uri
+  find <userEvent>, loan user-event
+
+  loot 200
+    seed json, like google-api-http-body
+    note <Successful response>

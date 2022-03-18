@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/describe-security-policy-response
+  take form describe-security-policy-response
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-security-policy, name <DescribeSecurityPolicy>
+  note <Describes the security policy that is attached to your file transfer protocol-enabled server. The response contains a description of the security policy's properties. For more information about security policies, see [Working with security policies](https://docs.aws.amazon.com/transfer/latest/userguide/security-policies.html).>
+
+  take x-amz-target
+    like native-string
+  take describe-security-policy-request, like describe-security-policy-request
+
+  line </#X-Amz-Target=TransferService.DescribeSecurityPolicy>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-security-policy-request
+
+  loot 200
+    seed json, like describe-security-policy-response
+    note <Success>
+  loot 480
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 481
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 482
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

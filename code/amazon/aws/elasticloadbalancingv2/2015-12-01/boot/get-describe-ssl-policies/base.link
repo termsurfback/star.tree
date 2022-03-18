@@ -1,0 +1,56 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/describe-ssl-policies-output
+  take form describe-ssl-policies-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/ssl-policy-name
+  take form ssl-policy-name
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/ssl-policy-not-found-exception
+  take form ssl-policy-not-found-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-ssl-policies, name <GET_DescribeSSLPolicies>
+  note <Describes the specified policies or all policies used for SSL negotiation.
+
+For more information, see [Security policies](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html#describe-ssl-policies) in the _Application Load Balancers Guide_ or [Security policies](https://docs.aws.amazon.com/elasticloadbalancing/latest/network/create-tls-listener.html#describe-ssl-policies) in the _Network Load Balancers Guide_.>
+
+  take names
+    like list
+      like ssl-policy-name
+    note <The names of the policies.>
+    void take
+  take marker
+    like native-string
+    note <The marker for the next set of results. (You received this marker from a previous call.)>
+    void take
+  take page-size
+    like native-integer
+    note <The maximum number of results to return with this call.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeSSLPolicies>
+
+  find <Names>, loan names
+  find <Marker>, loan marker
+  find <PageSize>, loan page-size
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-ssl-policies-output
+    note <Success>
+  loot 480
+    seed xml, like ssl-policy-not-found-exception
+    note <SSLPolicyNotFoundException>

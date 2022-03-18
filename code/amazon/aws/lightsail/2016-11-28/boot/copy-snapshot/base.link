@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/lightsail/2016-11-28/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/lightsail/2016-11-28/base/account-setup-in-progress-exception
+  take form account-setup-in-progress-exception
+
+load @drumwork/snow/amazonaws.com/lightsail/2016-11-28/base/copy-snapshot-result
+  take form copy-snapshot-result
+
+load @drumwork/snow/amazonaws.com/lightsail/2016-11-28/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/lightsail/2016-11-28/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/lightsail/2016-11-28/base/operation-failure-exception
+  take form operation-failure-exception
+
+load @drumwork/snow/amazonaws.com/lightsail/2016-11-28/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/amazonaws.com/lightsail/2016-11-28/base/unauthenticated-exception
+  take form unauthenticated-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot copy-snapshot, name <CopySnapshot>
+  note <Copies a manual snapshot of an instance or disk as another manual snapshot, or copies an automatic snapshot of an instance or disk as a manual snapshot. This operation can also be used to copy a manual or automatic snapshot of an instance or a disk from one AWS Region to another in Amazon Lightsail.
+
+When copying a _manual snapshot_, be sure to define the `source region`, `source snapshot name`, and `target snapshot name` parameters.
+
+When copying an _automatic snapshot_, be sure to define the `source region`, `source resource name`, `target snapshot name`, and either the `restore date` or the `use latest restorable auto snapshot` parameters.>
+
+  take x-amz-target
+    like native-string
+  take copy-snapshot-request, like copy-snapshot-request
+
+  line </#X-Amz-Target=Lightsail_20161128.CopySnapshot>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan copy-snapshot-request
+
+  loot 200
+    seed json, like copy-snapshot-result
+    note <Success>
+  loot 480
+    seed json, like service-exception
+    note <ServiceException>
+  loot 481
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 482
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 483
+    seed json, like operation-failure-exception
+    note <OperationFailureException>
+  loot 484
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 485
+    seed json, like account-setup-in-progress-exception
+    note <AccountSetupInProgressException>
+  loot 486
+    seed json, like unauthenticated-exception
+    note <UnauthenticatedException>

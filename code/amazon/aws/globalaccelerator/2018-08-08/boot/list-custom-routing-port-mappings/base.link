@@ -1,0 +1,68 @@
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/accelerator-not-found-exception
+  take form accelerator-not-found-exception
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/endpoint-group-not-found-exception
+  take form endpoint-group-not-found-exception
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/invalid-argument-exception
+  take form invalid-argument-exception
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/list-custom-routing-port-mappings-response
+  take form list-custom-routing-port-mappings-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-custom-routing-port-mappings, name <ListCustomRoutingPortMappings>
+  note <Provides a complete mapping from the public accelerator IP address and port to destination EC2 instance IP addresses and ports in the virtual public cloud (VPC) subnet endpoint for a custom routing accelerator. For each subnet endpoint that you add, Global Accelerator creates a new static port mapping for the accelerator. The port mappings don't change after Global Accelerator generates them, so you can retrieve and cache the full mapping on your servers.
+
+If you remove a subnet from your accelerator, Global Accelerator removes (reclaims) the port mappings. If you add a subnet to your accelerator, Global Accelerator creates new port mappings (the existing ones don't change). If you add or remove EC2 instances in your subnet, the port mappings don't change, because the mappings are created when you add the subnet to Global Accelerator.
+
+The mappings also include a flag for each destination denoting which destination IP addresses and ports are allowed or denied traffic.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-custom-routing-port-mappings-request, like list-custom-routing-port-mappings-request
+
+  line </#X-Amz-Target=GlobalAccelerator_V20180706.ListCustomRoutingPortMappings>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-custom-routing-port-mappings-request
+
+  loot 200
+    seed json, like list-custom-routing-port-mappings-response
+    note <Success>
+  loot 480
+    seed json, like invalid-argument-exception
+    note <InvalidArgumentException>
+  loot 481
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 482
+    seed json, like endpoint-group-not-found-exception
+    note <EndpointGroupNotFoundException>
+  loot 483
+    seed json, like accelerator-not-found-exception
+    note <AcceleratorNotFoundException>
+  loot 484
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>

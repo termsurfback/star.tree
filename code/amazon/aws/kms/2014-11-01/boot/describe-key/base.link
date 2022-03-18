@@ -1,0 +1,79 @@
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/dependency-timeout-exception
+  take form dependency-timeout-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/describe-key-response
+  take form describe-key-response
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-arn-exception
+  take form invalid-arn-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-internal-exception
+  take form kms-internal-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-key, name <DescribeKey>
+  note <Provides detailed information about a KMS key. You can run `DescribeKey` on a [customer managed key](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#customer-cmk) or an [Amazon Web Services managed key](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#aws-managed-cmk).
+
+This detailed information includes the key ARN, creation date (and deletion date, if applicable), the key state, and the origin and expiration date (if any) of the key material. It includes fields, like `KeySpec`, that help you distinguish symmetric from asymmetric KMS keys. It also provides information that is particularly important to asymmetric keys, such as the key usage (encryption or signing) and the encryption algorithms or signing algorithms that the KMS key supports. For KMS keys in custom key stores, it includes information about the custom key store, such as the key store ID and the CloudHSM cluster ID. For multi-Region keys, it displays the primary key and all related replica keys.
+
+`DescribeKey` does not return the following information:
+
+- Aliases associated with the KMS key. To get this information, use ListAliases.
+
+- Whether automatic key rotation is enabled on the KMS key. To get this information, use GetKeyRotationStatus. Also, some key states prevent a KMS key from being automatically rotated. For details, see [How Automatic Key Rotation Works](https://docs.aws.amazon.com/kms/latest/developerguide/rotate-keys.html#rotate-keys-how-it-works) in _Key Management Service Developer Guide_.
+
+- Tags on the KMS key. To get this information, use ListResourceTags.
+
+- Key policies and grants on the KMS key. To get this information, use GetKeyPolicy and ListGrants.
+
+If you call the `DescribeKey` operation on a _predefined Amazon Web Services alias_, that is, an Amazon Web Services alias with no key ID, KMS creates an [Amazon Web Services managed key](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#aws-managed-cmk). Then, it associates the alias with the new KMS key, and returns the `KeyId` and `Arn` of the new KMS key in the response.
+
+**Cross-account use**: Yes. To perform this operation with a KMS key in a different Amazon Web Services account, specify the key ARN or alias ARN in the value of the `KeyId` parameter.
+
+**Required permissions**: [kms:DescribeKey](https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html) (key policy)
+
+**Related operations:** - GetKeyPolicy
+
+- GetKeyRotationStatus
+
+- ListAliases
+
+- ListGrants
+
+- ListKeys
+
+- ListResourceTags
+
+- ListRetirableGrants>
+
+  take x-amz-target
+    like native-string
+  take describe-key-request, like describe-key-request
+
+  line </#X-Amz-Target=TrentService.DescribeKey>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-key-request
+
+  loot 200
+    seed json, like describe-key-response
+    note <Success>
+  loot 480
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 481
+    seed json, like invalid-arn-exception
+    note <InvalidArnException>
+  loot 482
+    seed json, like dependency-timeout-exception
+    note <DependencyTimeoutException>
+  loot 483
+    seed json, like kms-internal-exception
+    note <KMSInternalException>

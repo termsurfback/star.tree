@@ -1,0 +1,94 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-cluster-not-found-fault
+  take form cache-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/describe-snapshots-list-message
+  take form describe-snapshots-list-message
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/snapshot-not-found-fault
+  take form snapshot-not-found-fault
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-snapshots, name <GET_DescribeSnapshots>
+  note <Returns information about cluster or replication group snapshots. By default, `DescribeSnapshots` lists all of your snapshots; it can optionally describe a single snapshot, or just the snapshots associated with a particular cache cluster.
+
+This operation is valid for Redis only.>
+
+  take replication-group-id
+    like native-string
+    note <A user-supplied replication group identifier. If this parameter is specified, only snapshots associated with that specific replication group are described.>
+    void take
+  take cache-cluster-id
+    like native-string
+    note <A user-supplied cluster identifier. If this parameter is specified, only snapshots associated with that specific cluster are described.>
+    void take
+  take snapshot-name
+    like native-string
+    note <A user-supplied name of the snapshot. If this parameter is specified, only this snapshot are described.>
+    void take
+  take snapshot-source
+    like native-string
+    note <If set to `system`, the output shows snapshots that were automatically created by ElastiCache. If set to `user` the output shows snapshots that were manually created. If omitted, the output shows both automatically and manually created snapshots.>
+    void take
+  take marker
+    like native-string
+    note <An optional marker returned from a prior request. Use this marker for pagination of results from this operation. If this parameter is specified, the response includes only records beyond the marker, up to the value specified by `MaxRecords`.>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of records to include in the response. If more records exist than the specified `MaxRecords` value, a marker is included in the response so that the remaining results can be retrieved.
+
+Default: 50
+
+Constraints: minimum 20; maximum 50.>
+    void take
+  take show-node-group-config
+    like native-boolean
+    note <A Boolean value which if true, the node group (shard) configuration is included in the snapshot description.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeSnapshots>
+
+  find <ReplicationGroupId>, loan replication-group-id
+  find <CacheClusterId>, loan cache-cluster-id
+  find <SnapshotName>, loan snapshot-name
+  find <SnapshotSource>, loan snapshot-source
+  find <Marker>, loan marker
+  find <MaxRecords>, loan max-records
+  find <ShowNodeGroupConfig>, loan show-node-group-config
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-snapshots-list-message
+    note <Success>
+  loot 480
+    seed xml, like cache-cluster-not-found-fault
+    note <CacheClusterNotFoundFault>
+  loot 481
+    seed xml, like snapshot-not-found-fault
+    note <SnapshotNotFoundFault>
+  loot 482
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

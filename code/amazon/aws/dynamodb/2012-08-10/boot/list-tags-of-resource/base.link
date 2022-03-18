@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/list-tags-of-resource-output
+  take form list-tags-of-resource-output
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-tags-of-resource, name <ListTagsOfResource>
+  note <List all tags on an Amazon DynamoDB resource. You can call ListTagsOfResource up to 10 times per second, per account.
+
+For an overview on tagging DynamoDB resources, see [Tagging for DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tagging.html) in the _Amazon DynamoDB Developer Guide_.>
+
+  take x-amz-target
+    like native-string
+  take list-tags-of-resource-input, like list-tags-of-resource-input
+
+  line </#X-Amz-Target=DynamoDB_20120810.ListTagsOfResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-tags-of-resource-input
+
+  loot 200
+    seed json, like list-tags-of-resource-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

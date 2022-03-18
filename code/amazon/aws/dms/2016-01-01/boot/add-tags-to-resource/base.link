@@ -1,0 +1,29 @@
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/add-tags-to-resource-response
+  take form add-tags-to-resource-response
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/resource-not-found-fault
+  take form resource-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot add-tags-to-resource, name <AddTagsToResource>
+  note <Adds metadata tags to an DMS resource, including replication instance, endpoint, security group, and migration task. These tags can also be used with cost allocation reporting to track cost associated with DMS resources, or used in a Condition statement in an IAM policy for DMS. For more information, see [`Tag`](https://docs.aws.amazon.com/dms/latest/APIReference/API_Tag.html) data type description.>
+
+  take x-amz-target
+    like native-string
+  take add-tags-to-resource-message, like add-tags-to-resource-message
+
+  line </#X-Amz-Target=AmazonDMSv20160101.AddTagsToResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan add-tags-to-resource-message
+
+  loot 200
+    seed json, like add-tags-to-resource-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-fault
+    note <ResourceNotFoundFault>

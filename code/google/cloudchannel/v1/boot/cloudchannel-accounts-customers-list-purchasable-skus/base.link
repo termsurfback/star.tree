@@ -1,0 +1,53 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/cloudchannel/v1/base/google-cloud-channel-v1-list-purchasable-skus-response
+  take form google-cloud-channel-v1-list-purchasable-skus-response
+
+boot cloudchannel-accounts-customers-list-purchasable-skus, name <cloudchannel.accounts.customers.listPurchasableSkus>
+  note <Lists the following: * SKUs that you can purchase for a customer * SKUs that you can upgrade or downgrade for an entitlement. Possible error codes: * PERMISSION_DENIED: The customer doesn't belong to the reseller. * INVALID_ARGUMENT: Required request parameters are missing or invalid.>
+
+  take customer
+    like native-string
+    note <Required. The resource name of the customer to list SKUs for. Format: accounts/{account_id}/customers/{customer_id}.>
+  take change-offer-purchase-change-type
+    like native-string
+    note <Required. Change Type for the entitlement.>
+    void take
+  take change-offer-purchase-entitlement
+    like native-string
+    note <Required. Resource name of the entitlement. Format: accounts/{account_id}/customers/{customer_id}/entitlements/{entitlement_id}>
+    void take
+  take create-entitlement-purchase-product
+    like native-string
+    note <Required. List SKUs belonging to this Product. Format: products/{product_id}. Supports products/- to retrieve SKUs for all products.>
+    void take
+  take language-code
+    like native-string
+    note <Optional. The BCP-47 language code. For example, "en-US". The response will localize in the corresponding language code, if specified. The default value is "en-US".>
+    void take
+  take page-size
+    like native-integer
+    note <Optional. Requested page size. Server might return fewer results than requested. If unspecified, returns at most 100 SKUs. The maximum value is 1000; the server will coerce values above 1000.>
+    void take
+  take page-token
+    like native-string
+    note <Optional. A token for a page of results other than the first page.>
+    void take
+
+  line </v1/{customer}:listPurchasableSkus>
+
+  find <changeOfferPurchase.changeType>, loan change-offer-purchase-change-type
+  find <changeOfferPurchase.entitlement>, loan change-offer-purchase-entitlement
+  find <createEntitlementPurchase.product>, loan create-entitlement-purchase-product
+  find <languageCode>, loan language-code
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like google-cloud-channel-v1-list-purchasable-skus-response
+    note <Successful response>

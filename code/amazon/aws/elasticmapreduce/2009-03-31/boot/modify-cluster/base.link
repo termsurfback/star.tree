@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/modify-cluster-output
+  take form modify-cluster-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot modify-cluster, name <ModifyCluster>
+  note <Modifies the number of steps that can be executed concurrently for the cluster specified using ClusterID.>
+
+  take x-amz-target
+    like native-string
+  take modify-cluster-input, like modify-cluster-input
+
+  line </#X-Amz-Target=ElasticMapReduce.ModifyCluster>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan modify-cluster-input
+
+  loot 200
+    seed json, like modify-cluster-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

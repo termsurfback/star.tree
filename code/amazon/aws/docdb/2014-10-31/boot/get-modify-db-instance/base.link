@@ -1,0 +1,180 @@
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/authorization-not-found-fault
+  take form authorization-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/certificate-not-found-fault
+  take form certificate-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-instance-already-exists-fault
+  take form db-instance-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-parameter-group-not-found-fault
+  take form db-parameter-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-security-group-not-found-fault
+  take form db-security-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-upgrade-dependency-failure-fault
+  take form db-upgrade-dependency-failure-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/insufficient-db-instance-capacity-fault
+  take form insufficient-db-instance-capacity-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/invalid-db-instance-state-fault
+  take form invalid-db-instance-state-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/invalid-db-security-group-state-fault
+  take form invalid-db-security-group-state-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/invalid-vpc-network-state-fault
+  take form invalid-vpc-network-state-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/modify-db-instance-result
+  take form modify-db-instance-result
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/storage-quota-exceeded-fault
+  take form storage-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/storage-type-not-supported-fault
+  take form storage-type-not-supported-fault
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-modify-db-instance, name <GET_ModifyDBInstance>
+  note <Modifies settings for an instance. You can change one or more database configuration parameters by specifying these parameters and the new values in the request.>
+
+  take db-instance-identifier
+    like native-string
+    note <The instance identifier. This value is stored as a lowercase string.
+
+Constraints:
+
+- Must match the identifier of an existing `DBInstance`.>
+  take db-instance-class
+    like native-string
+    note <The new compute and memory capacity of the instance; for example, `db.r5.large`. Not all instance classes are available in all Regions.
+
+If you modify the instance class, an outage occurs during the change. The change is applied during the next maintenance window, unless `ApplyImmediately` is specified as `true` for this request.
+
+Default: Uses existing setting.>
+    void take
+  take apply-immediately
+    like native-boolean
+    note <Specifies whether the modifications in this request and any pending modifications are asynchronously applied as soon as possible, regardless of the `PreferredMaintenanceWindow` setting for the instance.
+
+If this parameter is set to `false`, changes to the instance are applied during the next maintenance window. Some parameter changes can cause an outage and are applied on the next reboot.
+
+Default: `false`>
+    void take
+  take preferred-maintenance-window
+    like native-string
+    note <The weekly time range (in UTC) during which system maintenance can occur, which might result in an outage. Changing this parameter doesn't result in an outage except in the following situation, and the change is asynchronously applied as soon as possible. If there are pending actions that cause a reboot, and the maintenance window is changed to include the current time, changing this parameter causes a reboot of the instance. If you are moving this window to the current time, there must be at least 30 minutes between the current time and end of the window to ensure that pending changes are applied.
+
+Default: Uses existing setting.
+
+Format: `ddd:hh24:mi-ddd:hh24:mi`
+
+Valid days: Mon, Tue, Wed, Thu, Fri, Sat, Sun
+
+Constraints: Must be at least 30 minutes.>
+    void take
+  take auto-minor-version-upgrade
+    like native-boolean
+    note <This parameter does not apply to Amazon DocumentDB. Amazon DocumentDB does not perform minor version upgrades regardless of the value set.>
+    void take
+  take new-db-instance-identifier
+    like native-string
+    note <The new instance identifier for the instance when renaming an instance. When you change the instance identifier, an instance reboot occurs immediately if you set `Apply Immediately` to `true`. It occurs during the next maintenance window if you set `Apply Immediately` to `false`. This value is stored as a lowercase string.
+
+Constraints:
+
+- Must contain from 1 to 63 letters, numbers, or hyphens.
+
+- The first character must be a letter.
+
+- Cannot end with a hyphen or contain two consecutive hyphens.
+
+Example: `mydbinstance`>
+    void take
+  take ca-certificate-identifier
+    like native-string
+    note <Indicates the certificate that needs to be associated with the instance.>
+    void take
+  take promotion-tier
+    like native-integer
+    note <A value that specifies the order in which an Amazon DocumentDB replica is promoted to the primary instance after a failure of the existing primary instance.
+
+Default: 1
+
+Valid values: 0-15>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyDBInstance>
+
+  find <DBInstanceIdentifier>, loan db-instance-identifier
+  find <DBInstanceClass>, loan db-instance-class
+  find <ApplyImmediately>, loan apply-immediately
+  find <PreferredMaintenanceWindow>, loan preferred-maintenance-window
+  find <AutoMinorVersionUpgrade>, loan auto-minor-version-upgrade
+  find <NewDBInstanceIdentifier>, loan new-db-instance-identifier
+  find <CACertificateIdentifier>, loan ca-certificate-identifier
+  find <PromotionTier>, loan promotion-tier
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-db-instance-result
+    note <Success>
+  loot 480
+    seed xml, like invalid-db-instance-state-fault
+    note <InvalidDBInstanceStateFault>
+  loot 481
+    seed xml, like invalid-db-security-group-state-fault
+    note <InvalidDBSecurityGroupStateFault>
+  loot 482
+    seed xml, like db-instance-already-exists-fault
+    note <DBInstanceAlreadyExistsFault>
+  loot 483
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>
+  loot 484
+    seed xml, like db-security-group-not-found-fault
+    note <DBSecurityGroupNotFoundFault>
+  loot 485
+    seed xml, like db-parameter-group-not-found-fault
+    note <DBParameterGroupNotFoundFault>
+  loot 486
+    seed xml, like insufficient-db-instance-capacity-fault
+    note <InsufficientDBInstanceCapacityFault>
+  loot 487
+    seed xml, like storage-quota-exceeded-fault
+    note <StorageQuotaExceededFault>
+  loot 488
+    seed xml, like invalid-vpc-network-state-fault
+    note <InvalidVPCNetworkStateFault>
+  loot 489
+    seed xml, like db-upgrade-dependency-failure-fault
+    note <DBUpgradeDependencyFailureFault>
+  loot 490
+    seed xml, like storage-type-not-supported-fault
+    note <StorageTypeNotSupportedFault>
+  loot 491
+    seed xml, like authorization-not-found-fault
+    note <AuthorizationNotFoundFault>
+  loot 492
+    seed xml, like certificate-not-found-fault
+    note <CertificateNotFoundFault>

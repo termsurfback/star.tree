@@ -1,0 +1,68 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/add-tags-output
+  take form add-tags-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/duplicate-tag-keys-exception
+  take form duplicate-tag-keys-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/load-balancer-not-found-exception
+  take form load-balancer-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/resource-arn
+  take form resource-arn
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/tag
+  take form tag
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/target-group-not-found-exception
+  take form target-group-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/too-many-tags-exception
+  take form too-many-tags-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-add-tags, name <GET_AddTags>
+  note <Adds the specified tags to the specified Elastic Load Balancing resource. You can tag your Application Load Balancers, Network Load Balancers, Gateway Load Balancers, target groups, listeners, and rules.
+
+Each tag consists of a key and an optional value. If a resource already has a tag with the same key, `AddTags` updates its value.>
+
+  take resource-arns
+    like list
+      like resource-arn
+    note <The Amazon Resource Name (ARN) of the resource.>
+  take tags
+    like list
+      like tag
+    note <The tags.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=AddTags>
+
+  find <ResourceArns>, loan resource-arns
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like add-tags-output
+    note <Success>
+  loot 480
+    seed xml, like duplicate-tag-keys-exception
+    note <DuplicateTagKeysException>
+  loot 481
+    seed xml, like too-many-tags-exception
+    note <TooManyTagsException>
+  loot 482
+    seed xml, like load-balancer-not-found-exception
+    note <LoadBalancerNotFoundException>
+  loot 483
+    seed xml, like target-group-not-found-exception
+    note <TargetGroupNotFoundException>

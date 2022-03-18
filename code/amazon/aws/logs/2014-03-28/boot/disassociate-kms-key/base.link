@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/operation-aborted-exception
+  take form operation-aborted-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot disassociate-kms-key, name <DisassociateKmsKey>
+  note <Disassociates the associated Key Management Service customer master key (CMK) from the specified log group.
+
+After the KMS CMK is disassociated from the log group, CloudWatch Logs stops encrypting newly ingested data for the log group. All previously ingested data remains encrypted, and CloudWatch Logs requires permissions for the CMK whenever the encrypted data is requested.
+
+Note that it can take up to 5 minutes for this operation to take effect.>
+
+  take x-amz-target
+    like native-string
+  take disassociate-kms-key-request, like disassociate-kms-key-request
+
+  line </#X-Amz-Target=Logs_20140328.DisassociateKmsKey>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan disassociate-kms-key-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like operation-aborted-exception
+    note <OperationAbortedException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

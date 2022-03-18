@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/delete-resource-policy-statement-response
+  take form delete-resource-policy-statement-response
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/precondition-failed-exception
+  take form precondition-failed-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-resource-policy-statement, name <DeleteResourcePolicyStatement>
+  note <Deletes a policy statement from a resource policy. If you delete the last statement from a policy, the policy is deleted. If you specify a statement ID that doesn't exist in the policy, or if the bot or bot alias doesn't have a policy attached, Amazon Lex returns an exception.>
+
+  take resource-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the bot or bot alias that the resource policy is attached to.>
+  take statement-id
+    like native-string
+    note <The name of the statement (SID) to delete from the policy.>
+  take expected-revision-id
+    like native-string
+    note <The identifier of the revision of the policy to delete the statement from. If this revision ID doesn't match the current revision ID, Amazon Lex throws an exception.
+
+If you don't specify a revision, Amazon Lex removes the current contents of the statement.>
+    void take
+
+  line </policy/{resource-arn}/statements/{statement-id}/>
+
+  find <expectedRevisionId>, loan expected-revision-id
+
+  loot 204
+    seed json, like delete-resource-policy-statement-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like precondition-failed-exception
+    note <PreconditionFailedException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>

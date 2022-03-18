@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/concurrent-runs-exceeded-exception
+  take form concurrent-runs-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/entity-not-found-exception
+  take form entity-not-found-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/illegal-workflow-state-exception
+  take form illegal-workflow-state-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/operation-timeout-exception
+  take form operation-timeout-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/resume-workflow-run-response
+  take form resume-workflow-run-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot resume-workflow-run, name <ResumeWorkflowRun>
+  note <Restarts selected nodes of a previous partially completed workflow run and resumes the workflow run. The selected nodes and all nodes that are downstream from the selected nodes are run.>
+
+  take x-amz-target
+    like native-string
+  take resume-workflow-run-request, like resume-workflow-run-request
+
+  line </#X-Amz-Target=AWSGlue.ResumeWorkflowRun>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan resume-workflow-run-request
+
+  loot 200
+    seed json, like resume-workflow-run-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like entity-not-found-exception
+    note <EntityNotFoundException>
+  loot 482
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 483
+    seed json, like operation-timeout-exception
+    note <OperationTimeoutException>
+  loot 484
+    seed json, like concurrent-runs-exceeded-exception
+    note <ConcurrentRunsExceededException>
+  loot 485
+    seed json, like illegal-workflow-state-exception
+    note <IllegalWorkflowStateException>

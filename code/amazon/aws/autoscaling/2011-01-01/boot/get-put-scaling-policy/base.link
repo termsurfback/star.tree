@@ -1,0 +1,252 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/customized-metric-specification
+  take form customized-metric-specification
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/disable-scale-in
+  take form disable-scale-in
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/limit-exceeded-fault
+  take form limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/metric-scale
+  take form metric-scale
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/policy-arn-type
+  take form policy-arn-type
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/predefined-metric-specification
+  take form predefined-metric-specification
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/predictive-scaling-max-capacity-breach-behavior
+  take form predictive-scaling-max-capacity-breach-behavior
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/predictive-scaling-max-capacity-buffer
+  take form predictive-scaling-max-capacity-buffer
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/predictive-scaling-metric-specifications
+  take form predictive-scaling-metric-specifications
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/predictive-scaling-mode
+  take form predictive-scaling-mode
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/predictive-scaling-scheduling-buffer-time
+  take form predictive-scaling-scheduling-buffer-time
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/service-linked-role-failure
+  take form service-linked-role-failure
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/step-adjustment
+  take form step-adjustment
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-put-scaling-policy, name <GET_PutScalingPolicy>
+  note <Creates or updates a scaling policy for an Auto Scaling group. Scaling policies are used to scale an Auto Scaling group based on configurable metrics. If no policies are defined, the dynamic scaling and predictive scaling features are not used.
+
+For more information about using dynamic scaling, see [Target tracking scaling policies](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-scaling-target-tracking.html) and [Step and simple scaling policies](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-scaling-simple-step.html) in the _Amazon EC2 Auto Scaling User Guide_.
+
+For more information about using predictive scaling, see [Predictive scaling for Amazon EC2 Auto Scaling](https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-predictive-scaling.html) in the _Amazon EC2 Auto Scaling User Guide_.
+
+You can view the scaling policies for an Auto Scaling group using the DescribePolicies API call. If you are no longer using a scaling policy, you can delete it by calling the DeletePolicy API.>
+
+  take auto-scaling-group-name
+    like native-string
+    note <The name of the Auto Scaling group.>
+  take policy-name
+    like native-string
+    note <The name of the policy.>
+  take policy-type
+    like native-string
+    note <One of the following policy types:
+
+- `TargetTrackingScaling`
+
+- `StepScaling`
+
+- `SimpleScaling` (default)
+
+- `PredictiveScaling`>
+    void take
+  take adjustment-type
+    like native-string
+    note <Specifies how the scaling adjustment is interpreted (for example, an absolute number or a percentage). The valid values are `ChangeInCapacity`, `ExactCapacity`, and `PercentChangeInCapacity`.
+
+Required if the policy type is `StepScaling` or `SimpleScaling`. For more information, see [Scaling adjustment types](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-scaling-simple-step.html#as-scaling-adjustment) in the _Amazon EC2 Auto Scaling User Guide_.>
+    void take
+  take min-adjustment-step
+    like native-integer
+    note <Available for backward compatibility. Use `MinAdjustmentMagnitude` instead.>
+    void take
+  take min-adjustment-magnitude
+    like native-integer
+    note <The minimum value to scale by when the adjustment type is `PercentChangeInCapacity`. For example, suppose that you create a step scaling policy to scale out an Auto Scaling group by 25 percent and you specify a `MinAdjustmentMagnitude` of 2. If the group has 4 instances and the scaling policy is performed, 25 percent of 4 is 1. However, because you specified a `MinAdjustmentMagnitude` of 2, Amazon EC2 Auto Scaling scales out the group by 2 instances.
+
+Valid only if the policy type is `StepScaling` or `SimpleScaling`. For more information, see [Scaling adjustment types](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-scaling-simple-step.html#as-scaling-adjustment) in the _Amazon EC2 Auto Scaling User Guide_.
+
+Some Auto Scaling groups use instance weights. In this case, set the `MinAdjustmentMagnitude` to a value that is at least as large as your largest instance weight.>
+    void take
+  take scaling-adjustment
+    like native-integer
+    note <The amount by which to scale, based on the specified adjustment type. A positive value adds to the current capacity while a negative number removes from the current capacity. For exact capacity, you must specify a positive value.
+
+Required if the policy type is `SimpleScaling`. (Not used with any other policy type.)>
+    void take
+  take cooldown
+    like native-integer
+    note <The duration of the policy's cooldown period, in seconds. When a cooldown period is specified here, it overrides the default cooldown period defined for the Auto Scaling group.
+
+Valid only if the policy type is `SimpleScaling`. For more information, see [Scaling cooldowns for Amazon EC2 Auto Scaling](https://docs.aws.amazon.com/autoscaling/ec2/userguide/Cooldown.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+    void take
+  take metric-aggregation-type
+    like native-string
+    note <The aggregation type for the CloudWatch metrics. The valid values are `Minimum`, `Maximum`, and `Average`. If the aggregation type is null, the value is treated as `Average`.
+
+Valid only if the policy type is `StepScaling`.>
+    void take
+  take step-adjustments
+    like list
+      like step-adjustment
+    note <A set of adjustments that enable you to scale based on the size of the alarm breach.
+
+Required if the policy type is `StepScaling`. (Not used with any other policy type.)>
+    void take
+  take estimated-instance-warmup
+    like native-integer
+    note <The estimated time, in seconds, until a newly launched instance can contribute to the CloudWatch metrics. If not provided, the default is to use the value from the default cooldown period for the Auto Scaling group.
+
+Valid only if the policy type is `TargetTrackingScaling` or `StepScaling`.>
+    void take
+  take target-tracking-configuration
+    like form
+      take predefined-metric-specification, name <PredefinedMetricSpecification>
+        like predefined-metric-specification
+        void take
+        note <A predefined metric. You must specify either a predefined metric or a customized metric.>
+      take customized-metric-specification, name <CustomizedMetricSpecification>
+        like customized-metric-specification
+        void take
+        note <A customized metric. You must specify either a predefined metric or a customized metric.>
+      take target-value, name <TargetValue>
+        like metric-scale
+        note <The target value for the metric.>
+      take disable-scale-in, name <DisableScaleIn>
+        like disable-scale-in
+        void take
+        note <Indicates whether scaling in by the target tracking scaling policy is disabled. If scaling in is disabled, the target tracking scaling policy doesn't remove instances from the Auto Scaling group. Otherwise, the target tracking scaling policy can remove instances from the Auto Scaling group. The default is `false`.>
+    note <A target tracking scaling policy. Provides support for predefined or customized metrics.
+
+The following predefined metrics are available:
+
+- `ASGAverageCPUUtilization`
+
+- `ASGAverageNetworkIn`
+
+- `ASGAverageNetworkOut`
+
+- `ALBRequestCountPerTarget`
+
+If you specify `ALBRequestCountPerTarget` for the metric, you must specify the `ResourceLabel` parameter with the `PredefinedMetricSpecification`.
+
+For more information, see [TargetTrackingConfiguration](https://docs.aws.amazon.com/autoscaling/ec2/APIReference/API_TargetTrackingConfiguration.html) in the _Amazon EC2 Auto Scaling API Reference_.
+
+Required if the policy type is `TargetTrackingScaling`.>
+    void take
+  take enabled
+    like native-boolean
+    note <Indicates whether the scaling policy is enabled or disabled. The default is enabled. For more information, see [Disabling a scaling policy for an Auto Scaling group](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-enable-disable-scaling-policy.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+    void take
+  take predictive-scaling-configuration
+    like form
+      take metric-specifications, name <MetricSpecifications>
+        like predictive-scaling-metric-specifications
+        note <This structure includes the metrics and target utilization to use for predictive scaling.
+
+This is an array, but we currently only support a single metric specification. That is, you can specify a target value and a single metric pair, or a target value and one scaling metric and one load metric.>
+      take mode, name <Mode>
+        like predictive-scaling-mode
+        void take
+        note <The predictive scaling mode. Defaults to `ForecastOnly` if not specified.>
+      take scheduling-buffer-time, name <SchedulingBufferTime>
+        like predictive-scaling-scheduling-buffer-time
+        void take
+        note <The amount of time, in seconds, by which the instance launch time can be advanced. For example, the forecast says to add capacity at 10:00 AM, and you choose to pre-launch instances by 5 minutes. In that case, the instances will be launched at 9:55 AM. The intention is to give resources time to be provisioned. It can take a few minutes to launch an EC2 instance. The actual amount of time required depends on several factors, such as the size of the instance and whether there are startup scripts to complete.
+
+The value must be less than the forecast interval duration of 3600 seconds (60 minutes). Defaults to 300 seconds if not specified.>
+      take max-capacity-breach-behavior, name <MaxCapacityBreachBehavior>
+        like predictive-scaling-max-capacity-breach-behavior
+        void take
+        note <Defines the behavior that should be applied if the forecast capacity approaches or exceeds the maximum capacity of the Auto Scaling group. Defaults to `HonorMaxCapacity` if not specified.
+
+The following are possible values:
+
+- `HonorMaxCapacity` - Amazon EC2 Auto Scaling cannot scale out capacity higher than the maximum capacity. The maximum capacity is enforced as a hard limit.
+
+- `IncreaseMaxCapacity` - Amazon EC2 Auto Scaling can scale out capacity higher than the maximum capacity when the forecast capacity is close to or exceeds the maximum capacity. The upper limit is determined by the forecasted capacity and the value for `MaxCapacityBuffer`.>
+      take max-capacity-buffer, name <MaxCapacityBuffer>
+        like predictive-scaling-max-capacity-buffer
+        void take
+        note <The size of the capacity buffer to use when the forecast capacity is close to or exceeds the maximum capacity. The value is specified as a percentage relative to the forecast capacity. For example, if the buffer is 10, this means a 10 percent buffer, such that if the forecast capacity is 50, and the maximum capacity is 40, then the effective maximum capacity is 55.
+
+If set to 0, Amazon EC2 Auto Scaling may scale capacity higher than the maximum capacity to equal but not exceed forecast capacity.
+
+Required if the `MaxCapacityBreachBehavior` property is set to `IncreaseMaxCapacity`, and cannot be used otherwise.>
+    note <A predictive scaling policy. Provides support for only predefined metrics.
+
+Predictive scaling works with CPU utilization, network in/out, and the Application Load Balancer request count.
+
+For more information, see [PredictiveScalingConfiguration](https://docs.aws.amazon.com/autoscaling/ec2/APIReference/API_PredictiveScalingConfiguration.html) in the _Amazon EC2 Auto Scaling API Reference_.
+
+Required if the policy type is `PredictiveScaling`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=PutScalingPolicy>
+
+  find <AutoScalingGroupName>, loan auto-scaling-group-name
+  find <PolicyName>, loan policy-name
+  find <PolicyType>, loan policy-type
+  find <AdjustmentType>, loan adjustment-type
+  find <MinAdjustmentStep>, loan min-adjustment-step
+  find <MinAdjustmentMagnitude>, loan min-adjustment-magnitude
+  find <ScalingAdjustment>, loan scaling-adjustment
+  find <Cooldown>, loan cooldown
+  find <MetricAggregationType>, loan metric-aggregation-type
+  find <StepAdjustments>, loan step-adjustments
+  find <EstimatedInstanceWarmup>, loan estimated-instance-warmup
+  find <TargetTrackingConfiguration>, loan target-tracking-configuration
+  find <Enabled>, loan enabled
+  find <PredictiveScalingConfiguration>, loan predictive-scaling-configuration
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like policy-arn-type
+    note <Success>
+  loot 480
+    seed xml, like limit-exceeded-fault
+    note <LimitExceededFault>
+  loot 481
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>
+  loot 482
+    seed xml, like service-linked-role-failure
+    note <ServiceLinkedRoleFailure>

@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/auditmanager/2017-07-25/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/auditmanager/2017-07-25/base/batch-import-evidence-to-assessment-control-body
+  take form batch-import-evidence-to-assessment-control-body
+
+load @drumwork/snow/amazonaws.com/auditmanager/2017-07-25/base/batch-import-evidence-to-assessment-control-response
+  take form batch-import-evidence-to-assessment-control-response
+
+load @drumwork/snow/amazonaws.com/auditmanager/2017-07-25/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/auditmanager/2017-07-25/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/auditmanager/2017-07-25/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot batch-import-evidence-to-assessment-control, name <BatchImportEvidenceToAssessmentControl>
+  note <Uploads one or more pieces of evidence to the specified control in the assessment in Audit Manager.>
+
+  take assessment-id
+    like native-string
+    note <The identifier for the specified assessment.>
+  take control-set-id
+    like native-string
+    note <The identifier for the specified control set.>
+  take control-id
+    like native-string
+    note <The identifier for the specified control.>
+  take batch-import-evidence-to-assessment-control-body, like batch-import-evidence-to-assessment-control-body
+
+  line </assessments/{assessment-id}/controlSets/{control-set-id}/controls/{control-id}/evidence>
+
+  seed json, loan batch-import-evidence-to-assessment-control-body
+
+  loot 200
+    seed json, like batch-import-evidence-to-assessment-control-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like internal-server-exception
+    note <InternalServerException>

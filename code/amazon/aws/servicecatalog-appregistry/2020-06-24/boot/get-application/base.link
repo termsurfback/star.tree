@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/servicecatalog-appregistry/2020-06-24/base/get-application-response
+  take form get-application-response
+
+load @drumwork/snow/amazonaws.com/servicecatalog-appregistry/2020-06-24/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog-appregistry/2020-06-24/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog-appregistry/2020-06-24/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-application, name <GetApplication>
+  note <Retrieves metadata information about one of your applications. The application can be specified either by its unique ID or by its name (which is unique within one account in one region at a given point in time). Specify by ID in automated workflows if you want to make sure that the exact same application is returned or a `ResourceNotFoundException` is thrown, avoiding the ABA addressing problem.>
+
+  take application
+    like native-string
+    note <The name or ID of the application.>
+
+  line </applications/{application}>
+
+  loot 200
+    seed json, like get-application-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

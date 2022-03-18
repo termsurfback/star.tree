@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/list-trials-response
+  take form list-trials-response
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-not-found
+  take form resource-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-trials, name <ListTrials>
+  note <Lists the trials in your account. Specify an experiment name to limit the list to the trials that are part of that experiment. Specify a trial component name to limit the list to the trials that associated with that trial component. The list can be filtered to show only trials that were created in a specific time range. The list can be sorted by trial name or creation time.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-trials-request, like list-trials-request
+
+  line </#X-Amz-Target=SageMaker.ListTrials>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-trials-request
+
+  loot 200
+    seed json, like list-trials-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found
+    note <ResourceNotFound>

@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/ec2-instance-connect/2018-04-02/base/auth-exception
+  take form auth-exception
+
+load @drumwork/snow/amazonaws.com/ec2-instance-connect/2018-04-02/base/ec2-instance-not-found-exception
+  take form ec2-instance-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ec2-instance-connect/2018-04-02/base/invalid-args-exception
+  take form invalid-args-exception
+
+load @drumwork/snow/amazonaws.com/ec2-instance-connect/2018-04-02/base/send-ssh-public-key-response
+  take form send-ssh-public-key-response
+
+load @drumwork/snow/amazonaws.com/ec2-instance-connect/2018-04-02/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/amazonaws.com/ec2-instance-connect/2018-04-02/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot send-ssh-public-key, name <SendSSHPublicKey>
+  note <Pushes an SSH public key to the specified EC2 instance for use by the specified user. The key remains for 60 seconds. For more information, see [Connect to your Linux instance using EC2 Instance Connect](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Connect-using-EC2-Instance-Connect.html) in the _Amazon EC2 User Guide_.>
+
+  take x-amz-target
+    like native-string
+  take send-ssh-public-key-request, like send-ssh-public-key-request
+
+  line </#X-Amz-Target=AWSEC2InstanceConnectService.SendSSHPublicKey>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan send-ssh-public-key-request
+
+  loot 200
+    seed json, like send-ssh-public-key-response
+    note <Success>
+  loot 480
+    seed json, like auth-exception
+    note <AuthException>
+  loot 481
+    seed json, like invalid-args-exception
+    note <InvalidArgsException>
+  loot 482
+    seed json, like service-exception
+    note <ServiceException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like ec2-instance-not-found-exception
+    note <EC2InstanceNotFoundException>

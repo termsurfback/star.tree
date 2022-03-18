@@ -1,0 +1,153 @@
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/image-inserter
+  take form image-inserter
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/input-deblock-filter
+  take form input-deblock-filter
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/input-denoise-filter
+  take form input-denoise-filter
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/input-filter-enable
+  take form input-filter-enable
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/input-psi-control
+  take form input-psi-control
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/input-scan-type
+  take form input-scan-type
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/input-timecode-source
+  take form input-timecode-source
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/integer-min-negative5-max5
+  take form integer-min-negative5-max5
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/integer-min1-max2147483647
+  take form integer-min1-max2147483647
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/list-of-input-clipping
+  take form list-of-input-clipping
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/map-of-audio-selector
+  take form map-of-audio-selector
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/map-of-audio-selector-group
+  take form map-of-audio-selector-group
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/map-of-caption-selector
+  take form map-of-caption-selector
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/rectangle
+  take form rectangle
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/string-min11-max11-pattern01-d20305-d205-d
+  take form string-min11-max11-pattern01-d20305-d205-d
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/video-selector
+  take form video-selector
+
+form input-template, name <InputTemplate>
+  note <Specified video input in a template.>
+  take audio-selector-groups, name <AudioSelectorGroups>
+    like map-of-audio-selector-group
+    void take
+    note <Use audio selector groups to combine multiple sidecar audio inputs so that you can assign them to a single output audio tab (AudioDescription). Note that, if you're working with embedded audio, it's simpler to assign multiple input tracks into a single audio selector rather than use an audio selector group.>
+    host xml
+      host name, text <audioSelectorGroups>
+  take audio-selectors, name <AudioSelectors>
+    like map-of-audio-selector
+    void take
+    note <Use Audio selectors (AudioSelectors) to specify a track or set of tracks from the input that you will use in your outputs. You can use multiple Audio selectors per input.>
+    host xml
+      host name, text <audioSelectors>
+  take caption-selectors, name <CaptionSelectors>
+    like map-of-caption-selector
+    void take
+    note <Use captions selectors to specify the captions data from your input that you use in your outputs. You can use up to 20 captions selectors per input.>
+    host xml
+      host name, text <captionSelectors>
+  take crop, name <Crop>
+    like rectangle
+    void take
+    note <Use Cropping selection (crop) to specify the video area that the service will include in the output video frame. If you specify a value here, it will override any value that you specify in the output setting Cropping selection (crop).>
+    host xml
+      host name, text <crop>
+  take deblock-filter, name <DeblockFilter>
+    like input-deblock-filter
+    void take
+    note <Enable Deblock (InputDeblockFilter) to produce smoother motion in the output. Default is disabled. Only manually controllable for MPEG2 and uncompressed video inputs.>
+    host xml
+      host name, text <deblockFilter>
+  take denoise-filter, name <DenoiseFilter>
+    like input-denoise-filter
+    void take
+    note <Enable Denoise (InputDenoiseFilter) to filter noise from the input. Default is disabled. Only applicable to MPEG2, H.264, H.265, and uncompressed video inputs.>
+    host xml
+      host name, text <denoiseFilter>
+  take filter-enable, name <FilterEnable>
+    like input-filter-enable
+    void take
+    note <Specify how the transcoding service applies the denoise and deblock filters. You must also enable the filters separately, with Denoise (InputDenoiseFilter) and Deblock (InputDeblockFilter). * Auto - The transcoding service determines whether to apply filtering, depending on input type and quality. * Disable - The input is not filtered. This is true even if you use the API to enable them in (InputDeblockFilter) and (InputDeblockFilter). * Force - The input is filtered regardless of input type.>
+    host xml
+      host name, text <filterEnable>
+  take filter-strength, name <FilterStrength>
+    like integer-min-negative5-max5
+    void take
+    note <Use Filter strength (FilterStrength) to adjust the magnitude the input filter settings (Deblock and Denoise). The range is -5 to 5. Default is 0.>
+    host xml
+      host name, text <filterStrength>
+  take image-inserter, name <ImageInserter>
+    like image-inserter
+    void take
+    note <Enable the image inserter feature to include a graphic overlay on your video. Enable or disable this feature for each input individually. This setting is disabled by default.>
+    host xml
+      host name, text <imageInserter>
+  take input-clippings, name <InputClippings>
+    like list-of-input-clipping
+    void take
+    note <(InputClippings) contains sets of start and end times that together specify a portion of the input to be used in the outputs. If you provide only a start time, the clip will be the entire input from that point to the end. If you provide only an end time, it will be the entire input up to that point. When you specify more than one input clip, the transcoding service creates the job outputs by stringing the clips together in the order you specify them.>
+    host xml
+      host name, text <inputClippings>
+  take input-scan-type, name <InputScanType>
+    like input-scan-type
+    void take
+    note <When you have a progressive segmented frame (PsF) input, use this setting to flag the input as PsF. MediaConvert doesn't automatically detect PsF. Therefore, flagging your input as PsF results in better preservation of video quality when you do deinterlacing and frame rate conversion. If you don't specify, the default value is Auto (AUTO). Auto is the correct setting for all inputs that are not PsF. Don't set this value to PsF when your input is interlaced. Doing so creates horizontal interlacing artifacts.>
+    host xml
+      host name, text <inputScanType>
+  take position, name <Position>
+    like rectangle
+    void take
+    note <Use Selection placement (position) to define the video area in your output frame. The area outside of the rectangle that you specify here is black. If you specify a value here, it will override any value that you specify in the output setting Selection placement (position). If you specify a value here, this will override any AFD values in your input, even if you set Respond to AFD (RespondToAfd) to Respond (RESPOND). If you specify a value here, this will ignore anything that you specify for the setting Scaling Behavior (scalingBehavior).>
+    host xml
+      host name, text <position>
+  take program-number, name <ProgramNumber>
+    like integer-min1-max2147483647
+    void take
+    note <Use Program (programNumber) to select a specific program from within a multi-program transport stream. Note that Quad 4K is not currently supported. Default is the first program within the transport stream. If the program you specify doesn't exist, the transcoding service will use this default.>
+    host xml
+      host name, text <programNumber>
+  take psi-control, name <PsiControl>
+    like input-psi-control
+    void take
+    note <Set PSI control (InputPsiControl) for transport stream inputs to specify which data the demux process to scans. * Ignore PSI - Scan all PIDs for audio and video. * Use PSI - Scan only PSI data.>
+    host xml
+      host name, text <psiControl>
+  take timecode-source, name <TimecodeSource>
+    like input-timecode-source
+    void take
+    note <Use this Timecode source setting, located under the input settings (InputTimecodeSource), to specify how the service counts input video frames. This input frame count affects only the behavior of features that apply to a single input at a time, such as input clipping and synchronizing some captions formats. Choose Embedded (EMBEDDED) to use the timecodes in your input video. Choose Start at zero (ZEROBASED) to start the first frame at zero. Choose Specified start (SPECIFIEDSTART) to start the first frame at the timecode that you specify in the setting Start timecode (timecodeStart). If you don't specify a value for Timecode source, the service will use Embedded by default. For more information about timecodes, see https://docs.aws.amazon.com/console/mediaconvert/timecode.>
+    host xml
+      host name, text <timecodeSource>
+  take timecode-start, name <TimecodeStart>
+    like string-min11-max11-pattern01-d20305-d205-d
+    void take
+    note <Specify the timecode that you want the service to use for this input's initial frame. To use this setting, you must set the Timecode source setting, located under the input settings (InputTimecodeSource), to Specified start (SPECIFIEDSTART). For more information about timecodes, see https://docs.aws.amazon.com/console/mediaconvert/timecode.>
+    host xml
+      host name, text <timecodeStart>
+  take video-selector, name <VideoSelector>
+    like video-selector
+    void take
+    note <Input video selectors contain the video settings for the input. Each of your inputs can have up to one video selector.>
+    host xml
+      host name, text <videoSelector>

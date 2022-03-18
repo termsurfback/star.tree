@@ -1,0 +1,197 @@
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/authorization-not-found-fault
+  take form authorization-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/create-db-instance-result
+  take form create-db-instance-result
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-instance-already-exists-fault
+  take form db-instance-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-parameter-group-not-found-fault
+  take form db-parameter-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-security-group-not-found-fault
+  take form db-security-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-subnet-group-does-not-cover-enough-a-zs
+  take form db-subnet-group-does-not-cover-enough-a-zs
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-subnet-group-not-found-fault
+  take form db-subnet-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/instance-quota-exceeded-fault
+  take form instance-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/insufficient-db-instance-capacity-fault
+  take form insufficient-db-instance-capacity-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/invalid-subnet
+  take form invalid-subnet
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/invalid-vpc-network-state-fault
+  take form invalid-vpc-network-state-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/kms-key-not-accessible-fault
+  take form kms-key-not-accessible-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/storage-quota-exceeded-fault
+  take form storage-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/storage-type-not-supported-fault
+  take form storage-type-not-supported-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/tag
+  take form tag
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-db-instance, name <GET_CreateDBInstance>
+  note <Creates a new instance.>
+
+  take db-instance-identifier
+    like native-string
+    note <The instance identifier. This parameter is stored as a lowercase string.
+
+Constraints:
+
+- Must contain from 1 to 63 letters, numbers, or hyphens.
+
+- The first character must be a letter.
+
+- Cannot end with a hyphen or contain two consecutive hyphens.
+
+Example: `mydbinstance`>
+  take db-instance-class
+    like native-string
+    note <The compute and memory capacity of the instance; for example, `db.r5.large`.>
+  take engine
+    like native-string
+    note <The name of the database engine to be used for this instance.
+
+Valid value: `docdb`>
+  take availability-zone
+    like native-string
+    note <The Amazon EC2 Availability Zone that the instance is created in.
+
+Default: A random, system-chosen Availability Zone in the endpoint's Region.
+
+Example: `us-east-1d`>
+    void take
+  take preferred-maintenance-window
+    like native-string
+    note <The time range each week during which system maintenance can occur, in Universal Coordinated Time (UTC).
+
+Format: `ddd:hh24:mi-ddd:hh24:mi`
+
+The default is a 30-minute window selected at random from an 8-hour block of time for each Region, occurring on a random day of the week.
+
+Valid days: Mon, Tue, Wed, Thu, Fri, Sat, Sun
+
+Constraints: Minimum 30-minute window.>
+    void take
+  take auto-minor-version-upgrade
+    like native-boolean
+    note <This parameter does not apply to Amazon DocumentDB. Amazon DocumentDB does not perform minor version upgrades regardless of the value set.
+
+Default: `false`>
+    void take
+  take tags
+    like list
+      like tag
+    note <The tags to be assigned to the instance. You can assign up to 10 tags to an instance.>
+    void take
+  take db-cluster-identifier
+    like native-string
+    note <The identifier of the cluster that the instance will belong to.>
+  take promotion-tier
+    like native-integer
+    note <A value that specifies the order in which an Amazon DocumentDB replica is promoted to the primary instance after a failure of the existing primary instance.
+
+Default: 1
+
+Valid values: 0-15>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateDBInstance>
+
+  find <DBInstanceIdentifier>, loan db-instance-identifier
+  find <DBInstanceClass>, loan db-instance-class
+  find <Engine>, loan engine
+  find <AvailabilityZone>, loan availability-zone
+  find <PreferredMaintenanceWindow>, loan preferred-maintenance-window
+  find <AutoMinorVersionUpgrade>, loan auto-minor-version-upgrade
+  find <Tags>, loan tags
+  find <DBClusterIdentifier>, loan db-cluster-identifier
+  find <PromotionTier>, loan promotion-tier
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-db-instance-result
+    note <Success>
+  loot 480
+    seed xml, like db-instance-already-exists-fault
+    note <DBInstanceAlreadyExistsFault>
+  loot 481
+    seed xml, like insufficient-db-instance-capacity-fault
+    note <InsufficientDBInstanceCapacityFault>
+  loot 482
+    seed xml, like db-parameter-group-not-found-fault
+    note <DBParameterGroupNotFoundFault>
+  loot 483
+    seed xml, like db-security-group-not-found-fault
+    note <DBSecurityGroupNotFoundFault>
+  loot 484
+    seed xml, like instance-quota-exceeded-fault
+    note <InstanceQuotaExceededFault>
+  loot 485
+    seed xml, like storage-quota-exceeded-fault
+    note <StorageQuotaExceededFault>
+  loot 486
+    seed xml, like db-subnet-group-not-found-fault
+    note <DBSubnetGroupNotFoundFault>
+  loot 487
+    seed xml, like db-subnet-group-does-not-cover-enough-a-zs
+    note <DBSubnetGroupDoesNotCoverEnoughAZs>
+  loot 488
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>
+  loot 489
+    seed xml, like invalid-subnet
+    note <InvalidSubnet>
+  loot 490
+    seed xml, like invalid-vpc-network-state-fault
+    note <InvalidVPCNetworkStateFault>
+  loot 491
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>
+  loot 492
+    seed xml, like storage-type-not-supported-fault
+    note <StorageTypeNotSupportedFault>
+  loot 493
+    seed xml, like authorization-not-found-fault
+    note <AuthorizationNotFoundFault>
+  loot 494
+    seed xml, like kms-key-not-accessible-fault
+    note <KMSKeyNotAccessibleFault>

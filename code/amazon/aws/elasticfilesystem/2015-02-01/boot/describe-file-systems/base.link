@@ -1,0 +1,66 @@
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/bad-request
+  take form bad-request
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/describe-file-systems-response
+  take form describe-file-systems-response
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/file-system-not-found
+  take form file-system-not-found
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-file-systems, name <DescribeFileSystems>
+  note <Returns the description of a specific Amazon EFS file system if either the file system `CreationToken` or the `FileSystemId` is provided. Otherwise, it returns descriptions of all file systems owned by the caller's Amazon Web Services account in the Amazon Web Services Region of the endpoint that you're calling.
+
+When retrieving all file system descriptions, you can optionally specify the `MaxItems` parameter to limit the number of descriptions in a response. Currently, this number is automatically set to 10. If more file system descriptions remain, Amazon EFS returns a `NextMarker`, an opaque token, in the response. In this case, you should send a subsequent request with the `Marker` request parameter set to the value of `NextMarker`.
+
+To retrieve a list of your file system descriptions, this operation is used in an iterative process, where `DescribeFileSystems` is called first without the `Marker` and then the operation continues to call it with the `Marker` parameter set to the value of the `NextMarker` from the previous response until the response has no `NextMarker`.
+
+The order of file systems returned in the response of one `DescribeFileSystems` call and the order of file systems returned across the responses of a multi-call iteration is unspecified.
+
+This operation requires permissions for the `elasticfilesystem:DescribeFileSystems` action.>
+
+  take max-items
+    like native-integer
+    note <(Optional) Specifies the maximum number of file systems to return in the response (integer). This number is automatically set to 100. The response is paginated at 100 per page if you have more than 100 file systems.>
+    void take
+  take marker
+    like native-string
+    note <(Optional) Opaque pagination token returned from a previous `DescribeFileSystems` operation (String). If present, specifies to continue the list from where the returning call had left off.>
+    void take
+  take creation-token
+    like native-string
+    note <(Optional) Restricts the list to the file system with this creation token (String). You specify a creation token when you create an Amazon EFS file system.>
+    void take
+  take file-system-id
+    like native-string
+    note <(Optional) ID of the file system whose description you want to retrieve (String).>
+    void take
+
+  line </2015-02-01/file-systems>
+
+  find <MaxItems>, loan max-items
+  find <Marker>, loan marker
+  find <CreationToken>, loan creation-token
+  find <FileSystemId>, loan file-system-id
+
+  loot 200
+    seed json, like describe-file-systems-response
+    note <Success>
+  loot 480
+    seed json, like bad-request
+    note <BadRequest>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 482
+    seed json, like file-system-not-found
+    note <FileSystemNotFound>

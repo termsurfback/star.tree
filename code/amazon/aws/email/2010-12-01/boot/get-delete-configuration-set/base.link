@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/configuration-set-does-not-exist-exception
+  take form configuration-set-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/delete-configuration-set-response
+  take form delete-configuration-set-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-configuration-set, name <GET_DeleteConfigurationSet>
+  note <Deletes a configuration set. Configuration sets enable you to publish email sending events. For information about using configuration sets, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/monitor-sending-activity.html).
+
+You can execute this operation no more than once per second.>
+
+  take configuration-set-name
+    like native-string
+    note <The name of the configuration set to delete.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteConfigurationSet>
+
+  find <ConfigurationSetName>, loan configuration-set-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-configuration-set-response
+    note <Success>
+  loot 480
+    seed xml, like configuration-set-does-not-exist-exception
+    note <ConfigurationSetDoesNotExistException>

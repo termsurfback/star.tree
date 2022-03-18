@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/tag-resource-response
+  take form tag-resource-response
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/tagging-failed-exception
+  take form tagging-failed-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot tag-resource, name <TagResource>
+  note <Assigns a tag to a GameLift resource. AWS resource tags provide an additional management tool set. You can use tags to organize resources, create IAM permissions policies to manage access to groups of resources, customize AWS cost breakdowns, etc. This operation handles the permissions necessary to manage tags for the following GameLift resource types:
+
+- Build
+
+- Script
+
+- Fleet
+
+- Alias
+
+- GameSessionQueue
+
+- MatchmakingConfiguration
+
+- MatchmakingRuleSet
+
+To add a tag to a resource, specify the unique ARN value for the resource and provide a tag list containing one or more tags. The operation succeeds even if the list includes tags that are already assigned to the specified resource.
+
+**Learn more** [Tagging AWS Resources](https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html) in the _AWS General Reference_
+
+[AWS Tagging Strategies](http://aws.amazon.com/answers/account-management/aws-tagging-strategies/)
+
+**Related actions** TagResource | UntagResource | ListTagsForResource | [All APIs by task](https://docs.aws.amazon.com/gamelift/latest/developerguide/reference-awssdk.html#reference-awssdk-resources-fleets)>
+
+  take x-amz-target
+    like native-string
+  take tag-resource-request, like tag-resource-request
+
+  line </#X-Amz-Target=GameLift.TagResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan tag-resource-request
+
+  loot 200
+    seed json, like tag-resource-response
+    note <Success>
+  loot 480
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like tagging-failed-exception
+    note <TaggingFailedException>
+  loot 483
+    seed json, like internal-service-exception
+    note <InternalServiceException>

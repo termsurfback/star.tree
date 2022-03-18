@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/firebasehosting/v1beta1/base/list-versions-response
+  take form list-versions-response
+
+boot firebasehosting-sites-versions-list, name <firebasehosting.sites.versions.list>
+  note <Lists the versions that have been created for the specified site. This list includes versions for both the default `live` channel and any active preview channels for the specified site.>
+
+  take parent
+    like native-string
+    note <Required. The site or channel for which to list versions, in either of the following formats: - sites/SITE_ID - sites/SITE_ID/channels/CHANNEL_ID>
+  take filter
+    like native-string
+    note <A filter string used to return a subset of versions in the response. The currently supported fields for filtering are: `name`, `status`, and `create_time`. Learn more about filtering in Google's [AIP 160 standard](https://google.aip.dev/160).>
+    void take
+  take page-size
+    like native-integer
+    note <The maximum number of versions to return. The service may return a lower number if fewer versions exist than this maximum number. If unspecified, defaults to 25. The maximum value is 100; values above 100 will be coerced to 100.>
+    void take
+  take page-token
+    like native-string
+    note <A token from a previous call to `ListVersions` that tells the server where to resume listing.>
+    void take
+
+  line </v1beta1/{parent}/versions>
+
+  find <filter>, loan filter
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-versions-response
+    note <Successful response>

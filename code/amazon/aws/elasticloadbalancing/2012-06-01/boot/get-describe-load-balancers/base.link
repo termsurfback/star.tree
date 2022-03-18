@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/access-point-name
+  take form access-point-name
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/access-point-not-found-exception
+  take form access-point-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/dependency-throttle-exception
+  take form dependency-throttle-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/describe-access-points-output
+  take form describe-access-points-output
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-load-balancers, name <GET_DescribeLoadBalancers>
+  note <Describes the specified the load balancers. If no load balancers are specified, the call describes all of your load balancers.>
+
+  take load-balancer-names
+    like list
+      like access-point-name
+    note <The names of the load balancers.>
+    void take
+  take marker
+    like native-string
+    note <The marker for the next set of results. (You received this marker from a previous call.)>
+    void take
+  take page-size
+    like native-integer
+    note <The maximum number of results to return with this call (a number from 1 to 400). The default is 400.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeLoadBalancers>
+
+  find <LoadBalancerNames>, loan load-balancer-names
+  find <Marker>, loan marker
+  find <PageSize>, loan page-size
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-access-points-output
+    note <Success>
+  loot 480
+    seed xml, like access-point-not-found-exception
+    note <AccessPointNotFoundException>
+  loot 481
+    seed xml, like dependency-throttle-exception
+    note <DependencyThrottleException>

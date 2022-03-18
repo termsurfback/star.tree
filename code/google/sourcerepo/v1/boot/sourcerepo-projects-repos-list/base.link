@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/sourcerepo/v1/base/list-repos-response
+  take form list-repos-response
+
+boot sourcerepo-projects-repos-list, name <sourcerepo.projects.repos.list>
+  note <Returns all repos belonging to a project. The sizes of the repos are not set by ListRepos. To get the size of a repo, use GetRepo.>
+
+  take name
+    like native-string
+    note <The project ID whose repos should be listed. Values are of the form `projects/`.>
+  take page-size
+    like native-integer
+    note <Maximum number of repositories to return; between 1 and 500. If not set or zero, defaults to 100 at the server.>
+    void take
+  take page-token
+    like native-string
+    note <Resume listing repositories where a prior ListReposResponse left off. This is an opaque token that must be obtained from a recent, prior ListReposResponse's next_page_token field.>
+    void take
+
+  line </v1/{name}/repos>
+
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-repos-response
+    note <Successful response>

@@ -1,0 +1,49 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_taskrouter_v1/1.27.2/base/taskrouter-v1-workspace-workflow-workflow-cumulative-statistics
+  take form taskrouter-v1-workspace-workflow-workflow-cumulative-statistics
+
+boot fetch-workflow-cumulative-statistics, name <FetchWorkflowCumulativeStatistics>
+  take workspace-sid
+    like native-string
+    note <The SID of the Workspace with the resource to fetch.>
+  take workflow-sid
+    like native-string
+    note <Returns the list of Tasks that are being controlled by the Workflow with the specified Sid value.>
+  take end-date
+    like native-string
+    note <Only include usage that occurred on or before this date, specified in GMT as an \[ISO 8601\](https://en.wikipedia.org/wiki/ISO\_8601) date-time.>
+    void take
+  take minutes
+    like native-integer
+    note <Only calculate statistics since this many minutes in the past. The default 15 minutes. This is helpful for displaying statistics for the last 15 minutes, 240 minutes (4 hours), and 480 minutes (8 hours) to see trends.>
+    void take
+  take start-date
+    like native-string
+    note <Only calculate statistics from this date and time and later, specified in \[ISO 8601\](https://en.wikipedia.org/wiki/ISO\_8601) format.>
+    void take
+  take task-channel
+    like native-string
+    note <Only calculate cumulative statistics on this TaskChannel. Can be the TaskChannel&#39;s SID or its \`unique\_name\`, such as \`voice\`, \`sms\`, or \`default\`.>
+    void take
+  take split-by-wait-time
+    like native-string
+    note <A comma separated list of values that describes the thresholds, in seconds, to calculate statistics on. For each threshold specified, the number of Tasks canceled and reservations accepted above and below the specified thresholds in seconds are computed. For example, \`5,30\` would show splits of Tasks that were canceled or accepted before and after 5 seconds and before and after 30 seconds. This can be used to show short abandoned Tasks or Tasks that failed to meet an SLA.>
+    void take
+
+  line </v1/Workspaces/{workspace-sid}/Workflows/{workflow-sid}/CumulativeStatistics>
+
+  find <EndDate>, loan end-date
+  find <Minutes>, loan minutes
+  find <StartDate>, loan start-date
+  find <TaskChannel>, loan task-channel
+  find <SplitByWaitTime>, loan split-by-wait-time
+
+  loot 200
+    seed json, like taskrouter-v1-workspace-workflow-workflow-cumulative-statistics
+    note <OK>

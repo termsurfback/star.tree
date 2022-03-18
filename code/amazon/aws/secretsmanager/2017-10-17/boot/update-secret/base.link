@@ -1,0 +1,105 @@
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/encryption-failure
+  take form encryption-failure
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/malformed-policy-document-exception
+  take form malformed-policy-document-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/precondition-not-met-exception
+  take form precondition-not-met-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/resource-exists-exception
+  take form resource-exists-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/update-secret-response
+  take form update-secret-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-secret, name <UpdateSecret>
+  note <Modifies many of the details of the specified secret. If you include a `ClientRequestToken` and _either_ `SecretString` or `SecretBinary` then it also creates a new version attached to the secret.
+
+To modify the rotation configuration of a secret, use RotateSecret instead.
+
+The Secrets Manager console uses only the `SecretString` parameter and therefore limits you to encrypting and storing only a text string. To encrypt and store binary data as part of the version of a secret, you must use either the Amazon Web Services CLI or one of the Amazon Web Services SDKs.
+
+- If a version with a `VersionId` with the same value as the `ClientRequestToken` parameter already exists, the operation results in an error. You cannot modify an existing version, you can only create a new version.
+
+- If you include `SecretString` or `SecretBinary` to create a new secret version, Secrets Manager automatically attaches the staging label `AWSCURRENT` to the new version.
+
+- If you call an operation to encrypt or decrypt the `SecretString` or `SecretBinary` for a secret in the same account as the calling user and that secret doesn't specify a Amazon Web Services KMS encryption key, Secrets Manager uses the account's default Amazon Web Services managed customer master key (CMK) with the alias `aws/secretsmanager`. If this key doesn't already exist in your account then Secrets Manager creates it for you automatically. All users and roles in the same Amazon Web Services account automatically have access to use the default CMK. Note that if an Secrets Manager API call results in Amazon Web Services creating the account's Amazon Web Services-managed CMK, it can result in a one-time significant delay in returning the result.
+
+- If the secret resides in a different Amazon Web Services account from the credentials calling an API that requires encryption or decryption of the secret value then you must create and use a custom Amazon Web Services KMS CMK because you can't access the default CMK for the account using credentials from a different Amazon Web Services account. Store the ARN of the CMK in the secret when you create the secret or when you update it by including it in the `KMSKeyId`. If you call an API that must encrypt or decrypt `SecretString` or `SecretBinary` using credentials from a different account then the Amazon Web Services KMS key policy must grant cross-account access to that other account's user or role for both the kms:GenerateDataKey and kms:Decrypt operations.
+
+**Minimum permissions** To run this command, you must have the following permissions:
+
+- secretsmanager:UpdateSecret
+
+- kms:GenerateDataKey - needed only if you use a custom Amazon Web Services KMS key to encrypt the secret. You do not need this permission to use the account's Amazon Web Services managed CMK for Secrets Manager.
+
+- kms:Decrypt - needed only if you use a custom Amazon Web Services KMS key to encrypt the secret. You do not need this permission to use the account's Amazon Web Services managed CMK for Secrets Manager.
+
+**Related operations** - To create a new secret, use CreateSecret.
+
+- To add only a new version to an existing secret, use PutSecretValue.
+
+- To get the details for a secret, use DescribeSecret.
+
+- To list the versions contained in a secret, use ListSecretVersionIds.>
+
+  take x-amz-target
+    like native-string
+  take update-secret-request, like update-secret-request
+
+  line </#X-Amz-Target=secretsmanager.UpdateSecret>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-secret-request
+
+  loot 200
+    seed json, like update-secret-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 483
+    seed json, like encryption-failure
+    note <EncryptionFailure>
+  loot 484
+    seed json, like resource-exists-exception
+    note <ResourceExistsException>
+  loot 485
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 486
+    seed json, like malformed-policy-document-exception
+    note <MalformedPolicyDocumentException>
+  loot 487
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 488
+    seed json, like precondition-not-met-exception
+    note <PreconditionNotMetException>

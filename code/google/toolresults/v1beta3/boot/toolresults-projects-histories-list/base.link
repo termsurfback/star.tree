@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/toolresults/v1beta3/base/list-histories-response
+  take form list-histories-response
+
+boot toolresults-projects-histories-list, name <toolresults.projects.histories.list>
+  note <Lists Histories for a given Project. The histories are sorted by modification time in descending order. The history_id key will be used to order the history with the same modification time. May return any of the following canonical error codes: - PERMISSION_DENIED - if the user is not authorized to read project - INVALID_ARGUMENT - if the request is malformed - NOT_FOUND - if the History does not exist>
+
+  take project-id
+    like native-string
+    note <A Project id. Required.>
+  take filter-by-name
+    like native-string
+    note <If set, only return histories with the given name. Optional.>
+    void take
+  take page-size
+    like native-integer
+    note <The maximum number of Histories to fetch. Default value: 20. The server will use this default if the field is not set or has a value of 0. Any value greater than 100 will be treated as 100. Optional.>
+    void take
+  take page-token
+    like native-string
+    note <A continuation token to resume the query at the next item. Optional.>
+    void take
+
+  line </toolresults/v1beta3/projects/{project-id}/histories>
+
+  find <filterByName>, loan filter-by-name
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-histories-response
+    note <Successful response>

@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/direct-connect-client-exception
+  take form direct-connect-client-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/direct-connect-server-exception
+  take form direct-connect-server-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/duplicate-tag-keys-exception
+  take form duplicate-tag-keys-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/tag-resource-response
+  take form tag-resource-response
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/too-many-tags-exception
+  take form too-many-tags-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot tag-resource, name <TagResource>
+  note <Adds the specified tags to the specified Direct Connect resource. Each resource can have a maximum of 50 tags.
+
+Each tag consists of a key and an optional value. If a tag with the same key is already associated with the resource, this action updates its value.>
+
+  take x-amz-target
+    like native-string
+  take tag-resource-request, like tag-resource-request
+
+  line </#X-Amz-Target=OvertureService.TagResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan tag-resource-request
+
+  loot 200
+    seed json, like tag-resource-response
+    note <Success>
+  loot 480
+    seed json, like duplicate-tag-keys-exception
+    note <DuplicateTagKeysException>
+  loot 481
+    seed json, like too-many-tags-exception
+    note <TooManyTagsException>
+  loot 482
+    seed json, like direct-connect-server-exception
+    note <DirectConnectServerException>
+  loot 483
+    seed json, like direct-connect-client-exception
+    note <DirectConnectClientException>

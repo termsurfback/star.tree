@@ -1,0 +1,83 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/create-vpc-endpoint-service-configuration-result
+  take form create-vpc-endpoint-service-configuration-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/tag-specification
+  take form tag-specification
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-create-vpc-endpoint-service-configuration, name <GET_CreateVpcEndpointServiceConfiguration>
+  note <Creates a VPC endpoint service configuration to which service consumers (AWS accounts, IAM users, and IAM roles) can connect.
+
+To create an endpoint service configuration, you must first create one of the following for your service:
+
+- A [Network Load Balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/network/introduction.html). Service consumers connect to your service using an interface endpoint.
+
+- A [Gateway Load Balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/gateway/introduction.html). Service consumers connect to your service using a Gateway Load Balancer endpoint.
+
+For more information, see [VPC Endpoint Services](https://docs.aws.amazon.com/vpc/latest/userguide/endpoint-service.html) in the _Amazon Virtual Private Cloud User Guide_.
+
+If you set the private DNS name, you must prove that you own the private DNS domain name. For more information, see [VPC Endpoint Service Private DNS Name Verification](https://docs.aws.amazon.com/vpc/latest/userguide/endpoint-services-dns-validation.html) in the _Amazon Virtual Private Cloud User Guide_.>
+
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take acceptance-required
+    like native-boolean
+    note <Indicates whether requests from service consumers to create an endpoint to your service must be accepted. To accept a request, use AcceptVpcEndpointConnections.>
+    void take
+  take private-dns-name
+    like native-string
+    note <(Interface endpoint configuration) The private DNS name to assign to the VPC endpoint service.>
+    void take
+  take network-load-balancer-arn
+    like list
+      like string
+    note <The Amazon Resource Names (ARNs) of one or more Network Load Balancers for your service.>
+    void take
+  take gateway-load-balancer-arn
+    like list
+      like string
+    note <The Amazon Resource Names (ARNs) of one or more Gateway Load Balancers.>
+    void take
+  take client-token
+    like native-string
+    note <Unique, case-sensitive identifier that you provide to ensure the idempotency of the request. For more information, see [How to Ensure Idempotency](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Run_Instance_Idempotency.html).>
+    void take
+  take tag-specification
+    like list
+      like tag-specification
+    note <The tags to associate with the service.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateVpcEndpointServiceConfiguration>
+
+  find <DryRun>, loan dry-run
+  find <AcceptanceRequired>, loan acceptance-required
+  find <PrivateDnsName>, loan private-dns-name
+  find <NetworkLoadBalancerArn>, loan network-load-balancer-arn
+  find <GatewayLoadBalancerArn>, loan gateway-load-balancer-arn
+  find <ClientToken>, loan client-token
+  find <TagSpecification>, loan tag-specification
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-vpc-endpoint-service-configuration-result
+    note <Success>

@@ -1,0 +1,81 @@
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/disabled-exception
+  take form disabled-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-arn-exception
+  take form invalid-arn-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-internal-exception
+  take form kms-internal-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-invalid-state-exception
+  take form kms-invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/unsupported-operation-exception
+  take form unsupported-operation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-primary-region, name <UpdatePrimaryRegion>
+  note <Changes the primary key of a multi-Region key.
+
+This operation changes the replica key in the specified Region to a primary key and changes the former primary key to a replica key. For example, suppose you have a primary key in `us-east-1` and a replica key in `eu-west-2`. If you run `UpdatePrimaryRegion` with a `PrimaryRegion` value of `eu-west-2`, the primary key is now the key in `eu-west-2`, and the key in `us-east-1` becomes a replica key. For details, see [Updating the primary Region](https://docs.aws.amazon.com/kms/latest/developerguide/multi-region-keys-manage.html#multi-region-update) in the _Key Management Service Developer Guide_.
+
+This operation supports _multi-Region keys_, an KMS feature that lets you create multiple interoperable KMS keys in different Amazon Web Services Regions. Because these KMS keys have the same key ID, key material, and other metadata, you can use them interchangeably to encrypt data in one Amazon Web Services Region and decrypt it in a different Amazon Web Services Region without re-encrypting the data or making a cross-Region call. For more information about multi-Region keys, see [Using multi-Region keys](https://docs.aws.amazon.com/kms/latest/developerguide/multi-region-keys-overview.html) in the _Key Management Service Developer Guide_.
+
+The _primary key_ of a multi-Region key is the source for properties that are always shared by primary and replica keys, including the key material, [key ID](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#key-id-key-id), [key spec](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#key-spec), [key usage](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#key-usage), [key material origin](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#key-origin), and [automatic key rotation](https://docs.aws.amazon.com/kms/latest/developerguide/rotate-keys.html). It's the only key that can be replicated. You cannot [delete the primary key](https://docs.aws.amazon.com/kms/latest/APIReference/API_ScheduleKeyDeletion.html) until all replica keys are deleted.
+
+The key ID and primary Region that you specify uniquely identify the replica key that will become the primary key. The primary Region must already have a replica key. This operation does not create a KMS key in the specified Region. To find the replica keys, use the DescribeKey operation on the primary key or any replica key. To create a replica key, use the ReplicateKey operation.
+
+You can run this operation while using the affected multi-Region keys in cryptographic operations. This operation should not delay, interrupt, or cause failures in cryptographic operations.
+
+Even after this operation completes, the process of updating the primary Region might still be in progress for a few more seconds. Operations such as `DescribeKey` might display both the old and new primary keys as replicas. The old and new primary keys have a transient key state of `Updating`. The original key state is restored when the update is complete. While the key state is `Updating`, you can use the keys in cryptographic operations, but you cannot replicate the new primary key or perform certain management operations, such as enabling or disabling these keys. For details about the `Updating` key state, see [Key state: Effect on your KMS key](kms/latest/developerguide/key-state.html) in the _Key Management Service Developer Guide_.
+
+This operation does not return any output. To verify that primary key is changed, use the DescribeKey operation.
+
+**Cross-account use**: No. You cannot use this operation in a different Amazon Web Services account.
+
+**Required permissions**:
+
+- `kms:UpdatePrimaryRegion` on the current primary key (in the primary key's Region). Include this permission primary key's key policy.
+
+- `kms:UpdatePrimaryRegion` on the current replica key (in the replica key's Region). Include this permission in the replica key's key policy.
+
+**Related operations** - CreateKey
+
+- ReplicateKey>
+
+  take x-amz-target
+    like native-string
+  take update-primary-region-request, like update-primary-region-request
+
+  line </#X-Amz-Target=TrentService.UpdatePrimaryRegion>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-primary-region-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like disabled-exception
+    note <DisabledException>
+  loot 481
+    seed json, like invalid-arn-exception
+    note <InvalidArnException>
+  loot 482
+    seed json, like kms-invalid-state-exception
+    note <KMSInvalidStateException>
+  loot 483
+    seed json, like kms-internal-exception
+    note <KMSInternalException>
+  loot 484
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 485
+    seed json, like unsupported-operation-exception
+    note <UnsupportedOperationException>

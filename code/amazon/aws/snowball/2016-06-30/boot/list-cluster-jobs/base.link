@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/invalid-resource-exception
+  take form invalid-resource-exception
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/list-cluster-jobs-result
+  take form list-cluster-jobs-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-cluster-jobs, name <ListClusterJobs>
+  note <Returns an array of `JobListEntry` objects of the specified length. Each `JobListEntry` object is for a job in the specified cluster and contains a job's state, a job's ID, and other information.>
+
+  take x-amz-target
+    like native-string
+  take list-cluster-jobs-request, like list-cluster-jobs-request
+
+  line </#X-Amz-Target=AWSIESnowballJobManagementService.ListClusterJobs>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-cluster-jobs-request
+
+  loot 200
+    seed json, like list-cluster-jobs-result
+    note <Success>
+  loot 480
+    seed json, like invalid-resource-exception
+    note <InvalidResourceException>
+  loot 481
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>

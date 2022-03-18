@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/forecast/2018-06-26/base/create-forecast-export-job-response
+  take form create-forecast-export-job-response
+
+load @drumwork/snow/amazonaws.com/forecast/2018-06-26/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/forecast/2018-06-26/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/forecast/2018-06-26/base/resource-already-exists-exception
+  take form resource-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/forecast/2018-06-26/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/forecast/2018-06-26/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-forecast-export-job, name <CreateForecastExportJob>
+  note <Exports a forecast created by the CreateForecast operation to your Amazon Simple Storage Service (Amazon S3) bucket. The forecast file name will match the following conventions:
+
+&lt;ForecastExportJobName&gt;_&lt;ExportTimestamp&gt;_&lt;PartNumber&gt;
+
+where the &lt;ExportTimestamp&gt; component is in Java SimpleDateFormat (yyyy-MM-ddTHH-mm-ssZ).
+
+You must specify a DataDestination object that includes an AWS Identity and Access Management (IAM) role that Amazon Forecast can assume to access the Amazon S3 bucket. For more information, see aws-forecast-iam-roles.
+
+For more information, see howitworks-forecast.
+
+To get a list of all your forecast export jobs, use the ListForecastExportJobs operation.
+
+The `Status` of the forecast export job must be `ACTIVE` before you can access the forecast in your Amazon S3 bucket. To get the status, use the DescribeForecastExportJob operation.>
+
+  take x-amz-target
+    like native-string
+  take create-forecast-export-job-request, like create-forecast-export-job-request
+
+  line </#X-Amz-Target=AmazonForecast.CreateForecastExportJob>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-forecast-export-job-request
+
+  loot 200
+    seed json, like create-forecast-export-job-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like resource-already-exists-exception
+    note <ResourceAlreadyExistsException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>
+  loot 484
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>

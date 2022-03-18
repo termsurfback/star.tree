@@ -1,0 +1,36 @@
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/db-snapshot-not-found-fault
+  take form db-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/delete-db-snapshot-result
+  take form delete-db-snapshot-result
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/invalid-db-snapshot-state-fault
+  take form invalid-db-snapshot-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-db-snapshot, name <GET_DeleteDBSnapshot>
+  take db-snapshot-identifier
+    like native-string
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteDBSnapshot>
+
+  find <DBSnapshotIdentifier>, loan db-snapshot-identifier
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-db-snapshot-result
+    note <Success>
+  loot 480
+    seed xml, like invalid-db-snapshot-state-fault
+    note <InvalidDBSnapshotStateFault>
+  loot 481
+    seed xml, like db-snapshot-not-found-fault
+    note <DBSnapshotNotFoundFault>

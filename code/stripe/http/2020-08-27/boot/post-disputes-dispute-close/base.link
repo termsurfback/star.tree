@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/dispute
+  take form dispute
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-disputes-dispute-close-body
+  take form post-disputes-dispute-close-body
+
+boot post-disputes-dispute-close, name <PostDisputesDisputeClose>
+  note <Closing the dispute for a charge indicates that you do not have any evidence to submit and are essentially dismissing the dispute, acknowledging it as lost.
+
+The status of the dispute will change from `needs_response` to `lost`. _Closing a dispute is irreversible_.>
+
+  take dispute
+    like native-string
+  take post-disputes-dispute-close-body, like post-disputes-dispute-close-body
+    void take
+
+  line </v1/disputes/{dispute}/close>
+
+  seed x-www-form-urlencoded, loan post-disputes-dispute-close-body
+
+  loot 200
+    seed json, like dispute
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

@@ -1,0 +1,34 @@
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/start-bulk-deployment-body
+  take form start-bulk-deployment-body
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/start-bulk-deployment-response
+  take form start-bulk-deployment-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-bulk-deployment, name <StartBulkDeployment>
+  note <Deploys multiple groups in one operation. This action starts the bulk deployment of a specified set of group versions. Each group version deployment will be triggered with an adaptive rate that has a fixed upper limit. We recommend that you include an ''X-Amzn-Client-Token'' token in every ''StartBulkDeployment'' request. These requests are idempotent with respect to the token and the request parameters.>
+
+  take x-amzn-client-token
+    like native-string
+    note <A client token used to correlate requests and responses.>
+    void take
+  take start-bulk-deployment-body, like start-bulk-deployment-body
+
+  line </greengrass/bulk/deployments>
+
+  hint <X-Amzn-Client-Token>, loan x-amzn-client-token
+
+  seed json, loan start-bulk-deployment-body
+
+  loot 200
+    seed json, like start-bulk-deployment-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>

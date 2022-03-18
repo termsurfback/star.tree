@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/import-certificate-response
+  take form import-certificate-response
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/invalid-certificate-fault
+  take form invalid-certificate-fault
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/resource-already-exists-fault
+  take form resource-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/resource-quota-exceeded-fault
+  take form resource-quota-exceeded-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot import-certificate, name <ImportCertificate>
+  note <Uploads the specified certificate.>
+
+  take x-amz-target
+    like native-string
+  take import-certificate-message, like import-certificate-message
+
+  line </#X-Amz-Target=AmazonDMSv20160101.ImportCertificate>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan import-certificate-message
+
+  loot 200
+    seed json, like import-certificate-response
+    note <Success>
+  loot 480
+    seed json, like resource-already-exists-fault
+    note <ResourceAlreadyExistsFault>
+  loot 481
+    seed json, like invalid-certificate-fault
+    note <InvalidCertificateFault>
+  loot 482
+    seed json, like resource-quota-exceeded-fault
+    note <ResourceQuotaExceededFault>

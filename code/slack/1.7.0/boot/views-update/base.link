@@ -1,0 +1,54 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+boot views-update, name <views_update>
+  note <Update an existing view.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `none`>
+  take view-id
+    like native-string
+    note <A unique identifier of the view to be updated. Either `view_id` or `external_id` is required.>
+    void take
+  take external-id
+    like native-string
+    note <A unique identifier of the view set by the developer. Must be unique for all views on a team. Max length of 255 characters. Either `view_id` or `external_id` is required.>
+    void take
+  take view
+    like native-string
+    note <A [view object](/reference/surfaces/views). This must be a JSON-encoded string.>
+    void take
+  take hash
+    like native-string
+    note <A string that represents view state to protect against possible race conditions.>
+    void take
+
+  line </views.update>
+
+  hint <token>, loan token
+
+  find <view_id>, loan view-id
+  find <external_id>, loan external-id
+  find <view>, loan view
+  find <hash>, loan hash
+
+  loot 200
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-true
+    note <Typical success response includes the updated view payload.>
+  loot fall
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response.>

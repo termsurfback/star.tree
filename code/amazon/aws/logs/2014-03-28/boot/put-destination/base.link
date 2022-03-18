@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/operation-aborted-exception
+  take form operation-aborted-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/put-destination-response
+  take form put-destination-response
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-destination, name <PutDestination>
+  note <Creates or updates a destination. This operation is used only to create destinations for cross-account subscriptions.
+
+A destination encapsulates a physical resource (such as an Amazon Kinesis stream) and enables you to subscribe to a real-time stream of log events for a different account, ingested using [PutLogEvents](https://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/API_PutLogEvents.html).
+
+Through an access policy, a destination controls what is written to it. By default, `PutDestination` does not set any access policy with the destination, which means a cross-account user cannot call [PutSubscriptionFilter](https://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/API_PutSubscriptionFilter.html) against this destination. To enable this, the destination owner must call [PutDestinationPolicy](https://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/API_PutDestinationPolicy.html) after `PutDestination`.
+
+To perform a `PutDestination` operation, you must also have the `iam:PassRole` permission.>
+
+  take x-amz-target
+    like native-string
+  take put-destination-request, like put-destination-request
+
+  line </#X-Amz-Target=Logs_20140328.PutDestination>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan put-destination-request
+
+  loot 200
+    seed json, like put-destination-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like operation-aborted-exception
+    note <OperationAbortedException>
+  loot 482
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

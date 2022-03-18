@@ -1,0 +1,39 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/people/v1/base/batch-get-contact-groups-response
+  take form batch-get-contact-groups-response
+
+boot people-contact-groups-batch-get, name <people.contactGroups.batchGet>
+  note <Get a list of contact groups owned by the authenticated user by specifying a list of contact group resource names.>
+
+  take group-fields
+    like native-string
+    note <Optional. A field mask to restrict which fields on the group are returned. Defaults to `metadata`, `groupType`, `memberCount`, and `name` if not set or set to empty. Valid fields are: * clientData * groupType * memberCount * metadata * name>
+    void take
+  take max-members
+    like native-integer
+    note <Optional. Specifies the maximum number of members to return for each group. Defaults to 0 if not set, which will return zero members.>
+    void take
+  take resource-names
+    like list
+      like native-string
+    note <Required. The resource names of the contact groups to get. There is a maximum of 200 resource names.>
+    void take
+
+  line </v1/contactGroups:batchGet>
+
+  find <groupFields>, loan group-fields
+  find <maxMembers>, loan max-members
+  find <resourceNames>, loan resource-names
+
+  loot 200
+    seed json, like batch-get-contact-groups-response
+    note <Successful response>

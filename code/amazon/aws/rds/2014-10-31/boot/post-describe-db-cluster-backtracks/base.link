@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-backtrack-message
+  take form db-cluster-backtrack-message
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-backtrack-not-found-fault
+  take form db-cluster-backtrack-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-db-cluster-backtracks, name <POST_DescribeDBClusterBacktracks>
+  note <Returns information about backtracks for a DB cluster.
+
+For more information on Amazon Aurora, see [What Is Amazon Aurora?](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_AuroraOverview.html) in the _Amazon Aurora User Guide._
+
+This action only applies to Aurora MySQL DB clusters.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-db-cluster-backtracks-message, like describe-db-cluster-backtracks-message
+    void take
+
+  line </#Action=DescribeDBClusterBacktracks>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-db-cluster-backtracks-message
+
+  loot 200
+    seed xml, like db-cluster-backtrack-message
+    note <Success>
+  loot 480
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>
+  loot 481
+    seed xml, like db-cluster-backtrack-not-found-fault
+    note <DBClusterBacktrackNotFoundFault>

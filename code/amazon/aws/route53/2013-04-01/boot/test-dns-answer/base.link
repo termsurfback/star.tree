@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/no-such-hosted-zone
+  take form no-such-hosted-zone
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/test-dns-answer-response
+  take form test-dns-answer-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot test-dns-answer, name <TestDNSAnswer>
+  note <Gets the value that Amazon Route 53 returns in response to a DNS request for a specified record name and type. You can optionally specify the IP address of a DNS resolver, an EDNS0 client subnet IP address, and a subnet mask.
+
+This call only supports querying public hosted zones.>
+
+  take hostedzoneid
+    like native-string
+    note <The ID of the hosted zone that you want Amazon Route 53 to simulate a query for.>
+  take recordname
+    like native-string
+    note <The name of the resource record set that you want Amazon Route 53 to simulate a query for.>
+  take recordtype
+    like native-string
+    note <The type of the resource record set.>
+  take resolverip
+    like native-string
+    note <If you want to simulate a request from a specific DNS resolver, specify the IP address for that resolver. If you omit this value, `TestDnsAnswer` uses the IP address of a DNS resolver in the Amazon Web Services US East (N. Virginia) Region (`us-east-1`).>
+    void take
+  take edns0clientsubnetip
+    like native-string
+    note <If the resolver that you specified for resolverip supports EDNS0, specify the IPv4 or IPv6 address of a client in the applicable location, for example, `192.0.2.44` or `2001:db8:85a3::8a2e:370:7334`.>
+    void take
+  take edns0clientsubnetmask
+    like native-string
+    note <If you specify an IP address for `edns0clientsubnetip`, you can optionally specify the number of bits of the IP address that you want the checking tool to include in the DNS query. For example, if you specify `192.0.2.44` for `edns0clientsubnetip` and `24` for `edns0clientsubnetmask`, the checking tool will simulate a request from 192.0.2.0/24. The default value is 24 bits for IPv4 addresses and 64 bits for IPv6 addresses.
+
+The range of valid values depends on whether `edns0clientsubnetip` is an IPv4 or an IPv6 address:
+
+- **IPv4**: Specify a value between 0 and 32
+
+- **IPv6**: Specify a value between 0 and 128>
+    void take
+
+  line </2013-04-01/testdnsanswer#hostedzoneid&recordname&recordtype>
+
+  find <hostedzoneid>, loan hostedzoneid
+  find <recordname>, loan recordname
+  find <recordtype>, loan recordtype
+  find <resolverip>, loan resolverip
+  find <edns0clientsubnetip>, loan edns0clientsubnetip
+  find <edns0clientsubnetmask>, loan edns0clientsubnetmask
+
+  loot 200
+    seed xml, like test-dns-answer-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-hosted-zone
+    note <NoSuchHostedZone>
+  loot 481
+    seed xml, like invalid-input
+    note <InvalidInput>

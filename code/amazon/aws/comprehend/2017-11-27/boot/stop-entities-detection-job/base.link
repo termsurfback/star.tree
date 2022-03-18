@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/comprehend/2017-11-27/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/comprehend/2017-11-27/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/comprehend/2017-11-27/base/job-not-found-exception
+  take form job-not-found-exception
+
+load @drumwork/snow/amazonaws.com/comprehend/2017-11-27/base/stop-entities-detection-job-response
+  take form stop-entities-detection-job-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot stop-entities-detection-job, name <StopEntitiesDetectionJob>
+  note <Stops an entities detection job in progress.
+
+If the job state is `IN_PROGRESS` the job is marked for termination and put into the `STOP_REQUESTED` state. If the job completes before it can be stopped, it is put into the `COMPLETED` state; otherwise the job is stopped and put into the `STOPPED` state.
+
+If the job is in the `COMPLETED` or `FAILED` state when you call the `StopDominantLanguageDetectionJob` operation, the operation returns a 400 Internal Request Exception.
+
+When a job is stopped, any documents already processed are written to the output location.>
+
+  take x-amz-target
+    like native-string
+  take stop-entities-detection-job-request, like stop-entities-detection-job-request
+
+  line </#X-Amz-Target=Comprehend_20171127.StopEntitiesDetectionJob>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan stop-entities-detection-job-request
+
+  loot 200
+    seed json, like stop-entities-detection-job-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like job-not-found-exception
+    note <JobNotFoundException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

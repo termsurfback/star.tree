@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/list-studios-output
+  take form list-studios-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-studios, name <ListStudios>
+  note <Returns a list of all Amazon EMR Studios associated with the Amazon Web Services account. The list includes details such as ID, Studio Access URL, and creation time for each Studio.>
+
+  take x-amz-target
+    like native-string
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take list-studios-input, like list-studios-input
+
+  line </#X-Amz-Target=ElasticMapReduce.ListStudios>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <Marker>, loan marker
+
+  seed json, loan list-studios-input
+
+  loot 200
+    seed json, like list-studios-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

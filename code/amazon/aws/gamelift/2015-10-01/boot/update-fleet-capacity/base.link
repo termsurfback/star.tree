@@ -1,0 +1,81 @@
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/invalid-fleet-status-exception
+  take form invalid-fleet-status-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/update-fleet-capacity-output
+  take form update-fleet-capacity-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-fleet-capacity, name <UpdateFleetCapacity>
+  note <Updates capacity settings for a fleet. For fleets with multiple locations, use this operation to manage capacity settings in each location individually. Fleet capacity determines the number of game sessions and players that can be hosted based on the fleet configuration. Use this operation to set the following fleet capacity properties:
+
+- Minimum/maximum size: Set hard limits on fleet capacity. GameLift cannot set the fleet's capacity to a value outside of this range, whether the capacity is changed manually or through automatic scaling.
+
+- Desired capacity: Manually set the number of EC2 instances to be maintained in a fleet location. Before changing a fleet's desired capacity, you may want to call DescribeEC2InstanceLimits to get the maximum capacity of the fleet's EC2 instance type. Alternatively, consider using automatic scaling to adjust capacity based on player demand.
+
+This operation can be used in the following ways:
+
+- To update capacity for a fleet's home Region, or if the fleet has no remote locations, omit the `Location` parameter. The fleet must be in `ACTIVE` status.
+
+- To update capacity for a fleet's remote location, include the `Location` parameter set to the location to be updated. The location must be in `ACTIVE` status.
+
+If successful, capacity settings are updated immediately. In response a change in desired capacity, GameLift initiates steps to start new instances or terminate existing instances in the requested fleet location. This continues until the location's active instance count matches the new desired instance count. You can track a fleet's current capacity by calling DescribeFleetCapacity or DescribeFleetLocationCapacity. If the requested desired instance count is higher than the instance type's limit, the `LimitExceeded` exception occurs.
+
+**Learn more** [Scaling fleet capacity](https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-manage-capacity.html)
+
+**Related actions** CreateFleetLocations | UpdateFleetAttributes | UpdateFleetCapacity | UpdateFleetPortSettings | UpdateRuntimeConfiguration | StopFleetActions | StartFleetActions | PutScalingPolicy | DeleteFleet | DeleteFleetLocations | DeleteScalingPolicy | [All APIs by task](https://docs.aws.amazon.com/gamelift/latest/developerguide/reference-awssdk.html#reference-awssdk-resources-fleets)>
+
+  take x-amz-target
+    like native-string
+  take update-fleet-capacity-input, like update-fleet-capacity-input
+
+  line </#X-Amz-Target=GameLift.UpdateFleetCapacity>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-fleet-capacity-input
+
+  loot 200
+    seed json, like update-fleet-capacity-output
+    note <Success>
+  loot 480
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 481
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 482
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 483
+    seed json, like invalid-fleet-status-exception
+    note <InvalidFleetStatusException>
+  loot 484
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 485
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 486
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>

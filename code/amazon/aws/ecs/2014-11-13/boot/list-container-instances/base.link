@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/cluster-not-found-exception
+  take form cluster-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/list-container-instances-response
+  take form list-container-instances-response
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-container-instances, name <ListContainerInstances>
+  note <Returns a list of container instances in a specified cluster. You can filter the results of a `ListContainerInstances` operation with cluster query language statements inside the `filter` parameter. For more information, see [Cluster Query Language](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/cluster-query-language.html) in the _Amazon Elastic Container Service Developer Guide_.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-container-instances-request, like list-container-instances-request
+
+  line </#X-Amz-Target=AmazonEC2ContainerServiceV20141113.ListContainerInstances>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-container-instances-request
+
+  loot 200
+    seed json, like list-container-instances-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like client-exception
+    note <ClientException>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 483
+    seed json, like cluster-not-found-exception
+    note <ClusterNotFoundException>

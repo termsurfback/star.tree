@@ -1,0 +1,73 @@
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/create-thing-body
+  take form create-thing-body
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/create-thing-response
+  take form create-thing-response
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/resource-already-exists-exception
+  take form resource-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-thing, name <CreateThing>
+  note <Creates a thing record in the registry. If this call is made multiple times using the same thing name and configuration, the call will succeed. If this call is made with the same thing name but different configuration a `ResourceAlreadyExistsException` is thrown.
+
+This is a control plane operation. See [Authorization](https://docs.aws.amazon.com/iot/latest/developerguide/iot-authorization.html) for information about authorizing control plane actions.
+
+Requires permission to access the [CreateThing](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiot.html#awsiot-actions-as-permissions) action.>
+
+  take thing-name
+    like native-string
+    note <The name of the thing to create.
+
+You can't change a thing's name after you create it. To change a thing's name, you must create a new thing, give it the new name, and then delete the old thing.>
+  take create-thing-body, like create-thing-body
+
+  line </things/{thing-name}>
+
+  seed json, loan create-thing-body
+
+  loot 200
+    seed json, like create-thing-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 484
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 485
+    seed json, like resource-already-exists-exception
+    note <ResourceAlreadyExistsException>
+  loot 486
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

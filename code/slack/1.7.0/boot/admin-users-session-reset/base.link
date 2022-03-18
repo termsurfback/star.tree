@@ -1,0 +1,39 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/admin-users-session-reset-body
+  take form admin-users-session-reset-body
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+boot admin-users-session-reset, name <admin_users_session_reset>
+  note <Wipes all valid sessions on all devices for a given user>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `admin.users:write`>
+  take admin-users-session-reset-body, like admin-users-session-reset-body
+
+  line </admin.users.session.reset>
+
+  hint <token>, loan token
+
+  seed x-www-form-urlencoded, loan admin-users-session-reset-body
+
+  loot 200
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-true
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response>

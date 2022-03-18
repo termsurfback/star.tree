@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/operation-not-permitted-fault
+  take form operation-not-permitted-fault
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/unknown-resource-fault
+  take form unknown-resource-fault
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/workflow-type-detail
+  take form workflow-type-detail
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-workflow-type, name <DescribeWorkflowType>
+  note <Returns information about the specified _workflow type_. This includes configuration settings specified when the type was registered and other information such as creation date, current status, etc.
+
+**Access Control** You can use IAM policies to control this action's access to Amazon SWF resources as follows:
+
+- Use a `Resource` element with the domain name to limit the action to only specified domains.
+
+- Use an `Action` element to allow or deny permission to call this action.
+
+- Constrain the following parameters by using a `Condition` element with the appropriate keys.
+
+  - `workflowType.name`: String constraint. The key is `swf:workflowType.name`.
+
+  - `workflowType.version`: String constraint. The key is `swf:workflowType.version`.
+
+If the caller doesn't have sufficient permissions to invoke the action, or the parameter values fall outside the specified constraints, the action fails. The associated event attribute's `cause` parameter is set to `OPERATION_NOT_PERMITTED`. For details and example IAM policies, see [Using IAM to Manage Access to Amazon SWF Workflows](https://docs.aws.amazon.com/amazonswf/latest/developerguide/swf-dev-iam.html) in the _Amazon SWF Developer Guide_.>
+
+  take x-amz-target
+    like native-string
+  take describe-workflow-type-input, like describe-workflow-type-input
+
+  line </#X-Amz-Target=SimpleWorkflowService.DescribeWorkflowType>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-workflow-type-input
+
+  loot 200
+    seed json, like workflow-type-detail
+    note <Success>
+  loot 480
+    seed json, like unknown-resource-fault
+    note <UnknownResourceFault>
+  loot 481
+    seed json, like operation-not-permitted-fault
+    note <OperationNotPermittedFault>

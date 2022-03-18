@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/deployment-does-not-exist-exception
+  take form deployment-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/deployment-id-required-exception
+  take form deployment-id-required-exception
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/get-deployment-output
+  take form get-deployment-output
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/invalid-deployment-id-exception
+  take form invalid-deployment-id-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-deployment, name <GetDeployment>
+  note <Gets information about a deployment.
+
+The `content` property of the `appSpecContent` object in the returned revision is always null. Use `GetApplicationRevision` and the `sha256` property of the returned `appSpecContent` object to get the content of the deployment’s AppSpec file.>
+
+  take x-amz-target
+    like native-string
+  take get-deployment-input, like get-deployment-input
+
+  line </#X-Amz-Target=CodeDeploy_20141006.GetDeployment>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-deployment-input
+
+  loot 200
+    seed json, like get-deployment-output
+    note <Success>
+  loot 480
+    seed json, like deployment-id-required-exception
+    note <DeploymentIdRequiredException>
+  loot 481
+    seed json, like invalid-deployment-id-exception
+    note <InvalidDeploymentIdException>
+  loot 482
+    seed json, like deployment-does-not-exist-exception
+    note <DeploymentDoesNotExistException>

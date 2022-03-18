@@ -1,0 +1,32 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/appengine/v1/base/authorized-certificate
+  take form authorized-certificate
+
+boot appengine-apps-authorized-certificates-patch, name <appengine.apps.authorizedCertificates.patch>
+  note <Updates the specified SSL certificate. To renew a certificate and maintain its existing domain mappings, update certificate_data with a new certificate. The new certificate must be applicable to the same domains as the original certificate. The certificate display_name may also be updated.>
+
+  take apps-id
+    like native-string
+    note <Part of `name`. Name of the resource to update. Example: apps/myapp/authorizedCertificates/12345.>
+  take authorized-certificates-id
+    like native-string
+    note <Part of `name`. See documentation of `appsId`.>
+  take update-mask
+    like native-string
+    note <Standard field mask for the set of fields to be updated. Updates are only supported on the certificate_raw_data and display_name fields.>
+    void take
+  take authorized-certificate, like authorized-certificate
+    void take
+
+  line </v1/apps/{apps-id}/authorizedCertificates/{authorized-certificates-id}>
+
+  find <updateMask>, loan update-mask
+
+  seed json, loan authorized-certificate
+
+  loot 200
+    seed json, like authorized-certificate
+    note <Successful response>

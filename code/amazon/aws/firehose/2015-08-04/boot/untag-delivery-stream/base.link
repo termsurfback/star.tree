@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/firehose/2015-08-04/base/invalid-argument-exception
+  take form invalid-argument-exception
+
+load @drumwork/snow/amazonaws.com/firehose/2015-08-04/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/firehose/2015-08-04/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/firehose/2015-08-04/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/firehose/2015-08-04/base/untag-delivery-stream-output
+  take form untag-delivery-stream-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot untag-delivery-stream, name <UntagDeliveryStream>
+  note <Removes tags from the specified delivery stream. Removed tags are deleted, and you can't recover them after this operation successfully completes.
+
+If you specify a tag that doesn't exist, the operation ignores it.
+
+This operation has a limit of five transactions per second per account.>
+
+  take x-amz-target
+    like native-string
+  take untag-delivery-stream-input, like untag-delivery-stream-input
+
+  line </#X-Amz-Target=Firehose_20150804.UntagDeliveryStream>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan untag-delivery-stream-input
+
+  loot 200
+    seed json, like untag-delivery-stream-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>
+  loot 482
+    seed json, like invalid-argument-exception
+    note <InvalidArgumentException>
+  loot 483
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>

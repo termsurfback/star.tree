@@ -1,0 +1,31 @@
+
+load @drumwork/snow/amazonaws.com/kinesisanalyticsv2/2018-05-23/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/kinesisanalyticsv2/2018-05-23/base/list-applications-response
+  take form list-applications-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-applications, name <ListApplications>
+  note <Returns a list of Kinesis Data Analytics applications in your account. For each application, the response includes the application name, Amazon Resource Name (ARN), and status.
+
+If you want detailed information about a specific application, use DescribeApplication.>
+
+  take x-amz-target
+    like native-string
+  take list-applications-request, like list-applications-request
+
+  line </#X-Amz-Target=KinesisAnalytics_20180523.ListApplications>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-applications-request
+
+  loot 200
+    seed json, like list-applications-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

@@ -1,0 +1,43 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-customers-customer-sources-id-body
+  take form get-customers-customer-sources-id-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/payment-source
+  take form payment-source
+
+boot get-customers-customer-sources-id, name <GetCustomersCustomerSourcesId>
+  note <Retrieve a specified source for a given customer.>
+
+  take customer
+    like native-string
+  take id
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-customers-customer-sources-id-body, like get-customers-customer-sources-id-body
+    void take
+
+  line </v1/customers/{customer}/sources/{id}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-customers-customer-sources-id-body
+
+  loot 200
+    seed json, like payment-source
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

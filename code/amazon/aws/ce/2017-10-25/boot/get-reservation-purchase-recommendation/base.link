@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/data-unavailable-exception
+  take form data-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/get-reservation-purchase-recommendation-response
+  take form get-reservation-purchase-recommendation-response
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-reservation-purchase-recommendation, name <GetReservationPurchaseRecommendation>
+  note <Gets recommendations for which reservations to purchase. These recommendations could help you reduce your costs. Reservations provide a discounted hourly rate (up to 75%) compared to On-Demand pricing.
+
+Amazon Web Services generates your recommendations by identifying your On-Demand usage during a specific time period and collecting your usage into categories that are eligible for a reservation. After Amazon Web Services has these categories, it simulates every combination of reservations in each category of usage to identify the best number of each type of RI to purchase to maximize your estimated savings.
+
+For example, Amazon Web Services automatically aggregates your Amazon EC2 Linux, shared tenancy, and c4 family usage in the US West (Oregon) Region and recommends that you buy size-flexible regional reservations to apply to the c4 family usage. Amazon Web Services recommends the smallest size instance in an instance family. This makes it easier to purchase a size-flexible RI. Amazon Web Services also shows the equal number of normalized units so that you can purchase any instance size that you want. For this example, your RI recommendation would be for `c4.large` because that is the smallest size instance in the c4 instance family.>
+
+  take x-amz-target
+    like native-string
+  take get-reservation-purchase-recommendation-request, like get-reservation-purchase-recommendation-request
+
+  line </#X-Amz-Target=AWSInsightsIndexService.GetReservationPurchaseRecommendation>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-reservation-purchase-recommendation-request
+
+  loot 200
+    seed json, like get-reservation-purchase-recommendation-response
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed json, like data-unavailable-exception
+    note <DataUnavailableException>
+  loot 482
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>

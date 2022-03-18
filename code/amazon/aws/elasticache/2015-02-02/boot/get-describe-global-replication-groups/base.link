@@ -1,0 +1,67 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/describe-global-replication-groups-result
+  take form describe-global-replication-groups-result
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/global-replication-group-not-found-fault
+  take form global-replication-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-global-replication-groups, name <GET_DescribeGlobalReplicationGroups>
+  note <Returns information about a particular global replication group. If no identifier is specified, returns information about all Global datastores.>
+
+  take global-replication-group-id
+    like native-string
+    note <The name of the Global datastore>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of records to include in the response. If more records exist than the specified MaxRecords value, a marker is included in the response so that the remaining results can be retrieved.>
+    void take
+  take marker
+    like native-string
+    note <An optional marker returned from a prior request. Use this marker for pagination of results from this operation. If this parameter is specified, the response includes only records beyond the marker, up to the value specified by `MaxRecords`.>
+    void take
+  take show-member-info
+    like native-boolean
+    note <Returns the list of members that comprise the Global datastore.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeGlobalReplicationGroups>
+
+  find <GlobalReplicationGroupId>, loan global-replication-group-id
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <ShowMemberInfo>, loan show-member-info
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-global-replication-groups-result
+    note <Success>
+  loot 480
+    seed xml, like global-replication-group-not-found-fault
+    note <GlobalReplicationGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

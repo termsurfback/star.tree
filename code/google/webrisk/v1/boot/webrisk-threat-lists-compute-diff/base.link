@@ -1,0 +1,49 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/webrisk/v1/base/google-cloud-webrisk-v1-compute-threat-list-diff-response
+  take form google-cloud-webrisk-v1-compute-threat-list-diff-response
+
+boot webrisk-threat-lists-compute-diff, name <webrisk.threatLists.computeDiff>
+  note <Gets the most recent threat list diffs. These diffs should be applied to a local database of hashes to keep it up-to-date. If the local database is empty or excessively out-of-date, a complete snapshot of the database will be returned. This Method only updates a single ThreatList at a time. To update multiple ThreatList databases, this method needs to be called once for each list.>
+
+  take constraints-max-database-entries
+    like native-integer
+    note <Sets the maximum number of entries that the client is willing to have in the local database. This should be a power of 2 between 2**10 and 2**20. If zero, no database size limit is set.>
+    void take
+  take constraints-max-diff-entries
+    like native-integer
+    note <The maximum size in number of entries. The diff will not contain more entries than this value. This should be a power of 2 between 2**10 and 2**20. If zero, no diff size limit is set.>
+    void take
+  take constraints-supported-compressions
+    like list
+      like native-string
+    note <The compression types supported by the client.>
+    void take
+  take threat-type
+    like native-string
+    note <Required. The threat list to update. Only a single ThreatType should be specified per request. If you want to handle multiple ThreatTypes, you must make one request per ThreatType.>
+    void take
+  take version-token
+    like native-string
+    note <The current version token of the client for the requested list (the client version that was received from the last successful diff). If the client does not have a version token (this is the first time calling ComputeThreatListDiff), this may be left empty and a full database snapshot will be returned.>
+    void take
+
+  line </v1/threatLists:computeDiff>
+
+  find <constraints.maxDatabaseEntries>, loan constraints-max-database-entries
+  find <constraints.maxDiffEntries>, loan constraints-max-diff-entries
+  find <constraints.supportedCompressions>, loan constraints-supported-compressions
+  find <threatType>, loan threat-type
+  find <versionToken>, loan version-token
+
+  loot 200
+    seed json, like google-cloud-webrisk-v1-compute-threat-list-diff-response
+    note <Successful response>

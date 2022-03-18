@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/does-not-exist-exception
+  take form does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/get-maintenance-window-execution-task-result
+  take form get-maintenance-window-execution-task-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-maintenance-window-execution-task, name <GetMaintenanceWindowExecutionTask>
+  note <Retrieves the details about a specific task run as part of a maintenance window execution.>
+
+  take x-amz-target
+    like native-string
+  take get-maintenance-window-execution-task-request, like get-maintenance-window-execution-task-request
+
+  line </#X-Amz-Target=AmazonSSM.GetMaintenanceWindowExecutionTask>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-maintenance-window-execution-task-request
+
+  loot 200
+    seed json, like get-maintenance-window-execution-task-result
+    note <Success>
+  loot 480
+    seed json, like does-not-exist-exception
+    note <DoesNotExistException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

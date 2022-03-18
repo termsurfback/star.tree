@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/describe-attack-statistics-response
+  take form describe-attack-statistics-response
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-attack-statistics, name <DescribeAttackStatistics>
+  note <Provides information about the number and type of attacks Shield has detected in the last year for all resources that belong to your account, regardless of whether you've defined Shield protections for them. This operation is available to Shield customers as well as to Shield Advanced customers.
+
+The operation returns data for the time range of midnight UTC, one year ago, to midnight UTC, today. For example, if the current time is `2020-10-26 15:39:32 PDT`, equal to `2020-10-26 22:39:32 UTC`, then the time range for the attack data returned is from `2019-10-26 00:00:00 UTC` to `2020-10-26 00:00:00 UTC`.
+
+The time range indicates the period covered by the attack statistics data items.>
+
+  take x-amz-target
+    like native-string
+  take describe-attack-statistics-request, like describe-attack-statistics-request
+
+  line </#X-Amz-Target=AWSShield_20160616.DescribeAttackStatistics>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-attack-statistics-request
+
+  loot 200
+    seed json, like describe-attack-statistics-response
+    note <Success>
+  loot 480
+    seed json, like internal-error-exception
+    note <InternalErrorException>

@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/check-domain-availability-response
+  take form check-domain-availability-response
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/unsupported-tld
+  take form unsupported-tld
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot check-domain-availability, name <CheckDomainAvailability>
+  note <This operation checks the availability of one domain name. Note that if the availability status of a domain is pending, you must submit another request to determine the availability of the domain name.>
+
+  take x-amz-target
+    like native-string
+  take check-domain-availability-request, like check-domain-availability-request
+
+  line </#X-Amz-Target=Route53Domains_v20140515.CheckDomainAvailability>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan check-domain-availability-request
+
+  loot 200
+    seed json, like check-domain-availability-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input
+    note <InvalidInput>
+  loot 481
+    seed json, like unsupported-tld
+    note <UnsupportedTLD>

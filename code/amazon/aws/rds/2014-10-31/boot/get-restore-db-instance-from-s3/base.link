@@ -1,0 +1,465 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/authorization-not-found-fault
+  take form authorization-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/backup-policy-not-found-fault
+  take form backup-policy-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-instance-already-exists-fault
+  take form db-instance-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-parameter-group-not-found-fault
+  take form db-parameter-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-security-group-not-found-fault
+  take form db-security-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-subnet-group-does-not-cover-enough-a-zs
+  take form db-subnet-group-does-not-cover-enough-a-zs
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-subnet-group-not-found-fault
+  take form db-subnet-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/instance-quota-exceeded-fault
+  take form instance-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/insufficient-db-instance-capacity-fault
+  take form insufficient-db-instance-capacity-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-s3-bucket-fault
+  take form invalid-s3-bucket-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-subnet
+  take form invalid-subnet
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-vpc-network-state-fault
+  take form invalid-vpc-network-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/kms-key-not-accessible-fault
+  take form kms-key-not-accessible-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/option-group-not-found-fault
+  take form option-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/processor-feature
+  take form processor-feature
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/provisioned-iops-not-available-in-az-fault
+  take form provisioned-iops-not-available-in-az-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/restore-db-instance-from-s3-result
+  take form restore-db-instance-from-s3-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/storage-quota-exceeded-fault
+  take form storage-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/storage-type-not-supported-fault
+  take form storage-type-not-supported-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/tag
+  take form tag
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-restore-db-instance-from-s3, name <GET_RestoreDBInstanceFromS3>
+  note <Amazon Relational Database Service (Amazon RDS) supports importing MySQL databases by using backup files. You can create a backup of your on-premises database, store it on Amazon Simple Storage Service (Amazon S3), and then restore the backup file onto a new Amazon RDS DB instance running MySQL. For more information, see [Importing Data into an Amazon RDS MySQL DB Instance](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/MySQL.Procedural.Importing.html) in the _Amazon RDS User Guide._>
+
+  take db-name
+    like native-string
+    note <The name of the database to create when the DB instance is created. Follow the naming rules specified in `CreateDBInstance`.>
+    void take
+  take db-instance-identifier
+    like native-string
+    note <The DB instance identifier. This parameter is stored as a lowercase string.
+
+Constraints:
+
+- Must contain from 1 to 63 letters, numbers, or hyphens.
+
+- First character must be a letter.
+
+- Can't end with a hyphen or contain two consecutive hyphens.
+
+Example: `mydbinstance`>
+  take allocated-storage
+    like native-integer
+    note <The amount of storage (in gigabytes) to allocate initially for the DB instance. Follow the allocation rules specified in `CreateDBInstance`.
+
+Be sure to allocate enough memory for your new DB instance so that the restore operation can succeed. You can also allocate additional memory for future growth.>
+    void take
+  take db-instance-class
+    like native-string
+    note <The compute and memory capacity of the DB instance, for example, `db.m4.large`. Not all DB instance classes are available in all Amazon Web Services Regions, or for all database engines. For the full list of DB instance classes, and availability for your engine, see [DB Instance Class](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.DBInstanceClass.html) in the _Amazon RDS User Guide._
+
+Importing from Amazon S3 isn't supported on the db.t2.micro DB instance class.>
+  take engine
+    like native-string
+    note <The name of the database engine to be used for this instance.
+
+Valid Values: `mysql`>
+  take master-username
+    like native-string
+    note <The name for the master user.
+
+Constraints:
+
+- Must be 1 to 16 letters or numbers.
+
+- First character must be a letter.
+
+- Can't be a reserved word for the chosen database engine.>
+    void take
+  take master-user-password
+    like native-string
+    note <The password for the master user. The password can include any printable ASCII character except "/", """, or "@".
+
+Constraints: Must contain from 8 to 41 characters.>
+    void take
+  take db-security-groups
+    like list
+      like string
+    note <A list of DB security groups to associate with this DB instance.
+
+Default: The default DB security group for the database engine.>
+    void take
+  take vpc-security-group-ids
+    like list
+      like string
+    note <A list of VPC security groups to associate with this DB instance.>
+    void take
+  take availability-zone
+    like native-string
+    note <The Availability Zone that the DB instance is created in. For information about Amazon Web Services Regions and Availability Zones, see [Regions and Availability Zones](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html) in the _Amazon RDS User Guide._
+
+Default: A random, system-chosen Availability Zone in the endpoint's Amazon Web Services Region.
+
+Example: `us-east-1d`
+
+Constraint: The `AvailabilityZone` parameter can't be specified if the DB instance is a Multi-AZ deployment. The specified Availability Zone must be in the same Amazon Web Services Region as the current endpoint.>
+    void take
+  take db-subnet-group-name
+    like native-string
+    note <A DB subnet group to associate with this DB instance.>
+    void take
+  take preferred-maintenance-window
+    like native-string
+    note <The time range each week during which system maintenance can occur, in Universal Coordinated Time (UTC). For more information, see [Amazon RDS Maintenance Window](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_UpgradeDBInstance.Maintenance.html#Concepts.DBMaintenance) in the _Amazon RDS User Guide._
+
+Constraints:
+
+- Must be in the format `ddd:hh24:mi-ddd:hh24:mi`.
+
+- Valid Days: Mon, Tue, Wed, Thu, Fri, Sat, Sun.
+
+- Must be in Universal Coordinated Time (UTC).
+
+- Must not conflict with the preferred backup window.
+
+- Must be at least 30 minutes.>
+    void take
+  take db-parameter-group-name
+    like native-string
+    note <The name of the DB parameter group to associate with this DB instance.
+
+If you do not specify a value for `DBParameterGroupName`, then the default `DBParameterGroup` for the specified DB engine is used.>
+    void take
+  take backup-retention-period
+    like native-integer
+    note <The number of days for which automated backups are retained. Setting this parameter to a positive number enables backups. For more information, see `CreateDBInstance`.>
+    void take
+  take preferred-backup-window
+    like native-string
+    note <The time range each day during which automated backups are created if automated backups are enabled. For more information, see [Backup window](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_WorkingWithAutomatedBackups.html#USER_WorkingWithAutomatedBackups.BackupWindow) in the _Amazon RDS User Guide._
+
+Constraints:
+
+- Must be in the format `hh24:mi-hh24:mi`.
+
+- Must be in Universal Coordinated Time (UTC).
+
+- Must not conflict with the preferred maintenance window.
+
+- Must be at least 30 minutes.>
+    void take
+  take port
+    like native-integer
+    note <The port number on which the database accepts connections.
+
+Type: Integer
+
+Valid Values: `1150`-`65535`
+
+Default: `3306`>
+    void take
+  take multi-az
+    like native-boolean
+    note <A value that indicates whether the DB instance is a Multi-AZ deployment. If the DB instance is a Multi-AZ deployment, you can't set the `AvailabilityZone` parameter.>
+    void take
+  take engine-version
+    like native-string
+    note <The version number of the database engine to use. Choose the latest minor version of your database engine. For information about engine versions, see `CreateDBInstance`, or call `DescribeDBEngineVersions`.>
+    void take
+  take auto-minor-version-upgrade
+    like native-boolean
+    note <A value that indicates whether minor engine upgrades are applied automatically to the DB instance during the maintenance window. By default, minor engine upgrades are not applied automatically.>
+    void take
+  take license-model
+    like native-string
+    note <The license model for this DB instance. Use `general-public-license`.>
+    void take
+  take iops
+    like native-integer
+    note <The amount of Provisioned IOPS (input/output operations per second) to allocate initially for the DB instance. For information about valid Iops values, see [Amazon RDS Provisioned IOPS Storage to Improve Performance](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Storage.html#USER_PIOPS) in the _Amazon RDS User Guide._>
+    void take
+  take option-group-name
+    like native-string
+    note <The name of the option group to associate with this DB instance. If this argument is omitted, the default option group for the specified engine is used.>
+    void take
+  take publicly-accessible
+    like native-boolean
+    note <A value that indicates whether the DB instance is publicly accessible.
+
+When the DB instance is publicly accessible, its DNS endpoint resolves to the private IP address from within the DB instance's VPC, and to the public IP address from outside of the DB instance's VPC. Access to the DB instance is ultimately controlled by the security group it uses, and that public access is not permitted if the security group assigned to the DB instance doesn't permit it.
+
+When the DB instance isn't publicly accessible, it is an internal DB instance with a DNS name that resolves to a private IP address.
+
+For more information, see CreateDBInstance.>
+    void take
+  take tags
+    like list
+      like tag
+    note <A list of tags to associate with this DB instance. For more information, see [Tagging Amazon RDS Resources](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_Tagging.html) in the _Amazon RDS User Guide._>
+    void take
+  take storage-type
+    like native-string
+    note <Specifies the storage type to be associated with the DB instance.
+
+Valid values: `standard` | `gp2` | `io1`
+
+If you specify `io1`, you must also include a value for the `Iops` parameter.
+
+Default: `io1` if the `Iops` parameter is specified; otherwise `gp2`>
+    void take
+  take storage-encrypted
+    like native-boolean
+    note <A value that indicates whether the new DB instance is encrypted or not.>
+    void take
+  take kms-key-id
+    like native-string
+    note <The Amazon Web Services KMS key identifier for an encrypted DB instance.
+
+The Amazon Web Services KMS key identifier is the key ARN, key ID, alias ARN, or alias name for the Amazon Web Services KMS customer master key (CMK). To use a CMK in a different Amazon Web Services account, specify the key ARN or alias ARN.
+
+If the `StorageEncrypted` parameter is enabled, and you do not specify a value for the `KmsKeyId` parameter, then Amazon RDS will use your default CMK. There is a default CMK for your Amazon Web Services account. Your Amazon Web Services account has a different default CMK for each Amazon Web Services Region.>
+    void take
+  take copy-tags-to-snapshot
+    like native-boolean
+    note <A value that indicates whether to copy all tags from the DB instance to snapshots of the DB instance. By default, tags are not copied.>
+    void take
+  take monitoring-interval
+    like native-integer
+    note <The interval, in seconds, between points when Enhanced Monitoring metrics are collected for the DB instance. To disable collecting Enhanced Monitoring metrics, specify 0.
+
+If `MonitoringRoleArn` is specified, then you must also set `MonitoringInterval` to a value other than 0.
+
+Valid Values: 0, 1, 5, 10, 15, 30, 60
+
+Default: `0`>
+    void take
+  take monitoring-role-arn
+    like native-string
+    note <The ARN for the IAM role that permits RDS to send enhanced monitoring metrics to Amazon CloudWatch Logs. For example, `arn:aws:iam:123456789012:role/emaccess`. For information on creating a monitoring role, see [Setting Up and Enabling Enhanced Monitoring](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_Monitoring.OS.html#USER_Monitoring.OS.Enabling) in the _Amazon RDS User Guide._
+
+If `MonitoringInterval` is set to a value other than 0, then you must supply a `MonitoringRoleArn` value.>
+    void take
+  take enable-iam-database-authentication
+    like native-boolean
+    note <A value that indicates whether to enable mapping of Amazon Web Services Identity and Access Management (IAM) accounts to database accounts. By default, mapping is disabled.
+
+For more information about IAM database authentication, see [IAM Database Authentication for MySQL and PostgreSQL](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.IAMDBAuth.html) in the _Amazon RDS User Guide._>
+    void take
+  take source-engine
+    like native-string
+    note <The name of the engine of your source database.
+
+Valid Values: `mysql`>
+  take source-engine-version
+    like native-string
+    note <The version of the database that the backup files were created from.
+
+MySQL versions 5.6 and 5.7 are supported.
+
+Example: `5.6.40`>
+  take s3-bucket-name
+    like native-string
+    note <The name of your Amazon S3 bucket that contains your database backup file.>
+  take s3-prefix
+    like native-string
+    note <The prefix of your Amazon S3 bucket.>
+    void take
+  take s3-ingestion-role-arn
+    like native-string
+    note <An Amazon Web Services Identity and Access Management (IAM) role to allow Amazon RDS to access your Amazon S3 bucket.>
+  take enable-performance-insights
+    like native-boolean
+    note <A value that indicates whether to enable Performance Insights for the DB instance.
+
+For more information, see [Using Amazon Performance Insights](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_PerfInsights.html) in the _Amazon Relational Database Service User Guide_.>
+    void take
+  take performance-insights-kms-key-id
+    like native-string
+    note <The Amazon Web Services KMS key identifier for encryption of Performance Insights data.
+
+The Amazon Web Services KMS key identifier is the key ARN, key ID, alias ARN, or alias name for the Amazon Web Services KMS customer master key (CMK).
+
+If you do not specify a value for `PerformanceInsightsKMSKeyId`, then Amazon RDS uses your default CMK. There is a default CMK for your Amazon Web Services account. Your Amazon Web Services account has a different default CMK for each Amazon Web Services Region.>
+    void take
+  take performance-insights-retention-period
+    like native-integer
+    note <The amount of time, in days, to retain Performance Insights data. Valid values are 7 or 731 (2 years).>
+    void take
+  take enable-cloudwatch-logs-exports
+    like list
+      like string
+    note <The list of logs that the restored DB instance is to export to CloudWatch Logs. The values in the list depend on the DB engine being used. For more information, see [Publishing Database Logs to Amazon CloudWatch Logs](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_LogAccess.html#USER_LogAccess.Procedural.UploadtoCloudWatch) in the _Amazon RDS User Guide_.>
+    void take
+  take processor-features
+    like list
+      like processor-feature
+    note <The number of CPU cores and the number of threads per core for the DB instance class of the DB instance.>
+    void take
+  take use-default-processor-features
+    like native-boolean
+    note <A value that indicates whether the DB instance class of the DB instance uses its default processor features.>
+    void take
+  take deletion-protection
+    like native-boolean
+    note <A value that indicates whether the DB instance has deletion protection enabled. The database can't be deleted when deletion protection is enabled. By default, deletion protection is disabled. For more information, see [Deleting a DB Instance](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_DeleteInstance.html).>
+    void take
+  take max-allocated-storage
+    like native-integer
+    note <The upper limit in gibibytes (GiB) to which Amazon RDS can automatically scale the storage of the DB instance.
+
+For more information about this setting, including limitations that apply to it, see [Managing capacity automatically with Amazon RDS storage autoscaling](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_PIOPS.StorageTypes.html#USER_PIOPS.Autoscaling) in the _Amazon RDS User Guide_.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=RestoreDBInstanceFromS3>
+
+  find <DBName>, loan db-name
+  find <DBInstanceIdentifier>, loan db-instance-identifier
+  find <AllocatedStorage>, loan allocated-storage
+  find <DBInstanceClass>, loan db-instance-class
+  find <Engine>, loan engine
+  find <MasterUsername>, loan master-username
+  find <MasterUserPassword>, loan master-user-password
+  find <DBSecurityGroups>, loan db-security-groups
+  find <VpcSecurityGroupIds>, loan vpc-security-group-ids
+  find <AvailabilityZone>, loan availability-zone
+  find <DBSubnetGroupName>, loan db-subnet-group-name
+  find <PreferredMaintenanceWindow>, loan preferred-maintenance-window
+  find <DBParameterGroupName>, loan db-parameter-group-name
+  find <BackupRetentionPeriod>, loan backup-retention-period
+  find <PreferredBackupWindow>, loan preferred-backup-window
+  find <Port>, loan port
+  find <MultiAZ>, loan multi-az
+  find <EngineVersion>, loan engine-version
+  find <AutoMinorVersionUpgrade>, loan auto-minor-version-upgrade
+  find <LicenseModel>, loan license-model
+  find <Iops>, loan iops
+  find <OptionGroupName>, loan option-group-name
+  find <PubliclyAccessible>, loan publicly-accessible
+  find <Tags>, loan tags
+  find <StorageType>, loan storage-type
+  find <StorageEncrypted>, loan storage-encrypted
+  find <KmsKeyId>, loan kms-key-id
+  find <CopyTagsToSnapshot>, loan copy-tags-to-snapshot
+  find <MonitoringInterval>, loan monitoring-interval
+  find <MonitoringRoleArn>, loan monitoring-role-arn
+  find <EnableIAMDatabaseAuthentication>, loan enable-iam-database-authentication
+  find <SourceEngine>, loan source-engine
+  find <SourceEngineVersion>, loan source-engine-version
+  find <S3BucketName>, loan s3-bucket-name
+  find <S3Prefix>, loan s3-prefix
+  find <S3IngestionRoleArn>, loan s3-ingestion-role-arn
+  find <EnablePerformanceInsights>, loan enable-performance-insights
+  find <PerformanceInsightsKMSKeyId>, loan performance-insights-kms-key-id
+  find <PerformanceInsightsRetentionPeriod>, loan performance-insights-retention-period
+  find <EnableCloudwatchLogsExports>, loan enable-cloudwatch-logs-exports
+  find <ProcessorFeatures>, loan processor-features
+  find <UseDefaultProcessorFeatures>, loan use-default-processor-features
+  find <DeletionProtection>, loan deletion-protection
+  find <MaxAllocatedStorage>, loan max-allocated-storage
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like restore-db-instance-from-s3-result
+    note <Success>
+  loot 480
+    seed xml, like db-instance-already-exists-fault
+    note <DBInstanceAlreadyExistsFault>
+  loot 481
+    seed xml, like insufficient-db-instance-capacity-fault
+    note <InsufficientDBInstanceCapacityFault>
+  loot 482
+    seed xml, like db-parameter-group-not-found-fault
+    note <DBParameterGroupNotFoundFault>
+  loot 483
+    seed xml, like db-security-group-not-found-fault
+    note <DBSecurityGroupNotFoundFault>
+  loot 484
+    seed xml, like instance-quota-exceeded-fault
+    note <InstanceQuotaExceededFault>
+  loot 485
+    seed xml, like storage-quota-exceeded-fault
+    note <StorageQuotaExceededFault>
+  loot 486
+    seed xml, like db-subnet-group-not-found-fault
+    note <DBSubnetGroupNotFoundFault>
+  loot 487
+    seed xml, like db-subnet-group-does-not-cover-enough-a-zs
+    note <DBSubnetGroupDoesNotCoverEnoughAZs>
+  loot 488
+    seed xml, like invalid-subnet
+    note <InvalidSubnet>
+  loot 489
+    seed xml, like invalid-vpc-network-state-fault
+    note <InvalidVPCNetworkStateFault>
+  loot 490
+    seed xml, like invalid-s3-bucket-fault
+    note <InvalidS3BucketFault>
+  loot 491
+    seed xml, like provisioned-iops-not-available-in-az-fault
+    note <ProvisionedIopsNotAvailableInAZFault>
+  loot 492
+    seed xml, like option-group-not-found-fault
+    note <OptionGroupNotFoundFault>
+  loot 493
+    seed xml, like storage-type-not-supported-fault
+    note <StorageTypeNotSupportedFault>
+  loot 494
+    seed xml, like authorization-not-found-fault
+    note <AuthorizationNotFoundFault>
+  loot 495
+    seed xml, like kms-key-not-accessible-fault
+    note <KMSKeyNotAccessibleFault>
+  loot 496
+    seed xml, like backup-policy-not-found-fault
+    note <BackupPolicyNotFoundFault>

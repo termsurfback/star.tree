@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/describe-problem-response
+  take form describe-problem-response
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-problem, name <DescribeProblem>
+  note <Describes an application problem.>
+
+  take x-amz-target
+    like native-string
+  take describe-problem-request, like describe-problem-request
+
+  line </#X-Amz-Target=EC2WindowsBarleyService.DescribeProblem>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-problem-request
+
+  loot 200
+    seed json, like describe-problem-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

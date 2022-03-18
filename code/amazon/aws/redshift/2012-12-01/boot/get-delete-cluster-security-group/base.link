@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-security-group-not-found-fault
+  take form cluster-security-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-security-group-state-fault
+  take form invalid-cluster-security-group-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-cluster-security-group, name <GET_DeleteClusterSecurityGroup>
+  note <Deletes an Amazon Redshift security group.
+
+You cannot delete a security group that is associated with any clusters. You cannot delete the default security group.
+
+For information about managing security groups, go to [Amazon Redshift Cluster Security Groups](https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-security-groups.html) in the _Amazon Redshift Cluster Management Guide_.>
+
+  take cluster-security-group-name
+    like native-string
+    note <The name of the cluster security group to be deleted.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteClusterSecurityGroup>
+
+  find <ClusterSecurityGroupName>, loan cluster-security-group-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like invalid-cluster-security-group-state-fault
+    note <InvalidClusterSecurityGroupStateFault>
+  loot 481
+    seed xml, like cluster-security-group-not-found-fault
+    note <ClusterSecurityGroupNotFoundFault>

@@ -1,0 +1,44 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/list-account-aliases-response
+  take form list-account-aliases-response
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-list-account-aliases, name <GET_ListAccountAliases>
+  note <Lists the account alias associated with the account (Note: you can have only one). For information about using an account alias, see [Using an alias for your account ID](https://docs.aws.amazon.com/IAM/latest/UserGuide/AccountAlias.html) in the _IAM User Guide_.>
+
+  take marker
+    like native-string
+    note <Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the `Marker` element in the response that you received to indicate where the next call should start.>
+    void take
+  take max-items
+    like native-integer
+    note <Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the `IsTruncated` response element is `true`.
+
+If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the `IsTruncated` response element returns `true`, and `Marker` contains a value to include in the subsequent call that tells the service where to continue from.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ListAccountAliases>
+
+  find <Marker>, loan marker
+  find <MaxItems>, loan max-items
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like list-account-aliases-response
+    note <Success>
+  loot 480
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

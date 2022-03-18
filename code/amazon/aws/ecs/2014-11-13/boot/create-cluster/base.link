@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/create-cluster-response
+  take form create-cluster-response
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-cluster, name <CreateCluster>
+  note <Creates a new Amazon ECS cluster. By default, your account receives a `default` cluster when you launch your first container instance. However, you can create your own cluster with a unique name with the `CreateCluster` action.
+
+When you call the CreateCluster API operation, Amazon ECS attempts to create the Amazon ECS service-linked role for your account so that required resources in other Amazon Web Services services can be managed on your behalf. However, if the IAM user that makes the call does not have permissions to create the service-linked role, it is not created. For more information, see [Using Service-Linked Roles for Amazon ECS](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using-service-linked-roles.html) in the _Amazon Elastic Container Service Developer Guide_.>
+
+  take x-amz-target
+    like native-string
+  take create-cluster-request, like create-cluster-request
+
+  line </#X-Amz-Target=AmazonEC2ContainerServiceV20141113.CreateCluster>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-cluster-request
+
+  loot 200
+    seed json, like create-cluster-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like client-exception
+    note <ClientException>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>

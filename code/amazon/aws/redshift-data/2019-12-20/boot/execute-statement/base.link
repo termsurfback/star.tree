@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/redshift-data/2019-12-20/base/active-statements-exceeded-exception
+  take form active-statements-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/redshift-data/2019-12-20/base/execute-statement-exception
+  take form execute-statement-exception
+
+load @drumwork/snow/amazonaws.com/redshift-data/2019-12-20/base/execute-statement-output
+  take form execute-statement-output
+
+load @drumwork/snow/amazonaws.com/redshift-data/2019-12-20/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot execute-statement, name <ExecuteStatement>
+  note <Runs an SQL statement, which can be data manipulation language (DML) or data definition language (DDL). This statement must be a single SQL statement. Depending on the authorization method, use one of the following combinations of request parameters:
+
+- Secrets Manager - specify the Amazon Resource Name (ARN) of the secret, the database name, and the cluster identifier that matches the cluster in the secret.
+
+- Temporary credentials - specify the cluster identifier, the database name, and the database user name. Permission to call the `redshift:GetClusterCredentials` operation is required to use this method.>
+
+  take x-amz-target
+    like native-string
+  take execute-statement-input, like execute-statement-input
+
+  line </#X-Amz-Target=RedshiftData.ExecuteStatement>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan execute-statement-input
+
+  loot 200
+    seed json, like execute-statement-output
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like execute-statement-exception
+    note <ExecuteStatementException>
+  loot 482
+    seed json, like active-statements-exceeded-exception
+    note <ActiveStatementsExceededException>

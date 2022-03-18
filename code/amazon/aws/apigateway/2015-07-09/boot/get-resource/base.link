@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/apigateway/2015-07-09/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/apigateway/2015-07-09/base/resource
+  take form resource
+
+load @drumwork/snow/amazonaws.com/apigateway/2015-07-09/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/amazonaws.com/apigateway/2015-07-09/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-resource, name <GetResource>
+  note <Lists information about a resource.>
+
+  take restapi-id
+    like native-string
+    note <[Required] The string identifier of the associated RestApi.>
+  take resource-id
+    like native-string
+    note <[Required] The identifier for the Resource resource.>
+  take embed
+    like list
+      like string
+    note <A query parameter to retrieve the specified resources embedded in the returned Resource representation in the response. This `embed` parameter value is a list of comma-separated strings. Currently, the request supports only retrieval of the embedded Method resources this way. The query parameter value must be a single-valued list and contain the `"methods"` string. For example, `GET /restapis/{restapi_id}/resources/{resource_id}?embed=methods`.>
+    void take
+
+  line </restapis/{restapi-id}/resources/{resource-id}>
+
+  find <embed>, loan embed
+
+  loot 200
+    seed json, like resource
+    note <Success>
+  loot 480
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 481
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 482
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>

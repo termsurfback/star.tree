@@ -1,0 +1,34 @@
+
+load @drumwork/snow/amazonaws.com/mobileanalytics/2014-06-05/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/mobileanalytics/2014-06-05/base/put-events-body
+  take form put-events-body
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-events, name <PutEvents>
+  note <The PutEvents operation records one or more events. You can have up to 1,500 unique custom events per app, any combination of up to 40 attributes and metrics per custom event, and any number of attribute or metric values.>
+
+  take x-amz-client-context
+    like native-string
+    note <The client context including the client ID, app title, app version and package name.>
+  take x-amz-client-context-encoding
+    like native-string
+    note <The encoding used for the client context.>
+    void take
+  take put-events-body, like put-events-body
+
+  line </2014-06-05/events#x-amz-Client-Context>
+
+  hint <x-amz-Client-Context>, loan x-amz-client-context
+  hint <x-amz-Client-Context-Encoding>, loan x-amz-client-context-encoding
+
+  seed json, loan put-events-body
+
+  loot 202
+    note <Success>
+  loot 400
+    seed json, like bad-request-exception
+    note <BadRequestException>

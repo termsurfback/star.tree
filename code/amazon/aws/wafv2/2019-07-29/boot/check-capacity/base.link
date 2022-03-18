@@ -1,0 +1,73 @@
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/check-capacity-response
+  take form check-capacity-response
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-expired-managed-rule-group-version-exception
+  take form waf-expired-managed-rule-group-version-exception
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-internal-error-exception
+  take form waf-internal-error-exception
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-invalid-parameter-exception
+  take form waf-invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-invalid-resource-exception
+  take form waf-invalid-resource-exception
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-limits-exceeded-exception
+  take form waf-limits-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-nonexistent-item-exception
+  take form waf-nonexistent-item-exception
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-subscription-not-found-exception
+  take form waf-subscription-not-found-exception
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-unavailable-entity-exception
+  take form waf-unavailable-entity-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot check-capacity, name <CheckCapacity>
+  note <Returns the web ACL capacity unit (WCU) requirements for a specified scope and set of rules. You can use this to check the capacity requirements for the rules you want to use in a RuleGroup or WebACL.
+
+WAF uses WCUs to calculate and control the operating resources that are used to run your rules, rule groups, and web ACLs. WAF calculates capacity differently for each rule type, to reflect the relative cost of each rule. Simple rules that cost little to run use fewer WCUs than more complex rules that use more processing power. Rule group capacity is fixed at creation, which helps users plan their web ACL WCU usage when they use a rule group. The WCU limit for web ACLs is 1,500.>
+
+  take x-amz-target
+    like native-string
+  take check-capacity-request, like check-capacity-request
+
+  line </#X-Amz-Target=AWSWAF_20190729.CheckCapacity>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan check-capacity-request
+
+  loot 200
+    seed json, like check-capacity-response
+    note <Success>
+  loot 480
+    seed json, like waf-internal-error-exception
+    note <WAFInternalErrorException>
+  loot 481
+    seed json, like waf-invalid-parameter-exception
+    note <WAFInvalidParameterException>
+  loot 482
+    seed json, like waf-nonexistent-item-exception
+    note <WAFNonexistentItemException>
+  loot 483
+    seed json, like waf-limits-exceeded-exception
+    note <WAFLimitsExceededException>
+  loot 484
+    seed json, like waf-invalid-resource-exception
+    note <WAFInvalidResourceException>
+  loot 485
+    seed json, like waf-unavailable-entity-exception
+    note <WAFUnavailableEntityException>
+  loot 486
+    seed json, like waf-subscription-not-found-exception
+    note <WAFSubscriptionNotFoundException>
+  loot 487
+    seed json, like waf-expired-managed-rule-group-version-exception
+    note <WAFExpiredManagedRuleGroupVersionException>

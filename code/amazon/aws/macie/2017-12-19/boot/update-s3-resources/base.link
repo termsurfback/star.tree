@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/macie/2017-12-19/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/macie/2017-12-19/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/macie/2017-12-19/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/macie/2017-12-19/base/update-s3-resources-result
+  take form update-s3-resources-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-s3-resources, name <UpdateS3Resources>
+  note <Updates the classification types for the specified S3 resources. If memberAccountId isn't specified, the action updates the classification types of the S3 resources associated with Amazon Macie Classic for the current Macie Classic administrator account. If memberAccountId is specified, the action updates the classification types of the S3 resources associated with Macie Classic for the specified member account.>
+
+  take x-amz-target
+    like native-string
+  take update-s3-resources-request, like update-s3-resources-request
+
+  line </#X-Amz-Target=MacieService.UpdateS3Resources>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-s3-resources-request
+
+  loot 200
+    seed json, like update-s3-resources-result
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like internal-exception
+    note <InternalException>

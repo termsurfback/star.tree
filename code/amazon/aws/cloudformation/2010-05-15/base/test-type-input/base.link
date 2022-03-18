@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/s3-bucket
+  take form s3-bucket
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/third-party-type
+  take form third-party-type
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/type-arn
+  take form type-arn
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/type-name
+  take form type-name
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/type-version-id
+  take form type-version-id
+
+form test-type-input, name <TestTypeInput>
+  take arn, name <Arn>
+    like type-arn
+    void take
+    note <The Amazon Resource Number (ARN) of the extension.
+
+Conditional: You must specify `Arn`, or `TypeName` and `Type`.>
+  take type, name <Type>
+    like third-party-type
+    void take
+    note <The type of the extension to test.
+
+Conditional: You must specify `Arn`, or `TypeName` and `Type`.>
+  take type-name, name <TypeName>
+    like type-name
+    void take
+    note <The name of the extension to test.
+
+Conditional: You must specify `Arn`, or `TypeName` and `Type`.>
+  take version-id, name <VersionId>
+    like type-version-id
+    void take
+    note <The version of the extension to test.
+
+You can specify the version id with either `Arn`, or with `TypeName` and `Type`.
+
+If you do not specify a version, CloudFormation uses the default version of the extension in this account and region for testing.>
+  take log-delivery-bucket, name <LogDeliveryBucket>
+    like s3-bucket
+    void take
+    note <The S3 bucket to which CloudFormation delivers the contract test execution logs.
+
+CloudFormation delivers the logs by the time contract testing has completed and the extension has been assigned a test type status of `PASSED` or `FAILED`.
+
+The user calling `TestType` must be able to access items in the specified S3 bucket. Specifically, the user needs the following permissions:
+
+- GetObject
+
+- PutObject
+
+For more information, see [Actions, Resources, and Condition Keys for Amazon S3](https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html) in the _Amazon Web Services Identity and Access Management User Guide_.>

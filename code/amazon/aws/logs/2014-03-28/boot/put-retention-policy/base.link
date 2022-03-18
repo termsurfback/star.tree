@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/operation-aborted-exception
+  take form operation-aborted-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-retention-policy, name <PutRetentionPolicy>
+  note <Sets the retention of the specified log group. A retention policy allows you to configure the number of days for which to retain log events in the specified log group.>
+
+  take x-amz-target
+    like native-string
+  take put-retention-policy-request, like put-retention-policy-request
+
+  line </#X-Amz-Target=Logs_20140328.PutRetentionPolicy>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan put-retention-policy-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like operation-aborted-exception
+    note <OperationAbortedException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

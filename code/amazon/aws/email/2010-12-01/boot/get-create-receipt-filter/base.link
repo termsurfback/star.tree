@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/already-exists-exception
+  take form already-exists-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/create-receipt-filter-response
+  take form create-receipt-filter-response
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/receipt-filter-name
+  take form receipt-filter-name
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/receipt-ip-filter
+  take form receipt-ip-filter
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-receipt-filter, name <GET_CreateReceiptFilter>
+  note <Creates a new IP address filter.
+
+For information about setting up IP address filters, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-ip-filters.html).
+
+You can execute this operation no more than once per second.>
+
+  take filter
+    like form
+      take name, name <Name>
+        like receipt-filter-name
+        note <The name of the IP address filter. The name must:
+
+- This value can only contain ASCII letters (a-z, A-Z), numbers (0-9), underscores (_), or dashes (-).
+
+- Start and end with a letter or number.
+
+- Contain less than 64 characters.>
+      take ip-filter, name <IpFilter>
+        like receipt-ip-filter
+        note <A structure that provides the IP addresses to block or allow, and whether to block or allow incoming mail from them.>
+    note <A data structure that describes the IP address filter to create, which consists of a name, an IP address range, and whether to allow or block mail from it.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateReceiptFilter>
+
+  find <Filter>, loan filter
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-receipt-filter-response
+    note <Success>
+  loot 480
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed xml, like already-exists-exception
+    note <AlreadyExistsException>

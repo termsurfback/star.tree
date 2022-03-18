@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/get-compliance-details-by-resource-response
+  take form get-compliance-details-by-resource-response
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-compliance-details-by-resource, name <GetComplianceDetailsByResource>
+  note <Returns the evaluation results for the specified Amazon Web Services resource. The results indicate which Config rules were used to evaluate the resource, when each rule was last used, and whether the resource complies with each rule.>
+
+  take x-amz-target
+    like native-string
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-compliance-details-by-resource-request, like get-compliance-details-by-resource-request
+
+  line </#X-Amz-Target=StarlingDoveService.GetComplianceDetailsByResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <NextToken>, loan next-token
+
+  seed json, loan get-compliance-details-by-resource-request
+
+  loot 200
+    seed json, like get-compliance-details-by-resource-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>

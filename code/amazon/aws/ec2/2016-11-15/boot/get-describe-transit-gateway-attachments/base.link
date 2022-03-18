@@ -1,0 +1,83 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-transit-gateway-attachments-result
+  take form describe-transit-gateway-attachments-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/transit-gateway-attachment-id
+  take form transit-gateway-attachment-id
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-transit-gateway-attachments, name <GET_DescribeTransitGatewayAttachments>
+  note <Describes one or more attachments between resources and transit gateways. By default, all attachments are described. Alternatively, you can filter the results by attachment ID, attachment state, resource ID, or resource owner.>
+
+  take transit-gateway-attachment-ids
+    like list
+      like transit-gateway-attachment-id
+    note <The IDs of the attachments.>
+    void take
+  take filter
+    like list
+      like filter
+    note <One or more filters. The possible values are:
+
+- `association.state` - The state of the association (`associating` | `associated` | `disassociating`).
+
+- `association.transit-gateway-route-table-id` - The ID of the route table for the transit gateway.
+
+- `resource-id` - The ID of the resource.
+
+- `resource-owner-id` - The ID of the Amazon Web Services account that owns the resource.
+
+- `resource-type` - The resource type. Valid values are `vpc` | `vpn` | `direct-connect-gateway` | `peering` | `connect`.
+
+- `state` - The state of the attachment. Valid values are `available` | `deleted` | `deleting` | `failed` | `failing` | `initiatingRequest` | `modifying` | `pendingAcceptance` | `pending` | `rollingBack` | `rejected` | `rejecting`.
+
+- `transit-gateway-attachment-id` - The ID of the attachment.
+
+- `transit-gateway-id` - The ID of the transit gateway.
+
+- `transit-gateway-owner-id` - The ID of the Amazon Web Services account that owns the transit gateway.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return with a single call. To retrieve the remaining results, make another call with the returned `nextToken` value.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next page of results.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeTransitGatewayAttachments>
+
+  find <TransitGatewayAttachmentIds>, loan transit-gateway-attachment-ids
+  find <Filter>, loan filter
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <DryRun>, loan dry-run
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-transit-gateway-attachments-result
+    note <Success>

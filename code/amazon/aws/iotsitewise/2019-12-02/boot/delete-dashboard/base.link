@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/delete-dashboard-response
+  take form delete-dashboard-response
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-dashboard, name <DeleteDashboard>
+  note <Deletes a dashboard from IoT SiteWise Monitor.>
+
+  take dashboard-id
+    like native-string
+    note <The ID of the dashboard to delete.>
+  take client-token
+    like native-string
+    note <A unique case-sensitive identifier that you can provide to ensure the idempotency of the request. Don't reuse this client token if a new idempotent request is required.>
+    void take
+
+  line </dashboards/{dashboard-id}>
+
+  find <clientToken>, loan client-token
+
+  loot 204
+    seed json, like delete-dashboard-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>

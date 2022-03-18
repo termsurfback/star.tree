@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/bad-request
+  take form bad-request
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/dependency-timeout
+  take form dependency-timeout
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/mount-target-not-found
+  take form mount-target-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-mount-target, name <DeleteMountTarget>
+  note <Deletes the specified mount target.
+
+This operation forcibly breaks any mounts of the file system by using the mount target that is being deleted, which might disrupt instances or applications using those mounts. To avoid applications getting cut off abruptly, you might consider unmounting any mounts of the mount target, if feasible. The operation also deletes the associated network interface. Uncommitted writes might be lost, but breaking a mount target using this operation does not corrupt the file system itself. The file system you created remains. You can mount an EC2 instance in your VPC by using another mount target.
+
+This operation requires permissions for the following action on the file system:
+
+- `elasticfilesystem:DeleteMountTarget`
+
+The `DeleteMountTarget` call returns while the mount target state is still `deleting`. You can check the mount target deletion by calling the DescribeMountTargets operation, which returns a list of mount target descriptions for the given file system.
+
+The operation also requires permissions for the following Amazon EC2 action on the mount target's network interface:
+
+- `ec2:DeleteNetworkInterface`>
+
+  take mount-target-id
+    like native-string
+    note <The ID of the mount target to delete (String).>
+
+  line </2015-02-01/mount-targets/{mount-target-id}>
+
+  loot 204
+    note <Success>
+  loot 480
+    seed json, like bad-request
+    note <BadRequest>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 482
+    seed json, like dependency-timeout
+    note <DependencyTimeout>
+  loot 483
+    seed json, like mount-target-not-found
+    note <MountTargetNotFound>

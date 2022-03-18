@@ -1,0 +1,32 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_conversations_v1/1.27.2/base/conversations-v1-conversation-conversation-participant
+  take form conversations-v1-conversation-conversation-participant
+
+load @drumwork/snow/twilio.com/twilio_conversations_v1/1.27.2/base/create-conversation-participant-body
+  take form create-conversation-participant-body
+
+boot create-conversation-participant, name <CreateConversationParticipant>
+  note <Add a new participant to the conversation>
+
+  take conversation-sid
+    like native-string
+    note <The unique ID of the \[Conversation\](https://www.twilio.com/docs/conversations/api/conversation-resource) for this participant.>
+  take x-twilio-webhook-enabled
+    like native-string
+    note <The X-Twilio-Webhook-Enabled HTTP request header>
+    void take
+  take create-conversation-participant-body, like create-conversation-participant-body
+    void take
+
+  line </v1/Conversations/{conversation-sid}/Participants>
+
+  hint <X-Twilio-Webhook-Enabled>, loan x-twilio-webhook-enabled
+
+  seed x-www-form-urlencoded, loan create-conversation-participant-body
+
+  loot 201
+    seed json, like conversations-v1-conversation-conversation-participant
+    note <Created>

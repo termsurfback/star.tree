@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/describe-tapes-output
+  take form describe-tapes-output
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-tapes, name <DescribeTapes>
+  note <Returns a description of the specified Amazon Resource Name (ARN) of virtual tapes. If a `TapeARN` is not specified, returns a description of all virtual tapes associated with the specified gateway. This operation is only supported in the tape gateway type.>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-tapes-input, like describe-tapes-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.DescribeTapes>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <Limit>, loan limit
+  find <Marker>, loan marker
+
+  seed json, loan describe-tapes-input
+
+  loot 200
+    seed json, like describe-tapes-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

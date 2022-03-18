@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/mgn/2020-02-26/base/describe-job-log-items-body
+  take form describe-job-log-items-body
+
+load @drumwork/snow/amazonaws.com/mgn/2020-02-26/base/describe-job-log-items-response
+  take form describe-job-log-items-response
+
+load @drumwork/snow/amazonaws.com/mgn/2020-02-26/base/uninitialized-account-exception
+  take form uninitialized-account-exception
+
+load @drumwork/snow/amazonaws.com/mgn/2020-02-26/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-job-log-items, name <DescribeJobLogItems>
+  note <Retrieves detailed Job log with paging.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-job-log-items-body, like describe-job-log-items-body
+
+  line </DescribeJobLogItems>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan describe-job-log-items-body
+
+  loot 200
+    seed json, like describe-job-log-items-response
+    note <Success>
+  loot 480
+    seed json, like uninitialized-account-exception
+    note <UninitializedAccountException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>

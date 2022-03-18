@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/bad-request
+  take form bad-request
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/not-service-resource-error
+  take form not-service-resource-error
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/resource-does-not-support-tagging
+  take form resource-does-not-support-tagging
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/resource-not-found
+  take form resource-not-found
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/tag-resource-response
+  take form tag-resource-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot tag-resource, name <TagResource>
+  note <Tags an Amazon FSx resource.>
+
+  take x-amz-target
+    like native-string
+  take tag-resource-request, like tag-resource-request
+
+  line </#X-Amz-Target=AWSSimbaAPIService_v20180301.TagResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan tag-resource-request
+
+  loot 200
+    seed json, like tag-resource-response
+    note <Success>
+  loot 480
+    seed json, like bad-request
+    note <BadRequest>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 482
+    seed json, like resource-not-found
+    note <ResourceNotFound>
+  loot 483
+    seed json, like not-service-resource-error
+    note <NotServiceResourceError>
+  loot 484
+    seed json, like resource-does-not-support-tagging
+    note <ResourceDoesNotSupportTagging>

@@ -1,0 +1,98 @@
+
+load @drumwork/snow/amazonaws.com/codeguru-reviewer/2019-09-19/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/codeguru-reviewer/2019-09-19/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/codeguru-reviewer/2019-09-19/base/job-state
+  take form job-state
+
+load @drumwork/snow/amazonaws.com/codeguru-reviewer/2019-09-19/base/list-code-reviews-response
+  take form list-code-reviews-response
+
+load @drumwork/snow/amazonaws.com/codeguru-reviewer/2019-09-19/base/name
+  take form name
+
+load @drumwork/snow/amazonaws.com/codeguru-reviewer/2019-09-19/base/provider-type
+  take form provider-type
+
+load @drumwork/snow/amazonaws.com/codeguru-reviewer/2019-09-19/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/codeguru-reviewer/2019-09-19/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-code-reviews, name <ListCodeReviews>
+  note <Lists all the code reviews that the customer has created in the past 90 days.>
+
+  take provider-types
+    like list
+      like provider-type
+    note <List of provider types for filtering that needs to be applied before displaying the result. For example, `providerTypes=[GitHub]` lists code reviews from GitHub.>
+    void take
+  take states
+    like list
+      like job-state
+    note <List of states for filtering that needs to be applied before displaying the result. For example, `states=[Pending]` lists code reviews in the Pending state.
+
+The valid code review states are:
+
+- `Completed`: The code review is complete.
+
+- `Pending`: The code review started and has not completed or failed.
+
+- `Failed`: The code review failed.
+
+- `Deleting`: The code review is being deleted.>
+    void take
+  take repository-names
+    like list
+      like name
+    note <List of repository names for filtering that needs to be applied before displaying the result.>
+    void take
+  take type
+    like native-string
+    note <The type of code reviews to list in the response.>
+  take max-results
+    like native-integer
+    note <The maximum number of results that are returned per call. The default is 100.>
+    void take
+  take next-token
+    like native-string
+    note <If nextToken is returned, there are more results available. The value of nextToken is a unique pagination token for each page. Make the call again using the returned token to retrieve the next page. Keep all other arguments unchanged.>
+    void take
+
+  line </codereviews#Type>
+
+  find <ProviderTypes>, loan provider-types
+  find <States>, loan states
+  find <RepositoryNames>, loan repository-names
+  find <Type>, loan type
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like list-code-reviews-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

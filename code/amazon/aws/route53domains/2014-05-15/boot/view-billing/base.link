@@ -1,0 +1,29 @@
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/view-billing-response
+  take form view-billing-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot view-billing, name <ViewBilling>
+  note <Returns all the domain-related billing records for the current AWS account for a specified period>
+
+  take x-amz-target
+    like native-string
+  take view-billing-request, like view-billing-request
+
+  line </#X-Amz-Target=Route53Domains_v20140515.ViewBilling>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan view-billing-request
+
+  loot 200
+    seed json, like view-billing-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input
+    note <InvalidInput>

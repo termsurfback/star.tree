@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/adexchangebuyer2/v2beta1/base/list-creatives-response
+  take form list-creatives-response
+
+boot adexchangebuyer2-accounts-creatives-list, name <adexchangebuyer2.accounts.creatives.list>
+  note <Lists creatives.>
+
+  take account-id
+    like native-string
+    note <The account to list the creatives from. Specify "-" to list all creatives the current user has access to.>
+  take page-size
+    like native-integer
+    note <Requested page size. The server may return fewer creatives than requested (due to timeout constraint) even if more are available via another call. If unspecified, server will pick an appropriate default. Acceptable values are 1 to 1000, inclusive.>
+    void take
+  take page-token
+    like native-string
+    note <A token identifying a page of results the server should return. Typically, this is the value of ListCreativesResponse.next_page_token returned from the previous call to 'ListCreatives' method.>
+    void take
+  take query
+    like native-string
+    note <An optional query string to filter creatives. If no filter is specified, all active creatives will be returned. Supported queries are: - accountId=*account_id_string* - creativeId=*creative_id_string* - dealsStatus: {approved, conditionally_approved, disapproved, not_checked} - openAuctionStatus: {approved, conditionally_approved, disapproved, not_checked} - attribute: {a numeric attribute from the list of attributes} - disapprovalReason: {a reason from DisapprovalReason} Example: 'accountId=12345 AND (dealsStatus:disapproved AND disapprovalReason:unacceptable_content) OR attribute:47'>
+    void take
+
+  line </v2beta1/accounts/{account-id}/creatives>
+
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+  find <query>, loan query
+
+  loot 200
+    seed json, like list-creatives-response
+    note <Successful response>

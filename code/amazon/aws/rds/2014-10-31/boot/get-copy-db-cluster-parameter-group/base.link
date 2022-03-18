@@ -1,0 +1,82 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/copy-db-cluster-parameter-group-result
+  take form copy-db-cluster-parameter-group-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-parameter-group-already-exists-fault
+  take form db-parameter-group-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-parameter-group-not-found-fault
+  take form db-parameter-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-parameter-group-quota-exceeded-fault
+  take form db-parameter-group-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/tag
+  take form tag
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-copy-db-cluster-parameter-group, name <GET_CopyDBClusterParameterGroup>
+  note <Copies the specified DB cluster parameter group.
+
+This action only applies to Aurora DB clusters.>
+
+  take source-db-cluster-parameter-group-identifier
+    like native-string
+    note <The identifier or Amazon Resource Name (ARN) for the source DB cluster parameter group. For information about creating an ARN, see [Constructing an ARN for Amazon RDS](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_Tagging.ARN.html#USER_Tagging.ARN.Constructing) in the _Amazon Aurora User Guide_.
+
+Constraints:
+
+- Must specify a valid DB cluster parameter group.>
+  take target-db-cluster-parameter-group-identifier
+    like native-string
+    note <The identifier for the copied DB cluster parameter group.
+
+Constraints:
+
+- Can't be null, empty, or blank
+
+- Must contain from 1 to 255 letters, numbers, or hyphens
+
+- First character must be a letter
+
+- Can't end with a hyphen or contain two consecutive hyphens
+
+Example: `my-cluster-param-group1`>
+  take target-db-cluster-parameter-group-description
+    like native-string
+    note <A description for the copied DB cluster parameter group.>
+  take tags
+    like list
+      like tag
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CopyDBClusterParameterGroup>
+
+  find <SourceDBClusterParameterGroupIdentifier>, loan source-db-cluster-parameter-group-identifier
+  find <TargetDBClusterParameterGroupIdentifier>, loan target-db-cluster-parameter-group-identifier
+  find <TargetDBClusterParameterGroupDescription>, loan target-db-cluster-parameter-group-description
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like copy-db-cluster-parameter-group-result
+    note <Success>
+  loot 480
+    seed xml, like db-parameter-group-not-found-fault
+    note <DBParameterGroupNotFoundFault>
+  loot 481
+    seed xml, like db-parameter-group-quota-exceeded-fault
+    note <DBParameterGroupQuotaExceededFault>
+  loot 482
+    seed xml, like db-parameter-group-already-exists-fault
+    note <DBParameterGroupAlreadyExistsFault>

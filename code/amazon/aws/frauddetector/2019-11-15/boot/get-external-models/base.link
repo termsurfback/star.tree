@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/frauddetector/2019-11-15/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/frauddetector/2019-11-15/base/get-external-models-result
+  take form get-external-models-result
+
+load @drumwork/snow/amazonaws.com/frauddetector/2019-11-15/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/frauddetector/2019-11-15/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/frauddetector/2019-11-15/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/frauddetector/2019-11-15/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-external-models, name <GetExternalModels>
+  note <Gets the details for one or more Amazon SageMaker models that have been imported into the service. This is a paginated API. If you provide a null `maxResults`, this actions retrieves a maximum of 10 records per page. If you provide a `maxResults`, the value must be between 5 and 10. To get the next page results, provide the pagination token from the `GetExternalModelsResult` as part of your request. A null pagination token fetches the records from the beginning.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-external-models-request, like get-external-models-request
+
+  line </#X-Amz-Target=AWSHawksNestServiceFacade.GetExternalModels>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan get-external-models-request
+
+  loot 200
+    seed json, like get-external-models-result
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

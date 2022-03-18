@@ -1,0 +1,64 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+load @drumwork/snow/slack.com/1.7.0/base/objs-conversation
+  take form objs-conversation
+
+boot conversations-info, name <conversations_info>
+  note <Retrieve information about a conversation.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `conversations:read`>
+    void take
+  take channel
+    like native-string
+    note <Conversation ID to learn more about>
+    void take
+  take include-locale
+    like native-boolean
+    note <Set this to `true` to receive the locale for this conversation. Defaults to `false`>
+    void take
+  take include-num-members
+    like native-boolean
+    note <Set to `true` to include the member count for the specified conversation. Defaults to `false`>
+    void take
+
+  line </conversations.info>
+
+  find <token>, loan token
+  find <channel>, loan channel
+  find <include_locale>, loan include-locale
+  find <include_num_members>, loan include-num-members
+
+  loot 200
+    seed json
+      like form
+        take channel, name <channel>
+          like objs-conversation
+        take ok, name <ok>
+          like defs-ok-true
+    note <Typical success response for a public channel. (Also, a response from a private channel and a multi-party IM is very similar to this example.)>
+  loot fall
+    seed json
+      like form
+        take callstack, name <callstack>
+          void take
+        take error, name <error>
+        take needed, name <needed>
+          void take
+        take ok, name <ok>
+          like defs-ok-false
+        take provided, name <provided>
+          void take
+    note <Typical error response when a channel cannot be found>

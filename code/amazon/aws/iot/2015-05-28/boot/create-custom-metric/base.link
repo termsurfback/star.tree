@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/create-custom-metric-body
+  take form create-custom-metric-body
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/create-custom-metric-response
+  take form create-custom-metric-response
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/resource-already-exists-exception
+  take form resource-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-custom-metric, name <CreateCustomMetric>
+  note <Use this API to define a Custom Metric published by your devices to Device Defender.
+
+Requires permission to access the [CreateCustomMetric](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiot.html#awsiot-actions-as-permissions) action.>
+
+  take metric-name
+    like native-string
+    note <The name of the custom metric. This will be used in the metric report submitted from the device/thing. Shouldn't begin with `aws:`. Cannot be updated once defined.>
+  take create-custom-metric-body, like create-custom-metric-body
+
+  line </custom-metric/{metric-name}>
+
+  seed json, loan create-custom-metric-body
+
+  loot 200
+    seed json, like create-custom-metric-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like resource-already-exists-exception
+    note <ResourceAlreadyExistsException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

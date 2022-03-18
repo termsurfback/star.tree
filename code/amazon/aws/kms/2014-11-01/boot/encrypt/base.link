@@ -1,0 +1,123 @@
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/dependency-timeout-exception
+  take form dependency-timeout-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/disabled-exception
+  take form disabled-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/encrypt-response
+  take form encrypt-response
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-grant-token-exception
+  take form invalid-grant-token-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-key-usage-exception
+  take form invalid-key-usage-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/key-unavailable-exception
+  take form key-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-internal-exception
+  take form kms-internal-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-invalid-state-exception
+  take form kms-invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot encrypt, name <Encrypt>
+  note <Encrypts plaintext into ciphertext by using a KMS key. The `Encrypt` operation has two primary use cases:
+
+- You can encrypt small amounts of arbitrary data, such as a personal identifier or database password, or other sensitive information.
+
+- You can use the `Encrypt` operation to move encrypted data from one Amazon Web Services Region to another. For example, in Region A, generate a data key and use the plaintext key to encrypt your data. Then, in Region A, use the `Encrypt` operation to encrypt the plaintext data key under a KMS key in Region B. Now, you can move the encrypted data and the encrypted data key to Region B. When necessary, you can decrypt the encrypted data key and the encrypted data entirely within in Region B.
+
+You don't need to use the `Encrypt` operation to encrypt a data key. The GenerateDataKey and GenerateDataKeyPair operations return a plaintext data key and an encrypted copy of that data key.
+
+When you encrypt data, you must specify a symmetric or asymmetric KMS key to use in the encryption operation. The KMS key must have a `KeyUsage` value of `ENCRYPT_DECRYPT.` To find the `KeyUsage` of a KMS key, use the DescribeKey operation.
+
+If you use a symmetric KMS key, you can use an encryption context to add additional security to your encryption operation. If you specify an `EncryptionContext` when encrypting data, you must specify the same encryption context (a case-sensitive exact match) when decrypting the data. Otherwise, the request to decrypt fails with an `InvalidCiphertextException`. For more information, see [Encryption Context](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#encrypt_context) in the _Key Management Service Developer Guide_.
+
+If you specify an asymmetric KMS key, you must also specify the encryption algorithm. The algorithm must be compatible with the KMS key type.
+
+When you use an asymmetric KMS key to encrypt or reencrypt data, be sure to record the KMS key and encryption algorithm that you choose. You will be required to provide the same KMS key and encryption algorithm when you decrypt the data. If the KMS key and algorithm do not match the values used to encrypt the data, the decrypt operation fails.
+
+You are not required to supply the key ID and encryption algorithm when you decrypt with symmetric KMS keys because KMS stores this information in the ciphertext blob. KMS cannot store metadata in ciphertext generated with asymmetric keys. The standard format for asymmetric key ciphertext does not include configurable fields.
+
+The maximum size of the data that you can encrypt varies with the type of KMS key and the encryption algorithm that you choose.
+
+- Symmetric KMS keys
+
+  - `SYMMETRIC_DEFAULT`: 4096 bytes
+
+- `RSA_2048`
+
+  - `RSAES_OAEP_SHA_1`: 214 bytes
+
+  - `RSAES_OAEP_SHA_256`: 190 bytes
+
+- `RSA_3072`
+
+  - `RSAES_OAEP_SHA_1`: 342 bytes
+
+  - `RSAES_OAEP_SHA_256`: 318 bytes
+
+- `RSA_4096`
+
+  - `RSAES_OAEP_SHA_1`: 470 bytes
+
+  - `RSAES_OAEP_SHA_256`: 446 bytes
+
+The KMS key that you use for this operation must be in a compatible key state. For details, see [Key state: Effect on your KMS key](https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html) in the _Key Management Service Developer Guide_.
+
+**Cross-account use**: Yes. To perform this operation with a KMS key in a different Amazon Web Services account, specify the key ARN or alias ARN in the value of the `KeyId` parameter.
+
+**Required permissions**: [kms:Encrypt](https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html) (key policy)
+
+**Related operations:** - Decrypt
+
+- GenerateDataKey
+
+- GenerateDataKeyPair>
+
+  take x-amz-target
+    like native-string
+  take encrypt-request, like encrypt-request
+
+  line </#X-Amz-Target=TrentService.Encrypt>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan encrypt-request
+
+  loot 200
+    seed json, like encrypt-response
+    note <Success>
+  loot 480
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 481
+    seed json, like disabled-exception
+    note <DisabledException>
+  loot 482
+    seed json, like key-unavailable-exception
+    note <KeyUnavailableException>
+  loot 483
+    seed json, like dependency-timeout-exception
+    note <DependencyTimeoutException>
+  loot 484
+    seed json, like invalid-key-usage-exception
+    note <InvalidKeyUsageException>
+  loot 485
+    seed json, like invalid-grant-token-exception
+    note <InvalidGrantTokenException>
+  loot 486
+    seed json, like kms-internal-exception
+    note <KMSInternalException>
+  loot 487
+    seed json, like kms-invalid-state-exception
+    note <KMSInvalidStateException>

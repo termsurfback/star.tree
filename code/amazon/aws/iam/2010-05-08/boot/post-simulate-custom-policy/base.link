@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/policy-evaluation-exception
+  take form policy-evaluation-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/simulate-policy-response
+  take form simulate-policy-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-simulate-custom-policy, name <POST_SimulateCustomPolicy>
+  note <Simulate how a set of IAM policies and optionally a resource-based policy works with a list of API operations and Amazon Web Services resources to determine the policies' effective permissions. The policies are provided as strings.
+
+The simulation does not perform the API operations; it only checks the authorization to determine if the simulated policies allow or deny the operations. You can simulate resources that don't exist in your account.
+
+If you want to simulate existing policies that are attached to an IAM user, group, or role, use SimulatePrincipalPolicy instead.
+
+Context keys are variables that are maintained by Amazon Web Services and its services and which provide details about the context of an API query request. You can use the `Condition` element of an IAM policy to evaluate context keys. To get the list of context keys that the policies require for correct simulation, use GetContextKeysForCustomPolicy.
+
+If the output is long, you can use `MaxItems` and `Marker` parameters to paginate the results.
+
+For more information about using the policy simulator, see [Testing IAM policies with the IAM policy simulator](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_testing-policies.html) in the _IAM User Guide_.>
+
+  take max-items
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take simulate-custom-policy-request, like simulate-custom-policy-request
+    void take
+
+  line </#Action=SimulateCustomPolicy>
+
+  find <MaxItems>, loan max-items
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan simulate-custom-policy-request
+
+  loot 200
+    seed xml, like simulate-policy-response
+    note <Success>
+  loot 480
+    seed xml, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed xml, like policy-evaluation-exception
+    note <PolicyEvaluationException>

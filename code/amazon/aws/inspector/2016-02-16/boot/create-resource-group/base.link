@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/inspector/2016-02-16/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/inspector/2016-02-16/base/create-resource-group-response
+  take form create-resource-group-response
+
+load @drumwork/snow/amazonaws.com/inspector/2016-02-16/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/inspector/2016-02-16/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/inspector/2016-02-16/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/inspector/2016-02-16/base/service-temporarily-unavailable-exception
+  take form service-temporarily-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-resource-group, name <CreateResourceGroup>
+  note <Creates a resource group using the specified set of tags (key and value pairs) that are used to select the EC2 instances to be included in an Amazon Inspector assessment target. The created resource group is then used to create an Amazon Inspector assessment target. For more information, see CreateAssessmentTarget.>
+
+  take x-amz-target
+    like native-string
+  take create-resource-group-request, like create-resource-group-request
+
+  line </#X-Amz-Target=InspectorService.CreateResourceGroup>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-resource-group-request
+
+  loot 200
+    seed json, like create-resource-group-response
+    note <Success>
+  loot 480
+    seed json, like internal-exception
+    note <InternalException>
+  loot 481
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 482
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 483
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 484
+    seed json, like service-temporarily-unavailable-exception
+    note <ServiceTemporarilyUnavailableException>

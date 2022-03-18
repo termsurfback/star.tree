@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/list-traffic-policy-versions-response
+  take form list-traffic-policy-versions-response
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/no-such-traffic-policy
+  take form no-such-traffic-policy
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-traffic-policy-versions, name <ListTrafficPolicyVersions>
+  note <Gets information about all of the versions for a specified traffic policy.
+
+Traffic policy versions are listed in numerical order by `VersionNumber`.>
+
+  take id
+    like native-string
+    note <Specify the value of `Id` of the traffic policy for which you want to list all versions.>
+  take trafficpolicyversion
+    like native-string
+    note <For your first request to `ListTrafficPolicyVersions`, don't include the `TrafficPolicyVersionMarker` parameter.
+
+If you have more traffic policy versions than the value of `MaxItems`, `ListTrafficPolicyVersions` returns only the first group of `MaxItems` versions. To get more traffic policy versions, submit another `ListTrafficPolicyVersions` request. For the value of `TrafficPolicyVersionMarker`, specify the value of `TrafficPolicyVersionMarker` in the previous response.>
+    void take
+  take maxitems
+    like native-string
+    note <The maximum number of traffic policy versions that you want Amazon Route 53 to include in the response body for this request. If the specified traffic policy has more than `MaxItems` versions, the value of `IsTruncated` in the response is `true`, and the value of the `TrafficPolicyVersionMarker` element is the ID of the first version that Route 53 will return if you submit another request.>
+    void take
+
+  line </2013-04-01/trafficpolicies/{id}/versions>
+
+  find <trafficpolicyversion>, loan trafficpolicyversion
+  find <maxitems>, loan maxitems
+
+  loot 200
+    seed xml, like list-traffic-policy-versions-response
+    note <Success>
+  loot 480
+    seed xml, like invalid-input
+    note <InvalidInput>
+  loot 481
+    seed xml, like no-such-traffic-policy
+    note <NoSuchTrafficPolicy>

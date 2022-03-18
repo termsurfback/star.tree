@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/get-organizations-access-report-response
+  take form get-organizations-access-report-response
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-get-organizations-access-report, name <POST_GetOrganizationsAccessReport>
+  note <Retrieves the service last accessed data report for Organizations that was previously generated using the `GenerateOrganizationsAccessReport` operation. This operation retrieves the status of your report job and the report contents.
+
+Depending on the parameters that you passed when you generated the report, the data returned could include different information. For details, see GenerateOrganizationsAccessReport.
+
+To call this operation, you must be signed in to the management account in your organization. SCPs must be enabled for your organization root. You must have permissions to perform this operation. For more information, see [Refining permissions using service last accessed data](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_access-advisor.html) in the _IAM User Guide_.
+
+For each service that principals in an account (root users, IAM users, or IAM roles) could access using SCPs, the operation returns details about the most recent access attempt. If there was no attempt, the service is listed without details about the most recent attempt to access the service. If the operation fails, it returns the reason that it failed.
+
+By default, the list is sorted by service namespace.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take get-organizations-access-report-request, like get-organizations-access-report-request
+    void take
+
+  line </#Action=GetOrganizationsAccessReport>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan get-organizations-access-report-request
+
+  loot 200
+    seed xml, like get-organizations-access-report-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>

@@ -1,0 +1,44 @@
+
+load @drumwork/snow/amazonaws.com/health/2016-08-04/base/describe-affected-accounts-for-organization-response
+  take form describe-affected-accounts-for-organization-response
+
+load @drumwork/snow/amazonaws.com/health/2016-08-04/base/invalid-pagination-token
+  take form invalid-pagination-token
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-affected-accounts-for-organization, name <DescribeAffectedAccountsForOrganization>
+  note <Returns a list of accounts in the organization from AWS Organizations that are affected by the provided event. For more information about the different types of AWS Health events, see [Event](https://docs.aws.amazon.com/health/latest/APIReference/API_Event.html).
+
+Before you can call this operation, you must first enable AWS Health to work with AWS Organizations. To do this, call the [EnableHealthServiceAccessForOrganization](https://docs.aws.amazon.com/health/latest/APIReference/API_EnableHealthServiceAccessForOrganization.html) operation from your organization's management account.
+
+This API operation uses pagination. Specify the `nextToken` parameter in the next request to return more results.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-affected-accounts-for-organization-request, like describe-affected-accounts-for-organization-request
+
+  line </#X-Amz-Target=AWSHealth_20160804.DescribeAffectedAccountsForOrganization>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan describe-affected-accounts-for-organization-request
+
+  loot 200
+    seed json, like describe-affected-accounts-for-organization-response
+    note <Success>
+  loot 480
+    seed json, like invalid-pagination-token
+    note <InvalidPaginationToken>

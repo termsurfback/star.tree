@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/duplicate-resource-exception
+  take form duplicate-resource-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/invalid-parameters-exception
+  take form invalid-parameters-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/provision-product-output
+  take form provision-product-output
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot provision-product, name <ProvisionProduct>
+  note <Provisions the specified product.
+
+A provisioned product is a resourced instance of a product. For example, provisioning a product based on a CloudFormation template launches a CloudFormation stack and its underlying resources. You can check the status of this request using DescribeRecord.
+
+If the request contains a tag key with an empty list of values, there is a tag conflict for that key. Do not include conflicted keys as tags, or this causes the error "Parameter validation failed: Missing required parameter in Tags[_N_]:_Value_".>
+
+  take x-amz-target
+    like native-string
+  take provision-product-input, like provision-product-input
+
+  line </#X-Amz-Target=AWS242ServiceCatalogService.ProvisionProduct>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan provision-product-input
+
+  loot 200
+    seed json, like provision-product-output
+    note <Success>
+  loot 480
+    seed json, like invalid-parameters-exception
+    note <InvalidParametersException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like duplicate-resource-exception
+    note <DuplicateResourceException>

@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/get-prepared-statement-output
+  take form get-prepared-statement-output
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-prepared-statement, name <GetPreparedStatement>
+  note <Retrieves the prepared statement with the specified name from the specified workgroup.>
+
+  take x-amz-target
+    like native-string
+  take get-prepared-statement-input, like get-prepared-statement-input
+
+  line </#X-Amz-Target=AmazonAthena.GetPreparedStatement>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-prepared-statement-input
+
+  loot 200
+    seed json, like get-prepared-statement-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

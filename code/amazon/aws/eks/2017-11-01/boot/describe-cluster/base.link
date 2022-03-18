@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/describe-cluster-response
+  take form describe-cluster-response
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-cluster, name <DescribeCluster>
+  note <Returns descriptive information about an Amazon EKS cluster.
+
+The API server endpoint and certificate authority data returned by this operation are required for `kubelet` and `kubectl` to communicate with your Kubernetes API server. For more information, see [Create a kubeconfig for Amazon EKS](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html).
+
+The API server endpoint and certificate authority data aren't available until the cluster reaches the `ACTIVE` state.>
+
+  take name
+    like native-string
+    note <The name of the cluster to describe.>
+
+  line </clusters/{name}>
+
+  loot 200
+    seed json, like describe-cluster-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like client-exception
+    note <ClientException>
+  loot 482
+    seed json, like server-exception
+    note <ServerException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

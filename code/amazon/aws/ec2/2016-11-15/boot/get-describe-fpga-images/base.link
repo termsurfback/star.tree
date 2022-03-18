@@ -1,0 +1,96 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-fpga-images-result
+  take form describe-fpga-images-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/fpga-image-id
+  take form fpga-image-id
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-describe-fpga-images, name <GET_DescribeFpgaImages>
+  note <Describes the Amazon FPGA Images (AFIs) available to you. These include public AFIs, private AFIs that you own, and AFIs owned by other AWS accounts for which you have load permissions.>
+
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take fpga-image-id
+    like list
+      like fpga-image-id
+    note <The AFI IDs.>
+    void take
+  take owner
+    like list
+      like string
+    note <Filters the AFI by owner. Specify an AWS account ID, `self` (owner is the sender of the request), or an AWS owner alias (valid values are `amazon` | `aws-marketplace`).>
+    void take
+  take filter
+    like list
+      like filter
+    note <The filters.
+
+- `create-time` - The creation time of the AFI.
+
+- `fpga-image-id` - The FPGA image identifier (AFI ID).
+
+- `fpga-image-global-id` - The global FPGA image identifier (AGFI ID).
+
+- `name` - The name of the AFI.
+
+- `owner-id` - The AWS account ID of the AFI owner.
+
+- `product-code` - The product code.
+
+- `shell-version` - The version of the AWS Shell that was used to create the bitstream.
+
+- `state` - The state of the AFI (`pending` | `failed` | `available` | `unavailable`).
+
+- `tag`:&lt;key&gt; - The key/value combination of a tag assigned to the resource. Use the tag key in the filter name and the tag value as the filter value. For example, to find all resources that have a tag with the key `Owner` and the value `TeamA`, specify `tag:Owner` for the filter name and `TeamA` for the filter value.
+
+- `tag-key` - The key of a tag assigned to the resource. Use this filter to find all resources assigned a tag with a specific key, regardless of the tag value.
+
+- `update-time` - The time of the most recent update.>
+    void take
+  take next-token
+    like native-string
+    note <The token to retrieve the next page of results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return in a single call.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeFpgaImages>
+
+  find <DryRun>, loan dry-run
+  find <FpgaImageId>, loan fpga-image-id
+  find <Owner>, loan owner
+  find <Filter>, loan filter
+  find <NextToken>, loan next-token
+  find <MaxResults>, loan max-results
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-fpga-images-result
+    note <Success>

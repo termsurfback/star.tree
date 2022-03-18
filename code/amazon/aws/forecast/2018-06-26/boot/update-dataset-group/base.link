@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/forecast/2018-06-26/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/forecast/2018-06-26/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/forecast/2018-06-26/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/forecast/2018-06-26/base/update-dataset-group-response
+  take form update-dataset-group-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-dataset-group, name <UpdateDatasetGroup>
+  note <Replaces the datasets in a dataset group with the specified datasets.
+
+The `Status` of the dataset group must be `ACTIVE` before you can use the dataset group to create a predictor. Use the DescribeDatasetGroup operation to get the status.>
+
+  take x-amz-target
+    like native-string
+  take update-dataset-group-request, like update-dataset-group-request
+
+  line </#X-Amz-Target=AmazonForecast.UpdateDatasetGroup>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-dataset-group-request
+
+  loot 200
+    seed json, like update-dataset-group-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>

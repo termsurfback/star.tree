@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/create-environment-body
+  take form create-environment-body
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/environment
+  take form environment
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-environment, name <CreateEnvironment>
+  note <For each application, you define one or more environments. An environment is a logical deployment group of AppConfig targets, such as applications in a `Beta` or `Production` environment. You can also define environments for application subcomponents such as the `Web`, `Mobile` and `Back-end` components for your application. You can configure Amazon CloudWatch alarms for each environment. The system monitors alarms during a configuration deployment. If an alarm is triggered, the system rolls back the configuration.>
+
+  take application-id
+    like native-string
+    note <The application ID.>
+  take create-environment-body, like create-environment-body
+
+  line </applications/{application-id}/environments>
+
+  seed json, loan create-environment-body
+
+  loot 201
+    seed json, like environment
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like bad-request-exception
+    note <BadRequestException>

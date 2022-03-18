@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/accept-match-output
+  take form accept-match-output
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/unsupported-region-exception
+  take form unsupported-region-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot accept-match, name <AcceptMatch>
+  note <Registers a player's acceptance or rejection of a proposed FlexMatch match. A matchmaking configuration may require player acceptance; if so, then matches built with that configuration cannot be completed unless all players accept the proposed match within a specified time limit.
+
+When FlexMatch builds a match, all the matchmaking tickets involved in the proposed match are placed into status `REQUIRES_ACCEPTANCE`. This is a trigger for your game to get acceptance from all players in the ticket. Acceptances are only valid for tickets when they are in this status; all other acceptances result in an error.
+
+To register acceptance, specify the ticket ID, a response, and one or more players. Once all players have registered acceptance, the matchmaking tickets advance to status `PLACING`, where a new game session is created for the match.
+
+If any player rejects the match, or if acceptances are not received before a specified timeout, the proposed match is dropped. The matchmaking tickets are then handled in one of two ways: For tickets where one or more players rejected the match, the ticket status is returned to `SEARCHING` to find a new match. For tickets where one or more players failed to respond, the ticket status is set to `CANCELLED`, and processing is terminated. A new matchmaking request for these players can be submitted as needed.
+
+**Learn more** [Add FlexMatch to a game client](https://docs.aws.amazon.com/gamelift/latest/flexmatchguide/match-client.html)
+
+[FlexMatch events](https://docs.aws.amazon.com/gamelift/latest/flexmatchguide/match-events.html) (reference)
+
+**Related actions** StartMatchmaking | DescribeMatchmaking | StopMatchmaking | AcceptMatch | StartMatchBackfill | [All APIs by task](https://docs.aws.amazon.com/gamelift/latest/developerguide/reference-awssdk.html#reference-awssdk-resources-fleets)>
+
+  take x-amz-target
+    like native-string
+  take accept-match-input, like accept-match-input
+
+  line </#X-Amz-Target=GameLift.AcceptMatch>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan accept-match-input
+
+  loot 200
+    seed json, like accept-match-output
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 482
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 483
+    seed json, like unsupported-region-exception
+    note <UnsupportedRegionException>

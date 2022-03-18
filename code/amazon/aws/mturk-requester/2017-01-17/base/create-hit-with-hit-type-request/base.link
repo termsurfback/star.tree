@@ -1,0 +1,73 @@
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/entity-id
+  take form entity-id
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/hit-layout-parameter-list
+  take form hit-layout-parameter-list
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/idempotency-token
+  take form idempotency-token
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/long
+  take form long
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/review-policy
+  take form review-policy
+
+load @drumwork/snow/base/integer
+  take form integer
+
+load @drumwork/snow/base/string
+  take form string
+
+form create-hit-with-hit-type-request, name <CreateHITWithHITTypeRequest>
+  take hit-type-id, name <HITTypeId>
+    like entity-id
+    note <The HIT type ID you want to create this HIT with.>
+  take max-assignments, name <MaxAssignments>
+    like integer
+    void take
+    note <The number of times the HIT can be accepted and completed before the HIT becomes unavailable.>
+  take lifetime-in-seconds, name <LifetimeInSeconds>
+    like long
+    note <An amount of time, in seconds, after which the HIT is no longer available for users to accept. After the lifetime of the HIT elapses, the HIT no longer appears in HIT searches, even if not all of the assignments for the HIT have been accepted.>
+  take question, name <Question>
+    like string
+    void take
+    note <The data the person completing the HIT uses to produce the results.
+
+Constraints: Must be a QuestionForm data structure, an ExternalQuestion data structure, or an HTMLQuestion data structure. The XML question data must not be larger than 64 kilobytes (65,535 bytes) in size, including whitespace.
+
+Either a Question parameter or a HITLayoutId parameter must be provided.>
+  take requester-annotation, name <RequesterAnnotation>
+    like string
+    void take
+    note <An arbitrary data field. The RequesterAnnotation parameter lets your application attach arbitrary data to the HIT for tracking purposes. For example, this parameter could be an identifier internal to the Requester's application that corresponds with the HIT.
+
+The RequesterAnnotation parameter for a HIT is only visible to the Requester who created the HIT. It is not shown to the Worker, or any other Requester.
+
+The RequesterAnnotation parameter may be different for each HIT you submit. It does not affect how your HITs are grouped.>
+  take unique-request-token, name <UniqueRequestToken>
+    like idempotency-token
+    void take
+    note <A unique identifier for this request which allows you to retry the call on error without creating duplicate HITs. This is useful in cases such as network timeouts where it is unclear whether or not the call succeeded on the server. If the HIT already exists in the system from a previous call using the same UniqueRequestToken, subsequent calls will return a AWS.MechanicalTurk.HitAlreadyExists error with a message containing the HITId.
+
+Note: It is your responsibility to ensure uniqueness of the token. The unique token expires after 24 hours. Subsequent calls using the same UniqueRequestToken made after the 24 hour limit could create duplicate HITs.>
+  take assignment-review-policy, name <AssignmentReviewPolicy>
+    like review-policy
+    void take
+    note <The Assignment-level Review Policy applies to the assignments under the HIT. You can specify for Mechanical Turk to take various actions based on the policy.>
+  take hit-review-policy, name <HITReviewPolicy>
+    like review-policy
+    void take
+    note <The HIT-level Review Policy applies to the HIT. You can specify for Mechanical Turk to take various actions based on the policy.>
+  take hit-layout-id, name <HITLayoutId>
+    like entity-id
+    void take
+    note <The HITLayoutId allows you to use a pre-existing HIT design with placeholder values and create an additional HIT by providing those values as HITLayoutParameters.
+
+Constraints: Either a Question parameter or a HITLayoutId parameter must be provided.>
+  take hit-layout-parameters, name <HITLayoutParameters>
+    like hit-layout-parameter-list
+    void take
+    note <If the HITLayoutId is provided, any placeholder values must be filled in with values using the HITLayoutParameter structure. For more information, see HITLayout.>

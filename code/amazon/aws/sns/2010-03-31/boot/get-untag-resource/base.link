@@ -1,0 +1,80 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/concurrent-access-exception
+  take form concurrent-access-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/stale-tag-exception
+  take form stale-tag-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/tag-key
+  take form tag-key
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/tag-limit-exceeded-exception
+  take form tag-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/tag-policy-exception
+  take form tag-policy-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/untag-resource-response
+  take form untag-resource-response
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-untag-resource, name <GET_UntagResource>
+  note <Remove tags from the specified Amazon SNS topic. For an overview, see [Amazon SNS Tags](https://docs.aws.amazon.com/sns/latest/dg/sns-tags.html) in the _Amazon SNS Developer Guide_.>
+
+  take resource-arn
+    like native-string
+    note <The ARN of the topic from which to remove tags.>
+  take tag-keys
+    like list
+      like tag-key
+    note <The list of tag keys to remove from the specified topic.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=UntagResource>
+
+  find <ResourceArn>, loan resource-arn
+  find <TagKeys>, loan tag-keys
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like untag-resource-response
+    note <Success>
+  loot 480
+    seed xml, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed xml, like tag-limit-exceeded-exception
+    note <TagLimitExceededException>
+  loot 482
+    seed xml, like stale-tag-exception
+    note <StaleTagException>
+  loot 483
+    seed xml, like tag-policy-exception
+    note <TagPolicyException>
+  loot 484
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 485
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>
+  loot 486
+    seed xml, like concurrent-access-exception
+    note <ConcurrentAccessException>

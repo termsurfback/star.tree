@@ -1,0 +1,70 @@
+
+load @drumwork/snow/amazonaws.com/sesv2/2019-09-27/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/sesv2/2019-09-27/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/sesv2/2019-09-27/base/list-suppressed-destinations-response
+  take form list-suppressed-destinations-response
+
+load @drumwork/snow/amazonaws.com/sesv2/2019-09-27/base/suppression-list-reason
+  take form suppression-list-reason
+
+load @drumwork/snow/amazonaws.com/sesv2/2019-09-27/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-suppressed-destinations, name <ListSuppressedDestinations>
+  note <Retrieves a list of email addresses that are on the suppression list for your account.>
+
+  take reason
+    like list
+      like suppression-list-reason
+    note <The factors that caused the email address to be added to .>
+    void take
+  take start-date
+    like native-string
+    note <Used to filter the list of suppressed email destinations so that it only includes addresses that were added to the list after a specific date. The date that you specify should be in Unix time format.>
+    void take
+  take end-date
+    like native-string
+    note <Used to filter the list of suppressed email destinations so that it only includes addresses that were added to the list before a specific date. The date that you specify should be in Unix time format.>
+    void take
+  take next-token
+    like native-string
+    note <A token returned from a previous call to `ListSuppressedDestinations` to indicate the position in the list of suppressed email addresses.>
+    void take
+  take page-size
+    like native-integer
+    note <The number of results to show in a single call to `ListSuppressedDestinations`. If the number of results is larger than the number you specified in this parameter, then the response includes a `NextToken` element, which you can use to obtain additional results.>
+    void take
+
+  line </v2/email/suppression/addresses>
+
+  find <Reason>, loan reason
+  find <StartDate>, loan start-date
+  find <EndDate>, loan end-date
+  find <NextToken>, loan next-token
+  find <PageSize>, loan page-size
+
+  loot 200
+    seed json, like list-suppressed-destinations-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 482
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>

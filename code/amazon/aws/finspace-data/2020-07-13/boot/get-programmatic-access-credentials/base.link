@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/finspace-data/2020-07-13/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/finspace-data/2020-07-13/base/get-programmatic-access-credentials-response
+  take form get-programmatic-access-credentials-response
+
+load @drumwork/snow/amazonaws.com/finspace-data/2020-07-13/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/finspace-data/2020-07-13/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-programmatic-access-credentials, name <GetProgrammaticAccessCredentials>
+  note <Request programmatic credentials to use with Habanero SDK.>
+
+  take duration-in-minutes
+    like native-integer
+    note <The time duration in which the credentials remain valid.>
+    void take
+  take environment-id
+    like native-string
+    note <The habanero environment identifier.>
+
+  line </credentials/programmatic#environmentId>
+
+  find <durationInMinutes>, loan duration-in-minutes
+  find <environmentId>, loan environment-id
+
+  loot 200
+    seed json, like get-programmatic-access-credentials-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

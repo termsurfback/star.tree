@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/create-subnet-group-response
+  take form create-subnet-group-response
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/invalid-subnet
+  take form invalid-subnet
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/service-linked-role-not-found-fault
+  take form service-linked-role-not-found-fault
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/subnet-group-already-exists-fault
+  take form subnet-group-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/subnet-group-quota-exceeded-fault
+  take form subnet-group-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/subnet-quota-exceeded-fault
+  take form subnet-quota-exceeded-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-subnet-group, name <CreateSubnetGroup>
+  note <Creates a new subnet group.>
+
+  take x-amz-target
+    like native-string
+  take create-subnet-group-request, like create-subnet-group-request
+
+  line </#X-Amz-Target=AmazonDAXV3.CreateSubnetGroup>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-subnet-group-request
+
+  loot 200
+    seed json, like create-subnet-group-response
+    note <Success>
+  loot 480
+    seed json, like subnet-group-already-exists-fault
+    note <SubnetGroupAlreadyExistsFault>
+  loot 481
+    seed json, like subnet-group-quota-exceeded-fault
+    note <SubnetGroupQuotaExceededFault>
+  loot 482
+    seed json, like subnet-quota-exceeded-fault
+    note <SubnetQuotaExceededFault>
+  loot 483
+    seed json, like invalid-subnet
+    note <InvalidSubnet>
+  loot 484
+    seed json, like service-linked-role-not-found-fault
+    note <ServiceLinkedRoleNotFoundFault>

@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/detect-stack-drift-output
+  take form detect-stack-drift-output
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/logical-resource-id
+  take form logical-resource-id
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-detect-stack-drift, name <GET_DetectStackDrift>
+  note <Detects whether a stack's actual configuration differs, or has _drifted_, from it's expected configuration, as defined in the stack template and any values specified as template parameters. For each resource in the stack that supports drift detection, CloudFormation compares the actual configuration of the resource with its expected template configuration. Only resource properties explicitly defined in the stack template are checked for drift. A stack is considered to have drifted if one or more of its resources differ from their expected template configurations. For more information, see [Detecting Unregulated Configuration Changes to Stacks and Resources](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-stack-drift.html).
+
+Use `DetectStackDrift` to detect drift on all supported resources for a given stack, or DetectStackResourceDrift to detect drift on individual resources.
+
+For a list of stack resources that currently support drift detection, see [Resources that Support Drift Detection](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-stack-drift-resource-list.html).
+
+`DetectStackDrift` can take up to several minutes, depending on the number of resources contained within the stack. Use DescribeStackDriftDetectionStatus to monitor the progress of a detect stack drift operation. Once the drift detection operation has completed, use DescribeStackResourceDrifts to return drift information about the stack and its resources.
+
+When detecting drift on a stack, CloudFormation does not detect drift on any nested stacks belonging to that stack. Perform `DetectStackDrift` directly on the nested stack itself.>
+
+  take stack-name
+    like native-string
+    note <The name of the stack for which you want to detect drift.>
+  take logical-resource-ids
+    like list
+      like logical-resource-id
+    note <The logical names of any resources you want to use as filters.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DetectStackDrift>
+
+  find <StackName>, loan stack-name
+  find <LogicalResourceIds>, loan logical-resource-ids
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like detect-stack-drift-output
+    note <Success>

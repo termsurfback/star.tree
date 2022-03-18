@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/resource-already-exists-exception
+  take form resource-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-log-stream, name <CreateLogStream>
+  note <Creates a log stream for the specified log group. A log stream is a sequence of log events that originate from a single source, such as an application instance or a resource that is being monitored.
+
+There is no limit on the number of log streams that you can create for a log group. There is a limit of 50 TPS on `CreateLogStream` operations, after which transactions are throttled.
+
+You must use the following guidelines when naming a log stream:
+
+- Log stream names must be unique within the log group.
+
+- Log stream names can be between 1 and 512 characters long.
+
+- The ':' (colon) and '*' (asterisk) characters are not allowed.>
+
+  take x-amz-target
+    like native-string
+  take create-log-stream-request, like create-log-stream-request
+
+  line </#X-Amz-Target=Logs_20140328.CreateLogStream>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-log-stream-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like resource-already-exists-exception
+    note <ResourceAlreadyExistsException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

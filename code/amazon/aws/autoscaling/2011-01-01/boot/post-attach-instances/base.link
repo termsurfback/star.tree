@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/service-linked-role-failure
+  take form service-linked-role-failure
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-attach-instances, name <POST_AttachInstances>
+  note <Attaches one or more EC2 instances to the specified Auto Scaling group.
+
+When you attach instances, Amazon EC2 Auto Scaling increases the desired capacity of the group by the number of instances being attached. If the number of instances being attached plus the desired capacity of the group exceeds the maximum size of the group, the operation fails.
+
+If there is a Classic Load Balancer attached to your Auto Scaling group, the instances are also registered with the load balancer. If there are target groups attached to your Auto Scaling group, the instances are also registered with the target groups.
+
+For more information, see [Attach EC2 instances to your Auto Scaling group](https://docs.aws.amazon.com/autoscaling/ec2/userguide/attach-instance-asg.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take attach-instances-query, like attach-instances-query
+    void take
+
+  line </#Action=AttachInstances>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan attach-instances-query
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>
+  loot 481
+    seed xml, like service-linked-role-failure
+    note <ServiceLinkedRoleFailure>

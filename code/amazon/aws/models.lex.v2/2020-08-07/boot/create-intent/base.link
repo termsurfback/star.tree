@@ -1,0 +1,83 @@
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/create-intent-body
+  take form create-intent-body
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/create-intent-response
+  take form create-intent-response
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/precondition-failed-exception
+  take form precondition-failed-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/service-quota-exceeded-exception
+  take form service-quota-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-intent, name <CreateIntent>
+  note <Creates an intent.
+
+To define the interaction between the user and your bot, you define one or more intents. For example, for a pizza ordering bot you would create an `OrderPizza` intent.
+
+When you create an intent, you must provide a name. You can optionally provide the following:
+
+- Sample utterances. For example, "I want to order a pizza" and "Can I order a pizza." You can't provide utterances for built-in intents.
+
+- Information to be gathered. You specify slots for the information that you bot requests from the user. You can specify standard slot types, such as date and time, or custom slot types for your application.
+
+- How the intent is fulfilled. You can provide a Lambda function or configure the intent to return the intent information to your client application. If you use a Lambda function, Amazon Lex invokes the function when all of the intent information is available.
+
+- A confirmation prompt to send to the user to confirm an intent. For example, "Shall I order your pizza?"
+
+- A conclusion statement to send to the user after the intent is fulfilled. For example, "I ordered your pizza."
+
+- A follow-up prompt that asks the user for additional activity. For example, "Do you want a drink with your pizza?">
+
+  take bot-id
+    like native-string
+    note <The identifier of the bot associated with this intent.>
+  take bot-version
+    like native-string
+    note <The identifier of the version of the bot associated with this intent.>
+  take locale-id
+    like native-string
+    note <The identifier of the language and locale where this intent is used. All of the bots, slot types, and slots used by the intent must have the same locale. For more information, see [Supported languages](https://docs.aws.amazon.com/lexv2/latest/dg/how-languages.html).>
+  take create-intent-body, like create-intent-body
+
+  line </bots/{bot-id}/botversions/{bot-version}/botlocales/{locale-id}/intents/>
+
+  seed json, loan create-intent-body
+
+  loot 200
+    seed json, like create-intent-response
+    note <Success>
+  loot 480
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 481
+    seed json, like service-quota-exceeded-exception
+    note <ServiceQuotaExceededException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like precondition-failed-exception
+    note <PreconditionFailedException>
+  loot 484
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 485
+    seed json, like internal-server-exception
+    note <InternalServerException>

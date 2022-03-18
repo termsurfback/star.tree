@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/address
+  take form address
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/diagnostic-code
+  take form diagnostic-code
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/dsn-action
+  take form dsn-action
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/dsn-status
+  take form dsn-status
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/extension-field-list
+  take form extension-field-list
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/last-attempt-date
+  take form last-attempt-date
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/remote-mta
+  take form remote-mta
+
+form recipient-dsn-fields, name <RecipientDsnFields>
+  note <Recipient-related information to include in the Delivery Status Notification (DSN) when an email that Amazon SES receives on your behalf bounces.
+
+For information about receiving email through Amazon SES, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email.html).>
+  take final-recipient, name <FinalRecipient>
+    like address
+    void take
+    note <The email address that the message was ultimately delivered to. This corresponds to the `Final-Recipient` in the DSN. If not specified, `FinalRecipient` will be set to the `Recipient` specified in the `BouncedRecipientInfo` structure. Either `FinalRecipient` or the recipient in `BouncedRecipientInfo` must be a recipient of the original bounced message.
+
+Do not prepend the `FinalRecipient` email address with `rfc 822;`, as described in [RFC 3798](https://tools.ietf.org/html/rfc3798).>
+  take action, name <Action>
+    like dsn-action
+    note <The action performed by the reporting mail transfer agent (MTA) as a result of its attempt to deliver the message to the recipient address. This is required by [RFC 3464](https://tools.ietf.org/html/rfc3464).>
+  take remote-mta, name <RemoteMta>
+    like remote-mta
+    void take
+    note <The MTA to which the remote MTA attempted to deliver the message, formatted as specified in [RFC 3464](https://tools.ietf.org/html/rfc3464) (`mta-name-type; mta-name`). This parameter typically applies only to propagating synchronous bounces.>
+  take status, name <Status>
+    like dsn-status
+    note <The status code that indicates what went wrong. This is required by [RFC 3464](https://tools.ietf.org/html/rfc3464).>
+  take diagnostic-code, name <DiagnosticCode>
+    like diagnostic-code
+    void take
+    note <An extended explanation of what went wrong; this is usually an SMTP response. See [RFC 3463](https://tools.ietf.org/html/rfc3463) for the correct formatting of this parameter.>
+  take last-attempt-date, name <LastAttemptDate>
+    like last-attempt-date
+    void take
+    note <The time the final delivery attempt was made, in [RFC 822](https://www.ietf.org/rfc/rfc0822.txt) date-time format.>
+  take extension-fields, name <ExtensionFields>
+    like extension-field-list
+    void take
+    note <Additional X-headers to include in the DSN.>

@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/create-user-response
+  take form create-user-response
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/resource-exists-exception
+  take form resource-exists-exception
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-user, name <CreateUser>
+  note <Creates a user and associates them with an existing file transfer protocol-enabled server. You can only create and associate users with servers that have the `IdentityProviderType` set to `SERVICE_MANAGED`. Using parameters for `CreateUser`, you can specify the user name, set the home directory, store the user's public key, and assign the user's Amazon Web Services Identity and Access Management (IAM) role. You can also optionally add a session policy, and assign metadata with tags that can be used to group and search for users.>
+
+  take x-amz-target
+    like native-string
+  take create-user-request, like create-user-request
+
+  line </#X-Amz-Target=TransferService.CreateUser>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-user-request
+
+  loot 200
+    seed json, like create-user-response
+    note <Success>
+  loot 480
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 481
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 482
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 483
+    seed json, like resource-exists-exception
+    note <ResourceExistsException>
+  loot 484
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

@@ -1,0 +1,115 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/get-metric-data-label-timezone
+  take form get-metric-data-label-timezone
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/get-metric-data-output
+  take form get-metric-data-output
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/metric-data-query
+  take form metric-data-query
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-get-metric-data, name <GET_GetMetricData>
+  note <You can use the `GetMetricData` API to retrieve as many as 500 different metrics in a single request, with a total of as many as 100,800 data points. You can also optionally perform math expressions on the values of the returned statistics, to create new time series that represent new insights into your data. For example, using Lambda metrics, you could divide the Errors metric by the Invocations metric to get an error rate time series. For more information about metric math expressions, see [Metric Math Syntax and Functions](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/using-metric-math.html#metric-math-syntax) in the _Amazon CloudWatch User Guide_.
+
+Calls to the `GetMetricData` API have a different pricing structure than calls to `GetMetricStatistics`. For more information about pricing, see [Amazon CloudWatch Pricing](https://aws.amazon.com/cloudwatch/pricing/).
+
+Amazon CloudWatch retains metric data as follows:
+
+- Data points with a period of less than 60 seconds are available for 3 hours. These data points are high-resolution metrics and are available only for custom metrics that have been defined with a `StorageResolution` of 1.
+
+- Data points with a period of 60 seconds (1-minute) are available for 15 days.
+
+- Data points with a period of 300 seconds (5-minute) are available for 63 days.
+
+- Data points with a period of 3600 seconds (1 hour) are available for 455 days (15 months).
+
+Data points that are initially published with a shorter period are aggregated together for long-term storage. For example, if you collect data using a period of 1 minute, the data remains available for 15 days with 1-minute resolution. After 15 days, this data is still available, but is aggregated and retrievable only with a resolution of 5 minutes. After 63 days, the data is further aggregated and is available with a resolution of 1 hour.
+
+If you omit `Unit` in your request, all data that was collected with any unit is returned, along with the corresponding units that were specified when the data was reported to CloudWatch. If you specify a unit, the operation returns only data that was collected with that unit specified. If you specify a unit that does not match the data collected, the results of the operation are null. CloudWatch does not perform unit conversions.>
+
+  take metric-data-queries
+    like list
+      like metric-data-query
+    note <The metric queries to be returned. A single `GetMetricData` call can include as many as 500 `MetricDataQuery` structures. Each of these structures can specify either a metric to retrieve, or a math expression to perform on retrieved data.>
+  take start-time
+    like native-string
+    note <The time stamp indicating the earliest data to be returned.
+
+The value specified is inclusive; results include data points with the specified time stamp.
+
+CloudWatch rounds the specified time stamp as follows:
+
+- Start time less than 15 days ago - Round down to the nearest whole minute. For example, 12:32:34 is rounded down to 12:32:00.
+
+- Start time between 15 and 63 days ago - Round down to the nearest 5-minute clock interval. For example, 12:32:34 is rounded down to 12:30:00.
+
+- Start time greater than 63 days ago - Round down to the nearest 1-hour clock interval. For example, 12:32:34 is rounded down to 12:00:00.
+
+If you set `Period` to 5, 10, or 30, the start time of your request is rounded down to the nearest time that corresponds to even 5-, 10-, or 30-second divisions of a minute. For example, if you make a query at (HH:mm:ss) 01:05:23 for the previous 10-second period, the start time of your request is rounded down and you receive data from 01:05:10 to 01:05:20. If you make a query at 15:07:17 for the previous 5 minutes of data, using a period of 5 seconds, you receive data timestamped between 15:02:15 and 15:07:15.
+
+For better performance, specify `StartTime` and `EndTime` values that align with the value of the metric's `Period` and sync up with the beginning and end of an hour. For example, if the `Period` of a metric is 5 minutes, specifying 12:05 or 12:30 as `StartTime` can get a faster response from CloudWatch than setting 12:07 or 12:29 as the `StartTime`.>
+  take end-time
+    like native-string
+    note <The time stamp indicating the latest data to be returned.
+
+The value specified is exclusive; results include data points up to the specified time stamp.
+
+For better performance, specify `StartTime` and `EndTime` values that align with the value of the metric's `Period` and sync up with the beginning and end of an hour. For example, if the `Period` of a metric is 5 minutes, specifying 12:05 or 12:30 as `EndTime` can get a faster response from CloudWatch than setting 12:07 or 12:29 as the `EndTime`.>
+  take next-token
+    like native-string
+    note <Include this value, if it was returned by the previous `GetMetricData` operation, to get the next set of data points.>
+    void take
+  take scan-by
+    like native-string
+    note <The order in which data points should be returned. `TimestampDescending` returns the newest data first and paginates when the `MaxDatapoints` limit is reached. `TimestampAscending` returns the oldest data first and paginates when the `MaxDatapoints` limit is reached.>
+    void take
+  take max-datapoints
+    like native-integer
+    note <The maximum number of data points the request should return before paginating. If you omit this, the default of 100,800 is used.>
+    void take
+  take label-options
+    like form
+      take timezone, name <Timezone>
+        like get-metric-data-label-timezone
+        void take
+        note <The time zone to use for metric data return in this operation. The format is `+` or `-` followed by four digits. The first two digits indicate the number of hours ahead or behind of UTC, and the final two digits are the number of minutes. For example, +0130 indicates a time zone that is 1 hour and 30 minutes ahead of UTC. The default is +0000.>
+    note <This structure includes the `Timezone` parameter, which you can use to specify your time zone so that the labels of returned data display the correct time for your time zone.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=GetMetricData>
+
+  find <MetricDataQueries>, loan metric-data-queries
+  find <StartTime>, loan start-time
+  find <EndTime>, loan end-time
+  find <NextToken>, loan next-token
+  find <ScanBy>, loan scan-by
+  find <MaxDatapoints>, loan max-datapoints
+  find <LabelOptions>, loan label-options
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like get-metric-data-output
+    note <Success>
+  loot 480
+    seed xml, like invalid-next-token
+    note <InvalidNextToken>

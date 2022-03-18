@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/describe-engine-versions-response
+  take form describe-engine-versions-response
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/service-linked-role-not-found-fault
+  take form service-linked-role-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-engine-versions, name <DescribeEngineVersions>
+  note <Returns a list of the available Redis engine versions.>
+
+  take x-amz-target
+    like native-string
+  take describe-engine-versions-request, like describe-engine-versions-request
+
+  line </#X-Amz-Target=AmazonMemoryDB.DescribeEngineVersions>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-engine-versions-request
+
+  loot 200
+    seed json, like describe-engine-versions-response
+    note <Success>
+  loot 480
+    seed json, like service-linked-role-not-found-fault
+    note <ServiceLinkedRoleNotFoundFault>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed json, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/get-group-response
+  take form get-group-response
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-get-group, name <POST_GetGroup>
+  note <Returns a list of IAM users that are in the specified IAM group. You can paginate the results using the `MaxItems` and `Marker` parameters.>
+
+  take max-items
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take get-group-request, like get-group-request
+    void take
+
+  line </#Action=GetGroup>
+
+  find <MaxItems>, loan max-items
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan get-group-request
+
+  loot 200
+    seed xml, like get-group-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

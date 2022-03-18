@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-state-fault
+  take form invalid-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/logging-status
+  take form logging-status
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-disable-logging, name <GET_DisableLogging>
+  note <Stops logging information, such as queries and connection attempts, for the specified Amazon Redshift cluster.>
+
+  take cluster-identifier
+    like native-string
+    note <The identifier of the cluster on which logging is to be stopped.
+
+Example: `examplecluster`>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DisableLogging>
+
+  find <ClusterIdentifier>, loan cluster-identifier
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like logging-status
+    note <Success>
+  loot 480
+    seed xml, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 481
+    seed xml, like invalid-cluster-state-fault
+    note <InvalidClusterStateFault>

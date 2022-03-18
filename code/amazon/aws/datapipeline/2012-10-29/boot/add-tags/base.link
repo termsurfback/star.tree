@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/add-tags-output
+  take form add-tags-output
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/pipeline-deleted-exception
+  take form pipeline-deleted-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/pipeline-not-found-exception
+  take form pipeline-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot add-tags, name <AddTags>
+  note <Adds or modifies tags for the specified pipeline.>
+
+  take x-amz-target
+    like native-string
+  take add-tags-input, like add-tags-input
+
+  line </#X-Amz-Target=DataPipeline.AddTags>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan add-tags-input
+
+  loot 200
+    seed json, like add-tags-output
+    note <Success>
+  loot 480
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like pipeline-not-found-exception
+    note <PipelineNotFoundException>
+  loot 483
+    seed json, like pipeline-deleted-exception
+    note <PipelineDeletedException>

@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/delete-patch-baseline-result
+  take form delete-patch-baseline-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-patch-baseline, name <DeletePatchBaseline>
+  note <Deletes a patch baseline.>
+
+  take x-amz-target
+    like native-string
+  take delete-patch-baseline-request, like delete-patch-baseline-request
+
+  line </#X-Amz-Target=AmazonSSM.DeletePatchBaseline>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-patch-baseline-request
+
+  loot 200
+    seed json, like delete-patch-baseline-result
+    note <Success>
+  loot 480
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

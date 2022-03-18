@@ -1,0 +1,37 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/gmail/v1/base/thread
+  take form thread
+
+boot gmail-users-threads-get, name <gmail.users.threads.get>
+  note <Gets the specified thread.>
+
+  take user-id
+    like native-string
+    note <The user's email address. The special value `me` can be used to indicate the authenticated user.>
+  take id
+    like native-string
+    note <The ID of the thread to retrieve.>
+  take format
+    like native-string
+    note <The format to return the messages in.>
+    void take
+  take metadata-headers
+    like list
+      like native-string
+    note <When given and format is METADATA, only include headers specified.>
+    void take
+
+  line </gmail/v1/users/{user-id}/threads/{id}>
+
+  find <format>, loan format
+  find <metadataHeaders>, loan metadata-headers
+
+  loot 200
+    seed json, like thread
+    note <Successful response>

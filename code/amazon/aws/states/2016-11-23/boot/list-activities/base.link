@@ -1,0 +1,44 @@
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/invalid-token
+  take form invalid-token
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/list-activities-output
+  take form list-activities-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-activities, name <ListActivities>
+  note <Lists the existing activities.
+
+If `nextToken` is returned, there are more results available. The value of `nextToken` is a unique pagination token for each page. Make the call again using the returned token to retrieve the next page. Keep all other arguments unchanged. Each pagination token expires after 24 hours. Using an expired pagination token will return an _HTTP 400 InvalidToken_ error.
+
+This operation is eventually consistent. The results are best effort and may not reflect very recent updates and changes.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-activities-input, like list-activities-input
+
+  line </#X-Amz-Target=AWSStepFunctions.ListActivities>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-activities-input
+
+  loot 200
+    seed json, like list-activities-output
+    note <Success>
+  loot 480
+    seed json, like invalid-token
+    note <InvalidToken>

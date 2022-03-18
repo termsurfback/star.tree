@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/groundstation/2019-05-23/base/dependency-exception
+  take form dependency-exception
+
+load @drumwork/snow/amazonaws.com/groundstation/2019-05-23/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/groundstation/2019-05-23/base/mission-profile-id-response
+  take form mission-profile-id-response
+
+load @drumwork/snow/amazonaws.com/groundstation/2019-05-23/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/groundstation/2019-05-23/base/update-mission-profile-body
+  take form update-mission-profile-body
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-mission-profile, name <UpdateMissionProfile>
+  note <Updates a mission profile.
+
+Updating a mission profile will not update the execution parameters for existing future contacts.>
+
+  take mission-profile-id
+    like native-string
+    note <UUID of a mission profile.>
+  take update-mission-profile-body, like update-mission-profile-body
+
+  line </missionprofile/{mission-profile-id}>
+
+  seed json, loan update-mission-profile-body
+
+  loot 200
+    seed json, like mission-profile-id-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like dependency-exception
+    note <DependencyException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

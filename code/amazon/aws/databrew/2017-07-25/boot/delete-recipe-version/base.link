@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/delete-recipe-version-response
+  take form delete-recipe-version-response
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-recipe-version, name <DeleteRecipeVersion>
+  note <Deletes a single version of a DataBrew recipe.>
+
+  take name
+    like native-string
+    note <The name of the recipe.>
+  take recipe-version
+    like native-string
+    note <The version of the recipe to be deleted. You can specify a numeric versions (`X.Y`) or `LATEST_WORKING`. `LATEST_PUBLISHED` is not supported.>
+
+  line </recipes/{name}/recipeVersion/{recipe-version}>
+
+  loot 200
+    seed json, like delete-recipe-version-response
+    note <Success>
+  loot 480
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>

@@ -1,0 +1,88 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/account-list
+  take form account-list
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/call-as
+  take form call-as
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/client-request-token
+  take form client-request-token
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/deployment-targets
+  take form deployment-targets
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/parameters
+  take form parameters
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/region-list
+  take form region-list
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/stack-set-name
+  take form stack-set-name
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/stack-set-operation-preferences
+  take form stack-set-operation-preferences
+
+form create-stack-instances-input, name <CreateStackInstancesInput>
+  take stack-set-name, name <StackSetName>
+    like stack-set-name
+    note <The name or unique ID of the stack set that you want to create stack instances from.>
+  take accounts, name <Accounts>
+    like account-list
+    void take
+    note <[Self-managed permissions] The names of one or more Amazon Web Services accounts that you want to create stack instances in the specified Region(s) for.
+
+You can specify `Accounts` or `DeploymentTargets`, but not both.>
+  take deployment-targets, name <DeploymentTargets>
+    like deployment-targets
+    void take
+    note <[Service-managed permissions] The Organizations accounts for which to create stack instances in the specified Regions.
+
+You can specify `Accounts` or `DeploymentTargets`, but not both.>
+  take regions, name <Regions>
+    like region-list
+    note <The names of one or more Regions where you want to create stack instances using the specified Amazon Web Services accounts.>
+  take parameter-overrides, name <ParameterOverrides>
+    like parameters
+    void take
+    note <A list of stack set parameters whose values you want to override in the selected stack instances.
+
+Any overridden parameter values will be applied to all stack instances in the specified accounts and Regions. When specifying parameters and their values, be aware of how CloudFormation sets parameter values during stack instance operations:
+
+- To override the current value for a parameter, include the parameter and specify its value.
+
+- To leave an overridden parameter set to its present value, include the parameter and specify `UsePreviousValue` as `true`. (You cannot specify both a value and set `UsePreviousValue` to `true`.)
+
+- To set an overridden parameter back to the value specified in the stack set, specify a parameter list but do not include the parameter in the list.
+
+- To leave all parameters set to their present values, do not specify this property at all.
+
+During stack set updates, any parameter values overridden for a stack instance are not updated, but retain their overridden value.
+
+You can only override the parameter _values_ that are specified in the stack set; to add or delete a parameter itself, use [UpdateStackSet](https://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_UpdateStackSet.html) to update the stack set template.>
+  take operation-preferences, name <OperationPreferences>
+    like stack-set-operation-preferences
+    void take
+    note <Preferences for how CloudFormation performs this stack set operation.>
+  take operation-id, name <OperationId>
+    like client-request-token
+    void take
+    note <The unique identifier for this stack set operation.
+
+The operation ID also functions as an idempotency token, to ensure that CloudFormation performs the stack set operation only once, even if you retry the request multiple times. You might retry stack set operation requests to ensure that CloudFormation successfully received them.
+
+If you don't specify an operation ID, the SDK generates one automatically.
+
+Repeating this stack set operation with a new operation ID retries all stack instances whose status is `OUTDATED`.>
+  take call-as, name <CallAs>
+    like call-as
+    void take
+    note <[Service-managed permissions] Specifies whether you are acting as an account administrator in the organization's management account or as a delegated administrator in a member account.
+
+By default, `SELF` is specified. Use `SELF` for stack sets with self-managed permissions.
+
+- If you are signed in to the management account, specify `SELF`.
+
+- If you are signed in to a delegated administrator account, specify `DELEGATED_ADMIN`.
+
+  Your Amazon Web Services account must be registered as a delegated administrator in the management account. For more information, see [Register a delegated administrator](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-orgs-delegated-admin.html) in the _CloudFormation User Guide_.>

@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/replace-iam-instance-profile-association-result
+  take form replace-iam-instance-profile-association-result
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-replace-iam-instance-profile-association, name <GET_ReplaceIamInstanceProfileAssociation>
+  note <Replaces an IAM instance profile for the specified running instance. You can use this action to change the IAM instance profile that's associated with an instance without having to disassociate the existing IAM instance profile first.
+
+Use DescribeIamInstanceProfileAssociations to get the association ID.>
+
+  take iam-instance-profile
+    like form
+      take arn, name <Arn>
+        like string
+        void take
+        note <The Amazon Resource Name (ARN) of the instance profile.>
+        host xml
+          host name, text <arn>
+      take name, name <Name>
+        like string
+        void take
+        note <The name of the instance profile.>
+        host xml
+          host name, text <name>
+    note <The IAM instance profile.>
+  take association-id
+    like native-string
+    note <The ID of the existing IAM instance profile association.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ReplaceIamInstanceProfileAssociation>
+
+  find <IamInstanceProfile>, loan iam-instance-profile
+  find <AssociationId>, loan association-id
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like replace-iam-instance-profile-association-result
+    note <Success>

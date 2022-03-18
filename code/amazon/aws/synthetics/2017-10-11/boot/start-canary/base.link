@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/start-canary-response
+  take form start-canary-response
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-canary, name <StartCanary>
+  note <Use this operation to run a canary that has already been created. The frequency of the canary runs is determined by the value of the canary's `Schedule`. To see a canary's schedule, use [GetCanary](https://docs.aws.amazon.com/AmazonSynthetics/latest/APIReference/API_GetCanary.html).>
+
+  take name
+    like native-string
+    note <The name of the canary that you want to run. To find canary names, use [DescribeCanaries](https://docs.aws.amazon.com/AmazonSynthetics/latest/APIReference/API_DescribeCanaries.html).>
+
+  line </canary/{name}/start>
+
+  loot 200
+    seed json, like start-canary-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like conflict-exception
+    note <ConflictException>

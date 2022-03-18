@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/entity-not-found-exception
+  take form entity-not-found-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/get-schema-by-definition-response
+  take form get-schema-by-definition-response
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-schema-by-definition, name <GetSchemaByDefinition>
+  note <Retrieves a schema by the `SchemaDefinition`. The schema definition is sent to the Schema Registry, canonicalized, and hashed. If the hash is matched within the scope of the `SchemaName` or ARN (or the default registry, if none is supplied), that schema’s metadata is returned. Otherwise, a 404 or NotFound error is returned. Schema versions in `Deleted` statuses will not be included in the results.>
+
+  take x-amz-target
+    like native-string
+  take get-schema-by-definition-input, like get-schema-by-definition-input
+
+  line </#X-Amz-Target=AWSGlue.GetSchemaByDefinition>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-schema-by-definition-input
+
+  loot 200
+    seed json, like get-schema-by-definition-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like entity-not-found-exception
+    note <EntityNotFoundException>
+  loot 483
+    seed json, like internal-service-exception
+    note <InternalServiceException>

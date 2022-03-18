@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/comprehend/2017-11-27/base/batch-detect-sentiment-response
+  take form batch-detect-sentiment-response
+
+load @drumwork/snow/amazonaws.com/comprehend/2017-11-27/base/batch-size-limit-exceeded-exception
+  take form batch-size-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/comprehend/2017-11-27/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/comprehend/2017-11-27/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/comprehend/2017-11-27/base/text-size-limit-exceeded-exception
+  take form text-size-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/comprehend/2017-11-27/base/unsupported-language-exception
+  take form unsupported-language-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot batch-detect-sentiment, name <BatchDetectSentiment>
+  note <Inspects a batch of documents and returns an inference of the prevailing sentiment, `POSITIVE`, `NEUTRAL`, `MIXED`, or `NEGATIVE`, in each one.>
+
+  take x-amz-target
+    like native-string
+  take batch-detect-sentiment-request, like batch-detect-sentiment-request
+
+  line </#X-Amz-Target=Comprehend_20171127.BatchDetectSentiment>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan batch-detect-sentiment-request
+
+  loot 200
+    seed json, like batch-detect-sentiment-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like text-size-limit-exceeded-exception
+    note <TextSizeLimitExceededException>
+  loot 482
+    seed json, like unsupported-language-exception
+    note <UnsupportedLanguageException>
+  loot 483
+    seed json, like batch-size-limit-exceeded-exception
+    note <BatchSizeLimitExceededException>
+  loot 484
+    seed json, like internal-server-exception
+    note <InternalServerException>

@@ -1,0 +1,108 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-snapshot-already-exists-fault
+  take form cluster-snapshot-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-snapshot-quota-exceeded-fault
+  take form cluster-snapshot-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/delete-cluster-result
+  take form delete-cluster-result
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-state-fault
+  take form invalid-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-retention-period-fault
+  take form invalid-retention-period-fault
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-cluster, name <GET_DeleteCluster>
+  note <Deletes a previously provisioned cluster without its final snapshot being created. A successful response from the web service indicates that the request was received correctly. Use DescribeClusters to monitor the status of the deletion. The delete operation cannot be canceled or reverted once submitted. For more information about managing clusters, go to [Amazon Redshift Clusters](https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html) in the _Amazon Redshift Cluster Management Guide_.
+
+If you want to shut down the cluster and retain it for future use, set _SkipFinalClusterSnapshot_ to `false` and specify a name for _FinalClusterSnapshotIdentifier_. You can later restore this snapshot to resume using the cluster. If a final cluster snapshot is requested, the status of the cluster will be "final-snapshot" while the snapshot is being taken, then it's "deleting" once Amazon Redshift begins deleting the cluster.
+
+For more information about managing clusters, go to [Amazon Redshift Clusters](https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html) in the _Amazon Redshift Cluster Management Guide_.>
+
+  take cluster-identifier
+    like native-string
+    note <The identifier of the cluster to be deleted.
+
+Constraints:
+
+- Must contain lowercase characters.
+
+- Must contain from 1 to 63 alphanumeric characters or hyphens.
+
+- First character must be a letter.
+
+- Cannot end with a hyphen or contain two consecutive hyphens.>
+  take skip-final-cluster-snapshot
+    like native-boolean
+    note <Determines whether a final snapshot of the cluster is created before Amazon Redshift deletes the cluster. If `true`, a final cluster snapshot is not created. If `false`, a final cluster snapshot is created before the cluster is deleted.
+
+The _FinalClusterSnapshotIdentifier_ parameter must be specified if _SkipFinalClusterSnapshot_ is `false`.
+
+Default: `false`>
+    void take
+  take final-cluster-snapshot-identifier
+    like native-string
+    note <The identifier of the final snapshot that is to be created immediately before deleting the cluster. If this parameter is provided, _SkipFinalClusterSnapshot_ must be `false`.
+
+Constraints:
+
+- Must be 1 to 255 alphanumeric characters.
+
+- First character must be a letter.
+
+- Cannot end with a hyphen or contain two consecutive hyphens.>
+    void take
+  take final-cluster-snapshot-retention-period
+    like native-integer
+    note <The number of days that a manual snapshot is retained. If the value is -1, the manual snapshot is retained indefinitely.
+
+The value must be either -1 or an integer between 1 and 3,653.
+
+The default value is -1.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteCluster>
+
+  find <ClusterIdentifier>, loan cluster-identifier
+  find <SkipFinalClusterSnapshot>, loan skip-final-cluster-snapshot
+  find <FinalClusterSnapshotIdentifier>, loan final-cluster-snapshot-identifier
+  find <FinalClusterSnapshotRetentionPeriod>, loan final-cluster-snapshot-retention-period
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-cluster-result
+    note <Success>
+  loot 480
+    seed xml, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 481
+    seed xml, like invalid-cluster-state-fault
+    note <InvalidClusterStateFault>
+  loot 482
+    seed xml, like cluster-snapshot-already-exists-fault
+    note <ClusterSnapshotAlreadyExistsFault>
+  loot 483
+    seed xml, like cluster-snapshot-quota-exceeded-fault
+    note <ClusterSnapshotQuotaExceededFault>
+  loot 484
+    seed xml, like invalid-retention-period-fault
+    note <InvalidRetentionPeriodFault>

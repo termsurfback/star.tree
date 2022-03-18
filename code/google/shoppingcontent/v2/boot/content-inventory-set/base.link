@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/shoppingcontent/v2/base/inventory-set-response
+  take form inventory-set-response
+
+boot content-inventory-set, name <content.inventory.set>
+  note <Updates price and availability of a product in your Merchant Center account.>
+
+  take merchant-id
+    like native-string
+    note <The ID of the account that contains the product. This account cannot be a multi-client account.>
+  take store-code
+    like native-string
+    note <The code of the store for which to update price and availability. Use `online` to update price and availability of an online product.>
+  take product-id
+    like native-string
+    note <The REST ID of the product for which to update price and availability.>
+  take dry-run
+    like native-boolean
+    note <Flag to simulate a request like in a live environment. If set to true, dry-run mode checks the validity of the request and returns errors (if any).>
+    void take
+  take inventory-set-request, like inventory-set-request
+    void take
+
+  line </{merchant-id}/inventory/{store-code}/products/{product-id}>
+
+  find <dryRun>, loan dry-run
+
+  seed json, loan inventory-set-request
+
+  loot 200
+    seed json, like inventory-set-response
+    note <Successful response>

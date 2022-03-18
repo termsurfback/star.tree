@@ -1,0 +1,74 @@
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/delete-dataset-response
+  take form delete-dataset-response
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-dataset, name <DeleteDataset>
+  note <Deletes an existing Amazon Lookout for Vision `dataset`.
+
+If your the project has a single dataset, you must create a new dataset before you can create a model.
+
+If you project has a training dataset and a test dataset consider the following.
+
+- If you delete the test dataset, your project reverts to a single dataset project. If you then train the model, Amazon Lookout for Vision internally splits the remaining dataset into a training and test dataset.
+
+- If you delete the training dataset, you must create a training dataset before you can create a model.
+
+This operation requires permissions to perform the `lookoutvision:DeleteDataset` operation.>
+
+  take project-name
+    like native-string
+    note <The name of the project that contains the dataset that you want to delete.>
+  take dataset-type
+    like native-string
+    note <The type of the dataset to delete. Specify `train` to delete the training dataset. Specify `test` to delete the test dataset. To delete the dataset in a single dataset project, specify `train`.>
+  take x-amzn-client-token
+    like native-string
+    note <ClientToken is an idempotency token that ensures a call to `DeleteDataset` completes only once. You choose the value to pass. For example, An issue, such as an network outage, might prevent you from getting a response from `DeleteDataset`. In this case, safely retry your call to `DeleteDataset` by using the same `ClientToken` parameter value. An error occurs if the other input parameters are not the same as in the first request. Using a different value for `ClientToken` is considered a new call to `DeleteDataset`. An idempotency token is active for 8 hours.>
+    void take
+
+  line </2020-11-20/projects/{project-name}/datasets/{dataset-type}>
+
+  hint <X-Amzn-Client-Token>, loan x-amzn-client-token
+
+  loot 202
+    seed json, like delete-dataset-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 484
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 485
+    seed json, like throttling-exception
+    note <ThrottlingException>

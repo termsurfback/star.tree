@@ -1,0 +1,67 @@
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/delete-domain-permissions-policy-result
+  take form delete-domain-permissions-policy-result
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-domain-permissions-policy, name <DeleteDomainPermissionsPolicy>
+  note <Deletes the resource policy set on a domain.>
+
+  take domain
+    like native-string
+    note <The name of the domain associated with the resource policy to be deleted.>
+  take domain-owner
+    like native-string
+    note <The 12-digit account number of the AWS account that owns the domain. It does not include dashes or spaces.>
+    void take
+  take policy-revision
+    like native-string
+    note <The current revision of the resource policy to be deleted. This revision is used for optimistic locking, which prevents others from overwriting your changes to the domain's resource policy.>
+    void take
+
+  line </v1/domain/permissions/policy#domain>
+
+  find <domain>, loan domain
+  find <domain-owner>, loan domain-owner
+  find <policy-revision>, loan policy-revision
+
+  loot 200
+    seed json, like delete-domain-permissions-policy-result
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 484
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 485
+    seed json, like validation-exception
+    note <ValidationException>

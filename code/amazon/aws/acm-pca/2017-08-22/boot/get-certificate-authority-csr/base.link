@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/get-certificate-authority-csr-response
+  take form get-certificate-authority-csr-response
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/invalid-arn-exception
+  take form invalid-arn-exception
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/invalid-state-exception
+  take form invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/request-failed-exception
+  take form request-failed-exception
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/request-in-progress-exception
+  take form request-in-progress-exception
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-certificate-authority-csr, name <GetCertificateAuthorityCsr>
+  note <Retrieves the certificate signing request (CSR) for your private certificate authority (CA). The CSR is created when you call the [CreateCertificateAuthority](https://docs.aws.amazon.com/acm-pca/latest/APIReference/API_CreateCertificateAuthority.html) action. Sign the CSR with your ACM Private CA-hosted or on-premises root or subordinate CA. Then import the signed certificate back into ACM Private CA by calling the [ImportCertificateAuthorityCertificate](https://docs.aws.amazon.com/acm-pca/latest/APIReference/API_ImportCertificateAuthorityCertificate.html) action. The CSR is returned as a base64 PEM-encoded string.>
+
+  take x-amz-target
+    like native-string
+  take get-certificate-authority-csr-request, like get-certificate-authority-csr-request
+
+  line </#X-Amz-Target=ACMPrivateCA.GetCertificateAuthorityCsr>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-certificate-authority-csr-request
+
+  loot 200
+    seed json, like get-certificate-authority-csr-response
+    note <Success>
+  loot 480
+    seed json, like request-in-progress-exception
+    note <RequestInProgressException>
+  loot 481
+    seed json, like request-failed-exception
+    note <RequestFailedException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like invalid-arn-exception
+    note <InvalidArnException>
+  loot 484
+    seed json, like invalid-state-exception
+    note <InvalidStateException>

@@ -1,0 +1,149 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-reserved-instances-offerings-result
+  take form describe-reserved-instances-offerings-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/reserved-instances-offering-id
+  take form reserved-instances-offering-id
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-reserved-instances-offerings, name <GET_DescribeReservedInstancesOfferings>
+  note <Describes Reserved Instance offerings that are available for purchase. With Reserved Instances, you purchase the right to launch instances for a period of time. During that time period, you do not receive insufficient capacity errors, and you pay a lower usage rate than the rate charged for On-Demand instances for the actual time used.
+
+If you have listed your own Reserved Instances for sale in the Reserved Instance Marketplace, they will be excluded from these results. This is to ensure that you do not purchase your own Reserved Instances.
+
+For more information, see [Reserved Instance Marketplace](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ri-market-general.html) in the _Amazon EC2 User Guide_.>
+
+  take availability-zone
+    like native-string
+    note <The Availability Zone in which the Reserved Instance can be used.>
+    void take
+  take filter
+    like list
+      like filter
+    note <One or more filters.
+
+- `availability-zone` - The Availability Zone where the Reserved Instance can be used.
+
+- `duration` - The duration of the Reserved Instance (for example, one year or three years), in seconds (`31536000` | `94608000`).
+
+- `fixed-price` - The purchase price of the Reserved Instance (for example, 9800.0).
+
+- `instance-type` - The instance type that is covered by the reservation.
+
+- `marketplace` - Set to `true` to show only Reserved Instance Marketplace offerings. When this filter is not used, which is the default behavior, all offerings from both Amazon Web Services and the Reserved Instance Marketplace are listed.
+
+- `product-description` - The Reserved Instance product platform description. Instances that include `(Amazon VPC)` in the product platform description will only be displayed to EC2-Classic account holders and are for use with Amazon VPC. (`Linux/UNIX` | `Linux/UNIX (Amazon VPC)` | `SUSE Linux` | `SUSE Linux (Amazon VPC)` | `Red Hat Enterprise Linux` | `Red Hat Enterprise Linux (Amazon VPC)` | `Red Hat Enterprise Linux with HA (Amazon VPC)` | `Windows` | `Windows (Amazon VPC)` | `Windows with SQL Server Standard` | `Windows with SQL Server Standard (Amazon VPC)` | `Windows with SQL Server Web` | `Windows with SQL Server Web (Amazon VPC)` | `Windows with SQL Server Enterprise` | `Windows with SQL Server Enterprise (Amazon VPC)`)
+
+- `reserved-instances-offering-id` - The Reserved Instances offering ID.
+
+- `scope` - The scope of the Reserved Instance (`Availability Zone` or `Region`).
+
+- `usage-price` - The usage price of the Reserved Instance, per hour (for example, 0.84).>
+    void take
+  take include-marketplace
+    like native-boolean
+    note <Include Reserved Instance Marketplace offerings in the response.>
+    void take
+  take instance-type
+    like native-string
+    note <The instance type that the reservation will cover (for example, `m1.small`). For more information, see [Instance types](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html) in the _Amazon EC2 User Guide_.>
+    void take
+  take max-duration
+    like native-integer
+    note <The maximum duration (in seconds) to filter when searching for offerings.
+
+Default: 94608000 (3 years)>
+    void take
+  take max-instance-count
+    like native-integer
+    note <The maximum number of instances to filter when searching for offerings.
+
+Default: 20>
+    void take
+  take min-duration
+    like native-integer
+    note <The minimum duration (in seconds) to filter when searching for offerings.
+
+Default: 2592000 (1 month)>
+    void take
+  take offering-class
+    like native-string
+    note <The offering class of the Reserved Instance. Can be `standard` or `convertible`.>
+    void take
+  take product-description
+    like native-string
+    note <The Reserved Instance product platform description. Instances that include `(Amazon VPC)` in the description are for use with Amazon VPC.>
+    void take
+  take reserved-instances-offering-id
+    like list
+      like reserved-instances-offering-id
+    note <One or more Reserved Instances offering IDs.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take instance-tenancy
+    like native-string
+    note <The tenancy of the instances covered by the reservation. A Reserved Instance with a tenancy of `dedicated` is applied to instances that run in a VPC on single-tenant hardware (i.e., Dedicated Instances).
+
+**Important:** The `host` value cannot be used with this parameter. Use the `default` or `dedicated` values only.
+
+Default: `default`>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return for the request in a single page. The remaining results of the initial request can be seen by sending another request with the returned `NextToken` value. The maximum is 100.
+
+Default: 100>
+    void take
+  take next-token
+    like native-string
+    note <The token to retrieve the next page of results.>
+    void take
+  take offering-type
+    like native-string
+    note <The Reserved Instance offering type. If you are using tools that predate the 2011-11-01 API version, you only have access to the `Medium Utilization` Reserved Instance offering type.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeReservedInstancesOfferings>
+
+  find <AvailabilityZone>, loan availability-zone
+  find <Filter>, loan filter
+  find <IncludeMarketplace>, loan include-marketplace
+  find <InstanceType>, loan instance-type
+  find <MaxDuration>, loan max-duration
+  find <MaxInstanceCount>, loan max-instance-count
+  find <MinDuration>, loan min-duration
+  find <OfferingClass>, loan offering-class
+  find <ProductDescription>, loan product-description
+  find <ReservedInstancesOfferingId>, loan reserved-instances-offering-id
+  find <DryRun>, loan dry-run
+  find <InstanceTenancy>, loan instance-tenancy
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <OfferingType>, loan offering-type
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-reserved-instances-offerings-result
+    note <Success>

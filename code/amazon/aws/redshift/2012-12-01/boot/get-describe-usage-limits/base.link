@@ -1,0 +1,93 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unsupported-operation-fault
+  take form unsupported-operation-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/usage-limit-list
+  take form usage-limit-list
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-describe-usage-limits, name <GET_DescribeUsageLimits>
+  note <Shows usage limits on a cluster. Results are filtered based on the combination of input usage limit identifier, cluster identifier, and feature type parameters:
+
+- If usage limit identifier, cluster identifier, and feature type are not provided, then all usage limit objects for the current account in the current region are returned.
+
+- If usage limit identifier is provided, then the corresponding usage limit object is returned.
+
+- If cluster identifier is provided, then all usage limit objects for the specified cluster are returned.
+
+- If cluster identifier and feature type are provided, then all usage limit objects for the combination of cluster and feature are returned.>
+
+  take usage-limit-id
+    like native-string
+    note <The identifier of the usage limit to describe.>
+    void take
+  take cluster-identifier
+    like native-string
+    note <The identifier of the cluster for which you want to describe usage limits.>
+    void take
+  take feature-type
+    like native-string
+    note <The feature type for which you want to describe usage limits.>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of response records to return in each call. If the number of remaining response records exceeds the specified `MaxRecords` value, a value is returned in a `marker` field of the response. You can retrieve the next set of records by retrying the command with the returned marker value.
+
+Default: `100`
+
+Constraints: minimum 20, maximum 100.>
+    void take
+  take marker
+    like native-string
+    note <An optional parameter that specifies the starting point to return a set of response records. When the results of a DescribeUsageLimits request exceed the value specified in `MaxRecords`, Amazon Web Services returns a value in the `Marker` field of the response. You can retrieve the next set of response records by providing the returned marker value in the `Marker` parameter and retrying the request.>
+    void take
+  take tag-keys
+    like list
+      like string
+    note <A tag key or keys for which you want to return all matching usage limit objects that are associated with the specified key or keys. For example, suppose that you have parameter groups that are tagged with keys called `owner` and `environment`. If you specify both of these tag keys in the request, Amazon Redshift returns a response with the usage limit objects have either or both of these tag keys associated with them.>
+    void take
+  take tag-values
+    like list
+      like string
+    note <A tag value or values for which you want to return all matching usage limit objects that are associated with the specified tag value or values. For example, suppose that you have parameter groups that are tagged with values called `admin` and `test`. If you specify both of these tag values in the request, Amazon Redshift returns a response with the usage limit objects that have either or both of these tag values associated with them.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeUsageLimits>
+
+  find <UsageLimitId>, loan usage-limit-id
+  find <ClusterIdentifier>, loan cluster-identifier
+  find <FeatureType>, loan feature-type
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <TagKeys>, loan tag-keys
+  find <TagValues>, loan tag-values
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like usage-limit-list
+    note <Success>
+  loot 480
+    seed xml, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 481
+    seed xml, like unsupported-operation-fault
+    note <UnsupportedOperationFault>

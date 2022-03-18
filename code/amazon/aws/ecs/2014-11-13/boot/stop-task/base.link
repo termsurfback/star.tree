@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/cluster-not-found-exception
+  take form cluster-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/stop-task-response
+  take form stop-task-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot stop-task, name <StopTask>
+  note <Stops a running task. Any tags associated with the task will be deleted.
+
+When StopTask is called on a task, the equivalent of `docker stop` is issued to the containers running in the task. This results in a `SIGTERM` value and a default 30-second timeout, after which the `SIGKILL` value is sent and the containers are forcibly stopped. If the container handles the `SIGTERM` value gracefully and exits within 30 seconds from receiving it, no `SIGKILL` value is sent.
+
+The default 30-second timeout can be configured on the Amazon ECS container agent with the `ECS_CONTAINER_STOP_TIMEOUT` variable. For more information, see [Amazon ECS Container Agent Configuration](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-agent-config.html) in the _Amazon Elastic Container Service Developer Guide_.>
+
+  take x-amz-target
+    like native-string
+  take stop-task-request, like stop-task-request
+
+  line </#X-Amz-Target=AmazonEC2ContainerServiceV20141113.StopTask>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan stop-task-request
+
+  loot 200
+    seed json, like stop-task-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like client-exception
+    note <ClientException>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 483
+    seed json, like cluster-not-found-exception
+    note <ClusterNotFoundException>

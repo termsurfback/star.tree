@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/get-studio-session-mapping-output
+  take form get-studio-session-mapping-output
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-studio-session-mapping, name <GetStudioSessionMapping>
+  note <Fetches mapping details for the specified Amazon EMR Studio and identity (user or group).>
+
+  take x-amz-target
+    like native-string
+  take get-studio-session-mapping-input, like get-studio-session-mapping-input
+
+  line </#X-Amz-Target=ElasticMapReduce.GetStudioSessionMapping>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-studio-session-mapping-input
+
+  loot 200
+    seed json, like get-studio-session-mapping-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/batch-get-blueprints-response
+  take form batch-get-blueprints-response
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/operation-timeout-exception
+  take form operation-timeout-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot batch-get-blueprints, name <BatchGetBlueprints>
+  note <Retrieves information about a list of blueprints.>
+
+  take x-amz-target
+    like native-string
+  take batch-get-blueprints-request, like batch-get-blueprints-request
+
+  line </#X-Amz-Target=AWSGlue.BatchGetBlueprints>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan batch-get-blueprints-request
+
+  loot 200
+    seed json, like batch-get-blueprints-response
+    note <Success>
+  loot 480
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 481
+    seed json, like operation-timeout-exception
+    note <OperationTimeoutException>
+  loot 482
+    seed json, like invalid-input-exception
+    note <InvalidInputException>

@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/comprehend/2017-11-27/base/contains-pii-entities-response
+  take form contains-pii-entities-response
+
+load @drumwork/snow/amazonaws.com/comprehend/2017-11-27/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/comprehend/2017-11-27/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/comprehend/2017-11-27/base/text-size-limit-exceeded-exception
+  take form text-size-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/comprehend/2017-11-27/base/unsupported-language-exception
+  take form unsupported-language-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot contains-pii-entities, name <ContainsPiiEntities>
+  note <Analyzes input text for the presence of personally identifiable information (PII) and returns the labels of identified PII entity types such as name, address, bank account number, or phone number.>
+
+  take x-amz-target
+    like native-string
+  take contains-pii-entities-request, like contains-pii-entities-request
+
+  line </#X-Amz-Target=Comprehend_20171127.ContainsPiiEntities>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan contains-pii-entities-request
+
+  loot 200
+    seed json, like contains-pii-entities-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like text-size-limit-exceeded-exception
+    note <TextSizeLimitExceededException>
+  loot 482
+    seed json, like unsupported-language-exception
+    note <UnsupportedLanguageException>
+  loot 483
+    seed json, like internal-server-exception
+    note <InternalServerException>

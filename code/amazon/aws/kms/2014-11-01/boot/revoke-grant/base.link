@@ -1,0 +1,71 @@
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/dependency-timeout-exception
+  take form dependency-timeout-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-arn-exception
+  take form invalid-arn-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-grant-id-exception
+  take form invalid-grant-id-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-internal-exception
+  take form kms-internal-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-invalid-state-exception
+  take form kms-invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot revoke-grant, name <RevokeGrant>
+  note <Deletes the specified grant. You revoke a grant to terminate the permissions that the grant allows. For more information, see [Retiring and revoking grants](https://docs.aws.amazon.com/kms/latest/developerguide/managing-grants.html#grant-delete) in the __Key Management Service Developer Guide__ .
+
+When you create, retire, or revoke a grant, there might be a brief delay, usually less than five minutes, until the grant is available throughout KMS. This state is known as _eventual consistency_. For details, see [Eventual consistency](https://docs.aws.amazon.com/kms/latest/developerguide/grants.html#terms-eventual-consistency) in the __Key Management Service Developer Guide__ .
+
+For detailed information about grants, including grant terminology, see [Using grants](https://docs.aws.amazon.com/kms/latest/developerguide/grants.html) in the __Key Management Service Developer Guide__ . For examples of working with grants in several programming languages, see [Programming grants](https://docs.aws.amazon.com/kms/latest/developerguide/programming-grants.html).
+
+**Cross-account use**: Yes. To perform this operation on a KMS key in a different Amazon Web Services account, specify the key ARN in the value of the `KeyId` parameter.
+
+**Required permissions**: [kms:RevokeGrant](https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html) (key policy).
+
+**Related operations:** - CreateGrant
+
+- ListGrants
+
+- ListRetirableGrants
+
+- RetireGrant>
+
+  take x-amz-target
+    like native-string
+  take revoke-grant-request, like revoke-grant-request
+
+  line </#X-Amz-Target=TrentService.RevokeGrant>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan revoke-grant-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 481
+    seed json, like dependency-timeout-exception
+    note <DependencyTimeoutException>
+  loot 482
+    seed json, like invalid-arn-exception
+    note <InvalidArnException>
+  loot 483
+    seed json, like invalid-grant-id-exception
+    note <InvalidGrantIdException>
+  loot 484
+    seed json, like kms-internal-exception
+    note <KMSInternalException>
+  loot 485
+    seed json, like kms-invalid-state-exception
+    note <KMSInvalidStateException>

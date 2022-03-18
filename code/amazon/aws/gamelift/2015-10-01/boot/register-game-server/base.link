@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/register-game-server-output
+  take form register-game-server-output
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot register-game-server, name <RegisterGameServer>
+  note <**This operation is used with the GameLift FleetIQ solution and game server groups.** Creates a new game server resource and notifies GameLift FleetIQ that the game server is ready to host gameplay and players. This operation is called by a game server process that is running on an instance in a game server group. Registering game servers enables GameLift FleetIQ to track available game servers and enables game clients and services to claim a game server for a new game session.
+
+To register a game server, identify the game server group and instance where the game server is running, and provide a unique identifier for the game server. You can also include connection and game server data. When a game client or service requests a game server by calling ClaimGameServer, this information is returned in the response.
+
+Once a game server is successfully registered, it is put in status `AVAILABLE`. A request to register a game server may fail if the instance it is running on is in the process of shutting down as part of instance balancing or scale-down activity.
+
+**Learn more** [GameLift FleetIQ Guide](https://docs.aws.amazon.com/gamelift/latest/fleetiqguide/gsg-intro.html)
+
+**Related actions** RegisterGameServer | ListGameServers | ClaimGameServer | DescribeGameServer | UpdateGameServer | DeregisterGameServer | [All APIs by task](https://docs.aws.amazon.com/gamelift/latest/fleetiqguide/reference-awssdk-fleetiq.html)>
+
+  take x-amz-target
+    like native-string
+  take register-game-server-input, like register-game-server-input
+
+  line </#X-Amz-Target=GameLift.RegisterGameServer>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan register-game-server-input
+
+  loot 200
+    seed json, like register-game-server-output
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 482
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 483
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 484
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>

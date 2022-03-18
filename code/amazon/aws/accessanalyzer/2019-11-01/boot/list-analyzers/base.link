@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/list-analyzers-response
+  take form list-analyzers-response
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-analyzers, name <ListAnalyzers>
+  note <Retrieves a list of analyzers.>
+
+  take max-results
+    like native-integer
+    note <The maximum number of results to return in the response.>
+    void take
+  take next-token
+    like native-string
+    note <A token used for pagination of results returned.>
+    void take
+  take type
+    like native-string
+    note <The type of analyzer.>
+    void take
+
+  line </analyzer>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+  find <type>, loan type
+
+  loot 200
+    seed json, like list-analyzers-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

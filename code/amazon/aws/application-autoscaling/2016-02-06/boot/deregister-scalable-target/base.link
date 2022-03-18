@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/concurrent-update-exception
+  take form concurrent-update-exception
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/deregister-scalable-target-response
+  take form deregister-scalable-target-response
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/object-not-found-exception
+  take form object-not-found-exception
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot deregister-scalable-target, name <DeregisterScalableTarget>
+  note <Deregisters an Application Auto Scaling scalable target when you have finished using it. To see which resources have been registered, use [DescribeScalableTargets](https://docs.aws.amazon.com/autoscaling/application/APIReference/API_DescribeScalableTargets.html).
+
+Deregistering a scalable target deletes the scaling policies and the scheduled actions that are associated with it.>
+
+  take x-amz-target
+    like native-string
+  take deregister-scalable-target-request, like deregister-scalable-target-request
+
+  line </#X-Amz-Target=AnyScaleFrontendService.DeregisterScalableTarget>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan deregister-scalable-target-request
+
+  loot 200
+    seed json, like deregister-scalable-target-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like object-not-found-exception
+    note <ObjectNotFoundException>
+  loot 482
+    seed json, like concurrent-update-exception
+    note <ConcurrentUpdateException>
+  loot 483
+    seed json, like internal-service-exception
+    note <InternalServiceException>

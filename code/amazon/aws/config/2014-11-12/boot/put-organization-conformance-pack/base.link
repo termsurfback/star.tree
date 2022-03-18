@@ -1,0 +1,83 @@
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/insufficient-permissions-exception
+  take form insufficient-permissions-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/max-number-of-organization-conformance-packs-exceeded-exception
+  take form max-number-of-organization-conformance-packs-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/no-available-organization-exception
+  take form no-available-organization-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/organization-access-denied-exception
+  take form organization-access-denied-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/organization-all-features-not-enabled-exception
+  take form organization-all-features-not-enabled-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/organization-conformance-pack-template-validation-exception
+  take form organization-conformance-pack-template-validation-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/put-organization-conformance-pack-response
+  take form put-organization-conformance-pack-response
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-organization-conformance-pack, name <PutOrganizationConformancePack>
+  note <Deploys conformance packs across member accounts in an Amazon Web Services Organization.
+
+Only a master account and a delegated administrator can call this API. When calling this API with a delegated administrator, you must ensure Organizations `ListDelegatedAdministrator` permissions are added.
+
+This API enables organization service access for `config-multiaccountsetup.amazonaws.com` through the `EnableAWSServiceAccess` action and creates a service linked role `AWSServiceRoleForConfigMultiAccountSetup` in the master or delegated administrator account of your organization. The service linked role is created only when the role does not exist in the caller account. To use this API with delegated administrator, register a delegated administrator by calling Amazon Web Services Organization `register-delegate-admin` for `config-multiaccountsetup.amazonaws.com`.
+
+Prerequisite: Ensure you call `EnableAllFeatures` API to enable all features in an organization.
+
+You must specify either the `TemplateS3Uri` or the `TemplateBody` parameter, but not both. If you provide both Config uses the `TemplateS3Uri` parameter and ignores the `TemplateBody` parameter.
+
+Config sets the state of a conformance pack to CREATE_IN_PROGRESS and UPDATE_IN_PROGRESS until the conformance pack is created or updated. You cannot update a conformance pack while it is in this state.
+
+You can create 50 conformance packs with 25 Config rules in each pack and 3 delegated administrator per organization.>
+
+  take x-amz-target
+    like native-string
+  take put-organization-conformance-pack-request, like put-organization-conformance-pack-request
+
+  line </#X-Amz-Target=StarlingDoveService.PutOrganizationConformancePack>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan put-organization-conformance-pack-request
+
+  loot 200
+    seed json, like put-organization-conformance-pack-response
+    note <Success>
+  loot 480
+    seed json, like max-number-of-organization-conformance-packs-exceeded-exception
+    note <MaxNumberOfOrganizationConformancePacksExceededException>
+  loot 481
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like organization-access-denied-exception
+    note <OrganizationAccessDeniedException>
+  loot 484
+    seed json, like insufficient-permissions-exception
+    note <InsufficientPermissionsException>
+  loot 485
+    seed json, like organization-conformance-pack-template-validation-exception
+    note <OrganizationConformancePackTemplateValidationException>
+  loot 486
+    seed json, like organization-all-features-not-enabled-exception
+    note <OrganizationAllFeaturesNotEnabledException>
+  loot 487
+    seed json, like no-available-organization-exception
+    note <NoAvailableOrganizationException>

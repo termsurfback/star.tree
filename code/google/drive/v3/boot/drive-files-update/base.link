@@ -1,0 +1,72 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/drive/v3/base/file
+  take form file
+
+boot drive-files-update, name <drive.files.update>
+  note <Updates a file's metadata and/or content. When calling this method, only populate fields in the request that you want to modify. When updating fields, some fields might change automatically, such as modifiedDate. This method supports patch semantics.>
+
+  take file-id
+    like native-string
+    note <The ID of the file.>
+  take add-parents
+    like native-string
+    note <A comma-separated list of parent IDs to add.>
+    void take
+  take enforce-single-parent
+    like native-boolean
+    note <Deprecated. Adding files to multiple folders is no longer supported. Use shortcuts instead.>
+    void take
+  take include-permissions-for-view
+    like native-string
+    note <Specifies which additional view's permissions to include in the response. Only 'published' is supported.>
+    void take
+  take keep-revision-forever
+    like native-boolean
+    note <Whether to set the 'keepForever' field in the new head revision. This is only applicable to files with binary content in Google Drive. Only 200 revisions for the file can be kept forever. If the limit is reached, try deleting pinned revisions.>
+    void take
+  take ocr-language
+    like native-string
+    note <A language hint for OCR processing during image import (ISO 639-1 code).>
+    void take
+  take remove-parents
+    like native-string
+    note <A comma-separated list of parent IDs to remove.>
+    void take
+  take supports-all-drives
+    like native-boolean
+    note <Whether the requesting application supports both My Drives and shared drives.>
+    void take
+  take supports-team-drives
+    like native-boolean
+    note <Deprecated use supportsAllDrives instead.>
+    void take
+  take use-content-as-indexable-text
+    like native-boolean
+    note <Whether to use the uploaded content as indexable text.>
+    void take
+  take file, like file
+    void take
+
+  line </files/{file-id}>
+
+  find <addParents>, loan add-parents
+  find <enforceSingleParent>, loan enforce-single-parent
+  find <includePermissionsForView>, loan include-permissions-for-view
+  find <keepRevisionForever>, loan keep-revision-forever
+  find <ocrLanguage>, loan ocr-language
+  find <removeParents>, loan remove-parents
+  find <supportsAllDrives>, loan supports-all-drives
+  find <supportsTeamDrives>, loan supports-team-drives
+  find <useContentAsIndexableText>, loan use-content-as-indexable-text
+
+  seed octet-stream, loan file
+
+  loot 200
+    seed json, like file
+    note <Successful response>

@@ -1,0 +1,107 @@
+
+load @drumwork/snow/amazonaws.com/codeguru-reviewer/2019-09-19/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/codeguru-reviewer/2019-09-19/base/list-repository-associations-response
+  take form list-repository-associations-response
+
+load @drumwork/snow/amazonaws.com/codeguru-reviewer/2019-09-19/base/name
+  take form name
+
+load @drumwork/snow/amazonaws.com/codeguru-reviewer/2019-09-19/base/owner
+  take form owner
+
+load @drumwork/snow/amazonaws.com/codeguru-reviewer/2019-09-19/base/provider-type
+  take form provider-type
+
+load @drumwork/snow/amazonaws.com/codeguru-reviewer/2019-09-19/base/repository-association-state
+  take form repository-association-state
+
+load @drumwork/snow/amazonaws.com/codeguru-reviewer/2019-09-19/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/codeguru-reviewer/2019-09-19/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-repository-associations, name <ListRepositoryAssociations>
+  note <Returns a list of [`RepositoryAssociationSummary`](https://docs.aws.amazon.com/codeguru/latest/reviewer-api/API_RepositoryAssociationSummary.html) objects that contain summary information about a repository association. You can filter the returned list by [`ProviderType`](https://docs.aws.amazon.com/codeguru/latest/reviewer-api/API_RepositoryAssociationSummary.html#reviewer-Type-RepositoryAssociationSummary-ProviderType) , [`Name`](https://docs.aws.amazon.com/codeguru/latest/reviewer-api/API_RepositoryAssociationSummary.html#reviewer-Type-RepositoryAssociationSummary-Name) , [`State`](https://docs.aws.amazon.com/codeguru/latest/reviewer-api/API_RepositoryAssociationSummary.html#reviewer-Type-RepositoryAssociationSummary-State) , and [`Owner`](https://docs.aws.amazon.com/codeguru/latest/reviewer-api/API_RepositoryAssociationSummary.html#reviewer-Type-RepositoryAssociationSummary-Owner) .>
+
+  take provider-type
+    like list
+      like provider-type
+    note <List of provider types to use as a filter.>
+    void take
+  take state
+    like list
+      like repository-association-state
+    note <List of repository association states to use as a filter.
+
+The valid repository association states are:
+
+- **Associated**: The repository association is complete.
+
+- **Associating**: CodeGuru Reviewer is:
+
+  - Setting up pull request notifications. This is required for pull requests to trigger a CodeGuru Reviewer review.
+
+    If your repository `ProviderType` is `GitHub`, `GitHub Enterprise Server`, or `Bitbucket`, CodeGuru Reviewer creates webhooks in your repository to trigger CodeGuru Reviewer reviews. If you delete these webhooks, reviews of code in your repository cannot be triggered.
+
+  - Setting up source code access. This is required for CodeGuru Reviewer to securely clone code in your repository.
+
+- **Failed**: The repository failed to associate or disassociate.
+
+- **Disassociating**: CodeGuru Reviewer is removing the repository's pull request notifications and source code access.
+
+- **Disassociated**: CodeGuru Reviewer successfully disassociated the repository. You can create a new association with this repository if you want to review source code in it later. You can control access to code reviews created in an associated repository with tags after it has been disassociated. For more information, see [Using tags to control access to associated repositories](https://docs.aws.amazon.com/codeguru/latest/reviewer-ug/auth-and-access-control-using-tags.html) in the _Amazon CodeGuru Reviewer User Guide_.>
+    void take
+  take name
+    like list
+      like name
+    note <List of repository names to use as a filter.>
+    void take
+  take owner
+    like list
+      like owner
+    note <List of owners to use as a filter. For Amazon Web Services CodeCommit, it is the name of the CodeCommit account that was used to associate the repository. For other repository source providers, such as Bitbucket and GitHub Enterprise Server, this is name of the account that was used to associate the repository.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of repository association results returned by `ListRepositoryAssociations` in paginated output. When this parameter is used, `ListRepositoryAssociations` only returns `maxResults` results in a single page with a `nextToken` response element. The remaining results of the initial request can be seen by sending another `ListRepositoryAssociations` request with the returned `nextToken` value. This value can be between 1 and 100. If this parameter is not used, `ListRepositoryAssociations` returns up to 100 results and a `nextToken` value if applicable.>
+    void take
+  take next-token
+    like native-string
+    note <The `nextToken` value returned from a previous paginated `ListRepositoryAssociations` request where `maxResults` was used and the results exceeded the value of that parameter. Pagination continues from the end of the previous results that returned the `nextToken` value.
+
+Treat this token as an opaque identifier that is only used to retrieve the next items in a list and not for other programmatic purposes.>
+    void take
+
+  line </associations>
+
+  find <ProviderType>, loan provider-type
+  find <State>, loan state
+  find <Name>, loan name
+  find <Owner>, loan owner
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like list-repository-associations-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>

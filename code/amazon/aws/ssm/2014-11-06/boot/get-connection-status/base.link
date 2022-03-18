@@ -1,0 +1,29 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/get-connection-status-response
+  take form get-connection-status-response
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-connection-status, name <GetConnectionStatus>
+  note <Retrieves the Session Manager connection status for an instance to determine whether it is running and ready to receive Session Manager connections.>
+
+  take x-amz-target
+    like native-string
+  take get-connection-status-request, like get-connection-status-request
+
+  line </#X-Amz-Target=AmazonSSM.GetConnectionStatus>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-connection-status-request
+
+  loot 200
+    seed json, like get-connection-status-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>

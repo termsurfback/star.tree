@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/charge
+  take form charge
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-charges-charge-body
+  take form get-charges-charge-body
+
+boot get-charges-charge, name <GetChargesCharge>
+  note <Retrieves the details of a charge that has previously been created. Supply the unique charge ID that was returned from your previous request, and Stripe will return the corresponding charge information. The same information is returned when creating or refunding the charge.>
+
+  take charge
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-charges-charge-body, like get-charges-charge-body
+    void take
+
+  line </v1/charges/{charge}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-charges-charge-body
+
+  loot 200
+    seed json, like charge
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

@@ -1,0 +1,68 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-endpoint-already-exists-fault
+  take form db-proxy-endpoint-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-endpoint-not-found-fault
+  take form db-proxy-endpoint-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-proxy-endpoint-state-fault
+  take form invalid-db-proxy-endpoint-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-proxy-state-fault
+  take form invalid-db-proxy-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/modify-db-proxy-endpoint-response
+  take form modify-db-proxy-endpoint-response
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-modify-db-proxy-endpoint, name <GET_ModifyDBProxyEndpoint>
+  note <Changes the settings for an existing DB proxy endpoint.>
+
+  take db-proxy-endpoint-name
+    like native-string
+    note <The name of the DB proxy sociated with the DB proxy endpoint that you want to modify.>
+  take new-db-proxy-endpoint-name
+    like native-string
+    note <The new identifier for the `DBProxyEndpoint`. An identifier must begin with a letter and must contain only ASCII letters, digits, and hyphens; it can't end with a hyphen or contain two consecutive hyphens.>
+    void take
+  take vpc-security-group-ids
+    like list
+      like string
+    note <The VPC security group IDs for the DB proxy endpoint. When the DB proxy endpoint uses a different VPC than the original proxy, you also specify a different set of security group IDs than for the original proxy.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyDBProxyEndpoint>
+
+  find <DBProxyEndpointName>, loan db-proxy-endpoint-name
+  find <NewDBProxyEndpointName>, loan new-db-proxy-endpoint-name
+  find <VpcSecurityGroupIds>, loan vpc-security-group-ids
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-db-proxy-endpoint-response
+    note <Success>
+  loot 480
+    seed xml, like db-proxy-endpoint-not-found-fault
+    note <DBProxyEndpointNotFoundFault>
+  loot 481
+    seed xml, like db-proxy-endpoint-already-exists-fault
+    note <DBProxyEndpointAlreadyExistsFault>
+  loot 482
+    seed xml, like invalid-db-proxy-endpoint-state-fault
+    note <InvalidDBProxyEndpointStateFault>
+  loot 483
+    seed xml, like invalid-db-proxy-state-fault
+    note <InvalidDBProxyStateFault>

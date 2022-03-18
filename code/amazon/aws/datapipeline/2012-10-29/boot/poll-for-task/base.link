@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/poll-for-task-output
+  take form poll-for-task-output
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/task-not-found-exception
+  take form task-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot poll-for-task, name <PollForTask>
+  note <Task runners call `PollForTask` to receive a task to perform from AWS Data Pipeline. The task runner specifies which tasks it can perform by setting a value for the `workerGroup` parameter. The task returned can come from any of the pipelines that match the `workerGroup` value passed in by the task runner and that was launched using the IAM user credentials specified by the task runner.
+
+If tasks are ready in the work queue, `PollForTask` returns a response immediately. If no tasks are available in the queue, `PollForTask` uses long-polling and holds on to a poll connection for up to a 90 seconds, during which time the first newly scheduled task is handed to the task runner. To accomodate this, set the socket timeout in your task runner to 90 seconds. The task runner should not call `PollForTask` again on the same `workerGroup` until it receives a response, and this can take up to 90 seconds.>
+
+  take x-amz-target
+    like native-string
+  take poll-for-task-input, like poll-for-task-input
+
+  line </#X-Amz-Target=DataPipeline.PollForTask>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan poll-for-task-input
+
+  loot 200
+    seed json, like poll-for-task-output
+    note <Success>
+  loot 480
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like task-not-found-exception
+    note <TaskNotFoundException>

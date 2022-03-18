@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/polly/2016-06-10/base/describe-voices-output
+  take form describe-voices-output
+
+load @drumwork/snow/amazonaws.com/polly/2016-06-10/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/polly/2016-06-10/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-voices, name <DescribeVoices>
+  note <Returns the list of voices that are available for use when requesting speech synthesis. Each voice speaks a specified language, is either male or female, and is identified by an ID, which is the ASCII version of the voice name.
+
+When synthesizing speech ( `SynthesizeSpeech` ), you provide the voice ID for the voice you want from the list of voices returned by `DescribeVoices`.
+
+For example, you want your news reader application to read news in a specific language, but giving a user the option to choose the voice. Using the `DescribeVoices` operation you can provide the user with a list of available voices to select from.
+
+You can optionally specify a language code to filter the available voices. For example, if you specify `en-US`, the operation returns a list of all available US English voices.
+
+This operation requires permissions to perform the `polly:DescribeVoices` action.>
+
+  take engine
+    like native-string
+    note <Specifies the engine (`standard` or `neural`) used by Amazon Polly when processing input text for speech synthesis.>
+    void take
+  take language-code
+    like native-string
+    note <The language identification tag (ISO 639 code for the language name-ISO 3166 country code) for filtering the list of voices returned. If you don't specify this optional parameter, all available voices are returned.>
+    void take
+  take include-additional-language-codes
+    like native-boolean
+    note <Boolean value indicating whether to return any bilingual voices that use the specified language as an additional language. For instance, if you request all languages that use US English (es-US), and there is an Italian voice that speaks both Italian (it-IT) and US English, that voice will be included if you specify `yes` but not if you specify `no`.>
+    void take
+  take next-token
+    like native-string
+    note <An opaque pagination token returned from the previous `DescribeVoices` operation. If present, this indicates where to continue the listing.>
+    void take
+
+  line </v1/voices>
+
+  find <Engine>, loan engine
+  find <LanguageCode>, loan language-code
+  find <IncludeAdditionalLanguageCodes>, loan include-additional-language-codes
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like describe-voices-output
+    note <Success>
+  loot 480
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 481
+    seed json, like service-failure-exception
+    note <ServiceFailureException>

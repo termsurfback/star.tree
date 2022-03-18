@@ -1,0 +1,23 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_taskrouter_v1/1.27.2/base/taskrouter-v1-workspace-worker-workers-real-time-statistics
+  take form taskrouter-v1-workspace-worker-workers-real-time-statistics
+
+boot fetch-workers-real-time-statistics, name <FetchWorkersRealTimeStatistics>
+  take workspace-sid
+    like native-string
+    note <The SID of the Workspace with the resource to fetch.>
+  take task-channel
+    like native-string
+    note <Only calculate real-time statistics on this TaskChannel. Can be the TaskChannel&#39;s SID or its \`unique\_name\`, such as \`voice\`, \`sms\`, or \`default\`.>
+    void take
+
+  line </v1/Workspaces/{workspace-sid}/Workers/RealTimeStatistics>
+
+  find <TaskChannel>, loan task-channel
+
+  loot 200
+    seed json, like taskrouter-v1-workspace-worker-workers-real-time-statistics
+    note <OK>

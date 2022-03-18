@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/list-stream-keys-body
+  take form list-stream-keys-body
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/list-stream-keys-response
+  take form list-stream-keys-response
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-stream-keys, name <ListStreamKeys>
+  note <Gets summary information about stream keys for the specified channel.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-stream-keys-body, like list-stream-keys-body
+
+  line </ListStreamKeys>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-stream-keys-body
+
+  loot 200
+    seed json, like list-stream-keys-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

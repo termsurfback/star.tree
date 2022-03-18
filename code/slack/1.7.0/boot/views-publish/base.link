@@ -1,0 +1,47 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+boot views-publish, name <views_publish>
+  note <Publish a static view for a User.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `none`>
+  take user-id
+    like native-string
+    note <`id` of the user you want publish a view to.>
+  take view
+    like native-string
+    note <A [view payload](/reference/surfaces/views). This must be a JSON-encoded string.>
+  take hash
+    like native-string
+    note <A string that represents view state to protect against possible race conditions.>
+    void take
+
+  line </views.publish>
+
+  hint <token>, loan token
+
+  find <user_id>, loan user-id
+  find <view>, loan view
+  find <hash>, loan hash
+
+  loot 200
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-true
+    note <Typical success response includes the published view payload.>
+  loot fall
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response, before getting to any possible validation errors.>

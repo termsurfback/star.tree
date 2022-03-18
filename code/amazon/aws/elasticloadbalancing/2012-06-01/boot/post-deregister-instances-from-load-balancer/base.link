@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/access-point-not-found-exception
+  take form access-point-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/deregister-end-points-output
+  take form deregister-end-points-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/invalid-end-point-exception
+  take form invalid-end-point-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-deregister-instances-from-load-balancer, name <POST_DeregisterInstancesFromLoadBalancer>
+  note <Deregisters the specified instances from the specified load balancer. After the instance is deregistered, it no longer receives traffic from the load balancer.
+
+You can use DescribeLoadBalancers to verify that the instance is deregistered from the load balancer.
+
+For more information, see [Register or De-Register EC2 Instances](https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/elb-deregister-register-instances.html) in the _Classic Load Balancers Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take deregister-end-points-input, like deregister-end-points-input
+    void take
+
+  line </#Action=DeregisterInstancesFromLoadBalancer>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan deregister-end-points-input
+
+  loot 200
+    seed xml, like deregister-end-points-output
+    note <Success>
+  loot 480
+    seed xml, like access-point-not-found-exception
+    note <AccessPointNotFoundException>
+  loot 481
+    seed xml, like invalid-end-point-exception
+    note <InvalidEndPointException>

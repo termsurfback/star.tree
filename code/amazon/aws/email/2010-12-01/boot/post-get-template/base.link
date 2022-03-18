@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/get-template-response
+  take form get-template-response
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/template-does-not-exist-exception
+  take form template-does-not-exist-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-get-template, name <POST_GetTemplate>
+  note <Displays the template object (which includes the Subject line, HTML part and text part) for the template you specify.
+
+You can execute this operation no more than once per second.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take get-template-request, like get-template-request
+    void take
+
+  line </#Action=GetTemplate>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan get-template-request
+
+  loot 200
+    seed xml, like get-template-response
+    note <Success>
+  loot 480
+    seed xml, like template-does-not-exist-exception
+    note <TemplateDoesNotExistException>

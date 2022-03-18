@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/disassociate-vpc-from-hosted-zone-body
+  take form disassociate-vpc-from-hosted-zone-body
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/disassociate-vpc-from-hosted-zone-response
+  take form disassociate-vpc-from-hosted-zone-response
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-vpc-id
+  take form invalid-vpc-id
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/last-vpc-association
+  take form last-vpc-association
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/no-such-hosted-zone
+  take form no-such-hosted-zone
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/vpc-association-not-found
+  take form vpc-association-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot disassociate-vpc-from-hosted-zone, name <DisassociateVPCFromHostedZone>
+  note <Disassociates an Amazon Virtual Private Cloud (Amazon VPC) from an Amazon Route 53 private hosted zone. Note the following:
+
+- You can't disassociate the last Amazon VPC from a private hosted zone.
+
+- You can't convert a private hosted zone into a public hosted zone.
+
+- You can submit a `DisassociateVPCFromHostedZone` request using either the account that created the hosted zone or the account that created the Amazon VPC.
+
+- Some services, such as Cloud Map and Amazon Elastic File System (Amazon EFS) automatically create hosted zones and associate VPCs with the hosted zones. A service can create a hosted zone using your account or using its own account. You can disassociate a VPC from a hosted zone only if the service created the hosted zone using your account.
+
+  When you run [DisassociateVPCFromHostedZone](https://docs.aws.amazon.com/Route53/latest/APIReference/API_ListHostedZonesByVPC.html), if the hosted zone has a value for `OwningAccount`, you can use `DisassociateVPCFromHostedZone`. If the hosted zone has a value for `OwningService`, you can't use `DisassociateVPCFromHostedZone`.>
+
+  take id
+    like native-string
+    note <The ID of the private hosted zone that you want to disassociate a VPC from.>
+  take disassociate-vpc-from-hosted-zone-body, like disassociate-vpc-from-hosted-zone-body
+
+  line </2013-04-01/hostedzone/{id}/disassociatevpc>
+
+  seed xml, loan disassociate-vpc-from-hosted-zone-body
+
+  loot 200
+    seed xml, like disassociate-vpc-from-hosted-zone-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-hosted-zone
+    note <NoSuchHostedZone>
+  loot 481
+    seed xml, like invalid-vpc-id
+    note <InvalidVPCId>
+  loot 482
+    seed xml, like vpc-association-not-found
+    note <VPCAssociationNotFound>
+  loot 483
+    seed xml, like last-vpc-association
+    note <LastVPCAssociation>
+  loot 484
+    seed xml, like invalid-input
+    note <InvalidInput>

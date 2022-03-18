@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/ops-metadata-invalid-argument-exception
+  take form ops-metadata-invalid-argument-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/ops-metadata-key-limit-exceeded-exception
+  take form ops-metadata-key-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/ops-metadata-not-found-exception
+  take form ops-metadata-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/ops-metadata-too-many-updates-exception
+  take form ops-metadata-too-many-updates-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/update-ops-metadata-result
+  take form update-ops-metadata-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-ops-metadata, name <UpdateOpsMetadata>
+  note <Amazon Web Services Systems Manager calls this API operation when you edit OpsMetadata in Application Manager.>
+
+  take x-amz-target
+    like native-string
+  take update-ops-metadata-request, like update-ops-metadata-request
+
+  line </#X-Amz-Target=AmazonSSM.UpdateOpsMetadata>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-ops-metadata-request
+
+  loot 200
+    seed json, like update-ops-metadata-result
+    note <Success>
+  loot 480
+    seed json, like ops-metadata-not-found-exception
+    note <OpsMetadataNotFoundException>
+  loot 481
+    seed json, like ops-metadata-invalid-argument-exception
+    note <OpsMetadataInvalidArgumentException>
+  loot 482
+    seed json, like ops-metadata-key-limit-exceeded-exception
+    note <OpsMetadataKeyLimitExceededException>
+  loot 483
+    seed json, like ops-metadata-too-many-updates-exception
+    note <OpsMetadataTooManyUpdatesException>
+  loot 484
+    seed json, like internal-server-error
+    note <InternalServerError>

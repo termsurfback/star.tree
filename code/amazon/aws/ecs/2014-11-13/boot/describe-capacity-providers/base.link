@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/describe-capacity-providers-response
+  take form describe-capacity-providers-response
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-capacity-providers, name <DescribeCapacityProviders>
+  note <Describes one or more of your capacity providers.>
+
+  take x-amz-target
+    like native-string
+  take describe-capacity-providers-request, like describe-capacity-providers-request
+
+  line </#X-Amz-Target=AmazonEC2ContainerServiceV20141113.DescribeCapacityProviders>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-capacity-providers-request
+
+  loot 200
+    seed json, like describe-capacity-providers-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like client-exception
+    note <ClientException>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>

@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/delete-firewall-rule-response
+  take form delete-firewall-rule-response
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-firewall-rule, name <DeleteFirewallRule>
+  note <Deletes the specified firewall rule.>
+
+  take x-amz-target
+    like native-string
+  take delete-firewall-rule-request, like delete-firewall-rule-request
+
+  line </#X-Amz-Target=Route53Resolver.DeleteFirewallRule>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-firewall-rule-request
+
+  loot 200
+    seed json, like delete-firewall-rule-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>

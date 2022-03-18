@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/workspaces/2015-04-08/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/workspaces/2015-04-08/base/delete-workspace-image-result
+  take form delete-workspace-image-result
+
+load @drumwork/snow/amazonaws.com/workspaces/2015-04-08/base/invalid-resource-state-exception
+  take form invalid-resource-state-exception
+
+load @drumwork/snow/amazonaws.com/workspaces/2015-04-08/base/resource-associated-exception
+  take form resource-associated-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-workspace-image, name <DeleteWorkspaceImage>
+  note <Deletes the specified image from your account. To delete an image, you must first delete any bundles that are associated with the image and unshare the image if it is shared with other accounts.>
+
+  take x-amz-target
+    like native-string
+  take delete-workspace-image-request, like delete-workspace-image-request
+
+  line </#X-Amz-Target=WorkspacesService.DeleteWorkspaceImage>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-workspace-image-request
+
+  loot 200
+    seed json, like delete-workspace-image-result
+    note <Success>
+  loot 480
+    seed json, like resource-associated-exception
+    note <ResourceAssociatedException>
+  loot 481
+    seed json, like invalid-resource-state-exception
+    note <InvalidResourceStateException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

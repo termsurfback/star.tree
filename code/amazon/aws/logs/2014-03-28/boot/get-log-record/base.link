@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/get-log-record-response
+  take form get-log-record-response
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-log-record, name <GetLogRecord>
+  note <Retrieves all of the fields and values of a single log event. All fields are retrieved, even if the original query that produced the `logRecordPointer` retrieved only a subset of fields. Fields are returned as field name/field value pairs.
+
+The full unparsed log event is returned within `@message`.>
+
+  take x-amz-target
+    like native-string
+  take get-log-record-request, like get-log-record-request
+
+  line </#X-Amz-Target=Logs_20140328.GetLogRecord>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-log-record-request
+
+  loot 200
+    seed json, like get-log-record-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

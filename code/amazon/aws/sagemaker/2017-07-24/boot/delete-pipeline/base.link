@@ -1,0 +1,29 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/delete-pipeline-response
+  take form delete-pipeline-response
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-not-found
+  take form resource-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-pipeline, name <DeletePipeline>
+  note <Deletes a pipeline if there are no running instances of the pipeline. To delete a pipeline, you must stop all running instances of the pipeline using the `StopPipelineExecution` API. When you delete a pipeline, all instances of the pipeline are deleted.>
+
+  take x-amz-target
+    like native-string
+  take delete-pipeline-request, like delete-pipeline-request
+
+  line </#X-Amz-Target=SageMaker.DeletePipeline>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-pipeline-request
+
+  loot 200
+    seed json, like delete-pipeline-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found
+    note <ResourceNotFound>

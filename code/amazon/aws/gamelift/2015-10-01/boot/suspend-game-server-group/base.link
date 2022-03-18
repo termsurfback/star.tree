@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/suspend-game-server-group-output
+  take form suspend-game-server-group-output
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot suspend-game-server-group, name <SuspendGameServerGroup>
+  note <**This operation is used with the GameLift FleetIQ solution and game server groups.** Temporarily stops activity on a game server group without terminating instances or the game server group. You can restart activity by calling ResumeGameServerGroup. You can suspend the following activity:
+
+- **Instance type replacement** - This activity evaluates the current game hosting viability of all Spot instance types that are defined for the game server group. It updates the Auto Scaling group to remove nonviable Spot Instance types, which have a higher chance of game server interruptions. It then balances capacity across the remaining viable Spot Instance types. When this activity is suspended, the Auto Scaling group continues with its current balance, regardless of viability. Instance protection, utilization metrics, and capacity scaling activities continue to be active.
+
+To suspend activity, specify a game server group ARN and the type of activity to be suspended. If successful, a GameServerGroup object is returned showing that the activity is listed in `SuspendedActions`.
+
+**Learn more** [GameLift FleetIQ Guide](https://docs.aws.amazon.com/gamelift/latest/fleetiqguide/gsg-intro.html)
+
+**Related actions** CreateGameServerGroup | ListGameServerGroups | DescribeGameServerGroup | UpdateGameServerGroup | DeleteGameServerGroup | ResumeGameServerGroup | SuspendGameServerGroup | DescribeGameServerInstances | [All APIs by task](https://docs.aws.amazon.com/gamelift/latest/fleetiqguide/reference-awssdk-fleetiq.html)>
+
+  take x-amz-target
+    like native-string
+  take suspend-game-server-group-input, like suspend-game-server-group-input
+
+  line </#X-Amz-Target=GameLift.SuspendGameServerGroup>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan suspend-game-server-group-input
+
+  loot 200
+    seed json, like suspend-game-server-group-output
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 482
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 483
+    seed json, like internal-service-exception
+    note <InternalServiceException>

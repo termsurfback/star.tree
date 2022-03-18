@@ -1,0 +1,95 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/endpoint-authorization
+  take form endpoint-authorization
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/endpoint-authorization-not-found-fault
+  take form endpoint-authorization-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/endpoint-not-found-fault
+  take form endpoint-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-authorization-state-fault
+  take form invalid-authorization-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-security-group-state-fault
+  take form invalid-cluster-security-group-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-state-fault
+  take form invalid-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-endpoint-state-fault
+  take form invalid-endpoint-state-fault
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-revoke-endpoint-access, name <GET_RevokeEndpointAccess>
+  note <Revokes access to a cluster.>
+
+  take cluster-identifier
+    like native-string
+    note <The cluster to revoke access from.>
+    void take
+  take account
+    like native-string
+    note <The Amazon Web Services account ID whose access is to be revoked.>
+    void take
+  take vpc-ids
+    like list
+      like string
+    note <The virtual private cloud (VPC) identifiers for which access is to be revoked.>
+    void take
+  take force
+    like native-boolean
+    note <Indicates whether to force the revoke action. If true, the Redshift-managed VPC endpoints associated with the endpoint authorization are also deleted.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=RevokeEndpointAccess>
+
+  find <ClusterIdentifier>, loan cluster-identifier
+  find <Account>, loan account
+  find <VpcIds>, loan vpc-ids
+  find <Force>, loan force
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like endpoint-authorization
+    note <Success>
+  loot 480
+    seed xml, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 481
+    seed xml, like invalid-endpoint-state-fault
+    note <InvalidEndpointStateFault>
+  loot 482
+    seed xml, like invalid-cluster-security-group-state-fault
+    note <InvalidClusterSecurityGroupStateFault>
+  loot 483
+    seed xml, like endpoint-not-found-fault
+    note <EndpointNotFoundFault>
+  loot 484
+    seed xml, like endpoint-authorization-not-found-fault
+    note <EndpointAuthorizationNotFoundFault>
+  loot 485
+    seed xml, like invalid-authorization-state-fault
+    note <InvalidAuthorizationStateFault>
+  loot 486
+    seed xml, like invalid-cluster-state-fault
+    note <InvalidClusterStateFault>

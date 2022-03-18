@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/update-log-pattern-response
+  take form update-log-pattern-response
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-log-pattern, name <UpdateLogPattern>
+  note <Adds a log pattern to a `LogPatternSet`.>
+
+  take x-amz-target
+    like native-string
+  take update-log-pattern-request, like update-log-pattern-request
+
+  line </#X-Amz-Target=EC2WindowsBarleyService.UpdateLogPattern>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-log-pattern-request
+
+  loot 200
+    seed json, like update-log-pattern-response
+    note <Success>
+  loot 480
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like internal-server-exception
+    note <InternalServerException>

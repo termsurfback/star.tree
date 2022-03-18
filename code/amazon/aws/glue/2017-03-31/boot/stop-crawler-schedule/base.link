@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/entity-not-found-exception
+  take form entity-not-found-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/operation-timeout-exception
+  take form operation-timeout-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/scheduler-not-running-exception
+  take form scheduler-not-running-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/scheduler-transitioning-exception
+  take form scheduler-transitioning-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/stop-crawler-schedule-response
+  take form stop-crawler-schedule-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot stop-crawler-schedule, name <StopCrawlerSchedule>
+  note <Sets the schedule state of the specified crawler to `NOT_SCHEDULED`, but does not stop the crawler if it is already running.>
+
+  take x-amz-target
+    like native-string
+  take stop-crawler-schedule-request, like stop-crawler-schedule-request
+
+  line </#X-Amz-Target=AWSGlue.StopCrawlerSchedule>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan stop-crawler-schedule-request
+
+  loot 200
+    seed json, like stop-crawler-schedule-response
+    note <Success>
+  loot 480
+    seed json, like entity-not-found-exception
+    note <EntityNotFoundException>
+  loot 481
+    seed json, like scheduler-not-running-exception
+    note <SchedulerNotRunningException>
+  loot 482
+    seed json, like scheduler-transitioning-exception
+    note <SchedulerTransitioningException>
+  loot 483
+    seed json, like operation-timeout-exception
+    note <OperationTimeoutException>

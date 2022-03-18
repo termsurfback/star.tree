@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/elastictranscoder/2012-09-25/base/key-id-guid
+  take form key-id-guid
+
+load @drumwork/snow/amazonaws.com/elastictranscoder/2012-09-25/base/non-empty-base64-encoded-string
+  take form non-empty-base64-encoded-string
+
+load @drumwork/snow/amazonaws.com/elastictranscoder/2012-09-25/base/one-to512-string
+  take form one-to512-string
+
+load @drumwork/snow/amazonaws.com/elastictranscoder/2012-09-25/base/play-ready-drm-format-string
+  take form play-ready-drm-format-string
+
+load @drumwork/snow/amazonaws.com/elastictranscoder/2012-09-25/base/zero-to255-string
+  take form zero-to255-string
+
+form play-ready-drm, name <PlayReadyDrm>
+  note <The PlayReady DRM settings, if any, that you want Elastic Transcoder to apply to the output files associated with this playlist.
+
+PlayReady DRM encrypts your media files using `aes-ctr` encryption.
+
+If you use DRM for an `HLSv3` playlist, your outputs must have a master playlist.>
+  take format, name <Format>
+    like play-ready-drm-format-string
+    void take
+    note <The type of DRM, if any, that you want Elastic Transcoder to apply to the output files associated with this playlist.>
+  take key, name <Key>
+    like non-empty-base64-encoded-string
+    void take
+    note <The DRM key for your file, provided by your DRM license provider. The key must be base64-encoded, and it must be one of the following bit lengths before being base64-encoded:
+
+`128`, `192`, or `256`.
+
+The key must also be encrypted by using AWS KMS.>
+  take key-md5, name <KeyMd5>
+    like non-empty-base64-encoded-string
+    void take
+    note <The MD5 digest of the key used for DRM on your file, and that you want Elastic Transcoder to use as a checksum to make sure your key was not corrupted in transit. The key MD5 must be base64-encoded, and it must be exactly 16 bytes before being base64-encoded.>
+  take key-id, name <KeyId>
+    like key-id-guid
+    void take
+    note <The ID for your DRM key, so that your DRM license provider knows which key to provide.
+
+The key ID must be provided in big endian, and Elastic Transcoder converts it to little endian before inserting it into the PlayReady DRM headers. If you are unsure whether your license server provides your key ID in big or little endian, check with your DRM provider.>
+  take initialization-vector, name <InitializationVector>
+    like zero-to255-string
+    void take
+    note <The series of random bits created by a random bit generator, unique for every encryption operation, that you want Elastic Transcoder to use to encrypt your files. The initialization vector must be base64-encoded, and it must be exactly 8 bytes long before being base64-encoded. If no initialization vector is provided, Elastic Transcoder generates one for you.>
+  take license-acquisition-url, name <LicenseAcquisitionUrl>
+    like one-to512-string
+    void take
+    note <The location of the license key required to play DRM content. The URL must be an absolute path, and is referenced by the PlayReady header. The PlayReady header is referenced in the protection header of the client manifest for Smooth Streaming outputs, and in the EXT-X-DXDRM and EXT-XDXDRMINFO metadata tags for HLS playlist outputs. An example URL looks like this: `https://www.example.com/exampleKey/`>

@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/get-account-balance-response
+  take form get-account-balance-response
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/request-error
+  take form request-error
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/service-fault
+  take form service-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-account-balance, name <GetAccountBalance>
+  note <The `GetAccountBalance` operation retrieves the Prepaid HITs balance in your Amazon Mechanical Turk account if you are a Prepaid Requester. Alternatively, this operation will retrieve the remaining available AWS Billing usage if you have enabled AWS Billing. Note: If you have enabled AWS Billing and still have a remaining Prepaid HITs balance, this balance can be viewed on the My Account page in the Requester console.>
+
+  take x-amz-target
+    like native-string
+  take get-account-balance-request, like get-account-balance-request
+
+  line </#X-Amz-Target=MTurkRequesterServiceV20170117.GetAccountBalance>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-account-balance-request
+
+  loot 200
+    seed json, like get-account-balance-response
+    note <Success>
+  loot 480
+    seed json, like service-fault
+    note <ServiceFault>
+  loot 481
+    seed json, like request-error
+    note <RequestError>

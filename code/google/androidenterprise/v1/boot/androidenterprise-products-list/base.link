@@ -1,0 +1,51 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/androidenterprise/v1/base/products-list-response
+  take form products-list-response
+
+boot androidenterprise-products-list, name <androidenterprise.products.list>
+  note <Finds approved products that match a query, or all approved products if there is no query.>
+
+  take enterprise-id
+    like native-string
+    note <The ID of the enterprise.>
+  take approved
+    like native-boolean
+    note <Specifies whether to search among all products (false) or among only products that have been approved (true). Only "true" is supported, and should be specified.>
+    void take
+  take language
+    like native-string
+    note <The BCP47 tag for the user's preferred language (e.g. "en-US", "de"). Results are returned in the language best matching the preferred language.>
+    void take
+  take max-results
+    like native-integer
+    note <Defines how many results the list operation should return. The default number depends on the resource collection.>
+    void take
+  take query
+    like native-string
+    note <The search query as typed in the Google Play store search box. If omitted, all approved apps will be returned (using the pagination parameters), including apps that are not available in the store (e.g. unpublished apps).>
+    void take
+  take token
+    like native-string
+    note <Defines the token of the page to return, usually taken from TokenPagination. This can only be used if token paging is enabled.>
+    void take
+
+  line </androidenterprise/v1/enterprises/{enterprise-id}/products>
+
+  find <approved>, loan approved
+  find <language>, loan language
+  find <maxResults>, loan max-results
+  find <query>, loan query
+  find <token>, loan token
+
+  loot 200
+    seed json, like products-list-response
+    note <Successful response>

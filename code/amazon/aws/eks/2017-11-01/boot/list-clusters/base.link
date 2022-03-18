@@ -1,0 +1,68 @@
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/list-clusters-response
+  take form list-clusters-response
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot list-clusters, name <ListClusters>
+  note <Lists the Amazon EKS clusters in your Amazon Web Services account in the specified Region.>
+
+  take max-results
+    like native-integer
+    note <The maximum number of cluster results returned by `ListClusters` in paginated output. When you use this parameter, `ListClusters` returns only `maxResults` results in a single page along with a `nextToken` response element. You can see the remaining results of the initial request by sending another `ListClusters` request with the returned `nextToken` value. This value can be between 1 and 100. If you don't use this parameter, `ListClusters` returns up to 100 results and a `nextToken` value if applicable.>
+    void take
+  take next-token
+    like native-string
+    note <The `nextToken` value returned from a previous paginated `ListClusters` request where `maxResults` was used and the results exceeded the value of that parameter. Pagination continues from the end of the previous results that returned the `nextToken` value.
+
+This token should be treated as an opaque identifier that is used only to retrieve the next items in a list and not for other programmatic purposes.>
+    void take
+  take include
+    like list
+      like string
+    note <Indicates whether connected clusters are included in the returned list. Default value is 'ALL'.>
+    void take
+
+  line </clusters>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+  find <include>, loan include
+
+  loot 200
+    seed json, like list-clusters-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like client-exception
+    note <ClientException>
+  loot 482
+    seed json, like server-exception
+    note <ServerException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

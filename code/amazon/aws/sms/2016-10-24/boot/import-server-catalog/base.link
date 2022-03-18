@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/sms/2016-10-24/base/import-server-catalog-response
+  take form import-server-catalog-response
+
+load @drumwork/snow/amazonaws.com/sms/2016-10-24/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sms/2016-10-24/base/missing-required-parameter-exception
+  take form missing-required-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sms/2016-10-24/base/no-connectors-available-exception
+  take form no-connectors-available-exception
+
+load @drumwork/snow/amazonaws.com/sms/2016-10-24/base/operation-not-permitted-exception
+  take form operation-not-permitted-exception
+
+load @drumwork/snow/amazonaws.com/sms/2016-10-24/base/unauthorized-operation-exception
+  take form unauthorized-operation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot import-server-catalog, name <ImportServerCatalog>
+  note <Gathers a complete list of on-premises servers. Connectors must be installed and monitoring all servers to import.
+
+This call returns immediately, but might take additional time to retrieve all the servers.>
+
+  take x-amz-target
+    like native-string
+  take import-server-catalog-request, like import-server-catalog-request
+
+  line </#X-Amz-Target=AWSServerMigrationService_V2016_10_24.ImportServerCatalog>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan import-server-catalog-request
+
+  loot 200
+    seed json, like import-server-catalog-response
+    note <Success>
+  loot 480
+    seed json, like unauthorized-operation-exception
+    note <UnauthorizedOperationException>
+  loot 481
+    seed json, like operation-not-permitted-exception
+    note <OperationNotPermittedException>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 483
+    seed json, like missing-required-parameter-exception
+    note <MissingRequiredParameterException>
+  loot 484
+    seed json, like no-connectors-available-exception
+    note <NoConnectorsAvailableException>

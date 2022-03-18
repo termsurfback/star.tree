@@ -1,0 +1,42 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/drive/v2/base/child-reference
+  take form child-reference
+
+boot drive-children-insert, name <drive.children.insert>
+  note <Inserts a file into a folder.>
+
+  take folder-id
+    like native-string
+    note <The ID of the folder.>
+  take enforce-single-parent
+    like native-boolean
+    note <Deprecated. Adding files to multiple folders is no longer supported. Use shortcuts instead.>
+    void take
+  take supports-all-drives
+    like native-boolean
+    note <Whether the requesting application supports both My Drives and shared drives.>
+    void take
+  take supports-team-drives
+    like native-boolean
+    note <Deprecated use supportsAllDrives instead.>
+    void take
+  take child-reference, like child-reference
+    void take
+
+  line </files/{folder-id}/children>
+
+  find <enforceSingleParent>, loan enforce-single-parent
+  find <supportsAllDrives>, loan supports-all-drives
+  find <supportsTeamDrives>, loan supports-team-drives
+
+  seed json, loan child-reference
+
+  loot 200
+    seed json, like child-reference
+    note <Successful response>

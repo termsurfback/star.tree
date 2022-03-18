@@ -1,0 +1,74 @@
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/boxed-boolean
+  take form boxed-boolean
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/log-setups
+  take form log-setups
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/string-list
+  take form string-list
+
+load @drumwork/snow/base/string
+  take form string
+
+form create-cluster-body
+  take name, name <name>
+  take version, name <version>
+    void take
+  take role-arn, name <roleArn>
+  take resources-vpc-config, name <resourcesVpcConfig>
+    like form
+      take subnet-ids, name <subnetIds>
+        like string-list
+        void take
+        note <Specify subnets for your Amazon EKS nodes. Amazon EKS creates cross-account elastic network interfaces in these subnets to allow communication between your nodes and the Kubernetes control plane.>
+      take security-group-ids, name <securityGroupIds>
+        like string-list
+        void take
+        note <Specify one or more security groups for the cross-account elastic network interfaces that Amazon EKS creates to use that allow communication between your nodes and the Kubernetes control plane. If you don't specify any security groups, then familiarize yourself with the difference between Amazon EKS defaults for clusters deployed with Kubernetes:
+
+- 1.14 Amazon EKS platform version `eks.2` and earlier
+
+- 1.14 Amazon EKS platform version `eks.3` and later
+
+For more information, see [Amazon EKS security group considerations](https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html) in the __Amazon EKS User Guide__ .>
+      take endpoint-public-access, name <endpointPublicAccess>
+        like boxed-boolean
+        void take
+        note <Set this value to `false` to disable public access to your cluster's Kubernetes API server endpoint. If you disable public access, your cluster's Kubernetes API server can only receive requests from within the cluster VPC. The default value for this parameter is `true`, which enables public access for your Kubernetes API server. For more information, see [Amazon EKS cluster endpoint access control](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html) in the __Amazon EKS User Guide__ .>
+      take endpoint-private-access, name <endpointPrivateAccess>
+        like boxed-boolean
+        void take
+        note <Set this value to `true` to enable private access for your cluster's Kubernetes API server endpoint. If you enable private access, Kubernetes API requests from within your cluster's VPC use the private VPC endpoint. The default value for this parameter is `false`, which disables private access for your Kubernetes API server. If you disable private access and you have nodes or Fargate pods in the cluster, then ensure that `publicAccessCidrs` includes the necessary CIDR blocks for communication with the nodes or Fargate pods. For more information, see [Amazon EKS cluster endpoint access control](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html) in the __Amazon EKS User Guide__ .>
+      take public-access-cidrs, name <publicAccessCidrs>
+        like string-list
+        void take
+        note <The CIDR blocks that are allowed access to your cluster's public Kubernetes API server endpoint. Communication to the endpoint from addresses outside of the CIDR blocks that you specify is denied. The default value is `0.0.0.0/0`. If you've disabled private endpoint access and you have nodes or Fargate pods in the cluster, then ensure that you specify the necessary CIDR blocks. For more information, see [Amazon EKS cluster endpoint access control](https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html) in the __Amazon EKS User Guide__ .>
+  take kubernetes-network-config, name <kubernetesNetworkConfig>
+    like form
+      take service-ipv4-cidr, name <serviceIpv4Cidr>
+        like string
+        void take
+        note <The CIDR block to assign Kubernetes service IP addresses from. If you don't specify a block, Kubernetes assigns addresses from either the 10.100.0.0/16 or 172.20.0.0/16 CIDR blocks. We recommend that you specify a block that does not overlap with resources in other networks that are peered or connected to your VPC. The block must meet the following requirements:
+
+- Within one of the following private IP address blocks: 10.0.0.0/8, 172.16.0.0.0/12, or 192.168.0.0/16.
+
+- Doesn't overlap with any CIDR block assigned to the VPC that you selected for VPC.
+
+- Between /24 and /12.
+
+You can only specify a custom CIDR block when you create a cluster and can't change this value once the cluster is created.>
+    void take
+  take logging, name <logging>
+    like form
+      take cluster-logging, name <clusterLogging>
+        like log-setups
+        void take
+        note <The cluster control plane logging configuration for your cluster.>
+    void take
+  take client-request-token, name <clientRequestToken>
+    void take
+  take tags, name <tags>
+    void take
+  take encryption-config, name <encryptionConfig>
+    void take

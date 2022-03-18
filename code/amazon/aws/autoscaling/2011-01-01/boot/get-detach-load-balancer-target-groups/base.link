@@ -1,0 +1,44 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/detach-load-balancer-target-groups-result-type
+  take form detach-load-balancer-target-groups-result-type
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/xml-string-max-len511
+  take form xml-string-max-len511
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-detach-load-balancer-target-groups, name <GET_DetachLoadBalancerTargetGroups>
+  note <Detaches one or more target groups from the specified Auto Scaling group.>
+
+  take auto-scaling-group-name
+    like native-string
+    note <The name of the Auto Scaling group.>
+  take target-group-ar-ns
+    like list
+      like xml-string-max-len511
+    note <The Amazon Resource Names (ARN) of the target groups. You can specify up to 10 target groups.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DetachLoadBalancerTargetGroups>
+
+  find <AutoScalingGroupName>, loan auto-scaling-group-name
+  find <TargetGroupARNs>, loan target-group-ar-ns
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like detach-load-balancer-target-groups-result-type
+    note <Success>
+  loot 480
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

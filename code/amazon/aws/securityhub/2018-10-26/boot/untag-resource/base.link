@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/tag-key
+  take form tag-key
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/untag-resource-response
+  take form untag-resource-response
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot untag-resource, name <UntagResource>
+  note <Removes one or more tags from a resource.>
+
+  take resource-arn
+    like native-string
+    note <The ARN of the resource to remove the tags from.>
+  take tag-keys
+    like list
+      like tag-key
+    note <The tag keys associated with the tags to remove from the resource. You can remove up to 50 tags at a time.>
+
+  line </tags/{resource-arn}#tagKeys>
+
+  find <tagKeys>, loan tag-keys
+
+  loot 200
+    seed json, like untag-resource-response
+    note <Success>
+  loot 480
+    seed json, like internal-exception
+    note <InternalException>
+  loot 481
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

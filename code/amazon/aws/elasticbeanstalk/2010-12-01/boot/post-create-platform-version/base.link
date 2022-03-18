@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/create-platform-version-result
+  take form create-platform-version-result
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/elastic-beanstalk-service-exception
+  take form elastic-beanstalk-service-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/insufficient-privileges-exception
+  take form insufficient-privileges-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/too-many-platforms-exception
+  take form too-many-platforms-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-platform-version, name <POST_CreatePlatformVersion>
+  note <Create a new version of your custom platform.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-platform-version-request, like create-platform-version-request
+    void take
+
+  line </#Action=CreatePlatformVersion>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-platform-version-request
+
+  loot 200
+    seed xml, like create-platform-version-result
+    note <Success>
+  loot 480
+    seed xml, like insufficient-privileges-exception
+    note <InsufficientPrivilegesException>
+  loot 481
+    seed xml, like elastic-beanstalk-service-exception
+    note <ElasticBeanstalkServiceException>
+  loot 482
+    seed xml, like too-many-platforms-exception
+    note <TooManyPlatformsException>

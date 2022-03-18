@@ -1,0 +1,71 @@
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/cloud-trail-arn-invalid-exception
+  take form cloud-trail-arn-invalid-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/invalid-token-exception
+  take form invalid-token-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/invalid-trail-name-exception
+  take form invalid-trail-name-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/list-tags-response
+  take form list-tags-response
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/operation-not-permitted-exception
+  take form operation-not-permitted-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/resource-type-not-supported-exception
+  take form resource-type-not-supported-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/unsupported-operation-exception
+  take form unsupported-operation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-tags, name <ListTags>
+  note <Lists the tags for the trail in the current region.>
+
+  take x-amz-target
+    like native-string
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-tags-request, like list-tags-request
+
+  line </#X-Amz-Target=com.amazonaws.cloudtrail.v20131101.CloudTrail_20131101.ListTags>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <NextToken>, loan next-token
+
+  seed json, loan list-tags-request
+
+  loot 200
+    seed json, like list-tags-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like cloud-trail-arn-invalid-exception
+    note <CloudTrailARNInvalidException>
+  loot 482
+    seed json, like resource-type-not-supported-exception
+    note <ResourceTypeNotSupportedException>
+  loot 483
+    seed json, like invalid-trail-name-exception
+    note <InvalidTrailNameException>
+  loot 484
+    seed json, like unsupported-operation-exception
+    note <UnsupportedOperationException>
+  loot 485
+    seed json, like operation-not-permitted-exception
+    note <OperationNotPermittedException>
+  loot 486
+    seed json, like invalid-token-exception
+    note <InvalidTokenException>

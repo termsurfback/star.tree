@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/copy-db-snapshot-result
+  take form copy-db-snapshot-result
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/db-snapshot-already-exists-fault
+  take form db-snapshot-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/db-snapshot-not-found-fault
+  take form db-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/invalid-db-snapshot-state-fault
+  take form invalid-db-snapshot-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/snapshot-quota-exceeded-fault
+  take form snapshot-quota-exceeded-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-copy-db-snapshot, name <POST_CopyDBSnapshot>
+  take action
+    like native-string
+  take version
+    like native-string
+  take copy-db-snapshot-message, like copy-db-snapshot-message
+    void take
+
+  line </#Action=CopyDBSnapshot>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan copy-db-snapshot-message
+
+  loot 200
+    seed xml, like copy-db-snapshot-result
+    note <Success>
+  loot 480
+    seed xml, like db-snapshot-already-exists-fault
+    note <DBSnapshotAlreadyExistsFault>
+  loot 481
+    seed xml, like db-snapshot-not-found-fault
+    note <DBSnapshotNotFoundFault>
+  loot 482
+    seed xml, like invalid-db-snapshot-state-fault
+    note <InvalidDBSnapshotStateFault>
+  loot 483
+    seed xml, like snapshot-quota-exceeded-fault
+    note <SnapshotQuotaExceededFault>

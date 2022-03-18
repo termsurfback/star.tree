@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-instance-state-fault
+  take form invalid-db-instance-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/stop-db-cluster-result
+  take form stop-db-cluster-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-stop-db-cluster, name <POST_StopDBCluster>
+  note <Stops an Amazon Aurora DB cluster. When you stop a DB cluster, Aurora retains the DB cluster's metadata, including its endpoints and DB parameter groups. Aurora also retains the transaction logs so you can do a point-in-time restore if necessary.
+
+For more information, see [Stopping and Starting an Aurora Cluster](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-cluster-stop-start.html) in the _Amazon Aurora User Guide._
+
+This action only applies to Aurora DB clusters.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take stop-db-cluster-message, like stop-db-cluster-message
+    void take
+
+  line </#Action=StopDBCluster>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan stop-db-cluster-message
+
+  loot 200
+    seed xml, like stop-db-cluster-result
+    note <Success>
+  loot 480
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>
+  loot 481
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>
+  loot 482
+    seed xml, like invalid-db-instance-state-fault
+    note <InvalidDBInstanceStateFault>

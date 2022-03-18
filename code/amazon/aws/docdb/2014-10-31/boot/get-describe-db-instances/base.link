@@ -1,0 +1,73 @@
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-instance-message
+  take form db-instance-message
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/filter
+  take form filter
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-db-instances, name <GET_DescribeDBInstances>
+  note <Returns information about provisioned Amazon DocumentDB instances. This API supports pagination.>
+
+  take db-instance-identifier
+    like native-string
+    note <The user-provided instance identifier. If this parameter is specified, information from only the specific instance is returned. This parameter isn't case sensitive.
+
+Constraints:
+
+- If provided, must match the identifier of an existing `DBInstance`.>
+    void take
+  take filters
+    like list
+      like filter
+    note <A filter that specifies one or more instances to describe.
+
+Supported filters:
+
+- `db-cluster-id` - Accepts cluster identifiers and cluster Amazon Resource Names (ARNs). The results list includes only the information about the instances that are associated with the clusters that are identified by these ARNs.
+
+- `db-instance-id` - Accepts instance identifiers and instance ARNs. The results list includes only the information about the instances that are identified by these ARNs.>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of records to include in the response. If more records exist than the specified `MaxRecords` value, a pagination token (marker) is included in the response so that the remaining results can be retrieved.
+
+Default: 100
+
+Constraints: Minimum 20, maximum 100.>
+    void take
+  take marker
+    like native-string
+    note <An optional pagination token provided by a previous request. If this parameter is specified, the response includes only records beyond the marker, up to the value specified by `MaxRecords`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeDBInstances>
+
+  find <DBInstanceIdentifier>, loan db-instance-identifier
+  find <Filters>, loan filters
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like db-instance-message
+    note <Success>
+  loot 480
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>

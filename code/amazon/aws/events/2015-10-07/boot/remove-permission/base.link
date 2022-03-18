@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/operation-disabled-exception
+  take form operation-disabled-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot remove-permission, name <RemovePermission>
+  note <Revokes the permission of another Amazon Web Services account to be able to put events to the specified event bus. Specify the account to revoke by the `StatementId` value that you associated with the account when you granted it permission with `PutPermission`. You can find the `StatementId` by using [DescribeEventBus](https://docs.aws.amazon.com/eventbridge/latest/APIReference/API_DescribeEventBus.html).>
+
+  take x-amz-target
+    like native-string
+  take remove-permission-request, like remove-permission-request
+
+  line </#X-Amz-Target=AWSEvents.RemovePermission>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan remove-permission-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like internal-exception
+    note <InternalException>
+  loot 482
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>
+  loot 483
+    seed json, like operation-disabled-exception
+    note <OperationDisabledException>

@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/does-not-exist-exception
+  take form does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/update-maintenance-window-result
+  take form update-maintenance-window-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-maintenance-window, name <UpdateMaintenanceWindow>
+  note <Updates an existing maintenance window. Only specified parameters are modified.
+
+The value you specify for `Duration` determines the specific end time for the maintenance window based on the time it begins. No maintenance window tasks are permitted to start after the resulting endtime minus the number of hours you specify for `Cutoff`. For example, if the maintenance window starts at 3 PM, the duration is three hours, and the value you specify for `Cutoff` is one hour, no maintenance window tasks can start after 5 PM.>
+
+  take x-amz-target
+    like native-string
+  take update-maintenance-window-request, like update-maintenance-window-request
+
+  line </#X-Amz-Target=AmazonSSM.UpdateMaintenanceWindow>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-maintenance-window-request
+
+  loot 200
+    seed json, like update-maintenance-window-result
+    note <Success>
+  loot 480
+    seed json, like does-not-exist-exception
+    note <DoesNotExistException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

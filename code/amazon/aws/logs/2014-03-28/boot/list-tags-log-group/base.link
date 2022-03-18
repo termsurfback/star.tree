@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/list-tags-log-group-response
+  take form list-tags-log-group-response
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-tags-log-group, name <ListTagsLogGroup>
+  note <Lists the tags for the specified log group.>
+
+  take x-amz-target
+    like native-string
+  take list-tags-log-group-request, like list-tags-log-group-request
+
+  line </#X-Amz-Target=Logs_20140328.ListTagsLogGroup>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-tags-log-group-request
+
+  loot 200
+    seed json, like list-tags-log-group-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

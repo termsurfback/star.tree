@@ -1,0 +1,26 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/sqladmin/v1/base/ssl-cert
+  take form ssl-cert
+
+boot sql-ssl-certs-create-ephemeral, name <sql.sslCerts.createEphemeral>
+  note <Generates a short-lived X509 certificate containing the provided public key and signed by a private key specific to the target instance. Users may use the certificate to authenticate as themselves when connecting to the database.>
+
+  take project
+    like native-string
+    note <Project ID of the Cloud SQL project.>
+  take instance
+    like native-string
+    note <Cloud SQL instance ID. This does not include the project ID.>
+  take ssl-certs-create-ephemeral-request, like ssl-certs-create-ephemeral-request
+    void take
+
+  line </v1/projects/{project}/instances/{instance}/createEphemeral>
+
+  seed json, loan ssl-certs-create-ephemeral-request
+
+  loot 200
+    seed json, like ssl-cert
+    note <Successful response>

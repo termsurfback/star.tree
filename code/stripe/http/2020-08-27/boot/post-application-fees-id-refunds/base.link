@@ -1,0 +1,35 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/fee-refund
+  take form fee-refund
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-application-fees-id-refunds-body
+  take form post-application-fees-id-refunds-body
+
+boot post-application-fees-id-refunds, name <PostApplicationFeesIdRefunds>
+  note <Refunds an application fee that has previously been collected but not yet refunded. Funds will be refunded to the Stripe account from which the fee was originally collected.
+
+You can optionally refund only part of an application fee. You can do so multiple times, until the entire fee has been refunded.
+
+Once entirely refunded, an application fee can’t be refunded again. This method will raise an error when called on an already-refunded application fee, or when trying to refund more money than is left on an application fee.>
+
+  take id
+    like native-string
+  take post-application-fees-id-refunds-body, like post-application-fees-id-refunds-body
+    void take
+
+  line </v1/application_fees/{id}/refunds>
+
+  seed x-www-form-urlencoded, loan post-application-fees-id-refunds-body
+
+  loot 200
+    seed json, like fee-refund
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

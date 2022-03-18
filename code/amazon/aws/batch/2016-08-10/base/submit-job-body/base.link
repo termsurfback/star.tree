@@ -1,0 +1,117 @@
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/environment-variables
+  take form environment-variables
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/evaluate-on-exit-list
+  take form evaluate-on-exit-list
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/node-property-overrides
+  take form node-property-overrides
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/resource-requirements
+  take form resource-requirements
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/string-list
+  take form string-list
+
+load @drumwork/snow/base/integer
+  take form integer
+
+load @drumwork/snow/base/string
+  take form string
+
+form submit-job-body
+  take job-name, name <jobName>
+  take job-queue, name <jobQueue>
+  take array-properties, name <arrayProperties>
+    like form
+      take size, name <size>
+        like integer
+        void take
+        note <The size of the array job.>
+    void take
+  take depends-on, name <dependsOn>
+    void take
+  take job-definition, name <jobDefinition>
+  take parameters, name <parameters>
+    void take
+  take container-overrides, name <containerOverrides>
+    like form
+      take vcpus, name <vcpus>
+        like integer
+        void take
+        note <This parameter indicates the number of vCPUs reserved for the container.It overrides the `vcpus` parameter that's set in the job definition, but doesn't override any vCPU requirement specified in the `resourceRequirement` structure in the job definition. To override vCPU requirements that are specified in the `ResourceRequirement` structure in the job definition, `ResourceRequirement` must be specified in the `SubmitJob` request, with `type` set to `VCPU` and `value` set to the new value.
+
+This parameter maps to `CpuShares` in the [Create a container](https://docs.docker.com/engine/api/v1.23/#create-a-container) section of the [Docker Remote API](https://docs.docker.com/engine/api/v1.23/) and the `--cpu-shares` option to [docker run](https://docs.docker.com/engine/reference/run/). Each vCPU is equivalent to 1,024 CPU shares. You must specify at least one vCPU.
+
+This parameter is supported for jobs that run on EC2 resources, but isn't supported for jobs that run on Fargate resources. For Fargate resources, you can only use `resourceRequirement`. For EC2 resources, you can use either this parameter or `resourceRequirement` but not both.
+
+This field is deprecated, use resourceRequirements instead.>
+      take memory, name <memory>
+        like integer
+        void take
+        note <This parameter indicates the amount of memory (in MiB) that's reserved for the job. It overrides the `memory` parameter set in the job definition, but doesn't override any memory requirement specified in the `ResourceRequirement` structure in the job definition. To override memory requirements that are specified in the `ResourceRequirement` structure in the job definition, `ResourceRequirement` must be specified in the `SubmitJob` request, with `type` set to `MEMORY` and `value` set to the new value.
+
+This parameter is supported for jobs that run on EC2 resources, but isn't supported for jobs that run on Fargate resources. For these resources, use `resourceRequirement` instead.
+
+This field is deprecated, use resourceRequirements instead.>
+      take command, name <command>
+        like string-list
+        void take
+        note <The command to send to the container that overrides the default command from the Docker image or the job definition.>
+      take instance-type, name <instanceType>
+        like string
+        void take
+        note <The instance type to use for a multi-node parallel job.
+
+This parameter isn't applicable to single-node container jobs or jobs that run on Fargate resources, and shouldn't be provided.>
+      take environment, name <environment>
+        like environment-variables
+        void take
+        note <The environment variables to send to the container. You can add new environment variables, which are added to the container at launch, or you can override the existing environment variables from the Docker image or the job definition.
+
+Environment variables must not start with `AWS_BATCH`; this naming convention is reserved for variables that are set by the Batch service.>
+      take resource-requirements, name <resourceRequirements>
+        like resource-requirements
+        void take
+        note <The type and amount of resources to assign to a container. This overrides the settings in the job definition. The supported resources include `GPU`, `MEMORY`, and `VCPU`.>
+    void take
+  take node-overrides, name <nodeOverrides>
+    like form
+      take num-nodes, name <numNodes>
+        like integer
+        void take
+        note <The number of nodes to use with a multi-node parallel job. This value overrides the number of nodes that are specified in the job definition. To use this override:
+
+- There must be at least one node range in your job definition that has an open upper boundary (such as `:` or `n:`).
+
+- The lower boundary of the node range specified in the job definition must be fewer than the number of nodes specified in the override.
+
+- The main node index specified in the job definition must be fewer than the number of nodes specified in the override.>
+      take node-property-overrides, name <nodePropertyOverrides>
+        like node-property-overrides
+        void take
+        note <The node property overrides for the job.>
+    void take
+  take retry-strategy, name <retryStrategy>
+    like form
+      take attempts, name <attempts>
+        like integer
+        void take
+        note <The number of times to move a job to the `RUNNABLE` status. You can specify between 1 and 10 attempts. If the value of `attempts` is greater than one, the job is retried on failure the same number of attempts as the value.>
+      take evaluate-on-exit, name <evaluateOnExit>
+        like evaluate-on-exit-list
+        void take
+        note <Array of up to 5 objects that specify conditions under which the job should be retried or failed. If this parameter is specified, then the `attempts` parameter must also be specified.>
+    void take
+  take propagate-tags, name <propagateTags>
+    void take
+  take timeout, name <timeout>
+    like form
+      take attempt-duration-seconds, name <attemptDurationSeconds>
+        like integer
+        void take
+        note <The time duration in seconds (measured from the job attempt's `startedAt` timestamp) after which Batch terminates your jobs if they have not finished. The minimum value for the timeout is 60 seconds.>
+    void take
+  take tags, name <tags>
+    void take

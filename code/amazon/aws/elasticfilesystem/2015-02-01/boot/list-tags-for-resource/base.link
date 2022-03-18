@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/access-point-not-found
+  take form access-point-not-found
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/bad-request
+  take form bad-request
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/file-system-not-found
+  take form file-system-not-found
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/list-tags-for-resource-response
+  take form list-tags-for-resource-response
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-tags-for-resource, name <ListTagsForResource>
+  note <Lists all tags for a top-level EFS resource. You must provide the ID of the resource that you want to retrieve the tags for.
+
+This operation requires permissions for the `elasticfilesystem:DescribeAccessPoints` action.>
+
+  take resource-id
+    like native-string
+    note <Specifies the EFS resource you want to retrieve tags for. You can retrieve tags for EFS file systems and access points using this API endpoint.>
+  take max-results
+    like native-integer
+    note <(Optional) Specifies the maximum number of tag objects to return in the response. The default value is 100.>
+    void take
+  take next-token
+    like native-string
+    note <(Optional) You can use `NextToken` in a subsequent request to fetch the next page of access point descriptions if the response payload was paginated.>
+    void take
+
+  line </2015-02-01/resource-tags/{resource-id}>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like list-tags-for-resource-response
+    note <Success>
+  loot 480
+    seed json, like bad-request
+    note <BadRequest>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 482
+    seed json, like file-system-not-found
+    note <FileSystemNotFound>
+  loot 483
+    seed json, like access-point-not-found
+    note <AccessPointNotFound>

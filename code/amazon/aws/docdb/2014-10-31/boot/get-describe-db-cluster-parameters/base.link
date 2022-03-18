@@ -1,0 +1,71 @@
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-cluster-parameter-group-details
+  take form db-cluster-parameter-group-details
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-parameter-group-not-found-fault
+  take form db-parameter-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/filter
+  take form filter
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-db-cluster-parameters, name <GET_DescribeDBClusterParameters>
+  note <Returns the detailed parameter list for a particular cluster parameter group.>
+
+  take db-cluster-parameter-group-name
+    like native-string
+    note <The name of a specific cluster parameter group to return parameter details for.
+
+Constraints:
+
+- If provided, must match the name of an existing `DBClusterParameterGroup`.>
+  take source
+    like native-string
+    note <A value that indicates to return only parameters for a specific source. Parameter sources can be `engine`, `service`, or `customer`.>
+    void take
+  take filters
+    like list
+      like filter
+    note <This parameter is not currently supported.>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of records to include in the response. If more records exist than the specified `MaxRecords` value, a pagination token (marker) is included in the response so that the remaining results can be retrieved.
+
+Default: 100
+
+Constraints: Minimum 20, maximum 100.>
+    void take
+  take marker
+    like native-string
+    note <An optional pagination token provided by a previous request. If this parameter is specified, the response includes only records beyond the marker, up to the value specified by `MaxRecords`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeDBClusterParameters>
+
+  find <DBClusterParameterGroupName>, loan db-cluster-parameter-group-name
+  find <Source>, loan source
+  find <Filters>, loan filters
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like db-cluster-parameter-group-details
+    note <Success>
+  loot 480
+    seed xml, like db-parameter-group-not-found-fault
+    note <DBParameterGroupNotFoundFault>

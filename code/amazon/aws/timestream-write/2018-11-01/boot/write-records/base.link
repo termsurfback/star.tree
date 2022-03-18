@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/invalid-endpoint-exception
+  take form invalid-endpoint-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/rejected-records-exception
+  take form rejected-records-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot write-records, name <WriteRecords>
+  note <The WriteRecords operation enables you to write your time series data into Timestream. You can specify a single data point or a batch of data points to be inserted into the system. Timestream offers you with a flexible schema that auto detects the column names and data types for your Timestream tables based on the dimension names and data types of the data points you specify when invoking writes into the database. Timestream support eventual consistency read semantics. This means that when you query data immediately after writing a batch of data into Timestream, the query results might not reflect the results of a recently completed write operation. The results may also include some stale data. If you repeat the query request after a short time, the results should return the latest data. Service quotas apply. For more information, see [Access Management](https://docs.aws.amazon.com/timestream/latest/developerguide/ts-limits.html) in the Timestream Developer Guide.>
+
+  take x-amz-target
+    like native-string
+  take write-records-request, like write-records-request
+
+  line </#X-Amz-Target=Timestream_20181101.WriteRecords>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan write-records-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 484
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 485
+    seed json, like rejected-records-exception
+    note <RejectedRecordsException>
+  loot 486
+    seed json, like invalid-endpoint-exception
+    note <InvalidEndpointException>

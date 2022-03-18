@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/base-exception
+  take form base-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/disabled-operation-exception
+  take form disabled-operation-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/update-availability-options-response
+  take form update-availability-options-response
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-update-availability-options, name <GET_UpdateAvailabilityOptions>
+  note <Configures the availability options for a domain. Enabling the Multi-AZ option expands an Amazon CloudSearch domain to an additional Availability Zone in the same Region to increase fault tolerance in the event of a service disruption. Changes to the Multi-AZ option can take about half an hour to become active. For more information, see [Configuring Availability Options](http://docs.aws.amazon.com/cloudsearch/latest/developerguide/configuring-availability-options.html) in the _Amazon CloudSearch Developer Guide_.>
+
+  take domain-name
+    like native-string
+  take multi-az
+    like native-boolean
+    note <You expand an existing search domain to a second Availability Zone by setting the Multi-AZ option to true. Similarly, you can turn off the Multi-AZ option to downgrade the domain to a single Availability Zone by setting the Multi-AZ option to `false`.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=UpdateAvailabilityOptions>
+
+  find <DomainName>, loan domain-name
+  find <MultiAZ>, loan multi-az
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like update-availability-options-response
+    note <Success>
+  loot 409
+    seed xml, like disabled-operation-exception
+    note <DisabledOperationException>
+  loot 480
+    seed xml, like base-exception
+    note <BaseException>
+  loot 500
+    seed xml, like internal-exception
+    note <InternalException>

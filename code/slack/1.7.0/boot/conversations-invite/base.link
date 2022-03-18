@@ -1,0 +1,56 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/conversations-invite-body
+  take form conversations-invite-body
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+load @drumwork/snow/slack.com/1.7.0/base/objs-conversation
+  take form objs-conversation
+
+boot conversations-invite, name <conversations_invite>
+  note <Invites users to a channel.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `conversations:write`>
+    void take
+  take conversations-invite-body, like conversations-invite-body
+    void take
+
+  line </conversations.invite>
+
+  hint <token>, loan token
+
+  seed x-www-form-urlencoded, loan conversations-invite-body
+
+  loot 200
+    seed json
+      like form
+        take channel, name <channel>
+          like objs-conversation
+        take ok, name <ok>
+          like defs-ok-true
+    note <Typical success response when an invitation is extended>
+  loot fall
+    seed json
+      like form
+        take callstack, name <callstack>
+          void take
+        take error, name <error>
+          void take
+        take errors, name <errors>
+          void take
+        take needed, name <needed>
+          void take
+        take ok, name <ok>
+          like defs-ok-false
+        take provided, name <provided>
+          void take
+    note <Typical error response when an invite is attempted on a conversation type that does not support it>

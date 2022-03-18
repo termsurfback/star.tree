@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/mybusinessbusinesscalls/v1/base/list-business-calls-insights-response
+  take form list-business-calls-insights-response
+
+boot mybusinessbusinesscalls-locations-businesscallsinsights-list, name <mybusinessbusinesscalls.locations.businesscallsinsights.list>
+  note <Returns insights for Business calls for a location.>
+
+  take parent
+    like native-string
+    note <Required. The parent location to fetch calls insights for. Format: locations/{location_id}>
+  take filter
+    like native-string
+    note <Optional. A filter constraining the calls insights to return. The response includes only entries that match the filter. If the MetricType is not provided, AGGREGATE_COUNT is returned. If no end_date is provided, the last date for which data is available is used. If no start_date is provided, we will default to the first date for which data is available, which is currently 6 months. If start_date is before the date when data is available, data is returned starting from the date when it is available. At this time we support following filters. 1. start_date="DATE" where date is in YYYY-MM-DD format. 2. end_date="DATE" where date is in YYYY-MM-DD format. 3. metric_type=XYZ where XYZ is a valid MetricType. 4. Conjunctions(AND) of all of the above. e.g., "start_date=2021-08-01 AND end_date=2021-08-10 AND metric_type=AGGREGATE_COUNT" The AGGREGATE_COUNT metric_type ignores the DD part of the date.>
+    void take
+  take page-size
+    like native-integer
+    note <Optional. The maximum number of BusinessCallsInsights to return. If unspecified, at most 20 will be returned. Some of the metric_types(e.g, AGGREGATE_COUNT) returns a single page. For these metrics, the page_size is ignored.>
+    void take
+  take page-token
+    like native-string
+    note <Optional. A page token, received from a previous `ListBusinessCallsInsights` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListBusinessCallsInsights` must match the call that provided the page token. Some of the metric_types (e.g, AGGREGATE_COUNT) returns a single page. For these metrics, the pake_token is ignored.>
+    void take
+
+  line </v1/{parent}/businesscallsinsights>
+
+  find <filter>, loan filter
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-business-calls-insights-response
+    note <Successful response>

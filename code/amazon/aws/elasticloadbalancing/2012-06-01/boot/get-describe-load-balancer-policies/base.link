@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/access-point-not-found-exception
+  take form access-point-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/describe-load-balancer-policies-output
+  take form describe-load-balancer-policies-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/policy-name
+  take form policy-name
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/policy-not-found-exception
+  take form policy-not-found-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-load-balancer-policies, name <GET_DescribeLoadBalancerPolicies>
+  note <Describes the specified policies.
+
+If you specify a load balancer name, the action returns the descriptions of all policies created for the load balancer. If you specify a policy name associated with your load balancer, the action returns the description of that policy. If you don't specify a load balancer name, the action returns descriptions of the specified sample policies, or descriptions of all sample policies. The names of the sample policies have the `ELBSample-` prefix.>
+
+  take load-balancer-name
+    like native-string
+    note <The name of the load balancer.>
+    void take
+  take policy-names
+    like list
+      like policy-name
+    note <The names of the policies.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeLoadBalancerPolicies>
+
+  find <LoadBalancerName>, loan load-balancer-name
+  find <PolicyNames>, loan policy-names
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-load-balancer-policies-output
+    note <Success>
+  loot 480
+    seed xml, like access-point-not-found-exception
+    note <AccessPointNotFoundException>
+  loot 481
+    seed xml, like policy-not-found-exception
+    note <PolicyNotFoundException>

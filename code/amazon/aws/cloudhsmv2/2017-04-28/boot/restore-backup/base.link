@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/cloudhsmv2/2017-04-28/base/cloud-hsm-access-denied-exception
+  take form cloud-hsm-access-denied-exception
+
+load @drumwork/snow/amazonaws.com/cloudhsmv2/2017-04-28/base/cloud-hsm-internal-failure-exception
+  take form cloud-hsm-internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/cloudhsmv2/2017-04-28/base/cloud-hsm-invalid-request-exception
+  take form cloud-hsm-invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/cloudhsmv2/2017-04-28/base/cloud-hsm-resource-not-found-exception
+  take form cloud-hsm-resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/cloudhsmv2/2017-04-28/base/cloud-hsm-service-exception
+  take form cloud-hsm-service-exception
+
+load @drumwork/snow/amazonaws.com/cloudhsmv2/2017-04-28/base/restore-backup-response
+  take form restore-backup-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot restore-backup, name <RestoreBackup>
+  note <Restores a specified AWS CloudHSM backup that is in the `PENDING_DELETION` state. For mor information on deleting a backup, see DeleteBackup.>
+
+  take x-amz-target
+    like native-string
+  take restore-backup-request, like restore-backup-request
+
+  line </#X-Amz-Target=BaldrApiService.RestoreBackup>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan restore-backup-request
+
+  loot 200
+    seed json, like restore-backup-response
+    note <Success>
+  loot 480
+    seed json, like cloud-hsm-access-denied-exception
+    note <CloudHsmAccessDeniedException>
+  loot 481
+    seed json, like cloud-hsm-internal-failure-exception
+    note <CloudHsmInternalFailureException>
+  loot 482
+    seed json, like cloud-hsm-invalid-request-exception
+    note <CloudHsmInvalidRequestException>
+  loot 483
+    seed json, like cloud-hsm-resource-not-found-exception
+    note <CloudHsmResourceNotFoundException>
+  loot 484
+    seed json, like cloud-hsm-service-exception
+    note <CloudHsmServiceException>

@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/failover-db-cluster-result
+  take form failover-db-cluster-result
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-instance-state-fault
+  take form invalid-db-instance-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-failover-db-cluster, name <POST_FailoverDBCluster>
+  note <Forces a failover for a DB cluster.
+
+A failover for a DB cluster promotes one of the Read Replicas (read-only instances) in the DB cluster to be the primary instance (the cluster writer).
+
+Amazon Neptune will automatically fail over to a Read Replica, if one exists, when the primary instance fails. You can force a failover when you want to simulate a failure of a primary instance for testing. Because each instance in a DB cluster has its own endpoint address, you will need to clean up and re-establish any existing connections that use those endpoint addresses when the failover is complete.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take failover-db-cluster-message, like failover-db-cluster-message
+    void take
+
+  line </#Action=FailoverDBCluster>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan failover-db-cluster-message
+
+  loot 200
+    seed xml, like failover-db-cluster-result
+    note <Success>
+  loot 480
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>
+  loot 481
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>
+  loot 482
+    seed xml, like invalid-db-instance-state-fault
+    note <InvalidDBInstanceStateFault>

@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-in-use-fault
+  take form resource-in-use-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-tags, name <POST_DeleteTags>
+  note <Deletes the specified tags.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-tags-type, like delete-tags-type
+    void take
+
+  line </#Action=DeleteTags>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-tags-type
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>
+  loot 481
+    seed xml, like resource-in-use-fault
+    note <ResourceInUseFault>

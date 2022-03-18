@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/delete-rule-output
+  take form delete-rule-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/operation-not-permitted-exception
+  take form operation-not-permitted-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/rule-not-found-exception
+  take form rule-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-rule, name <POST_DeleteRule>
+  note <Deletes the specified rule.
+
+You can't delete the default rule.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-rule-input, like delete-rule-input
+    void take
+
+  line </#Action=DeleteRule>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-rule-input
+
+  loot 200
+    seed xml, like delete-rule-output
+    note <Success>
+  loot 480
+    seed xml, like rule-not-found-exception
+    note <RuleNotFoundException>
+  loot 481
+    seed xml, like operation-not-permitted-exception
+    note <OperationNotPermittedException>

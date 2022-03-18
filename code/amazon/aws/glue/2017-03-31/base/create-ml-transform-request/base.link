@@ -1,0 +1,122 @@
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/description-string
+  take form description-string
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/glue-tables
+  take form glue-tables
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/glue-version-string
+  take form glue-version-string
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/name-string
+  take form name-string
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/nullable-double
+  take form nullable-double
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/nullable-integer
+  take form nullable-integer
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/role-string
+  take form role-string
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/tags-map
+  take form tags-map
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/timeout
+  take form timeout
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/transform-encryption
+  take form transform-encryption
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/transform-parameters
+  take form transform-parameters
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/worker-type
+  take form worker-type
+
+form create-ml-transform-request, name <CreateMLTransformRequest>
+  take name, name <Name>
+    like name-string
+    note <The unique name that you give the transform when you create it.>
+  take description, name <Description>
+    like description-string
+    void take
+    note <A description of the machine learning transform that is being defined. The default is an empty string.>
+  take input-record-tables, name <InputRecordTables>
+    like glue-tables
+    note <A list of Glue table definitions used by the transform.>
+  take parameters, name <Parameters>
+    like transform-parameters
+    note <The algorithmic parameters that are specific to the transform type used. Conditionally dependent on the transform type.>
+  take role, name <Role>
+    like role-string
+    note <The name or Amazon Resource Name (ARN) of the IAM role with the required permissions. The required permissions include both Glue service role permissions to Glue resources, and Amazon S3 permissions required by the transform.
+
+- This role needs Glue service role permissions to allow access to resources in Glue. See [Attach a Policy to IAM Users That Access Glue](https://docs.aws.amazon.com/glue/latest/dg/attach-policy-iam-user.html).
+
+- This role needs permission to your Amazon Simple Storage Service (Amazon S3) sources, targets, temporary directory, scripts, and any libraries used by the task run for this transform.>
+  take glue-version, name <GlueVersion>
+    like glue-version-string
+    void take
+    note <This value determines which version of Glue this machine learning transform is compatible with. Glue 1.0 is recommended for most customers. If the value is not set, the Glue compatibility defaults to Glue 0.9. For more information, see [Glue Versions](https://docs.aws.amazon.com/glue/latest/dg/release-notes.html#release-notes-versions) in the developer guide.>
+  take max-capacity, name <MaxCapacity>
+    like nullable-double
+    void take
+    note <The number of Glue data processing units (DPUs) that are allocated to task runs for this transform. You can allocate from 2 to 100 DPUs; the default is 10. A DPU is a relative measure of processing power that consists of 4 vCPUs of compute capacity and 16 GB of memory. For more information, see the [Glue pricing page](https://aws.amazon.com/glue/pricing/).
+
+`MaxCapacity` is a mutually exclusive option with `NumberOfWorkers` and `WorkerType`.
+
+- If either `NumberOfWorkers` or `WorkerType` is set, then `MaxCapacity` cannot be set.
+
+- If `MaxCapacity` is set then neither `NumberOfWorkers` or `WorkerType` can be set.
+
+- If `WorkerType` is set, then `NumberOfWorkers` is required (and vice versa).
+
+- `MaxCapacity` and `NumberOfWorkers` must both be at least 1.
+
+When the `WorkerType` field is set to a value other than `Standard`, the `MaxCapacity` field is set automatically and becomes read-only.
+
+When the `WorkerType` field is set to a value other than `Standard`, the `MaxCapacity` field is set automatically and becomes read-only.>
+  take worker-type, name <WorkerType>
+    like worker-type
+    void take
+    note <The type of predefined worker that is allocated when this task runs. Accepts a value of Standard, G.1X, or G.2X.
+
+- For the `Standard` worker type, each worker provides 4 vCPU, 16 GB of memory and a 50GB disk, and 2 executors per worker.
+
+- For the `G.1X` worker type, each worker provides 4 vCPU, 16 GB of memory and a 64GB disk, and 1 executor per worker.
+
+- For the `G.2X` worker type, each worker provides 8 vCPU, 32 GB of memory and a 128GB disk, and 1 executor per worker.
+
+`MaxCapacity` is a mutually exclusive option with `NumberOfWorkers` and `WorkerType`.
+
+- If either `NumberOfWorkers` or `WorkerType` is set, then `MaxCapacity` cannot be set.
+
+- If `MaxCapacity` is set then neither `NumberOfWorkers` or `WorkerType` can be set.
+
+- If `WorkerType` is set, then `NumberOfWorkers` is required (and vice versa).
+
+- `MaxCapacity` and `NumberOfWorkers` must both be at least 1.>
+  take number-of-workers, name <NumberOfWorkers>
+    like nullable-integer
+    void take
+    note <The number of workers of a defined `workerType` that are allocated when this task runs.
+
+If `WorkerType` is set, then `NumberOfWorkers` is required (and vice versa).>
+  take timeout, name <Timeout>
+    like timeout
+    void take
+    note <The timeout of the task run for this transform in minutes. This is the maximum time that a task run for this transform can consume resources before it is terminated and enters `TIMEOUT` status. The default is 2,880 minutes (48 hours).>
+  take max-retries, name <MaxRetries>
+    like nullable-integer
+    void take
+    note <The maximum number of times to retry a task for this transform after a task run fails.>
+  take tags, name <Tags>
+    like tags-map
+    void take
+    note <The tags to use with this machine learning transform. You may use tags to limit access to the machine learning transform. For more information about tags in Glue, see [Amazon Web Services Tags in Glue](https://docs.aws.amazon.com/glue/latest/dg/monitor-tags.html) in the developer guide.>
+  take transform-encryption, name <TransformEncryption>
+    like transform-encryption
+    void take
+    note <The encryption-at-rest settings of the transform that apply to accessing user data. Machine learning transforms can access user data encrypted in Amazon S3 using KMS.>

@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/organization-state-exception
+  take form organization-state-exception
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/tag-resource-response
+  take form tag-resource-response
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/too-many-tags-exception
+  take form too-many-tags-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot tag-resource, name <TagResource>
+  note <Applies the specified tags to the specified Amazon WorkMail organization resource.>
+
+  take x-amz-target
+    like native-string
+  take tag-resource-request, like tag-resource-request
+
+  line </#X-Amz-Target=WorkMailService.TagResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan tag-resource-request
+
+  loot 200
+    seed json, like tag-resource-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like too-many-tags-exception
+    note <TooManyTagsException>
+  loot 482
+    seed json, like organization-state-exception
+    note <OrganizationStateException>

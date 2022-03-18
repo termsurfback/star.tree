@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-set-endpoint-attributes, name <GET_SetEndpointAttributes>
+  note <Sets the attributes for an endpoint for a device on one of the supported push notification services, such as GCM (Firebase Cloud Messaging) and APNS. For more information, see [Using Amazon SNS Mobile Push Notifications](https://docs.aws.amazon.com/sns/latest/dg/SNSMobilePush.html).>
+
+  take endpoint-arn
+    like native-string
+    note <EndpointArn used for SetEndpointAttributes action.>
+  take attributes
+    like form
+    note <A map of the endpoint attributes. Attributes in this map include the following:
+
+- `CustomUserData` - arbitrary user data to associate with the endpoint. Amazon SNS does not use this data. The data must be in UTF-8 format and less than 2KB.
+
+- `Enabled` - flag that enables/disables delivery to the endpoint. Amazon SNS will set this to false when a notification service indicates to Amazon SNS that the endpoint is invalid. Users can set it back to true, typically after updating Token.
+
+- `Token` - device token, also referred to as a registration id, for an app and mobile device. This is returned from the notification service when an app and mobile device are registered with the notification service.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=SetEndpointAttributes>
+
+  find <EndpointArn>, loan endpoint-arn
+  find <Attributes>, loan attributes
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 482
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>
+  loot 483
+    seed xml, like not-found-exception
+    note <NotFoundException>

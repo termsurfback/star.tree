@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-instance-automated-backup-not-found-fault
+  take form db-instance-automated-backup-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/delete-db-instance-automated-backup-result
+  take form delete-db-instance-automated-backup-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-instance-automated-backup-state-fault
+  take form invalid-db-instance-automated-backup-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-db-instance-automated-backup, name <POST_DeleteDBInstanceAutomatedBackup>
+  note <Deletes automated backups using the `DbiResourceId` value of the source DB instance or the Amazon Resource Name (ARN) of the automated backups.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-db-instance-automated-backup-message, like delete-db-instance-automated-backup-message
+    void take
+
+  line </#Action=DeleteDBInstanceAutomatedBackup>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-db-instance-automated-backup-message
+
+  loot 200
+    seed xml, like delete-db-instance-automated-backup-result
+    note <Success>
+  loot 480
+    seed xml, like invalid-db-instance-automated-backup-state-fault
+    note <InvalidDBInstanceAutomatedBackupStateFault>
+  loot 481
+    seed xml, like db-instance-automated-backup-not-found-fault
+    note <DBInstanceAutomatedBackupNotFoundFault>

@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/reject-skill-response
+  take form reject-skill-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot reject-skill, name <RejectSkill>
+  note <Disassociates a skill from the organization under a user's AWS account. If the skill is a private skill, it moves to an AcceptStatus of PENDING. Any private or public skill that is rejected can be added later by calling the ApproveSkill API.>
+
+  take x-amz-target
+    like native-string
+  take reject-skill-request, like reject-skill-request
+
+  line </#X-Amz-Target=AlexaForBusiness.RejectSkill>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan reject-skill-request
+
+  loot 200
+    seed json, like reject-skill-response
+    note <Success>
+  loot 480
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>
+  loot 481
+    seed json, like not-found-exception
+    note <NotFoundException>

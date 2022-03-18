@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/sqs/2012-11-05/base/get-queue-attributes-result
+  take form get-queue-attributes-result
+
+load @drumwork/snow/amazonaws.com/sqs/2012-11-05/base/invalid-attribute-name
+  take form invalid-attribute-name
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-get-queue-attributes, name <POST_GetQueueAttributes>
+  note <Gets attributes for the specified queue.
+
+To determine whether a queue is [FIFO](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues.html), you can check whether `QueueName` ends with the `.fifo` suffix.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take get-queue-attributes-request, like get-queue-attributes-request
+    void take
+
+  line </#Action=GetQueueAttributes>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan get-queue-attributes-request
+
+  loot 200
+    seed xml, like get-queue-attributes-result
+    note <Success>
+  loot 480
+    seed xml, like invalid-attribute-name
+    note <InvalidAttributeName>

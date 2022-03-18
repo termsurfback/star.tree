@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/codestar-notifications/2019-10-15/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/codestar-notifications/2019-10-15/base/list-event-types-body
+  take form list-event-types-body
+
+load @drumwork/snow/amazonaws.com/codestar-notifications/2019-10-15/base/list-event-types-result
+  take form list-event-types-result
+
+load @drumwork/snow/amazonaws.com/codestar-notifications/2019-10-15/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-event-types, name <ListEventTypes>
+  note <Returns information about the event types available for configuring notifications.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-event-types-body, like list-event-types-body
+
+  line </listEventTypes>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-event-types-body
+
+  loot 200
+    seed json, like list-event-types-result
+    note <Success>
+  loot 480
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>

@@ -1,0 +1,80 @@
+
+load @drumwork/snow/amazonaws.com/resource-groups/2017-11-27/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/resource-groups/2017-11-27/base/forbidden-exception
+  take form forbidden-exception
+
+load @drumwork/snow/amazonaws.com/resource-groups/2017-11-27/base/internal-server-error-exception
+  take form internal-server-error-exception
+
+load @drumwork/snow/amazonaws.com/resource-groups/2017-11-27/base/list-groups-body
+  take form list-groups-body
+
+load @drumwork/snow/amazonaws.com/resource-groups/2017-11-27/base/list-groups-output
+  take form list-groups-output
+
+load @drumwork/snow/amazonaws.com/resource-groups/2017-11-27/base/method-not-allowed-exception
+  take form method-not-allowed-exception
+
+load @drumwork/snow/amazonaws.com/resource-groups/2017-11-27/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-groups, name <ListGroups>
+  note <Returns a list of existing resource groups in your account.
+
+**Minimum permissions** To run this command, you must have the following permissions:
+
+- `resource-groups:ListGroups`>
+
+  take max-results
+    like native-integer
+    note <The total number of results that you want included on each page of the response. If you do not include this parameter, it defaults to a value that is specific to the operation. If additional items exist beyond the maximum you specify, the `NextToken` response element is present and has a value (is not null). Include that value as the `NextToken` request parameter in the next call to the operation to get the next part of the results. Note that the service might return fewer results than the maximum even when there are more results available. You should check `NextToken` after every operation to ensure that you receive all of the results.>
+    void take
+  take next-token
+    like native-string
+    note <The parameter for receiving additional results if you receive a `NextToken` response in a previous request. A `NextToken` response indicates that more output is available. Set this parameter to the value provided by a previous call's `NextToken` response to indicate where the output should continue from.>
+    void take
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-groups-body, like list-groups-body
+
+  line </groups-list>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-groups-body
+
+  loot 200
+    seed json, like list-groups-output
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like forbidden-exception
+    note <ForbiddenException>
+  loot 482
+    seed json, like method-not-allowed-exception
+    note <MethodNotAllowedException>
+  loot 483
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 484
+    seed json, like internal-server-error-exception
+    note <InternalServerErrorException>

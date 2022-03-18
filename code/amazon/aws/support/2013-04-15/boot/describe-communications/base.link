@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/case-id-not-found
+  take form case-id-not-found
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/describe-communications-response
+  take form describe-communications-response
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-communications, name <DescribeCommunications>
+  note <Returns communications and attachments for one or more support cases. Use the `afterTime` and `beforeTime` parameters to filter by date. You can use the `caseId` parameter to restrict the results to a specific case.
+
+Case data is available for 12 months after creation. If a case was created more than 12 months ago, a request for data might cause an error.
+
+You can use the `maxResults` and `nextToken` parameters to control the pagination of the results. Set `maxResults` to the number of cases that you want to display on each page, and use `nextToken` to specify the resumption of pagination.
+
+- You must have a Business or Enterprise Support plan to use the AWS Support API.
+
+- If you call the AWS Support API from an account that does not have a Business or Enterprise Support plan, the `SubscriptionRequiredException` error message appears. For information about changing your support plan, see [AWS Support](http://aws.amazon.com/premiumsupport/).>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-communications-request, like describe-communications-request
+
+  line </#X-Amz-Target=AWSSupport_20130415.DescribeCommunications>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan describe-communications-request
+
+  loot 200
+    seed json, like describe-communications-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like case-id-not-found
+    note <CaseIdNotFound>

@@ -1,0 +1,56 @@
+
+load @drumwork/snow/amazonaws.com/rds/2013-09-09/base/create-db-security-group-result
+  take form create-db-security-group-result
+
+load @drumwork/snow/amazonaws.com/rds/2013-09-09/base/db-security-group-already-exists-fault
+  take form db-security-group-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-09-09/base/db-security-group-not-supported-fault
+  take form db-security-group-not-supported-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-09-09/base/db-security-group-quota-exceeded-fault
+  take form db-security-group-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-09-09/base/tag
+  take form tag
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-db-security-group, name <GET_CreateDBSecurityGroup>
+  take db-security-group-name
+    like native-string
+  take db-security-group-description
+    like native-string
+  take tags
+    like list
+      like tag
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateDBSecurityGroup>
+
+  find <DBSecurityGroupName>, loan db-security-group-name
+  find <DBSecurityGroupDescription>, loan db-security-group-description
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-db-security-group-result
+    note <Success>
+  loot 480
+    seed xml, like db-security-group-already-exists-fault
+    note <DBSecurityGroupAlreadyExistsFault>
+  loot 481
+    seed xml, like db-security-group-quota-exceeded-fault
+    note <DBSecurityGroupQuotaExceededFault>
+  loot 482
+    seed xml, like db-security-group-not-supported-fault
+    note <DBSecurityGroupNotSupportedFault>

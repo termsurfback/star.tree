@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/configuration
+  take form configuration
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-configuration, name <GetConfiguration>
+  note <Receive information about a configuration.
+
+AWS AppConfig uses the value of the `ClientConfigurationVersion` parameter to identify the configuration version on your clients. If you don’t send `ClientConfigurationVersion` with each call to `GetConfiguration`, your clients receive the current configuration. You are charged each time your clients receive a configuration.
+
+To avoid excess charges, we recommend that you include the `ClientConfigurationVersion` value with every call to `GetConfiguration`. This value must be saved on your client. Subsequent calls to `GetConfiguration` must pass this value by using the `ClientConfigurationVersion` parameter.>
+
+  take application
+    like native-string
+    note <The application to get. Specify either the application name or the application ID.>
+  take environment
+    like native-string
+    note <The environment to get. Specify either the environment name or the environment ID.>
+  take configuration
+    like native-string
+    note <The configuration to get. Specify either the configuration name or the configuration ID.>
+  take client-id
+    like native-string
+    note <A unique ID to identify the client for the configuration. This ID enables AppConfig to deploy the configuration in intervals, as defined in the deployment strategy.>
+  take client-configuration-version
+    like native-string
+    note <The configuration version returned in the most recent `GetConfiguration` response.
+
+AWS AppConfig uses the value of the `ClientConfigurationVersion` parameter to identify the configuration version on your clients. If you don’t send `ClientConfigurationVersion` with each call to `GetConfiguration`, your clients receive the current configuration. You are charged each time your clients receive a configuration.
+
+To avoid excess charges, we recommend that you include the `ClientConfigurationVersion` value with every call to `GetConfiguration`. This value must be saved on your client. Subsequent calls to `GetConfiguration` must pass this value by using the `ClientConfigurationVersion` parameter.
+
+For more information about working with configurations, see [Retrieving the Configuration](https://docs.aws.amazon.com/systems-manager/latest/userguide/appconfig-retrieving-the-configuration.html) in the _AWS AppConfig User Guide_.>
+    void take
+
+  line </applications/{application}/environments/{environment}/configurations/{configuration}#client_id>
+
+  find <client_id>, loan client-id
+  find <client_configuration_version>, loan client-configuration-version
+
+  loot 200
+    seed json, like configuration
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like bad-request-exception
+    note <BadRequestException>

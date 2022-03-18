@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/polly/2016-06-10/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/polly/2016-06-10/base/list-speech-synthesis-tasks-output
+  take form list-speech-synthesis-tasks-output
+
+load @drumwork/snow/amazonaws.com/polly/2016-06-10/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-speech-synthesis-tasks, name <ListSpeechSynthesisTasks>
+  note <Returns a list of SpeechSynthesisTask objects ordered by their creation date. This operation can filter the tasks by their status, for example, allowing users to list only tasks that are completed.>
+
+  take max-results
+    like native-integer
+    note <Maximum number of speech synthesis tasks returned in a List operation.>
+    void take
+  take next-token
+    like native-string
+    note <The pagination token to use in the next request to continue the listing of speech synthesis tasks.>
+    void take
+  take status
+    like native-string
+    note <Status of the speech synthesis tasks returned in a List operation>
+    void take
+
+  line </v1/synthesisTasks>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <Status>, loan status
+
+  loot 200
+    seed json, like list-speech-synthesis-tasks-output
+    note <Success>
+  loot 480
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 481
+    seed json, like service-failure-exception
+    note <ServiceFailureException>

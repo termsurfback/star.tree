@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/copy-db-cluster-parameter-group-result
+  take form copy-db-cluster-parameter-group-result
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-parameter-group-already-exists-fault
+  take form db-parameter-group-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-parameter-group-not-found-fault
+  take form db-parameter-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-parameter-group-quota-exceeded-fault
+  take form db-parameter-group-quota-exceeded-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-copy-db-cluster-parameter-group, name <POST_CopyDBClusterParameterGroup>
+  note <Copies the specified cluster parameter group.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take copy-db-cluster-parameter-group-message, like copy-db-cluster-parameter-group-message
+    void take
+
+  line </#Action=CopyDBClusterParameterGroup>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan copy-db-cluster-parameter-group-message
+
+  loot 200
+    seed xml, like copy-db-cluster-parameter-group-result
+    note <Success>
+  loot 480
+    seed xml, like db-parameter-group-not-found-fault
+    note <DBParameterGroupNotFoundFault>
+  loot 481
+    seed xml, like db-parameter-group-quota-exceeded-fault
+    note <DBParameterGroupQuotaExceededFault>
+  loot 482
+    seed xml, like db-parameter-group-already-exists-fault
+    note <DBParameterGroupAlreadyExistsFault>

@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/androidpublisher/v3/base/inappproducts-list-response
+  take form inappproducts-list-response
+
+boot androidpublisher-inappproducts-list, name <androidpublisher.inappproducts.list>
+  note <Lists all in-app products - both managed products and subscriptions. If an app has a large number of in-app products, the response may be paginated. In this case the response field `tokenPagination.nextPageToken` will be set and the caller should provide its value as a `token` request parameter to retrieve the next page.>
+
+  take package-name
+    like native-string
+    note <Package name of the app.>
+  take max-results
+    like native-integer
+    note <Deprecated and ignored. The page size is determined by the server.>
+    void take
+  take start-index
+    like native-integer
+    note <Deprecated and ignored. Set the `token` parameter to rertieve the next page.>
+    void take
+  take token
+    like native-string
+    note <Pagination token. If empty, list starts at the first product.>
+    void take
+
+  line </androidpublisher/v3/applications/{package-name}/inappproducts>
+
+  find <maxResults>, loan max-results
+  find <startIndex>, loan start-index
+  find <token>, loan token
+
+  loot 200
+    seed json, like inappproducts-list-response
+    note <Successful response>

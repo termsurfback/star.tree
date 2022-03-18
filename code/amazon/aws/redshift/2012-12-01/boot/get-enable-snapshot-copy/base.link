@@ -1,0 +1,125 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/copy-to-region-disabled-fault
+  take form copy-to-region-disabled-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/dependent-service-request-throttling-fault
+  take form dependent-service-request-throttling-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/enable-snapshot-copy-result
+  take form enable-snapshot-copy-result
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/incompatible-orderable-options
+  take form incompatible-orderable-options
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-state-fault
+  take form invalid-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-retention-period-fault
+  take form invalid-retention-period-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/limit-exceeded-fault
+  take form limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/snapshot-copy-already-enabled-fault
+  take form snapshot-copy-already-enabled-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/snapshot-copy-grant-not-found-fault
+  take form snapshot-copy-grant-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unauthorized-operation
+  take form unauthorized-operation
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unknown-snapshot-copy-region-fault
+  take form unknown-snapshot-copy-region-fault
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-enable-snapshot-copy, name <GET_EnableSnapshotCopy>
+  note <Enables the automatic copy of snapshots from one region to another region for a specified cluster.>
+
+  take cluster-identifier
+    like native-string
+    note <The unique identifier of the source cluster to copy snapshots from.
+
+Constraints: Must be the valid name of an existing cluster that does not already have cross-region snapshot copy enabled.>
+  take destination-region
+    like native-string
+    note <The destination Amazon Web Services Region that you want to copy snapshots to.
+
+Constraints: Must be the name of a valid Amazon Web Services Region. For more information, see [Regions and Endpoints](https://docs.aws.amazon.com/general/latest/gr/rande.html#redshift_region) in the Amazon Web Services General Reference.>
+  take retention-period
+    like native-integer
+    note <The number of days to retain automated snapshots in the destination region after they are copied from the source region.
+
+Default: 7.
+
+Constraints: Must be at least 1 and no more than 35.>
+    void take
+  take snapshot-copy-grant-name
+    like native-string
+    note <The name of the snapshot copy grant to use when snapshots of an Amazon Web Services KMS-encrypted cluster are copied to the destination region.>
+    void take
+  take manual-snapshot-retention-period
+    like native-integer
+    note <The number of days to retain newly copied snapshots in the destination Amazon Web Services Region after they are copied from the source Amazon Web Services Region. If the value is -1, the manual snapshot is retained indefinitely.
+
+The value must be either -1 or an integer between 1 and 3,653.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=EnableSnapshotCopy>
+
+  find <ClusterIdentifier>, loan cluster-identifier
+  find <DestinationRegion>, loan destination-region
+  find <RetentionPeriod>, loan retention-period
+  find <SnapshotCopyGrantName>, loan snapshot-copy-grant-name
+  find <ManualSnapshotRetentionPeriod>, loan manual-snapshot-retention-period
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like enable-snapshot-copy-result
+    note <Success>
+  loot 480
+    seed xml, like incompatible-orderable-options
+    note <IncompatibleOrderableOptions>
+  loot 481
+    seed xml, like invalid-cluster-state-fault
+    note <InvalidClusterStateFault>
+  loot 482
+    seed xml, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 483
+    seed xml, like copy-to-region-disabled-fault
+    note <CopyToRegionDisabledFault>
+  loot 484
+    seed xml, like snapshot-copy-already-enabled-fault
+    note <SnapshotCopyAlreadyEnabledFault>
+  loot 485
+    seed xml, like unknown-snapshot-copy-region-fault
+    note <UnknownSnapshotCopyRegionFault>
+  loot 486
+    seed xml, like unauthorized-operation
+    note <UnauthorizedOperation>
+  loot 487
+    seed xml, like snapshot-copy-grant-not-found-fault
+    note <SnapshotCopyGrantNotFoundFault>
+  loot 488
+    seed xml, like limit-exceeded-fault
+    note <LimitExceededFault>
+  loot 489
+    seed xml, like dependent-service-request-throttling-fault
+    note <DependentServiceRequestThrottlingFault>
+  loot 490
+    seed xml, like invalid-retention-period-fault
+    note <InvalidRetentionPeriodFault>

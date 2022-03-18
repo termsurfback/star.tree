@@ -1,0 +1,77 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/custom-availability-zone-not-found-fault
+  take form custom-availability-zone-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/installation-media
+  take form installation-media
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/installation-media-already-exists-fault
+  take form installation-media-already-exists-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-import-installation-media, name <GET_ImportInstallationMedia>
+  note <Imports the installation media for a DB engine that requires an on-premises customer provided license, such as SQL Server.>
+
+  take custom-availability-zone-id
+    like native-string
+    note <The identifier of the custom Availability Zone (AZ) to import the installation media to.>
+  take engine
+    like native-string
+    note <The name of the database engine to be used for this instance.
+
+The list only includes supported DB engines that require an on-premises customer provided license.
+
+Valid Values:
+
+- `sqlserver-ee`
+
+- `sqlserver-se`
+
+- `sqlserver-ex`
+
+- `sqlserver-web`>
+  take engine-version
+    like native-string
+    note <The version number of the database engine to use.
+
+For a list of valid engine versions, call DescribeDBEngineVersions.
+
+The following are the database engines and links to information about the major and minor versions. The list only includes DB engines that require an on-premises customer provided license.
+
+**Microsoft SQL Server** See [Microsoft SQL Server Versions on Amazon RDS](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_SQLServer.html#SQLServer.Concepts.General.VersionSupport) in the _Amazon RDS User Guide._>
+  take engine-installation-media-path
+    like native-string
+    note <The path to the installation medium for the specified DB engine.
+
+Example: `SQLServerISO/en_sql_server_2016_enterprise_x64_dvd_8701793.iso`>
+  take os-installation-media-path
+    like native-string
+    note <The path to the installation medium for the operating system associated with the specified DB engine.
+
+Example: `WindowsISO/en_windows_server_2016_x64_dvd_9327751.iso`>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ImportInstallationMedia>
+
+  find <CustomAvailabilityZoneId>, loan custom-availability-zone-id
+  find <Engine>, loan engine
+  find <EngineVersion>, loan engine-version
+  find <EngineInstallationMediaPath>, loan engine-installation-media-path
+  find <OSInstallationMediaPath>, loan os-installation-media-path
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like installation-media
+    note <Success>
+  loot 480
+    seed xml, like custom-availability-zone-not-found-fault
+    note <CustomAvailabilityZoneNotFoundFault>
+  loot 481
+    seed xml, like installation-media-already-exists-fault
+    note <InstallationMediaAlreadyExistsFault>

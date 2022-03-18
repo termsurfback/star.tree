@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/describe-addon-versions-response
+  take form describe-addon-versions-response
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-addon-versions, name <DescribeAddonVersions>
+  note <Describes the Kubernetes versions that the add-on can be used with.>
+
+  take kubernetes-version
+    like native-string
+    note <The Kubernetes versions that the add-on can be used with.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return.>
+    void take
+  take next-token
+    like native-string
+    note <The `nextToken` value returned from a previous paginated `DescribeAddonVersionsRequest` where `maxResults` was used and the results exceeded the value of that parameter. Pagination continues from the end of the previous results that returned the `nextToken` value.
+
+This token should be treated as an opaque identifier that is used only to retrieve the next items in a list and not for other programmatic purposes.>
+    void take
+  take addon-name
+    like native-string
+    note <The name of the add-on. The name must match one of the names returned by [`ListAddons`](https://docs.aws.amazon.com/eks/latest/APIReference/API_ListAddons.html) .>
+    void take
+
+  line </addons/supported-versions>
+
+  find <kubernetesVersion>, loan kubernetes-version
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+  find <addonName>, loan addon-name
+
+  loot 200
+    seed json, like describe-addon-versions-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>

@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/hsm-client-certificate-not-found-fault
+  take form hsm-client-certificate-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-hsm-client-certificate-state-fault
+  take form invalid-hsm-client-certificate-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-hsm-client-certificate, name <POST_DeleteHsmClientCertificate>
+  note <Deletes the specified HSM client certificate.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-hsm-client-certificate-message, like delete-hsm-client-certificate-message
+    void take
+
+  line </#Action=DeleteHsmClientCertificate>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-hsm-client-certificate-message
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like invalid-hsm-client-certificate-state-fault
+    note <InvalidHsmClientCertificateStateFault>
+  loot 481
+    seed xml, like hsm-client-certificate-not-found-fault
+    note <HsmClientCertificateNotFoundFault>

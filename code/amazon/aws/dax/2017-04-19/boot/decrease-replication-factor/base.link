@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/decrease-replication-factor-response
+  take form decrease-replication-factor-response
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/invalid-cluster-state-fault
+  take form invalid-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/node-not-found-fault
+  take form node-not-found-fault
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/service-linked-role-not-found-fault
+  take form service-linked-role-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot decrease-replication-factor, name <DecreaseReplicationFactor>
+  note <Removes one or more nodes from a DAX cluster.
+
+You cannot use `DecreaseReplicationFactor` to remove the last node in a DAX cluster. If you need to do this, use `DeleteCluster` instead.>
+
+  take x-amz-target
+    like native-string
+  take decrease-replication-factor-request, like decrease-replication-factor-request
+
+  line </#X-Amz-Target=AmazonDAXV3.DecreaseReplicationFactor>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan decrease-replication-factor-request
+
+  loot 200
+    seed json, like decrease-replication-factor-response
+    note <Success>
+  loot 480
+    seed json, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 481
+    seed json, like node-not-found-fault
+    note <NodeNotFoundFault>
+  loot 482
+    seed json, like invalid-cluster-state-fault
+    note <InvalidClusterStateFault>
+  loot 483
+    seed json, like service-linked-role-not-found-fault
+    note <ServiceLinkedRoleNotFoundFault>
+  loot 484
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 485
+    seed json, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

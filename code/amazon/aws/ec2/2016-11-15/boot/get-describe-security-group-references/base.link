@@ -1,0 +1,42 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-security-group-references-result
+  take form describe-security-group-references-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/security-group-id
+  take form security-group-id
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-security-group-references, name <GET_DescribeSecurityGroupReferences>
+  note <[VPC only] Describes the VPCs on the other side of a VPC peering connection that are referencing the security groups you've specified in this request.>
+
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take group-id
+    like list
+      like security-group-id
+    note <The IDs of the security groups in your account.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeSecurityGroupReferences>
+
+  find <DryRun>, loan dry-run
+  find <GroupId>, loan group-id
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-security-group-references-result
+    note <Success>

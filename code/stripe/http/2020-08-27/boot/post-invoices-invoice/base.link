@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/invoice
+  take form invoice
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-invoices-invoice-body
+  take form post-invoices-invoice-body
+
+boot post-invoices-invoice, name <PostInvoicesInvoice>
+  note <Draft invoices are fully editable. Once an invoice is [finalized](/docs/billing/invoices/workflow#finalized), monetary values, as well as `collection_method`, become uneditable.
+
+If you would like to stop the Stripe Billing engine from automatically finalizing, reattempting payments on, sending reminders for, or [automatically reconciling](/docs/billing/invoices/reconciliation) invoices, pass `auto_advance=false`.>
+
+  take invoice
+    like native-string
+  take post-invoices-invoice-body, like post-invoices-invoice-body
+    void take
+
+  line </v1/invoices/{invoice}>
+
+  seed x-www-form-urlencoded, loan post-invoices-invoice-body
+
+  loot 200
+    seed json, like invoice
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

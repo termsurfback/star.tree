@@ -1,0 +1,124 @@
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/agent-update-status
+  take form agent-update-status
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/attachments
+  take form attachments
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/attributes
+  take form attributes
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/long
+  take form long
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/resources
+  take form resources
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/tags
+  take form tags
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/timestamp
+  take form timestamp
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/version-info
+  take form version-info
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+load @drumwork/snow/base/integer
+  take form integer
+
+load @drumwork/snow/base/string
+  take form string
+
+form container-instance, name <ContainerInstance>
+  note <An EC2 instance that is running the Amazon ECS agent and has been registered with a cluster.>
+  take container-instance-arn, name <containerInstanceArn>
+    like string
+    void take
+    note <The Amazon Resource Name (ARN) of the container instance. The ARN contains the `arn:aws:ecs` namespace, followed by the Region of the container instance, the Amazon Web Services account ID of the container instance owner, the `container-instance` namespace, and then the container instance ID. For example, `arn:aws:ecs:region:aws_account_id:container-instance/container_instance_ID`.>
+  take ec2-instance-id, name <ec2InstanceId>
+    like string
+    void take
+    note <The ID of the container instance. For Amazon EC2 instances, this value is the Amazon EC2 instance ID. For external instances, this value is the Amazon Web Services Systems Manager managed instance ID.>
+  take capacity-provider-name, name <capacityProviderName>
+    like string
+    void take
+    note <The capacity provider associated with the container instance.>
+  take version, name <version>
+    like long
+    void take
+    note <The version counter for the container instance. Every time a container instance experiences a change that triggers a CloudWatch event, the version counter is incremented. If you are replicating your Amazon ECS container instance state with CloudWatch Events, you can compare the version of a container instance reported by the Amazon ECS APIs with the version reported in CloudWatch Events for the container instance (inside the `detail` object) to verify that the version in your event stream is current.>
+  take version-info, name <versionInfo>
+    like version-info
+    void take
+    note <The version information for the Amazon ECS container agent and Docker daemon running on the container instance.>
+  take remaining-resources, name <remainingResources>
+    like resources
+    void take
+    note <For CPU and memory resource types, this parameter describes the remaining CPU and memory that has not already been allocated to tasks and is therefore available for new tasks. For port resource types, this parameter describes the ports that were reserved by the Amazon ECS container agent (at instance registration time) and any task containers that have reserved port mappings on the host (with the `host` or `bridge` network mode). Any port that is not specified here is available for new tasks.>
+  take registered-resources, name <registeredResources>
+    like resources
+    void take
+    note <For CPU and memory resource types, this parameter describes the amount of each resource that was available on the container instance when the container agent registered it with Amazon ECS. This value represents the total amount of CPU and memory that can be allocated on this container instance to tasks. For port resource types, this parameter describes the ports that were reserved by the Amazon ECS container agent when it registered the container instance with Amazon ECS.>
+  take status, name <status>
+    like string
+    void take
+    note <The status of the container instance. The valid values are `REGISTERING`, `REGISTRATION_FAILED`, `ACTIVE`, `INACTIVE`, `DEREGISTERING`, or `DRAINING`.
+
+If your account has opted in to the `awsvpcTrunking` account setting, then any newly registered container instance will transition to a `REGISTERING` status while the trunk elastic network interface is provisioned for the instance. If the registration fails, the instance will transition to a `REGISTRATION_FAILED` status. You can describe the container instance and see the reason for failure in the `statusReason` parameter. Once the container instance is terminated, the instance transitions to a `DEREGISTERING` status while the trunk elastic network interface is deprovisioned. The instance then transitions to an `INACTIVE` status.
+
+The `ACTIVE` status indicates that the container instance can accept tasks. The `DRAINING` indicates that new tasks are not placed on the container instance and any service tasks running on the container instance are removed if possible. For more information, see [Container Instance Draining](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/container-instance-draining.html) in the _Amazon Elastic Container Service Developer Guide_.>
+  take status-reason, name <statusReason>
+    like string
+    void take
+    note <The reason that the container instance reached its current status.>
+  take agent-connected, name <agentConnected>
+    like boolean
+    void take
+    note <This parameter returns `true` if the agent is connected to Amazon ECS. Registered instances with an agent that may be unhealthy or stopped return `false`. Only instances connected to an agent can accept placement requests.>
+  take running-tasks-count, name <runningTasksCount>
+    like integer
+    void take
+    note <The number of tasks on the container instance that are in the `RUNNING` status.>
+  take pending-tasks-count, name <pendingTasksCount>
+    like integer
+    void take
+    note <The number of tasks on the container instance that are in the `PENDING` status.>
+  take agent-update-status, name <agentUpdateStatus>
+    like agent-update-status
+    void take
+    note <The status of the most recent agent update. If an update has never been requested, this value is `NULL`.>
+  take attributes, name <attributes>
+    like attributes
+    void take
+    note <The attributes set for the container instance, either by the Amazon ECS container agent at instance registration or manually with the PutAttributes operation.>
+  take registered-at, name <registeredAt>
+    like timestamp
+    void take
+    note <The Unix timestamp for when the container instance was registered.>
+  take attachments, name <attachments>
+    like attachments
+    void take
+    note <The resources attached to a container instance, such as elastic network interfaces.>
+  take tags, name <tags>
+    like tags
+    void take
+    note <The metadata that you apply to the container instance to help you categorize and organize them. Each tag consists of a key and an optional value, both of which you define.
+
+The following basic restrictions apply to tags:
+
+- Maximum number of tags per resource - 50
+
+- For each resource, each tag key must be unique, and each tag key can have only one value.
+
+- Maximum key length - 128 Unicode characters in UTF-8
+
+- Maximum value length - 256 Unicode characters in UTF-8
+
+- If your tagging schema is used across multiple services and resources, remember that other services may have restrictions on allowed characters. Generally allowed characters are: letters, numbers, and spaces representable in UTF-8, and the following characters: + - = . _ : / @.
+
+- Tag keys and values are case-sensitive.
+
+- Do not use `aws:`, `AWS:`, or any upper or lowercase combination of such as a prefix for either keys or values as it is reserved for Amazon Web Services use. You cannot edit or delete tag keys or values with this prefix. Tags with this prefix do not count against your tags per resource limit.>

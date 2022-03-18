@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/get-sms-attributes-response
+  take form get-sms-attributes-response
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/throttled-exception
+  take form throttled-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-get-sms-attributes, name <POST_GetSMSAttributes>
+  note <Returns the settings for sending SMS messages from your account.
+
+These settings are set with the `SetSMSAttributes` action.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take get-sms-attributes-input, like get-sms-attributes-input
+    void take
+
+  line </#Action=GetSMSAttributes>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan get-sms-attributes-input
+
+  loot 200
+    seed xml, like get-sms-attributes-response
+    note <Success>
+  loot 480
+    seed xml, like throttled-exception
+    note <ThrottledException>
+  loot 481
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 482
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>
+  loot 483
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>

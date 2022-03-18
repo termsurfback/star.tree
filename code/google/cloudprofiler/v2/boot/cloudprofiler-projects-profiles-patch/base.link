@@ -1,0 +1,29 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/cloudprofiler/v2/base/profile
+  take form profile
+
+boot cloudprofiler-projects-profiles-patch, name <cloudprofiler.projects.profiles.patch>
+  note <UpdateProfile updates the profile bytes and labels on the profile resource created in the online mode. Updating the bytes for profiles created in the offline mode is currently not supported: the profile content must be provided at the time of the profile creation.>
+
+  take name
+    like native-string
+    note <Output only. Opaque, server-assigned, unique ID for this profile.>
+  take update-mask
+    like native-string
+    note <Field mask used to specify the fields to be overwritten. Currently only profile_bytes and labels fields are supported by UpdateProfile, so only those fields can be specified in the mask. When no mask is provided, all fields are overwritten.>
+    void take
+  take profile, like profile
+    void take
+
+  line </v2/{name}>
+
+  find <updateMask>, loan update-mask
+
+  seed json, loan profile
+
+  loot 200
+    seed json, like profile
+    note <Successful response>

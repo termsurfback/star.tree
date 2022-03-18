@@ -1,0 +1,88 @@
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-cluster-snapshot-already-exists-fault
+  take form db-cluster-snapshot-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/delete-db-cluster-result
+  take form delete-db-cluster-result
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/invalid-db-cluster-snapshot-state-fault
+  take form invalid-db-cluster-snapshot-state-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/snapshot-quota-exceeded-fault
+  take form snapshot-quota-exceeded-fault
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-db-cluster, name <GET_DeleteDBCluster>
+  note <Deletes a previously provisioned cluster. When you delete a cluster, all automated backups for that cluster are deleted and can't be recovered. Manual DB cluster snapshots of the specified cluster are not deleted.>
+
+  take db-cluster-identifier
+    like native-string
+    note <The cluster identifier for the cluster to be deleted. This parameter isn't case sensitive.
+
+Constraints:
+
+- Must match an existing `DBClusterIdentifier`.>
+  take skip-final-snapshot
+    like native-boolean
+    note <Determines whether a final cluster snapshot is created before the cluster is deleted. If `true` is specified, no cluster snapshot is created. If `false` is specified, a cluster snapshot is created before the DB cluster is deleted.
+
+If `SkipFinalSnapshot` is `false`, you must specify a `FinalDBSnapshotIdentifier` parameter.
+
+Default: `false`>
+    void take
+  take final-db-snapshot-identifier
+    like native-string
+    note <The cluster snapshot identifier of the new cluster snapshot created when `SkipFinalSnapshot` is set to `false`.
+
+Specifying this parameter and also setting the `SkipFinalShapshot` parameter to `true` results in an error.
+
+Constraints:
+
+- Must be from 1 to 255 letters, numbers, or hyphens.
+
+- The first character must be a letter.
+
+- Cannot end with a hyphen or contain two consecutive hyphens.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteDBCluster>
+
+  find <DBClusterIdentifier>, loan db-cluster-identifier
+  find <SkipFinalSnapshot>, loan skip-final-snapshot
+  find <FinalDBSnapshotIdentifier>, loan final-db-snapshot-identifier
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-db-cluster-result
+    note <Success>
+  loot 480
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>
+  loot 481
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>
+  loot 482
+    seed xml, like db-cluster-snapshot-already-exists-fault
+    note <DBClusterSnapshotAlreadyExistsFault>
+  loot 483
+    seed xml, like snapshot-quota-exceeded-fault
+    note <SnapshotQuotaExceededFault>
+  loot 484
+    seed xml, like invalid-db-cluster-snapshot-state-fault
+    note <InvalidDBClusterSnapshotStateFault>

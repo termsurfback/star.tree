@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/describe-anomaly-detectors-output
+  take form describe-anomaly-detectors-output
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/internal-service-fault
+  take form internal-service-fault
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-anomaly-detectors, name <POST_DescribeAnomalyDetectors>
+  note <Lists the anomaly detection models that you have created in your account. You can list all models in your account or filter the results to only the models that are related to a certain namespace, metric name, or metric dimension.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-anomaly-detectors-input, like describe-anomaly-detectors-input
+    void take
+
+  line </#Action=DescribeAnomalyDetectors>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-anomaly-detectors-input
+
+  loot 200
+    seed xml, like describe-anomaly-detectors-output
+    note <Success>
+  loot 480
+    seed xml, like invalid-next-token
+    note <InvalidNextToken>
+  loot 481
+    seed xml, like internal-service-fault
+    note <InternalServiceFault>
+  loot 482
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>

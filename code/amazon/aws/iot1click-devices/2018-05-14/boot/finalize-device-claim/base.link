@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/finalize-device-claim-body
+  take form finalize-device-claim-body
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/finalize-device-claim-response
+  take form finalize-device-claim-response
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/precondition-failed-exception
+  take form precondition-failed-exception
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/resource-conflict-exception
+  take form resource-conflict-exception
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot finalize-device-claim, name <FinalizeDeviceClaim>
+  note <Given a device ID, finalizes the claim request for the associated device.
+
+Claiming a device consists of initiating a claim, then publishing a device event, and finalizing the claim. For a device of type button, a device event can be published by simply clicking the device.>
+
+  take device-id
+    like native-string
+    note <The unique identifier of the device.>
+  take finalize-device-claim-body, like finalize-device-claim-body
+
+  line </devices/{device-id}/finalize-claim>
+
+  seed json, loan finalize-device-claim-body
+
+  loot 200
+    seed json, like finalize-device-claim-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 483
+    seed json, like precondition-failed-exception
+    note <PreconditionFailedException>
+  loot 484
+    seed json, like resource-conflict-exception
+    note <ResourceConflictException>

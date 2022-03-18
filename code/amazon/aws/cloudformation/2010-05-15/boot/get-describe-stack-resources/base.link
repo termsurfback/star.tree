@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/describe-stack-resources-output
+  take form describe-stack-resources-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-stack-resources, name <GET_DescribeStackResources>
+  note <Returns Amazon Web Services resource descriptions for running and deleted stacks. If `StackName` is specified, all the associated resources that are part of the stack are returned. If `PhysicalResourceId` is specified, the associated resources of the stack that the resource belongs to are returned.
+
+Only the first 100 resources will be returned. If your stack has more resources than this, you should use `ListStackResources` instead.
+
+For deleted stacks, `DescribeStackResources` returns resource information for up to 90 days after the stack has been deleted.
+
+You must specify either `StackName` or `PhysicalResourceId`, but not both. In addition, you can specify `LogicalResourceId` to filter the returned result. For more information about resources, the `LogicalResourceId` and `PhysicalResourceId`, go to the [CloudFormation User Guide](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/).
+
+A `ValidationError` is returned if you specify both `StackName` and `PhysicalResourceId` in the same request.>
+
+  take stack-name
+    like native-string
+    note <The name or the unique stack ID that is associated with the stack, which are not always interchangeable:
+
+- Running stacks: You can specify either the stack's name or its unique stack ID.
+
+- Deleted stacks: You must specify the unique stack ID.
+
+Default: There is no default value.
+
+Required: Conditional. If you do not specify `StackName`, you must specify `PhysicalResourceId`.>
+    void take
+  take logical-resource-id
+    like native-string
+    note <The logical name of the resource as specified in the template.
+
+Default: There is no default value.>
+    void take
+  take physical-resource-id
+    like native-string
+    note <The name or unique identifier that corresponds to a physical instance ID of a resource supported by CloudFormation.
+
+For example, for an Amazon Elastic Compute Cloud (EC2) instance, `PhysicalResourceId` corresponds to the `InstanceId`. You can pass the EC2 `InstanceId` to `DescribeStackResources` to find which stack the instance belongs to and what other resources are part of the stack.
+
+Required: Conditional. If you do not specify `PhysicalResourceId`, you must specify `StackName`.
+
+Default: There is no default value.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeStackResources>
+
+  find <StackName>, loan stack-name
+  find <LogicalResourceId>, loan logical-resource-id
+  find <PhysicalResourceId>, loan physical-resource-id
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-stack-resources-output
+    note <Success>

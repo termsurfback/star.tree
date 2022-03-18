@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/entity-temporarily-unmodifiable-exception
+  take form entity-temporarily-unmodifiable-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/invalid-user-type-exception
+  take form invalid-user-type-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/password-policy-violation-exception
+  take form password-policy-violation-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-change-password, name <POST_ChangePassword>
+  note <Changes the password of the IAM user who is calling this operation. This operation can be performed using the CLI, the Amazon Web Services API, or the **My Security Credentials** page in the Management Console. The account root user password is not affected by this operation.
+
+Use UpdateLoginProfile to use the CLI, the Amazon Web Services API, or the **Users** page in the IAM console to change the password for any IAM user. For more information about modifying passwords, see [Managing passwords](https://docs.aws.amazon.com/IAM/latest/UserGuide/Using_ManagingLogins.html) in the _IAM User Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take change-password-request, like change-password-request
+    void take
+
+  line </#Action=ChangePassword>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan change-password-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like invalid-user-type-exception
+    note <InvalidUserTypeException>
+  loot 482
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 483
+    seed xml, like entity-temporarily-unmodifiable-exception
+    note <EntityTemporarilyUnmodifiableException>
+  loot 484
+    seed xml, like password-policy-violation-exception
+    note <PasswordPolicyViolationException>
+  loot 485
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

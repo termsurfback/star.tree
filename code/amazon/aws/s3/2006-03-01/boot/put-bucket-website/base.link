@@ -1,0 +1,89 @@
+
+load @drumwork/snow/amazonaws.com/s3/2006-03-01/base/put-bucket-website-body
+  take form put-bucket-website-body
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-bucket-website, name <PutBucketWebsite>
+  note <Sets the configuration of the website that is specified in the `website` subresource. To configure a bucket as a website, you can add this subresource on the bucket with website configuration information such as the file name of the index document and any redirect rules. For more information, see [Hosting Websites on Amazon S3](https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html).
+
+This PUT action requires the `S3:PutBucketWebsite` permission. By default, only the bucket owner can configure the website attached to a bucket; however, bucket owners can allow other users to set the website configuration by writing a bucket policy that grants them the `S3:PutBucketWebsite` permission.
+
+To redirect all website requests sent to the bucket's website endpoint, you add a website configuration with the following elements. Because all requests are sent to another website, you don't need to provide index document name for the bucket.
+
+- `WebsiteConfiguration`
+
+- `RedirectAllRequestsTo`
+
+- `HostName`
+
+- `Protocol`
+
+If you want granular control over redirects, you can use the following elements to add routing rules that describe conditions for redirecting requests and information about the redirect destination. In this case, the website configuration must provide an index document for the bucket, because some requests might not be redirected.
+
+- `WebsiteConfiguration`
+
+- `IndexDocument`
+
+- `Suffix`
+
+- `ErrorDocument`
+
+- `Key`
+
+- `RoutingRules`
+
+- `RoutingRule`
+
+- `Condition`
+
+- `HttpErrorCodeReturnedEquals`
+
+- `KeyPrefixEquals`
+
+- `Redirect`
+
+- `Protocol`
+
+- `HostName`
+
+- `ReplaceKeyPrefixWith`
+
+- `ReplaceKeyWith`
+
+- `HttpRedirectCode`
+
+Amazon S3 has a limitation of 50 routing rules per website configuration. If you require more than 50 routing rules, you can use object redirect. For more information, see [Configuring an Object Redirect](https://docs.aws.amazon.com/AmazonS3/latest/dev/how-to-page-redirect.html) in the _Amazon S3 User Guide_.>
+
+  take bucket
+    like native-string
+    note <The bucket name.>
+  take content-md5
+    like native-string
+    note <The base64-encoded 128-bit MD5 digest of the data. You must use this header as a message integrity check to verify that the request body was not corrupted in transit. For more information, see [RFC 1864](http://www.ietf.org/rfc/rfc1864.txt).
+
+For requests made using the Amazon Web Services Command Line Interface (CLI) or Amazon Web Services SDKs, this field is calculated automatically.>
+    void take
+  take x-amz-expected-bucket-owner
+    like native-string
+    note <The account ID of the expected bucket owner. If the bucket is owned by a different account, the request will fail with an HTTP `403 (Access Denied)` error.>
+    void take
+  take website
+    like native-boolean
+  take put-bucket-website-body, like put-bucket-website-body
+
+  line </{bucket}#website>
+
+  hint <Content-MD5>, loan content-md5
+  hint <x-amz-expected-bucket-owner>, loan x-amz-expected-bucket-owner
+
+  find <website>, loan website
+
+  seed xml, loan put-bucket-website-body
+
+  loot 200
+    note <Success>

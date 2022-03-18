@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/delete-target-group-output
+  take form delete-target-group-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-target-group, name <POST_DeleteTargetGroup>
+  note <Deletes the specified target group.
+
+You can delete a target group if it is not referenced by any actions. Deleting a target group also deletes any associated health checks. Deleting a target group does not affect its registered targets. For example, any EC2 instances continue to run until you stop or terminate them.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-target-group-input, like delete-target-group-input
+    void take
+
+  line </#Action=DeleteTargetGroup>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-target-group-input
+
+  loot 200
+    seed xml, like delete-target-group-output
+    note <Success>
+  loot 480
+    seed xml, like resource-in-use-exception
+    note <ResourceInUseException>

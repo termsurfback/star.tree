@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/access-to-snapshot-denied-fault
+  take form access-to-snapshot-denied-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-snapshot-not-found-fault
+  take form cluster-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-snapshot-state-fault
+  take form invalid-cluster-snapshot-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/node-configuration-options-message
+  take form node-configuration-options-message
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-node-configuration-options, name <POST_DescribeNodeConfigurationOptions>
+  note <Returns properties of possible node configurations such as node type, number of nodes, and disk usage for the specified action type.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-node-configuration-options-message, like describe-node-configuration-options-message
+    void take
+
+  line </#Action=DescribeNodeConfigurationOptions>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-node-configuration-options-message
+
+  loot 200
+    seed xml, like node-configuration-options-message
+    note <Success>
+  loot 480
+    seed xml, like cluster-snapshot-not-found-fault
+    note <ClusterSnapshotNotFoundFault>
+  loot 481
+    seed xml, like invalid-cluster-snapshot-state-fault
+    note <InvalidClusterSnapshotStateFault>
+  loot 482
+    seed xml, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 483
+    seed xml, like access-to-snapshot-denied-fault
+    note <AccessToSnapshotDeniedFault>

@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/missing-parameter-value-exception
+  take form missing-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/untag-resource-body
+  take form untag-resource-body
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot untag-resource, name <UntagResource>
+  note <Removes a set of key-value pairs from a recovery point, backup plan, or backup vault identified by an Amazon Resource Name (ARN)>
+
+  take resource-arn
+    like native-string
+    note <An ARN that uniquely identifies a resource. The format of the ARN depends on the type of the tagged resource.>
+  take untag-resource-body, like untag-resource-body
+
+  line </untag/{resource-arn}>
+
+  seed json, loan untag-resource-body
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed json, like missing-parameter-value-exception
+    note <MissingParameterValueException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

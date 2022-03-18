@@ -1,0 +1,30 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_chat_v2/1.27.2/base/chat-v2-service-channel
+  take form chat-v2-service-channel
+
+load @drumwork/snow/twilio.com/twilio_chat_v2/1.27.2/base/create-channel-body
+  take form create-channel-body
+
+boot create-channel, name <CreateChannel>
+  take service-sid
+    like native-string
+    note <The SID of the \[Service\](https://www.twilio.com/docs/chat/rest/service-resource) to create the Channel resource under.>
+  take x-twilio-webhook-enabled
+    like native-string
+    note <The X-Twilio-Webhook-Enabled HTTP request header>
+    void take
+  take create-channel-body, like create-channel-body
+    void take
+
+  line </v2/Services/{service-sid}/Channels>
+
+  hint <X-Twilio-Webhook-Enabled>, loan x-twilio-webhook-enabled
+
+  seed x-www-form-urlencoded, loan create-channel-body
+
+  loot 201
+    seed json, like chat-v2-service-channel
+    note <Created>

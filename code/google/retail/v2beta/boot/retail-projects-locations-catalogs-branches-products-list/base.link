@@ -1,0 +1,43 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/retail/v2beta/base/google-cloud-retail-v2beta-list-products-response
+  take form google-cloud-retail-v2beta-list-products-response
+
+boot retail-projects-locations-catalogs-branches-products-list, name <retail.projects.locations.catalogs.branches.products.list>
+  note <Gets a list of Products.>
+
+  take parent
+    like native-string
+    note <Required. The parent branch resource name, such as `projects/*/locations/global/catalogs/default_catalog/branches/0`. Use `default_branch` as the branch ID, to list products under the default branch. If the caller does not have permission to list Products under this branch, regardless of whether or not this branch exists, a PERMISSION_DENIED error is returned.>
+  take filter
+    like native-string
+    note <A filter to apply on the list results. Supported features: * List all the products under the parent branch if filter is unset. * List Product.Type.VARIANT Products sharing the same Product.Type.PRIMARY Product. For example: `primary_product_id = "some_product_id"` * List Products bundled in a Product.Type.COLLECTION Product. For example: `collection_product_id = "some_product_id"` * List Products with a partibular type. For example: `type = "PRIMARY"` `type = "VARIANT"` `type = "COLLECTION"` If the field is unrecognizable, an INVALID_ARGUMENT error is returned. If the specified Product.Type.PRIMARY Product or Product.Type.COLLECTION Product does not exist, a NOT_FOUND error is returned.>
+    void take
+  take page-size
+    like native-integer
+    note <Maximum number of Products to return. If unspecified, defaults to 100. The maximum allowed value is 1000. Values above 1000 will be coerced to 1000. If this field is negative, an INVALID_ARGUMENT error is returned.>
+    void take
+  take page-token
+    like native-string
+    note <A page token ListProductsResponse.next_page_token, received from a previous ProductService.ListProducts call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to ProductService.ListProducts must match the call that provided the page token. Otherwise, an INVALID_ARGUMENT error is returned.>
+    void take
+  take read-mask
+    like native-string
+    note <The fields of Product to return in the responses. If not set or empty, the following fields are returned: * Product.name * Product.id * Product.title * Product.uri * Product.images * Product.price_info * Product.brands If "*" is provided, all fields are returned. Product.name is always returned no matter what mask is set. If an unsupported or unknown field is provided, an INVALID_ARGUMENT error is returned.>
+    void take
+
+  line </v2beta/{parent}/products>
+
+  find <filter>, loan filter
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+  find <readMask>, loan read-mask
+
+  loot 200
+    seed json, like google-cloud-retail-v2beta-list-products-response
+    note <Successful response>

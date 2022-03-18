@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/describe-certificate-response
+  take form describe-certificate-response
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/invalid-arn-exception
+  take form invalid-arn-exception
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-certificate, name <DescribeCertificate>
+  note <Returns detailed metadata about the specified ACM certificate.>
+
+  take x-amz-target
+    like native-string
+  take describe-certificate-request, like describe-certificate-request
+
+  line </#X-Amz-Target=CertificateManager.DescribeCertificate>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-certificate-request
+
+  loot 200
+    seed json, like describe-certificate-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-arn-exception
+    note <InvalidArnException>

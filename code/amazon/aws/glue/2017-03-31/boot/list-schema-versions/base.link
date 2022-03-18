@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/entity-not-found-exception
+  take form entity-not-found-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/list-schema-versions-response
+  take form list-schema-versions-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-schema-versions, name <ListSchemaVersions>
+  note <Returns a list of schema versions that you have created, with minimal information. Schema versions in Deleted status will not be included in the results. Empty results will be returned if there are no schema versions available.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-schema-versions-input, like list-schema-versions-input
+
+  line </#X-Amz-Target=AWSGlue.ListSchemaVersions>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-schema-versions-input
+
+  loot 200
+    seed json, like list-schema-versions-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like entity-not-found-exception
+    note <EntityNotFoundException>
+  loot 483
+    seed json, like internal-service-exception
+    note <InternalServiceException>

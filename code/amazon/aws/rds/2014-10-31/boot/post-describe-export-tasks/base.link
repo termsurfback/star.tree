@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/export-task-not-found-fault
+  take form export-task-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/export-tasks-message
+  take form export-tasks-message
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-export-tasks, name <POST_DescribeExportTasks>
+  note <Returns information about a snapshot export to Amazon S3. This API operation supports pagination.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-export-tasks-message, like describe-export-tasks-message
+    void take
+
+  line </#Action=DescribeExportTasks>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-export-tasks-message
+
+  loot 200
+    seed xml, like export-tasks-message
+    note <Success>
+  loot 480
+    seed xml, like export-task-not-found-fault
+    note <ExportTaskNotFoundFault>

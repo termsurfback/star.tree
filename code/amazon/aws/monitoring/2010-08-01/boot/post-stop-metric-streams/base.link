@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/internal-service-fault
+  take form internal-service-fault
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/missing-required-parameter-exception
+  take form missing-required-parameter-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/stop-metric-streams-output
+  take form stop-metric-streams-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-stop-metric-streams, name <POST_StopMetricStreams>
+  note <Stops the streaming of metrics for one or more of your metric streams.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take stop-metric-streams-input, like stop-metric-streams-input
+    void take
+
+  line </#Action=StopMetricStreams>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan stop-metric-streams-input
+
+  loot 200
+    seed xml, like stop-metric-streams-output
+    note <Success>
+  loot 480
+    seed xml, like internal-service-fault
+    note <InternalServiceFault>
+  loot 481
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed xml, like missing-required-parameter-exception
+    note <MissingRequiredParameterException>

@@ -1,0 +1,93 @@
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/boolean-optional
+  take form boolean-optional
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/integer-optional
+  take form integer-optional
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/kafka-security-protocol
+  take form kafka-security-protocol
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/message-format-value
+  take form message-format-value
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/secret-string
+  take form secret-string
+
+load @drumwork/snow/base/string
+  take form string
+
+form kafka-settings, name <KafkaSettings>
+  note <Provides information that describes an Apache Kafka endpoint. This information includes the output format of records applied to the endpoint and details of transaction and control table data information.>
+  take broker, name <Broker>
+    like string
+    void take
+    note <A comma-separated list of one or more broker locations in your Kafka cluster that host your Kafka instance. Specify each broker location in the form `_broker-hostname-or-ip_:_port_` . For example, `"ec2-12-345-678-901.compute-1.amazonaws.com:2345"`. For more information and examples of specifying a list of broker locations, see [Using Apache Kafka as a target for Database Migration Service](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Target.Kafka.html) in the _Database Migration Service User Guide_.>
+  take topic, name <Topic>
+    like string
+    void take
+    note <The topic to which you migrate the data. If you don't specify a topic, DMS specifies `"kafka-default-topic"` as the migration topic.>
+  take message-format, name <MessageFormat>
+    like message-format-value
+    void take
+    note <The output format for the records created on the endpoint. The message format is `JSON` (default) or `JSON_UNFORMATTED` (a single line with no tab).>
+  take include-transaction-details, name <IncludeTransactionDetails>
+    like boolean-optional
+    void take
+    note <Provides detailed transaction information from the source database. This information includes a commit timestamp, a log position, and values for `transaction_id`, previous `transaction_id`, and `transaction_record_id` (the record offset within a transaction). The default is `false`.>
+  take include-partition-value, name <IncludePartitionValue>
+    like boolean-optional
+    void take
+    note <Shows the partition value within the Kafka message output unless the partition type is `schema-table-type`. The default is `false`.>
+  take partition-include-schema-table, name <PartitionIncludeSchemaTable>
+    like boolean-optional
+    void take
+    note <Prefixes schema and table names to partition values, when the partition type is `primary-key-type`. Doing this increases data distribution among Kafka partitions. For example, suppose that a SysBench schema has thousands of tables and each table has only limited range for a primary key. In this case, the same primary key is sent from thousands of tables to the same partition, which causes throttling. The default is `false`.>
+  take include-table-alter-operations, name <IncludeTableAlterOperations>
+    like boolean-optional
+    void take
+    note <Includes any data definition language (DDL) operations that change the table in the control data, such as `rename-table`, `drop-table`, `add-column`, `drop-column`, and `rename-column`. The default is `false`.>
+  take include-control-details, name <IncludeControlDetails>
+    like boolean-optional
+    void take
+    note <Shows detailed control information for table definition, column definition, and table and column changes in the Kafka message output. The default is `false`.>
+  take message-max-bytes, name <MessageMaxBytes>
+    like integer-optional
+    void take
+    note <The maximum size in bytes for records created on the endpoint The default is 1,000,000.>
+  take include-null-and-empty, name <IncludeNullAndEmpty>
+    like boolean-optional
+    void take
+    note <Include NULL and empty columns for records migrated to the endpoint. The default is `false`.>
+  take security-protocol, name <SecurityProtocol>
+    like kafka-security-protocol
+    void take
+    note <Set secure connection to a Kafka target endpoint using Transport Layer Security (TLS). Options include `ssl-encryption`, `ssl-authentication`, and `sasl-ssl`. `sasl-ssl` requires `SaslUsername` and `SaslPassword`.>
+  take ssl-client-certificate-arn, name <SslClientCertificateArn>
+    like string
+    void take
+    note <The Amazon Resource Name (ARN) of the client certificate used to securely connect to a Kafka target endpoint.>
+  take ssl-client-key-arn, name <SslClientKeyArn>
+    like string
+    void take
+    note <The Amazon Resource Name (ARN) for the client private key used to securely connect to a Kafka target endpoint.>
+  take ssl-client-key-password, name <SslClientKeyPassword>
+    like secret-string
+    void take
+    note <The password for the client private key used to securely connect to a Kafka target endpoint.>
+  take ssl-ca-certificate-arn, name <SslCaCertificateArn>
+    like string
+    void take
+    note <The Amazon Resource Name (ARN) for the private certificate authority (CA) cert that DMS uses to securely connect to your Kafka target endpoint.>
+  take sasl-username, name <SaslUsername>
+    like string
+    void take
+    note <The secure user name you created when you first set up your MSK cluster to validate a client identity and make an encrypted connection between server and client using SASL-SSL authentication.>
+  take sasl-password, name <SaslPassword>
+    like secret-string
+    void take
+    note <The secure password you created when you first set up your MSK cluster to validate a client identity and make an encrypted connection between server and client using SASL-SSL authentication.>
+  take no-hex-prefix, name <NoHexPrefix>
+    like boolean-optional
+    void take
+    note <Set this optional parameter to `true` to avoid adding a '0x' prefix to raw data in hexadecimal format. For example, by default, DMS adds a '0x' prefix to the LOB column type in hexadecimal format moving from an Oracle source to a Kafka target. Use the `NoHexPrefix` endpoint setting to enable migration of RAW data type columns without adding the '0x' prefix.>

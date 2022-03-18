@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/cloudtasks/v2/base/list-tasks-response
+  take form list-tasks-response
+
+boot cloudtasks-projects-locations-queues-tasks-list, name <cloudtasks.projects.locations.queues.tasks.list>
+  note <Lists the tasks in a queue. By default, only the BASIC view is retrieved due to performance considerations; response_view controls the subset of information which is returned. The tasks may be returned in any order. The ordering may change at any time.>
+
+  take parent
+    like native-string
+    note <Required. The queue name. For example: `projects/PROJECT_ID/locations/LOCATION_ID/queues/QUEUE_ID`>
+  take page-size
+    like native-integer
+    note <Maximum page size. Fewer tasks than requested might be returned, even if more tasks exist; use next_page_token in the response to determine if more tasks exist. The maximum page size is 1000. If unspecified, the page size will be the maximum.>
+    void take
+  take page-token
+    like native-string
+    note <A token identifying the page of results to return. To request the first page results, page_token must be empty. To request the next page of results, page_token must be the value of next_page_token returned from the previous call to ListTasks method. The page token is valid for only 2 hours.>
+    void take
+  take response-view
+    like native-string
+    note <The response_view specifies which subset of the Task will be returned. By default response_view is BASIC; not all information is retrieved by default because some data, such as payloads, might be desirable to return only when needed because of its large size or because of the sensitivity of data that it contains. Authorization for FULL requires `cloudtasks.tasks.fullView` [Google IAM](https://cloud.google.com/iam/) permission on the Task resource.>
+    void take
+
+  line </v2/{parent}/tasks>
+
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+  find <responseView>, loan response-view
+
+  loot 200
+    seed json, like list-tasks-response
+    note <Successful response>

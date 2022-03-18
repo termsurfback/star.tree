@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/add-instance-fleet-output
+  take form add-instance-fleet-output
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot add-instance-fleet, name <AddInstanceFleet>
+  note <Adds an instance fleet to a running cluster.
+
+The instance fleet configuration is available only in Amazon EMR versions 4.8.0 and later, excluding 5.0.x.>
+
+  take x-amz-target
+    like native-string
+  take add-instance-fleet-input, like add-instance-fleet-input
+
+  line </#X-Amz-Target=ElasticMapReduce.AddInstanceFleet>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan add-instance-fleet-input
+
+  loot 200
+    seed json, like add-instance-fleet-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

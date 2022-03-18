@@ -1,0 +1,132 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/date-time
+  take form date-time
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-scheduled-instance-availability-result
+  take form describe-scheduled-instance-availability-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/occurrence-day-request-set
+  take form occurrence-day-request-set
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/integer
+  take form integer
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-describe-scheduled-instance-availability, name <GET_DescribeScheduledInstanceAvailability>
+  note <Finds available schedules that meet the specified criteria.
+
+You can search for an available schedule no more than 3 months in advance. You must meet the minimum required duration of 1,200 hours per year. For example, the minimum daily schedule is 4 hours, the minimum weekly schedule is 24 hours, and the minimum monthly schedule is 100 hours.
+
+After you find a schedule that meets your needs, call PurchaseScheduledInstances to purchase Scheduled Instances with that schedule.>
+
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take filter
+    like list
+      like filter
+    note <The filters.
+
+- `availability-zone` - The Availability Zone (for example, `us-west-2a`).
+
+- `instance-type` - The instance type (for example, `c4.large`).
+
+- `network-platform` - The network platform (`EC2-Classic` or `EC2-VPC`).
+
+- `platform` - The platform (`Linux/UNIX` or `Windows`).>
+    void take
+  take first-slot-start-time-range
+    like form
+      take earliest-time, name <EarliestTime>
+        like date-time
+        note <The earliest date and time, in UTC, for the Scheduled Instance to start.>
+      take latest-time, name <LatestTime>
+        like date-time
+        note <The latest date and time, in UTC, for the Scheduled Instance to start. This value must be later than or equal to the earliest date and at most three months in the future.>
+    note <The time period for the first schedule to start.>
+  take max-results
+    like native-integer
+    note <The maximum number of results to return in a single call. This value can be between 5 and 300. The default value is 300. To retrieve the remaining results, make another call with the returned `NextToken` value.>
+    void take
+  take max-slot-duration-in-hours
+    like native-integer
+    note <The maximum available duration, in hours. This value must be greater than `MinSlotDurationInHours` and less than 1,720.>
+    void take
+  take min-slot-duration-in-hours
+    like native-integer
+    note <The minimum available duration, in hours. The minimum required duration is 1,200 hours per year. For example, the minimum daily schedule is 4 hours, the minimum weekly schedule is 24 hours, and the minimum monthly schedule is 100 hours.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next set of results.>
+    void take
+  take recurrence
+    like form
+      take frequency, name <Frequency>
+        like string
+        void take
+        note <The frequency (`Daily`, `Weekly`, or `Monthly`).>
+      take interval, name <Interval>
+        like integer
+        void take
+        note <The interval quantity. The interval unit depends on the value of `Frequency`. For example, every 2 weeks or every 2 months.>
+      take occurrence-days, name <OccurrenceDays>
+        like occurrence-day-request-set
+        void take
+        note <The days. For a monthly schedule, this is one or more days of the month (1-31). For a weekly schedule, this is one or more days of the week (1-7, where 1 is Sunday). You can't specify this value with a daily schedule. If the occurrence is relative to the end of the month, you can specify only a single day.>
+        host xml
+          host name, text <OccurrenceDay>
+      take occurrence-relative-to-end, name <OccurrenceRelativeToEnd>
+        like boolean
+        void take
+        note <Indicates whether the occurrence is relative to the end of the specified week or month. You can't specify this value with a daily schedule.>
+      take occurrence-unit, name <OccurrenceUnit>
+        like string
+        void take
+        note <The unit for `OccurrenceDays` (`DayOfWeek` or `DayOfMonth`). This value is required for a monthly schedule. You can't specify `DayOfWeek` with a weekly schedule. You can't specify this value with a daily schedule.>
+    note <The schedule recurrence.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeScheduledInstanceAvailability>
+
+  find <DryRun>, loan dry-run
+  find <Filter>, loan filter
+  find <FirstSlotStartTimeRange>, loan first-slot-start-time-range
+  find <MaxResults>, loan max-results
+  find <MaxSlotDurationInHours>, loan max-slot-duration-in-hours
+  find <MinSlotDurationInHours>, loan min-slot-duration-in-hours
+  find <NextToken>, loan next-token
+  find <Recurrence>, loan recurrence
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-scheduled-instance-availability-result
+    note <Success>

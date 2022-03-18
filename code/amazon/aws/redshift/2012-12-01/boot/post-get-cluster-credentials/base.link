@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-credentials
+  take form cluster-credentials
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unsupported-operation-fault
+  take form unsupported-operation-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-get-cluster-credentials, name <POST_GetClusterCredentials>
+  note <Returns a database user name and temporary password with temporary authorization to log on to an Amazon Redshift database. The action returns the database user name prefixed with `IAM:` if `AutoCreate` is `False` or `IAMA:` if `AutoCreate` is `True`. You can optionally specify one or more database user groups that the user will join at log on. By default, the temporary credentials expire in 900 seconds. You can optionally specify a duration between 900 seconds (15 minutes) and 3600 seconds (60 minutes). For more information, see [Using IAM Authentication to Generate Database User Credentials](https://docs.aws.amazon.com/redshift/latest/mgmt/generating-user-credentials.html) in the Amazon Redshift Cluster Management Guide.
+
+The Identity and Access Management (IAM) user or role that runs GetClusterCredentials must have an IAM policy attached that allows access to all necessary actions and resources. For more information about permissions, see [Resource Policies for GetClusterCredentials](https://docs.aws.amazon.com/redshift/latest/mgmt/redshift-iam-access-control-identity-based.html#redshift-policy-resources.getclustercredentials-resources) in the Amazon Redshift Cluster Management Guide.
+
+If the `DbGroups` parameter is specified, the IAM policy must allow the `redshift:JoinGroup` action with access to the listed `dbgroups`.
+
+In addition, if the `AutoCreate` parameter is set to `True`, then the policy must include the `redshift:CreateClusterUser` privilege.
+
+If the `DbName` parameter is specified, the IAM policy must allow access to the resource `dbname` for the specified database name.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take get-cluster-credentials-message, like get-cluster-credentials-message
+    void take
+
+  line </#Action=GetClusterCredentials>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan get-cluster-credentials-message
+
+  loot 200
+    seed xml, like cluster-credentials
+    note <Success>
+  loot 480
+    seed xml, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 481
+    seed xml, like unsupported-operation-fault
+    note <UnsupportedOperationFault>

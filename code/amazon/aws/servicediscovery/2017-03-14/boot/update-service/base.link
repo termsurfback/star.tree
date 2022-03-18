@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/duplicate-request
+  take form duplicate-request
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/service-not-found
+  take form service-not-found
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/update-service-response
+  take form update-service-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-service, name <UpdateService>
+  note <Submits a request to perform the following operations:
+
+- Update the TTL setting for existing `DnsRecords` configurations
+
+- Add, update, or delete `HealthCheckConfig` for a specified service
+
+  You can't add, update, or delete a `HealthCheckCustomConfig` configuration.
+
+For public and private DNS namespaces, note the following:
+
+- If you omit any existing `DnsRecords` or `HealthCheckConfig` configurations from an `UpdateService` request, the configurations are deleted from the service.
+
+- If you omit an existing `HealthCheckCustomConfig` configuration from an `UpdateService` request, the configuration isn't deleted from the service.
+
+When you update settings for a service, Cloud Map also updates the corresponding settings in all the records and health checks that were created by using the specified service.>
+
+  take x-amz-target
+    like native-string
+  take update-service-request, like update-service-request
+
+  line </#X-Amz-Target=Route53AutoNaming_v20170314.UpdateService>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-service-request
+
+  loot 200
+    seed json, like update-service-response
+    note <Success>
+  loot 480
+    seed json, like duplicate-request
+    note <DuplicateRequest>
+  loot 481
+    seed json, like invalid-input
+    note <InvalidInput>
+  loot 482
+    seed json, like service-not-found
+    note <ServiceNotFound>

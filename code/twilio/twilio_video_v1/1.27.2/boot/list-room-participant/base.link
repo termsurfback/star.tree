@@ -1,0 +1,63 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-room-participant, name <ListRoomParticipant>
+  take room-sid
+    like native-string
+    note <The SID of the room with the Participant resources to read.>
+  take status
+    like native-string
+    note <Read only the participants with this status. Can be: \`connected\` or \`disconnected\`. For \`in-progress\` Rooms the default Status is \`connected\`, for \`completed\` Rooms only \`disconnected\` Participants are returned.>
+    void take
+  take identity
+    like native-string
+    note <Read only the Participants with this \[User\](https://www.twilio.com/docs/chat/rest/user-resource) \`identity\` value.>
+    void take
+  take date-created-after
+    like native-string
+    note <Read only Participants that started after this date in \[ISO 8601\](https://en.wikipedia.org/wiki/ISO\_8601#UTC) format.>
+    void take
+  take date-created-before
+    like native-string
+    note <Read only Participants that started before this date in \[ISO 8601\](https://en.wikipedia.org/wiki/ISO\_8601#UTC) format.>
+    void take
+  take page-size
+    like native-integer
+    note <How many resources to return in each list page. The default is 50, and the maximum is 1000.>
+    void take
+
+  line </v1/Rooms/{room-sid}/Participants>
+
+  find <Status>, loan status
+  find <Identity>, loan identity
+  find <DateCreatedAfter>, loan date-created-after
+  find <DateCreatedBefore>, loan date-created-before
+  find <PageSize>, loan page-size
+
+  loot 200
+    seed json
+      like form
+        like take meta, name <meta>
+        like   like form
+        like     take first-page-url, name <first_page_url>
+        like       void take
+        like     take key, name <key>
+        like       void take
+        like     take next-page-url, name <next_page_url>
+        like       void take
+        like     take page, name <page>
+        like       void take
+        like     take page-size, name <page_size>
+        like       void take
+        like     take previous-page-url, name <previous_page_url>
+        like       void take
+        like     take url, name <url>
+        like       void take
+        like   void take
+        like take participants, name <participants>
+        like   void take
+    note <OK>

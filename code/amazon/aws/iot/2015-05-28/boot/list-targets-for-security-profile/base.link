@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/list-targets-for-security-profile-response
+  take form list-targets-for-security-profile-response
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-targets-for-security-profile, name <ListTargetsForSecurityProfile>
+  note <Lists the targets (thing groups) associated with a given Device Defender security profile.
+
+Requires permission to access the [ListTargetsForSecurityProfile](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiot.html#awsiot-actions-as-permissions) action.>
+
+  take security-profile-name
+    like native-string
+    note <The security profile.>
+  take next-token
+    like native-string
+    note <The token for the next set of results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return at one time.>
+    void take
+
+  line </security-profiles/{security-profile-name}/targets>
+
+  find <nextToken>, loan next-token
+  find <maxResults>, loan max-results
+
+  loot 200
+    seed json, like list-targets-for-security-profile-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

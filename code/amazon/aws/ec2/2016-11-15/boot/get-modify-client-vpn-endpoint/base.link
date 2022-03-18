@@ -1,0 +1,151 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/modify-client-vpn-endpoint-result
+  take form modify-client-vpn-endpoint-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/security-group-id
+  take form security-group-id
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/value-string-list
+  take form value-string-list
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-modify-client-vpn-endpoint, name <GET_ModifyClientVpnEndpoint>
+  note <Modifies the specified Client VPN endpoint. Modifying the DNS server resets existing client connections.>
+
+  take client-vpn-endpoint-id
+    like native-string
+    note <The ID of the Client VPN endpoint to modify.>
+  take server-certificate-arn
+    like native-string
+    note <The ARN of the server certificate to be used. The server certificate must be provisioned in AWS Certificate Manager (ACM).>
+    void take
+  take connection-log-options
+    like form
+      take enabled, name <Enabled>
+        like boolean
+        void take
+        note <Indicates whether connection logging is enabled.>
+      take cloudwatch-log-group, name <CloudwatchLogGroup>
+        like string
+        void take
+        note <The name of the CloudWatch Logs log group. Required if connection logging is enabled.>
+      take cloudwatch-log-stream, name <CloudwatchLogStream>
+        like string
+        void take
+        note <The name of the CloudWatch Logs log stream to which the connection data is published.>
+    note <Information about the client connection logging options.
+
+If you enable client connection logging, data about client connections is sent to a Cloudwatch Logs log stream. The following information is logged:
+
+- Client connection requests
+
+- Client connection results (successful and unsuccessful)
+
+- Reasons for unsuccessful client connection requests
+
+- Client connection termination time>
+    void take
+  take dns-servers
+    like form
+      take custom-dns-servers, name <CustomDnsServers>
+        like value-string-list
+        void take
+        note <The IPv4 address range, in CIDR notation, of the DNS servers to be used. You can specify up to two DNS servers. Ensure that the DNS servers can be reached by the clients. The specified values overwrite the existing values.>
+      take enabled, name <Enabled>
+        like boolean
+        void take
+        note <Indicates whether DNS servers should be used. Specify `False` to delete the existing DNS servers.>
+    note <Information about the DNS servers to be used by Client VPN connections. A Client VPN endpoint can have up to two DNS servers.>
+    void take
+  take vpn-port
+    like native-integer
+    note <The port number to assign to the Client VPN endpoint for TCP and UDP traffic.
+
+Valid Values: `443` | `1194`
+
+Default Value: `443`>
+    void take
+  take description
+    like native-string
+    note <A brief description of the Client VPN endpoint.>
+    void take
+  take split-tunnel
+    like native-boolean
+    note <Indicates whether the VPN is split-tunnel.
+
+For information about split-tunnel VPN endpoints, see [Split-Tunnel AWS Client VPN Endpoint](https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/split-tunnel-vpn.html) in the _AWS Client VPN Administrator Guide_.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take security-group-id
+    like list
+      like security-group-id
+    note <The IDs of one or more security groups to apply to the target network.>
+    void take
+  take vpc-id
+    like native-string
+    note <The ID of the VPC to associate with the Client VPN endpoint.>
+    void take
+  take self-service-portal
+    like native-string
+    note <Specify whether to enable the self-service portal for the Client VPN endpoint.>
+    void take
+  take client-connect-options
+    like form
+      take enabled, name <Enabled>
+        like boolean
+        void take
+        note <Indicates whether client connect options are enabled. The default is `false` (not enabled).>
+      take lambda-function-arn, name <LambdaFunctionArn>
+        like string
+        void take
+        note <The Amazon Resource Name (ARN) of the AWS Lambda function used for connection authorization.>
+    note <The options for managing connection authorization for new client connections.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyClientVpnEndpoint>
+
+  find <ClientVpnEndpointId>, loan client-vpn-endpoint-id
+  find <ServerCertificateArn>, loan server-certificate-arn
+  find <ConnectionLogOptions>, loan connection-log-options
+  find <DnsServers>, loan dns-servers
+  find <VpnPort>, loan vpn-port
+  find <Description>, loan description
+  find <SplitTunnel>, loan split-tunnel
+  find <DryRun>, loan dry-run
+  find <SecurityGroupId>, loan security-group-id
+  find <VpcId>, loan vpc-id
+  find <SelfServicePortal>, loan self-service-portal
+  find <ClientConnectOptions>, loan client-connect-options
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-client-vpn-endpoint-result
+    note <Success>

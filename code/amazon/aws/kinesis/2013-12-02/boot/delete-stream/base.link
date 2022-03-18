@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-stream, name <DeleteStream>
+  note <Deletes a Kinesis data stream and all its shards and data. You must shut down any applications that are operating on the stream before you delete the stream. If an application attempts to operate on a deleted stream, it receives the exception `ResourceNotFoundException`.
+
+If the stream is in the `ACTIVE` state, you can delete it. After a `DeleteStream` request, the specified stream is in the `DELETING` state until Kinesis Data Streams completes the deletion.
+
+**Note:** Kinesis Data Streams might continue to accept data read and write operations, such as PutRecord, PutRecords, and GetRecords, on a stream in the `DELETING` state until the stream deletion is complete.
+
+When you delete a stream, any shards in that stream are also deleted, and any tags are dissociated from the stream.
+
+You can use the DescribeStream operation to check the state of the stream, which is returned in `StreamStatus`.
+
+DeleteStream has a limit of five transactions per second per account.>
+
+  take x-amz-target
+    like native-string
+  take delete-stream-input, like delete-stream-input
+
+  line </#X-Amz-Target=Kinesis_20131202.DeleteStream>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-stream-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>

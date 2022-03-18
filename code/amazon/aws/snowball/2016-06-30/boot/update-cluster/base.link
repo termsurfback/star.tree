@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/ec2-request-failed-exception
+  take form ec2-request-failed-exception
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/invalid-input-combination-exception
+  take form invalid-input-combination-exception
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/invalid-job-state-exception
+  take form invalid-job-state-exception
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/invalid-resource-exception
+  take form invalid-resource-exception
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/kms-request-failed-exception
+  take form kms-request-failed-exception
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/update-cluster-result
+  take form update-cluster-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-cluster, name <UpdateCluster>
+  note <While a cluster's `ClusterState` value is in the `AwaitingQuorum` state, you can update some of the information associated with a cluster. Once the cluster changes to a different job state, usually 60 minutes after the cluster being created, this action is no longer available.>
+
+  take x-amz-target
+    like native-string
+  take update-cluster-request, like update-cluster-request
+
+  line </#X-Amz-Target=AWSIESnowballJobManagementService.UpdateCluster>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-cluster-request
+
+  loot 200
+    seed json, like update-cluster-result
+    note <Success>
+  loot 480
+    seed json, like invalid-resource-exception
+    note <InvalidResourceException>
+  loot 481
+    seed json, like invalid-job-state-exception
+    note <InvalidJobStateException>
+  loot 482
+    seed json, like kms-request-failed-exception
+    note <KMSRequestFailedException>
+  loot 483
+    seed json, like invalid-input-combination-exception
+    note <InvalidInputCombinationException>
+  loot 484
+    seed json, like ec2-request-failed-exception
+    note <Ec2RequestFailedException>

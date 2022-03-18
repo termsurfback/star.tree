@@ -1,0 +1,84 @@
+
+load @drumwork/snow/amazonaws.com/ebs/2019-11-02/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/ebs/2019-11-02/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/ebs/2019-11-02/base/list-snapshot-blocks-response
+  take form list-snapshot-blocks-response
+
+load @drumwork/snow/amazonaws.com/ebs/2019-11-02/base/request-throttled-exception
+  take form request-throttled-exception
+
+load @drumwork/snow/amazonaws.com/ebs/2019-11-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ebs/2019-11-02/base/service-quota-exceeded-exception
+  take form service-quota-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/ebs/2019-11-02/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-snapshot-blocks, name <ListSnapshotBlocks>
+  note <Returns information about the blocks in an Amazon Elastic Block Store snapshot.>
+
+  take snapshot-id
+    like native-string
+    note <The ID of the snapshot from which to get block indexes and block tokens.>
+  take page-token
+    like native-string
+    note <The token to request the next page of results.>
+    void take
+  take max-results
+    like native-integer
+    note <The number of results to return.>
+    void take
+  take starting-block-index
+    like native-integer
+    note <The block index from which the list should start. The list in the response will start from this block index or the next valid block index in the snapshot.>
+    void take
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+
+  line </snapshots/{snapshot-id}/blocks>
+
+  find <pageToken>, loan page-token
+  find <maxResults>, loan max-results
+  find <startingBlockIndex>, loan starting-block-index
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like list-snapshot-blocks-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like request-throttled-exception
+    note <RequestThrottledException>
+  loot 484
+    seed json, like service-quota-exceeded-exception
+    note <ServiceQuotaExceededException>
+  loot 485
+    seed json, like internal-server-exception
+    note <InternalServerException>

@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-state-fault
+  take form invalid-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/resize-not-found-fault
+  take form resize-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/resize-progress-message
+  take form resize-progress-message
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unsupported-operation-fault
+  take form unsupported-operation-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-cancel-resize, name <POST_CancelResize>
+  note <Cancels a resize operation for a cluster.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take cancel-resize-message, like cancel-resize-message
+    void take
+
+  line </#Action=CancelResize>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan cancel-resize-message
+
+  loot 200
+    seed xml, like resize-progress-message
+    note <Success>
+  loot 480
+    seed xml, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 481
+    seed xml, like resize-not-found-fault
+    note <ResizeNotFoundFault>
+  loot 482
+    seed xml, like invalid-cluster-state-fault
+    note <InvalidClusterStateFault>
+  loot 483
+    seed xml, like unsupported-operation-fault
+    note <UnsupportedOperationFault>

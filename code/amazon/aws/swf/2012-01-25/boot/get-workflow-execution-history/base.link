@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/history
+  take form history
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/operation-not-permitted-fault
+  take form operation-not-permitted-fault
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/unknown-resource-fault
+  take form unknown-resource-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-workflow-execution-history, name <GetWorkflowExecutionHistory>
+  note <Returns the history of the specified workflow execution. The results may be split into multiple pages. To retrieve subsequent pages, make the call again using the `nextPageToken` returned by the initial call.
+
+This operation is eventually consistent. The results are best effort and may not exactly reflect recent updates and changes.
+
+**Access Control** You can use IAM policies to control this action's access to Amazon SWF resources as follows:
+
+- Use a `Resource` element with the domain name to limit the action to only specified domains.
+
+- Use an `Action` element to allow or deny permission to call this action.
+
+- You cannot use an IAM policy to constrain this action's parameters.
+
+If the caller doesn't have sufficient permissions to invoke the action, or the parameter values fall outside the specified constraints, the action fails. The associated event attribute's `cause` parameter is set to `OPERATION_NOT_PERMITTED`. For details and example IAM policies, see [Using IAM to Manage Access to Amazon SWF Workflows](https://docs.aws.amazon.com/amazonswf/latest/developerguide/swf-dev-iam.html) in the _Amazon SWF Developer Guide_.>
+
+  take x-amz-target
+    like native-string
+  take maximum-page-size
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-page-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-workflow-execution-history-input, like get-workflow-execution-history-input
+
+  line </#X-Amz-Target=SimpleWorkflowService.GetWorkflowExecutionHistory>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maximumPageSize>, loan maximum-page-size
+  find <nextPageToken>, loan next-page-token
+
+  seed json, loan get-workflow-execution-history-input
+
+  loot 200
+    seed json, like history
+    note <Success>
+  loot 480
+    seed json, like unknown-resource-fault
+    note <UnknownResourceFault>
+  loot 481
+    seed json, like operation-not-permitted-fault
+    note <OperationNotPermittedFault>

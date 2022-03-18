@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/create-provisioning-artifact-output
+  take form create-provisioning-artifact-output
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/invalid-parameters-exception
+  take form invalid-parameters-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-provisioning-artifact, name <CreateProvisioningArtifact>
+  note <Creates a provisioning artifact (also known as a version) for the specified product.
+
+You cannot create a provisioning artifact for a product that was shared with you.
+
+The user or role that performs this operation must have the `cloudformation:GetTemplate` IAM policy permission. This policy permission is required when using the `ImportFromPhysicalId` template source in the information data section.>
+
+  take x-amz-target
+    like native-string
+  take create-provisioning-artifact-input, like create-provisioning-artifact-input
+
+  line </#X-Amz-Target=AWS242ServiceCatalogService.CreateProvisioningArtifact>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-provisioning-artifact-input
+
+  loot 200
+    seed json, like create-provisioning-artifact-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-parameters-exception
+    note <InvalidParametersException>
+  loot 482
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>

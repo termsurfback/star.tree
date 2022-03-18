@@ -1,0 +1,29 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/create-context-response
+  take form create-context-response
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-limit-exceeded
+  take form resource-limit-exceeded
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-context, name <CreateContext>
+  note <Creates a _context_. A context is a lineage tracking entity that represents a logical grouping of other tracking or experiment entities. Some examples are an endpoint and a model package. For more information, see [Amazon SageMaker ML Lineage Tracking](https://docs.aws.amazon.com/sagemaker/latest/dg/lineage-tracking.html).>
+
+  take x-amz-target
+    like native-string
+  take create-context-request, like create-context-request
+
+  line </#X-Amz-Target=SageMaker.CreateContext>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-context-request
+
+  loot 200
+    seed json, like create-context-response
+    note <Success>
+  loot 480
+    seed json, like resource-limit-exceeded
+    note <ResourceLimitExceeded>

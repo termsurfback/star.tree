@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/cognito-idp/2016-04-18/base/admin-set-user-password-response
+  take form admin-set-user-password-response
+
+load @drumwork/snow/amazonaws.com/cognito-idp/2016-04-18/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/cognito-idp/2016-04-18/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/cognito-idp/2016-04-18/base/invalid-password-exception
+  take form invalid-password-exception
+
+load @drumwork/snow/amazonaws.com/cognito-idp/2016-04-18/base/not-authorized-exception
+  take form not-authorized-exception
+
+load @drumwork/snow/amazonaws.com/cognito-idp/2016-04-18/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/cognito-idp/2016-04-18/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/amazonaws.com/cognito-idp/2016-04-18/base/user-not-found-exception
+  take form user-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot admin-set-user-password, name <AdminSetUserPassword>
+  note <Sets the specified user's password in a user pool as an administrator. Works on any user.
+
+The password can be temporary or permanent. If it is temporary, the user status will be placed into the `FORCE_CHANGE_PASSWORD` state. When the user next tries to sign in, the InitiateAuth/AdminInitiateAuth response will contain the `NEW_PASSWORD_REQUIRED` challenge. If the user does not sign in before it expires, the user will not be able to sign in and their password will need to be reset by an administrator.
+
+Once the user has set a new password, or the password is permanent, the user status will be set to `Confirmed`.>
+
+  take x-amz-target
+    like native-string
+  take admin-set-user-password-request, like admin-set-user-password-request
+
+  line </#X-Amz-Target=AWSCognitoIdentityProviderService.AdminSetUserPassword>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan admin-set-user-password-request
+
+  loot 200
+    seed json, like admin-set-user-password-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like not-authorized-exception
+    note <NotAuthorizedException>
+  loot 482
+    seed json, like user-not-found-exception
+    note <UserNotFoundException>
+  loot 483
+    seed json, like internal-error-exception
+    note <InternalErrorException>
+  loot 484
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 485
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 486
+    seed json, like invalid-password-exception
+    note <InvalidPasswordException>

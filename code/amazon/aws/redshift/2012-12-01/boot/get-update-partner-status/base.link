@@ -1,0 +1,66 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/partner-integration-output-message
+  take form partner-integration-output-message
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/partner-not-found-fault
+  take form partner-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unauthorized-partner-integration-fault
+  take form unauthorized-partner-integration-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-update-partner-status, name <GET_UpdatePartnerStatus>
+  note <Updates the status of a partner integration.>
+
+  take account-id
+    like native-string
+    note <The Amazon Web Services account ID that owns the cluster.>
+  take cluster-identifier
+    like native-string
+    note <The cluster identifier of the cluster whose partner integration status is being updated.>
+  take database-name
+    like native-string
+    note <The name of the database whose partner integration status is being updated.>
+  take partner-name
+    like native-string
+    note <The name of the partner whose integration status is being updated.>
+  take status
+    like native-string
+    note <The value of the updated status.>
+  take status-message
+    like native-string
+    note <The status message provided by the partner.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=UpdatePartnerStatus>
+
+  find <AccountId>, loan account-id
+  find <ClusterIdentifier>, loan cluster-identifier
+  find <DatabaseName>, loan database-name
+  find <PartnerName>, loan partner-name
+  find <Status>, loan status
+  find <StatusMessage>, loan status-message
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like partner-integration-output-message
+    note <Success>
+  loot 480
+    seed xml, like partner-not-found-fault
+    note <PartnerNotFoundFault>
+  loot 481
+    seed xml, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 482
+    seed xml, like unauthorized-partner-integration-fault
+    note <UnauthorizedPartnerIntegrationFault>

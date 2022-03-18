@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/get-hosted-zone-limit-response
+  take form get-hosted-zone-limit-response
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/hosted-zone-not-private
+  take form hosted-zone-not-private
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/no-such-hosted-zone
+  take form no-such-hosted-zone
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-hosted-zone-limit, name <GetHostedZoneLimit>
+  note <Gets the specified limit for a specified hosted zone, for example, the maximum number of records that you can create in the hosted zone.
+
+For the default limit, see [Limits](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/DNSLimitations.html) in the _Amazon Route 53 Developer Guide_. To request a higher limit, [open a case](https://console.aws.amazon.com/support/home#/case/create?issueType=service-limit-increase&limitType=service-code-route53).>
+
+  take type
+    like native-string
+    note <The limit that you want to get. Valid values include the following:
+
+- **MAX_RRSETS_BY_ZONE**: The maximum number of records that you can create in the specified hosted zone.
+
+- **MAX_VPCS_ASSOCIATED_BY_ZONE**: The maximum number of Amazon VPCs that you can associate with the specified private hosted zone.>
+  take id
+    like native-string
+    note <The ID of the hosted zone that you want to get a limit for.>
+
+  line </2013-04-01/hostedzonelimit/{id}/{type}>
+
+  loot 200
+    seed xml, like get-hosted-zone-limit-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-hosted-zone
+    note <NoSuchHostedZone>
+  loot 481
+    seed xml, like invalid-input
+    note <InvalidInput>
+  loot 482
+    seed xml, like hosted-zone-not-private
+    note <HostedZoneNotPrivate>

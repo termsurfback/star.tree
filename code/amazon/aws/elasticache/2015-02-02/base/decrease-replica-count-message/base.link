@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/integer-optional
+  take form integer-optional
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/remove-replicas-list
+  take form remove-replicas-list
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/replica-configuration-list
+  take form replica-configuration-list
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+load @drumwork/snow/base/string
+  take form string
+
+form decrease-replica-count-message, name <DecreaseReplicaCountMessage>
+  take replication-group-id, name <ReplicationGroupId>
+    like string
+    note <The id of the replication group from which you want to remove replica nodes.>
+  take new-replica-count, name <NewReplicaCount>
+    like integer-optional
+    void take
+    note <The number of read replica nodes you want at the completion of this operation. For Redis (cluster mode disabled) replication groups, this is the number of replica nodes in the replication group. For Redis (cluster mode enabled) replication groups, this is the number of replica nodes in each of the replication group's node groups.
+
+The minimum number of replicas in a shard or replication group is:
+
+- Redis (cluster mode disabled)
+
+  - If Multi-AZ is enabled: 1
+
+  - If Multi-AZ is not enabled: 0
+
+- Redis (cluster mode enabled): 0 (though you will not be able to failover to a replica if your primary node fails)>
+  take replica-configuration, name <ReplicaConfiguration>
+    like replica-configuration-list
+    void take
+    note <A list of `ConfigureShard` objects that can be used to configure each shard in a Redis (cluster mode enabled) replication group. The `ConfigureShard` has three members: `NewReplicaCount`, `NodeGroupId`, and `PreferredAvailabilityZones`.>
+  take replicas-to-remove, name <ReplicasToRemove>
+    like remove-replicas-list
+    void take
+    note <A list of the node ids to remove from the replication group or node group (shard).>
+  take apply-immediately, name <ApplyImmediately>
+    like boolean
+    note <If `True`, the number of replica nodes is decreased immediately. `ApplyImmediately=False` is not currently supported.>

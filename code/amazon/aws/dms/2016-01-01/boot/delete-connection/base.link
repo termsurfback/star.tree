@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/access-denied-fault
+  take form access-denied-fault
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/delete-connection-response
+  take form delete-connection-response
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/invalid-resource-state-fault
+  take form invalid-resource-state-fault
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/resource-not-found-fault
+  take form resource-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-connection, name <DeleteConnection>
+  note <Deletes the connection between a replication instance and an endpoint.>
+
+  take x-amz-target
+    like native-string
+  take delete-connection-message, like delete-connection-message
+
+  line </#X-Amz-Target=AmazonDMSv20160101.DeleteConnection>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-connection-message
+
+  loot 200
+    seed json, like delete-connection-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-fault
+    note <AccessDeniedFault>
+  loot 481
+    seed json, like resource-not-found-fault
+    note <ResourceNotFoundFault>
+  loot 482
+    seed json, like invalid-resource-state-fault
+    note <InvalidResourceStateFault>

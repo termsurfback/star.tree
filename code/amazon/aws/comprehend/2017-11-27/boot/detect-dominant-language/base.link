@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/comprehend/2017-11-27/base/detect-dominant-language-response
+  take form detect-dominant-language-response
+
+load @drumwork/snow/amazonaws.com/comprehend/2017-11-27/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/comprehend/2017-11-27/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/comprehend/2017-11-27/base/text-size-limit-exceeded-exception
+  take form text-size-limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot detect-dominant-language, name <DetectDominantLanguage>
+  note <Determines the dominant language of the input text. For a list of languages that Amazon Comprehend can detect, see [Amazon Comprehend Supported Languages](https://docs.aws.amazon.com/comprehend/latest/dg/how-languages.html).>
+
+  take x-amz-target
+    like native-string
+  take detect-dominant-language-request, like detect-dominant-language-request
+
+  line </#X-Amz-Target=Comprehend_20171127.DetectDominantLanguage>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan detect-dominant-language-request
+
+  loot 200
+    seed json, like detect-dominant-language-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like text-size-limit-exceeded-exception
+    note <TextSizeLimitExceededException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

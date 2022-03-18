@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/describe-metric-filters-response
+  take form describe-metric-filters-response
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-metric-filters, name <DescribeMetricFilters>
+  note <Lists the specified metric filters. You can list all of the metric filters or filter the results by log name, prefix, metric name, or metric namespace. The results are ASCII-sorted by filter name.>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-metric-filters-request, like describe-metric-filters-request
+
+  line </#X-Amz-Target=Logs_20140328.DescribeMetricFilters>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <limit>, loan limit
+  find <nextToken>, loan next-token
+
+  seed json, loan describe-metric-filters-request
+
+  loot 200
+    seed json, like describe-metric-filters-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

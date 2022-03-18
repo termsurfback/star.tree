@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/missing-parameter-value-exception
+  take form missing-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/put-backup-vault-access-policy-body
+  take form put-backup-vault-access-policy-body
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-backup-vault-access-policy, name <PutBackupVaultAccessPolicy>
+  note <Sets a resource-based policy that is used to manage access permissions on the target backup vault. Requires a backup vault name and an access policy document in JSON format.>
+
+  take backup-vault-name
+    like native-string
+    note <The name of a logical container where backups are stored. Backup vaults are identified by names that are unique to the account used to create them and the Amazon Web Services Region where they are created. They consist of lowercase letters, numbers, and hyphens.>
+  take put-backup-vault-access-policy-body, like put-backup-vault-access-policy-body
+
+  line </backup-vaults/{backup-vault-name}/access-policy>
+
+  seed json, loan put-backup-vault-access-policy-body
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed json, like missing-parameter-value-exception
+    note <MissingParameterValueException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

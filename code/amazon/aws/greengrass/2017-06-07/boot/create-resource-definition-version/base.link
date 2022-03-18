@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/create-resource-definition-version-body
+  take form create-resource-definition-version-body
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/create-resource-definition-version-response
+  take form create-resource-definition-version-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-resource-definition-version, name <CreateResourceDefinitionVersion>
+  note <Creates a version of a resource definition that has already been defined.>
+
+  take resource-definition-id
+    like native-string
+    note <The ID of the resource definition.>
+  take x-amzn-client-token
+    like native-string
+    note <A client token used to correlate requests and responses.>
+    void take
+  take create-resource-definition-version-body, like create-resource-definition-version-body
+
+  line </greengrass/definition/resources/{resource-definition-id}/versions>
+
+  hint <X-Amzn-Client-Token>, loan x-amzn-client-token
+
+  seed json, loan create-resource-definition-version-body
+
+  loot 200
+    seed json, like create-resource-definition-version-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>

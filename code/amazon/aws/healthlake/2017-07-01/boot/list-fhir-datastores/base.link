@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/healthlake/2017-07-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/healthlake/2017-07-01/base/list-fhir-datastores-response
+  take form list-fhir-datastores-response
+
+load @drumwork/snow/amazonaws.com/healthlake/2017-07-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/healthlake/2017-07-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-fhir-datastores, name <ListFHIRDatastores>
+  note <Lists all FHIR Data Stores that are in the user’s account, regardless of Data Store status.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-fhir-datastores-request, like list-fhir-datastores-request
+
+  line </#X-Amz-Target=HealthLake.ListFHIRDatastores>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-fhir-datastores-request
+
+  loot 200
+    seed json, like list-fhir-datastores-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

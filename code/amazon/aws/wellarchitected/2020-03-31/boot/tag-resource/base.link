@@ -1,0 +1,36 @@
+
+load @drumwork/snow/amazonaws.com/wellarchitected/2020-03-31/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/wellarchitected/2020-03-31/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/wellarchitected/2020-03-31/base/tag-resource-body
+  take form tag-resource-body
+
+load @drumwork/snow/amazonaws.com/wellarchitected/2020-03-31/base/tag-resource-output
+  take form tag-resource-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot tag-resource, name <TagResource>
+  note <Adds one or more tags to the specified resource.>
+
+  take workload-arn
+    like native-string
+  take tag-resource-body, like tag-resource-body
+
+  line </tags/{workload-arn}>
+
+  seed json, loan tag-resource-body
+
+  loot 200
+    seed json, like tag-resource-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

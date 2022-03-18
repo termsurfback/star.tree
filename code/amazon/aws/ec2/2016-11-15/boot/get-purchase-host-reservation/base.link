@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/dedicated-host-id
+  take form dedicated-host-id
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/purchase-host-reservation-result
+  take form purchase-host-reservation-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/tag-specification
+  take form tag-specification
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-purchase-host-reservation, name <GET_PurchaseHostReservation>
+  note <Purchase a reservation with configurations that match those of your Dedicated Host. You must have active Dedicated Hosts in your account before you purchase a reservation. This action results in the specified reservation being purchased and charged to your account.>
+
+  take client-token
+    like native-string
+    note <Unique, case-sensitive identifier that you provide to ensure the idempotency of the request. For more information, see [Ensuring Idempotency](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/Run_Instance_Idempotency.html).>
+    void take
+  take currency-code
+    like native-string
+    note <The currency in which the `totalUpfrontPrice`, `LimitPrice`, and `totalHourlyPrice` amounts are specified. At this time, the only supported currency is `USD`.>
+    void take
+  take host-id-set
+    like list
+      like dedicated-host-id
+    note <The IDs of the Dedicated Hosts with which the reservation will be associated.>
+  take limit-price
+    like native-string
+    note <The specified limit is checked against the total upfront cost of the reservation (calculated as the offering's upfront cost multiplied by the host count). If the total upfront cost is greater than the specified price limit, the request fails. This is used to ensure that the purchase does not exceed the expected upfront cost of the purchase. At this time, the only supported currency is `USD`. For example, to indicate a limit price of USD 100, specify 100.00.>
+    void take
+  take offering-id
+    like native-string
+    note <The ID of the offering.>
+  take tag-specification
+    like list
+      like tag-specification
+    note <The tags to apply to the Dedicated Host Reservation during purchase.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=PurchaseHostReservation>
+
+  find <ClientToken>, loan client-token
+  find <CurrencyCode>, loan currency-code
+  find <HostIdSet>, loan host-id-set
+  find <LimitPrice>, loan limit-price
+  find <OfferingId>, loan offering-id
+  find <TagSpecification>, loan tag-specification
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like purchase-host-reservation-result
+    note <Success>

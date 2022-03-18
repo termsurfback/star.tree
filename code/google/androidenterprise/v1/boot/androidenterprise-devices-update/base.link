@@ -1,0 +1,35 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/androidenterprise/v1/base/device
+  take form device
+
+boot androidenterprise-devices-update, name <androidenterprise.devices.update>
+  note <Updates the device policy. To ensure the policy is properly enforced, you need to prevent unmanaged accounts from accessing Google Play by setting the allowed_accounts in the managed configuration for the Google Play package. See restrict accounts in Google Play. When provisioning a new device, you should set the device policy using this method before adding the managed Google Play Account to the device, otherwise the policy will not be applied for a short period of time after adding the account to the device.>
+
+  take enterprise-id
+    like native-string
+    note <The ID of the enterprise.>
+  take user-id
+    like native-string
+    note <The ID of the user.>
+  take device-id
+    like native-string
+    note <The ID of the device.>
+  take update-mask
+    like native-string
+    note <Mask that identifies which fields to update. If not set, all modifiable fields will be modified. When set in a query parameter, this field should be specified as updateMask=,,...>
+    void take
+  take device, like device
+    void take
+
+  line </androidenterprise/v1/enterprises/{enterprise-id}/users/{user-id}/devices/{device-id}>
+
+  find <updateMask>, loan update-mask
+
+  seed json, loan device
+
+  loot 200
+    seed json, like device
+    note <Successful response>

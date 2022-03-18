@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/delete-webhook-output
+  take form delete-webhook-output
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/o-auth-provider-exception
+  take form o-auth-provider-exception
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-webhook, name <DeleteWebhook>
+  note <For an existing CodeBuild build project that has its source code stored in a GitHub or Bitbucket repository, stops CodeBuild from rebuilding the source code every time a code change is pushed to the repository.>
+
+  take x-amz-target
+    like native-string
+  take delete-webhook-input, like delete-webhook-input
+
+  line </#X-Amz-Target=CodeBuild_20161006.DeleteWebhook>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-webhook-input
+
+  loot 200
+    seed json, like delete-webhook-output
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like o-auth-provider-exception
+    note <OAuthProviderException>

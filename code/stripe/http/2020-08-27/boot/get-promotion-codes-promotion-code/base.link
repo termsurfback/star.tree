@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-promotion-codes-promotion-code-body
+  take form get-promotion-codes-promotion-code-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/promotion-code
+  take form promotion-code
+
+boot get-promotion-codes-promotion-code, name <GetPromotionCodesPromotionCode>
+  note <Retrieves the promotion code with the given ID.>
+
+  take promotion-code
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-promotion-codes-promotion-code-body, like get-promotion-codes-promotion-code-body
+    void take
+
+  line </v1/promotion_codes/{promotion-code}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-promotion-codes-promotion-code-body
+
+  loot 200
+    seed json, like promotion-code
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

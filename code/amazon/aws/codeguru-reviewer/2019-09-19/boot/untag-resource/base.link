@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/codeguru-reviewer/2019-09-19/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/codeguru-reviewer/2019-09-19/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codeguru-reviewer/2019-09-19/base/tag-key
+  take form tag-key
+
+load @drumwork/snow/amazonaws.com/codeguru-reviewer/2019-09-19/base/untag-resource-response
+  take form untag-resource-response
+
+load @drumwork/snow/amazonaws.com/codeguru-reviewer/2019-09-19/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot untag-resource, name <UntagResource>
+  note <Removes a tag from an associated repository.>
+
+  take resource-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the [`RepositoryAssociation`](https://docs.aws.amazon.com/codeguru/latest/reviewer-api/API_RepositoryAssociation.html) object. You can retrieve this ARN by calling [`ListRepositoryAssociations`](https://docs.aws.amazon.com/codeguru/latest/reviewer-api/API_ListRepositoryAssociations.html) .>
+  take tag-keys
+    like list
+      like tag-key
+    note <A list of the keys for each tag you want to remove from an associated repository.>
+
+  line </tags/{resource-arn}#tagKeys>
+
+  find <tagKeys>, loan tag-keys
+
+  loot 200
+    seed json, like untag-resource-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

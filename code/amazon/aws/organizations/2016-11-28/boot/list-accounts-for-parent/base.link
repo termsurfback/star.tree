@@ -1,0 +1,74 @@
+
+load @drumwork/snow/amazonaws.com/organizations/2016-11-28/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/organizations/2016-11-28/base/aws-organizations-not-in-use-exception
+  take form aws-organizations-not-in-use-exception
+
+load @drumwork/snow/amazonaws.com/organizations/2016-11-28/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/organizations/2016-11-28/base/list-accounts-for-parent-response
+  take form list-accounts-for-parent-response
+
+load @drumwork/snow/amazonaws.com/organizations/2016-11-28/base/parent-not-found-exception
+  take form parent-not-found-exception
+
+load @drumwork/snow/amazonaws.com/organizations/2016-11-28/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/amazonaws.com/organizations/2016-11-28/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-accounts-for-parent, name <ListAccountsForParent>
+  note <Lists the accounts in an organization that are contained by the specified target root or organizational unit (OU). If you specify the root, you get a list of all the accounts that aren't in any OU. If you specify an OU, you get a list of all the accounts in only that OU and not in any child OUs. To get a list of all accounts in the organization, use the ListAccounts operation.
+
+Always check the `NextToken` response parameter for a `null` value when calling a `List*` operation. These operations can occasionally return an empty set of results even when there are more results available. The `NextToken` response parameter value is `null` _only_ when there are no more results to display.
+
+This operation can be called only from the organization's management account or by a member account that is a delegated administrator for an AWS service.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-accounts-for-parent-request, like list-accounts-for-parent-request
+
+  line </#X-Amz-Target=AWSOrganizationsV20161128.ListAccountsForParent>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-accounts-for-parent-request
+
+  loot 200
+    seed json, like list-accounts-for-parent-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like aws-organizations-not-in-use-exception
+    note <AWSOrganizationsNotInUseException>
+  loot 482
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 483
+    seed json, like parent-not-found-exception
+    note <ParentNotFoundException>
+  loot 484
+    seed json, like service-exception
+    note <ServiceException>
+  loot 485
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>

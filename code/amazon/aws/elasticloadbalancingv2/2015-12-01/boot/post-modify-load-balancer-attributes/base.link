@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/invalid-configuration-request-exception
+  take form invalid-configuration-request-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/load-balancer-not-found-exception
+  take form load-balancer-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/modify-load-balancer-attributes-output
+  take form modify-load-balancer-attributes-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-modify-load-balancer-attributes, name <POST_ModifyLoadBalancerAttributes>
+  note <Modifies the specified attributes of the specified Application Load Balancer, Network Load Balancer, or Gateway Load Balancer.
+
+If any of the specified attributes can't be modified as requested, the call fails. Any existing attributes that you do not modify retain their current values.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take modify-load-balancer-attributes-input, like modify-load-balancer-attributes-input
+    void take
+
+  line </#Action=ModifyLoadBalancerAttributes>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan modify-load-balancer-attributes-input
+
+  loot 200
+    seed xml, like modify-load-balancer-attributes-output
+    note <Success>
+  loot 480
+    seed xml, like load-balancer-not-found-exception
+    note <LoadBalancerNotFoundException>
+  loot 481
+    seed xml, like invalid-configuration-request-exception
+    note <InvalidConfigurationRequestException>

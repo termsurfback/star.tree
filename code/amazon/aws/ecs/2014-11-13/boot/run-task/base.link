@@ -1,0 +1,89 @@
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/blocked-exception
+  take form blocked-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/cluster-not-found-exception
+  take form cluster-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/platform-task-definition-incompatibility-exception
+  take form platform-task-definition-incompatibility-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/platform-unknown-exception
+  take form platform-unknown-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/run-task-response
+  take form run-task-response
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/unsupported-feature-exception
+  take form unsupported-feature-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot run-task, name <RunTask>
+  note <Starts a new task using the specified task definition.
+
+You can allow Amazon ECS to place tasks for you, or you can customize how Amazon ECS places tasks using placement constraints and placement strategies. For more information, see [Scheduling Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/scheduling_tasks.html) in the _Amazon Elastic Container Service Developer Guide_.
+
+Alternatively, you can use StartTask to use your own scheduler or place tasks manually on specific container instances.
+
+The Amazon ECS API follows an eventual consistency model, due to the distributed nature of the system supporting the API. This means that the result of an API command you run that affects your Amazon ECS resources might not be immediately visible to all subsequent commands you run. Keep this in mind when you carry out an API command that immediately follows a previous API command.
+
+To manage eventual consistency, you can do the following:
+
+- Confirm the state of the resource before you run a command to modify it. Run the DescribeTasks command using an exponential backoff algorithm to ensure that you allow enough time for the previous command to propagate through the system. To do this, run the DescribeTasks command repeatedly, starting with a couple of seconds of wait time and increasing gradually up to five minutes of wait time.
+
+- Add wait time between subsequent commands, even if the DescribeTasks command returns an accurate response. Apply an exponential backoff algorithm starting with a couple of seconds of wait time, and increase gradually up to about five minutes of wait time.>
+
+  take x-amz-target
+    like native-string
+  take run-task-request, like run-task-request
+
+  line </#X-Amz-Target=AmazonEC2ContainerServiceV20141113.RunTask>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan run-task-request
+
+  loot 200
+    seed json, like run-task-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like client-exception
+    note <ClientException>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 483
+    seed json, like cluster-not-found-exception
+    note <ClusterNotFoundException>
+  loot 484
+    seed json, like unsupported-feature-exception
+    note <UnsupportedFeatureException>
+  loot 485
+    seed json, like platform-unknown-exception
+    note <PlatformUnknownException>
+  loot 486
+    seed json, like platform-task-definition-incompatibility-exception
+    note <PlatformTaskDefinitionIncompatibilityException>
+  loot 487
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 488
+    seed json, like blocked-exception
+    note <BlockedException>

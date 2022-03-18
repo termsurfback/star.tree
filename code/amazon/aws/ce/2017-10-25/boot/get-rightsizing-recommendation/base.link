@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/get-rightsizing-recommendation-response
+  take form get-rightsizing-recommendation-response
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-rightsizing-recommendation, name <GetRightsizingRecommendation>
+  note <Creates recommendations that help you save cost by identifying idle and underutilized Amazon EC2 instances.
+
+Recommendations are generated to either downsize or terminate instances, along with providing savings detail and metrics. For details on calculation and function, see [Optimizing Your Cost with Rightsizing Recommendations](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/ce-rightsizing.html) in the _Billing and Cost Management User Guide_.>
+
+  take x-amz-target
+    like native-string
+  take get-rightsizing-recommendation-request, like get-rightsizing-recommendation-request
+
+  line </#X-Amz-Target=AWSInsightsIndexService.GetRightsizingRecommendation>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-rightsizing-recommendation-request
+
+  loot 200
+    seed json, like get-rightsizing-recommendation-response
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>

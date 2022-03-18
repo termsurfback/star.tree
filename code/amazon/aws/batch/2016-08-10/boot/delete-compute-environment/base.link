@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/delete-compute-environment-body
+  take form delete-compute-environment-body
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/delete-compute-environment-response
+  take form delete-compute-environment-response
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/server-exception
+  take form server-exception
+
+boot delete-compute-environment, name <DeleteComputeEnvironment>
+  note <Deletes an Batch compute environment.
+
+Before you can delete a compute environment, you must set its state to `DISABLED` with the UpdateComputeEnvironment API operation and disassociate it from any job queues with the UpdateJobQueue API operation. Compute environments that use Fargate resources must terminate all active jobs on that compute environment before deleting the compute environment. If this isn't done, the compute environment enters an invalid state.>
+
+  take delete-compute-environment-body, like delete-compute-environment-body
+
+  line </v1/deletecomputeenvironment>
+
+  seed json, loan delete-compute-environment-body
+
+  loot 200
+    seed json, like delete-compute-environment-response
+    note <Success>
+  loot 480
+    seed json, like client-exception
+    note <ClientException>
+  loot 481
+    seed json, like server-exception
+    note <ServerException>

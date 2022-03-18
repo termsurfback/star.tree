@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/access-point-not-found-exception
+  take form access-point-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/invalid-configuration-request-exception
+  take form invalid-configuration-request-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/load-balancer-attribute-not-found-exception
+  take form load-balancer-attribute-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/modify-load-balancer-attributes-output
+  take form modify-load-balancer-attributes-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-modify-load-balancer-attributes, name <POST_ModifyLoadBalancerAttributes>
+  note <Modifies the attributes of the specified load balancer.
+
+You can modify the load balancer attributes, such as `AccessLogs`, `ConnectionDraining`, and `CrossZoneLoadBalancing` by either enabling or disabling them. Or, you can modify the load balancer attribute `ConnectionSettings` by specifying an idle connection timeout value for your load balancer.
+
+For more information, see the following in the _Classic Load Balancers Guide_:
+
+- [Cross-Zone Load Balancing](https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/enable-disable-crosszone-lb.html)
+
+- [Connection Draining](https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/config-conn-drain.html)
+
+- [Access Logs](https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/access-log-collection.html)
+
+- [Idle Connection Timeout](https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/config-idle-timeout.html)>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take modify-load-balancer-attributes-input, like modify-load-balancer-attributes-input
+    void take
+
+  line </#Action=ModifyLoadBalancerAttributes>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan modify-load-balancer-attributes-input
+
+  loot 200
+    seed xml, like modify-load-balancer-attributes-output
+    note <Success>
+  loot 480
+    seed xml, like access-point-not-found-exception
+    note <AccessPointNotFoundException>
+  loot 481
+    seed xml, like load-balancer-attribute-not-found-exception
+    note <LoadBalancerAttributeNotFoundException>
+  loot 482
+    seed xml, like invalid-configuration-request-exception
+    note <InvalidConfigurationRequestException>

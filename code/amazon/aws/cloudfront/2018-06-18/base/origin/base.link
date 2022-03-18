@@ -1,0 +1,71 @@
+
+load @drumwork/snow/amazonaws.com/cloudfront/2018-06-18/base/custom-headers
+  take form custom-headers
+
+load @drumwork/snow/amazonaws.com/cloudfront/2018-06-18/base/custom-origin-config
+  take form custom-origin-config
+
+load @drumwork/snow/amazonaws.com/cloudfront/2018-06-18/base/s3-origin-config
+  take form s3-origin-config
+
+load @drumwork/snow/base/string
+  take form string
+
+form origin, name <Origin>
+  note <A complex type that describes the Amazon S3 bucket or the HTTP server (for example, a web server) from which CloudFront gets your files. You must create at least one origin.
+
+For the current limit on the number of origins that you can create for a distribution, see [Amazon CloudFront Limits](http://docs.aws.amazon.com/general/latest/gr/aws_service_limits.html#limits_cloudfront) in the _AWS General Reference_.>
+  take id, name <Id>
+    like string
+    note <A unique identifier for the origin. The value of `Id` must be unique within the distribution.
+
+When you specify the value of `TargetOriginId` for the default cache behavior or for another cache behavior, you indicate the origin to which you want the cache behavior to route requests by specifying the value of the `Id` element for that origin. When a request matches the path pattern for that cache behavior, CloudFront routes the request to the specified origin. For more information, see [Cache Behavior Settings](http://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html#DownloadDistValuesCacheBehavior) in the _Amazon CloudFront Developer Guide_.>
+  take domain-name, name <DomainName>
+    like string
+    note <**Amazon S3 origins**: The DNS name of the Amazon S3 bucket from which you want CloudFront to get objects for this origin, for example, `myawsbucket.s3.amazonaws.com`. If you set up your bucket to be configured as a website endpoint, enter the Amazon S3 static website hosting endpoint for the bucket.
+
+Constraints for Amazon S3 origins:
+
+- If you configured Amazon S3 Transfer Acceleration for your bucket, don't specify the `s3-accelerate` endpoint for `DomainName`.
+
+- The bucket name must be between 3 and 63 characters long (inclusive).
+
+- The bucket name must contain only lowercase characters, numbers, periods, underscores, and dashes.
+
+- The bucket name must not contain adjacent periods.
+
+**Custom Origins**: The DNS domain name for the HTTP server from which you want CloudFront to get objects for this origin, for example, `www.example.com`.
+
+Constraints for custom origins:
+
+- `DomainName` must be a valid DNS name that contains only a-z, A-Z, 0-9, dot (.), hyphen (-), or underscore (_) characters.
+
+- The name cannot exceed 128 characters.>
+  take origin-path, name <OriginPath>
+    like string
+    void take
+    note <An optional element that causes CloudFront to request your content from a directory in your Amazon S3 bucket or your custom origin. When you include the `OriginPath` element, specify the directory name, beginning with a `/`. CloudFront appends the directory name to the value of `DomainName`, for example, `example.com/production`. Do not include a `/` at the end of the directory name.
+
+For example, suppose you've specified the following values for your distribution:
+
+- `DomainName`: An Amazon S3 bucket named `myawsbucket`.
+
+- `OriginPath`: `/production`
+
+- `CNAME`: `example.com`
+
+When a user enters `example.com/index.html` in a browser, CloudFront sends a request to Amazon S3 for `myawsbucket/production/index.html`.
+
+When a user enters `example.com/acme/index.html` in a browser, CloudFront sends a request to Amazon S3 for `myawsbucket/production/acme/index.html`.>
+  take custom-headers, name <CustomHeaders>
+    like custom-headers
+    void take
+    note <A complex type that contains names and values for the custom headers that you want.>
+  take s3-origin-config, name <S3OriginConfig>
+    like s3-origin-config
+    void take
+    note <A complex type that contains information about the Amazon S3 origin. If the origin is a custom origin, use the `CustomOriginConfig` element instead.>
+  take custom-origin-config, name <CustomOriginConfig>
+    like custom-origin-config
+    void take
+    note <A complex type that contains information about a custom origin. If the origin is an Amazon S3 bucket, use the `S3OriginConfig` element instead.>

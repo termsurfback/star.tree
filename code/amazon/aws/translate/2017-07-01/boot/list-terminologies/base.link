@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/translate/2017-07-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/translate/2017-07-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/translate/2017-07-01/base/list-terminologies-response
+  take form list-terminologies-response
+
+load @drumwork/snow/amazonaws.com/translate/2017-07-01/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-terminologies, name <ListTerminologies>
+  note <Provides a list of custom terminologies associated with your account.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-terminologies-request, like list-terminologies-request
+
+  line </#X-Amz-Target=AWSShineFrontendService_20170701.ListTerminologies>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-terminologies-request
+
+  loot 200
+    seed json, like list-terminologies-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 481
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

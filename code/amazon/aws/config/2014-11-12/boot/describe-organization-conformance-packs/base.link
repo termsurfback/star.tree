@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/describe-organization-conformance-packs-response
+  take form describe-organization-conformance-packs-response
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-limit-exception
+  take form invalid-limit-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/no-such-organization-conformance-pack-exception
+  take form no-such-organization-conformance-pack-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/organization-access-denied-exception
+  take form organization-access-denied-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-organization-conformance-packs, name <DescribeOrganizationConformancePacks>
+  note <Returns a list of organization conformance packs.
+
+When you specify the limit and the next token, you receive a paginated response.
+
+Limit and next token are not applicable if you specify organization conformance packs names. They are only applicable, when you request all the organization conformance packs.>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-organization-conformance-packs-request, like describe-organization-conformance-packs-request
+
+  line </#X-Amz-Target=StarlingDoveService.DescribeOrganizationConformancePacks>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <Limit>, loan limit
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-organization-conformance-packs-request
+
+  loot 200
+    seed json, like describe-organization-conformance-packs-response
+    note <Success>
+  loot 480
+    seed json, like no-such-organization-conformance-pack-exception
+    note <NoSuchOrganizationConformancePackException>
+  loot 481
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 482
+    seed json, like invalid-limit-exception
+    note <InvalidLimitException>
+  loot 483
+    seed json, like organization-access-denied-exception
+    note <OrganizationAccessDeniedException>

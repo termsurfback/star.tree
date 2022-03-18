@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/modify-traffic-mirror-filter-network-services-result
+  take form modify-traffic-mirror-filter-network-services-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/traffic-mirror-network-service
+  take form traffic-mirror-network-service
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-modify-traffic-mirror-filter-network-services, name <GET_ModifyTrafficMirrorFilterNetworkServices>
+  note <Allows or restricts mirroring network services.
+
+By default, Amazon DNS network services are not eligible for Traffic Mirror. Use `AddNetworkServices` to add network services to a Traffic Mirror filter. When a network service is added to the Traffic Mirror filter, all traffic related to that network service will be mirrored. When you no longer want to mirror network services, use `RemoveNetworkServices` to remove the network services from the Traffic Mirror filter.
+
+For information about filter rule properties, see [Network Services](https://docs.aws.amazon.com/vpc/latest/mirroring/traffic-mirroring-considerations.html) in the _Traffic Mirroring User Guide_ .>
+
+  take traffic-mirror-filter-id
+    like native-string
+    note <The ID of the Traffic Mirror filter.>
+  take add-network-service
+    like list
+      like traffic-mirror-network-service
+    note <The network service, for example Amazon DNS, that you want to mirror.>
+    void take
+  take remove-network-service
+    like list
+      like traffic-mirror-network-service
+    note <The network service, for example Amazon DNS, that you no longer want to mirror.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyTrafficMirrorFilterNetworkServices>
+
+  find <TrafficMirrorFilterId>, loan traffic-mirror-filter-id
+  find <AddNetworkService>, loan add-network-service
+  find <RemoveNetworkService>, loan remove-network-service
+  find <DryRun>, loan dry-run
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-traffic-mirror-filter-network-services-result
+    note <Success>

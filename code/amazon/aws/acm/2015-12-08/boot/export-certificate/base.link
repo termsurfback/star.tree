@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/export-certificate-response
+  take form export-certificate-response
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/invalid-arn-exception
+  take form invalid-arn-exception
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/request-in-progress-exception
+  take form request-in-progress-exception
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot export-certificate, name <ExportCertificate>
+  note <Exports a private certificate issued by a private certificate authority (CA) for use anywhere. The exported file contains the certificate, the certificate chain, and the encrypted private 2048-bit RSA key associated with the public key that is embedded in the certificate. For security, you must assign a passphrase for the private key when exporting it.
+
+For information about exporting and formatting a certificate using the ACM console or CLI, see [Export a Private Certificate](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-export-private.html).>
+
+  take x-amz-target
+    like native-string
+  take export-certificate-request, like export-certificate-request
+
+  line </#X-Amz-Target=CertificateManager.ExportCertificate>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan export-certificate-request
+
+  loot 200
+    seed json, like export-certificate-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like request-in-progress-exception
+    note <RequestInProgressException>
+  loot 482
+    seed json, like invalid-arn-exception
+    note <InvalidArnException>

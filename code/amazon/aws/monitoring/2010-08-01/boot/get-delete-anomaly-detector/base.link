@@ -1,0 +1,71 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/delete-anomaly-detector-output
+  take form delete-anomaly-detector-output
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/dimension
+  take form dimension
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/internal-service-fault
+  take form internal-service-fault
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/missing-required-parameter-exception
+  take form missing-required-parameter-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-anomaly-detector, name <GET_DeleteAnomalyDetector>
+  note <Deletes the specified anomaly detection model from your account.>
+
+  take namespace
+    like native-string
+    note <The namespace associated with the anomaly detection model to delete.>
+  take metric-name
+    like native-string
+    note <The metric name associated with the anomaly detection model to delete.>
+  take dimensions
+    like list
+      like dimension
+    note <The metric dimensions associated with the anomaly detection model to delete.>
+    void take
+  take stat
+    like native-string
+    note <The statistic associated with the anomaly detection model to delete.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteAnomalyDetector>
+
+  find <Namespace>, loan namespace
+  find <MetricName>, loan metric-name
+  find <Dimensions>, loan dimensions
+  find <Stat>, loan stat
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-anomaly-detector-output
+    note <Success>
+  loot 480
+    seed xml, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed xml, like internal-service-fault
+    note <InternalServiceFault>
+  loot 482
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed xml, like missing-required-parameter-exception
+    note <MissingRequiredParameterException>

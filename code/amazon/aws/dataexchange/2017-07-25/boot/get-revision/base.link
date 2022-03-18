@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/dataexchange/2017-07-25/base/get-revision-response
+  take form get-revision-response
+
+load @drumwork/snow/amazonaws.com/dataexchange/2017-07-25/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/dataexchange/2017-07-25/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/dataexchange/2017-07-25/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/dataexchange/2017-07-25/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-revision, name <GetRevision>
+  note <This operation returns information about a revision.>
+
+  take data-set-id
+    like native-string
+    note <The unique identifier for a data set.>
+  take revision-id
+    like native-string
+    note <The unique identifier for a revision.>
+
+  line </v1/data-sets/{data-set-id}/revisions/{revision-id}>
+
+  loot 200
+    seed json, like get-revision-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like internal-server-exception
+    note <InternalServerException>

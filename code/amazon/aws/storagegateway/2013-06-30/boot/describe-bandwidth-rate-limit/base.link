@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/describe-bandwidth-rate-limit-output
+  take form describe-bandwidth-rate-limit-output
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-bandwidth-rate-limit, name <DescribeBandwidthRateLimit>
+  note <Returns the bandwidth rate limits of a gateway. By default, these limits are not set, which means no bandwidth rate limiting is in effect. This operation is supported for the stored volume, cached volume, and tape gateway types.
+
+This operation only returns a value for a bandwidth rate limit only if the limit is set. If no limits are set for the gateway, then this operation returns only the gateway ARN in the response body. To specify which gateway to describe, use the Amazon Resource Name (ARN) of the gateway in your request.>
+
+  take x-amz-target
+    like native-string
+  take describe-bandwidth-rate-limit-input, like describe-bandwidth-rate-limit-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.DescribeBandwidthRateLimit>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-bandwidth-rate-limit-input
+
+  loot 200
+    seed json, like describe-bandwidth-rate-limit-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

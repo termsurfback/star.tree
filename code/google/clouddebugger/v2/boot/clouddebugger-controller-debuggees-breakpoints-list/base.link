@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/clouddebugger/v2/base/list-active-breakpoints-response
+  take form list-active-breakpoints-response
+
+boot clouddebugger-controller-debuggees-breakpoints-list, name <clouddebugger.controller.debuggees.breakpoints.list>
+  note <Returns the list of all active breakpoints for the debuggee. The breakpoint specification (`location`, `condition`, and `expressions` fields) is semantically immutable, although the field values may change. For example, an agent may update the location line number to reflect the actual line where the breakpoint was set, but this doesn't change the breakpoint semantics. This means that an agent does not need to check if a breakpoint has changed when it encounters the same breakpoint on a successive call. Moreover, an agent should remember the breakpoints that are completed until the controller removes them from the active list to avoid setting those breakpoints again.>
+
+  take debuggee-id
+    like native-string
+    note <Required. Identifies the debuggee.>
+  take agent-id
+    like native-string
+    note <Identifies the agent. This is the ID returned in the RegisterDebuggee response.>
+    void take
+  take success-on-timeout
+    like native-boolean
+    note <If set to `true` (recommended), returns `google.rpc.Code.OK` status and sets the `wait_expired` response field to `true` when the server-selected timeout has expired. If set to `false` (deprecated), returns `google.rpc.Code.ABORTED` status when the server-selected timeout has expired.>
+    void take
+  take wait-token
+    like native-string
+    note <A token that, if specified, blocks the method call until the list of active breakpoints has changed, or a server-selected timeout has expired. The value should be set from the `next_wait_token` field in the last response. The initial value should be set to `"init"`.>
+    void take
+
+  line </v2/controller/debuggees/{debuggee-id}/breakpoints>
+
+  find <agentId>, loan agent-id
+  find <successOnTimeout>, loan success-on-timeout
+  find <waitToken>, loan wait-token
+
+  loot 200
+    seed json, like list-active-breakpoints-response
+    note <Successful response>

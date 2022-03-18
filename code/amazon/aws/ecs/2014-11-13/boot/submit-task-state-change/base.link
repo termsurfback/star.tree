@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/submit-task-state-change-response
+  take form submit-task-state-change-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot submit-task-state-change, name <SubmitTaskStateChange>
+  note <This action is only used by the Amazon ECS agent, and it is not intended for use outside of the agent.
+
+Sent to acknowledge that a task changed states.>
+
+  take x-amz-target
+    like native-string
+  take submit-task-state-change-request, like submit-task-state-change-request
+
+  line </#X-Amz-Target=AmazonEC2ContainerServiceV20141113.SubmitTaskStateChange>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan submit-task-state-change-request
+
+  loot 200
+    seed json, like submit-task-state-change-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like client-exception
+    note <ClientException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 483
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>

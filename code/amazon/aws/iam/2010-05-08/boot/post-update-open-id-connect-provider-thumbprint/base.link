@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-update-open-id-connect-provider-thumbprint, name <POST_UpdateOpenIDConnectProviderThumbprint>
+  note <Replaces the existing list of server certificate thumbprints associated with an OpenID Connect (OIDC) provider resource object with a new list of thumbprints.
+
+The list that you pass with this operation completely replaces the existing list of thumbprints. (The lists are not merged.)
+
+Typically, you need to update a thumbprint only when the identity provider certificate changes, which occurs rarely. However, if the provider's certificate _does_ change, any attempt to assume an IAM role that specifies the OIDC provider as a principal fails until the certificate thumbprint is updated.
+
+Amazon Web Services secures communication with some OIDC identity providers (IdPs) through our library of trusted certificate authorities (CAs) instead of using a certificate thumbprint to verify your IdP server certificate. These OIDC IdPs include Google, and those that use an Amazon S3 bucket to host a JSON Web Key Set (JWKS) endpoint. In these cases, your legacy thumbprint remains in your configuration, but is no longer used for validation.
+
+Trust for the OIDC provider is derived from the provider certificate and is validated by the thumbprint. Therefore, it is best to limit access to the `UpdateOpenIDConnectProviderThumbprint` operation to highly privileged users.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take update-open-id-connect-provider-thumbprint-request, like update-open-id-connect-provider-thumbprint-request
+    void take
+
+  line </#Action=UpdateOpenIDConnectProviderThumbprint>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan update-open-id-connect-provider-thumbprint-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 482
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

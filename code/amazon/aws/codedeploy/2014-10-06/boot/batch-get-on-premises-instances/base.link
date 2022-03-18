@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/batch-get-on-premises-instances-output
+  take form batch-get-on-premises-instances-output
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/batch-limit-exceeded-exception
+  take form batch-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/instance-name-required-exception
+  take form instance-name-required-exception
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/invalid-instance-name-exception
+  take form invalid-instance-name-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot batch-get-on-premises-instances, name <BatchGetOnPremisesInstances>
+  note <Gets information about one or more on-premises instances. The maximum number of on-premises instances that can be returned is 25.>
+
+  take x-amz-target
+    like native-string
+  take batch-get-on-premises-instances-input, like batch-get-on-premises-instances-input
+
+  line </#X-Amz-Target=CodeDeploy_20141006.BatchGetOnPremisesInstances>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan batch-get-on-premises-instances-input
+
+  loot 200
+    seed json, like batch-get-on-premises-instances-output
+    note <Success>
+  loot 480
+    seed json, like instance-name-required-exception
+    note <InstanceNameRequiredException>
+  loot 481
+    seed json, like invalid-instance-name-exception
+    note <InvalidInstanceNameException>
+  loot 482
+    seed json, like batch-limit-exceeded-exception
+    note <BatchLimitExceededException>

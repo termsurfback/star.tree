@@ -1,0 +1,102 @@
+
+load @drumwork/snow/amazonaws.com/compute-optimizer/2019-11-01/base/account-id
+  take form account-id
+
+load @drumwork/snow/amazonaws.com/compute-optimizer/2019-11-01/base/function-arn
+  take form function-arn
+
+load @drumwork/snow/amazonaws.com/compute-optimizer/2019-11-01/base/function-version
+  take form function-version
+
+load @drumwork/snow/amazonaws.com/compute-optimizer/2019-11-01/base/lambda-function-memory-recommendation-options
+  take form lambda-function-memory-recommendation-options
+
+load @drumwork/snow/amazonaws.com/compute-optimizer/2019-11-01/base/lambda-function-recommendation-finding
+  take form lambda-function-recommendation-finding
+
+load @drumwork/snow/amazonaws.com/compute-optimizer/2019-11-01/base/lambda-function-recommendation-finding-reason-codes
+  take form lambda-function-recommendation-finding-reason-codes
+
+load @drumwork/snow/amazonaws.com/compute-optimizer/2019-11-01/base/lambda-function-utilization-metrics
+  take form lambda-function-utilization-metrics
+
+load @drumwork/snow/amazonaws.com/compute-optimizer/2019-11-01/base/last-refresh-timestamp
+  take form last-refresh-timestamp
+
+load @drumwork/snow/amazonaws.com/compute-optimizer/2019-11-01/base/look-back-period-in-days
+  take form look-back-period-in-days
+
+load @drumwork/snow/amazonaws.com/compute-optimizer/2019-11-01/base/memory-size
+  take form memory-size
+
+load @drumwork/snow/amazonaws.com/compute-optimizer/2019-11-01/base/number-of-invocations
+  take form number-of-invocations
+
+form lambda-function-recommendation, name <LambdaFunctionRecommendation>
+  note <Describes an Lambda function recommendation.>
+  take function-arn, name <functionArn>
+    like function-arn
+    void take
+    note <The Amazon Resource Name (ARN) of the current function.>
+  take function-version, name <functionVersion>
+    like function-version
+    void take
+    note <The version number of the current function.>
+  take account-id, name <accountId>
+    like account-id
+    void take
+    note <The Amazon Web Services account ID of the function.>
+  take current-memory-size, name <currentMemorySize>
+    like memory-size
+    void take
+    note <The amount of memory, in MB, that's allocated to the current function.>
+  take number-of-invocations, name <numberOfInvocations>
+    like number-of-invocations
+    void take
+    note <The number of times your function code was applied during the look-back period.>
+  take utilization-metrics, name <utilizationMetrics>
+    like lambda-function-utilization-metrics
+    void take
+    note <An array of objects that describe the utilization metrics of the function.>
+  take lookback-period-in-days, name <lookbackPeriodInDays>
+    like look-back-period-in-days
+    void take
+    note <The number of days for which utilization metrics were analyzed for the function.>
+  take last-refresh-timestamp, name <lastRefreshTimestamp>
+    like last-refresh-timestamp
+    void take
+    note <The timestamp of when the function recommendation was last refreshed.>
+  take finding, name <finding>
+    like lambda-function-recommendation-finding
+    void take
+    note <The finding classification of the function.
+
+Findings for functions include:
+
+- **`Optimized`** — The function is correctly provisioned to run your workload based on its current configuration and its utilization history. This finding classification does not include finding reason codes.
+
+- **`NotOptimized`** — The function is performing at a higher level (over-provisioned) or at a lower level (under-provisioned) than required for your workload because its current configuration is not optimal. Over-provisioned resources might lead to unnecessary infrastructure cost, and under-provisioned resources might lead to poor application performance. This finding classification can include the `MemoryUnderprovisioned` and `MemoryUnderprovisioned` finding reason codes.
+
+- **`Unavailable`** — Compute Optimizer was unable to generate a recommendation for the function. This could be because the function has not accumulated sufficient metric data, or the function does not qualify for a recommendation. This finding classification can include the `InsufficientData` and `Inconclusive` finding reason codes.
+
+  Functions with a finding of unavailable are not returned unless you specify the `filter` parameter with a value of `Unavailable` in your `GetLambdaFunctionRecommendations` request.>
+  take finding-reason-codes, name <findingReasonCodes>
+    like lambda-function-recommendation-finding-reason-codes
+    void take
+    note <The reason for the finding classification of the function.
+
+Functions that have a finding classification of `Optimized` don't have a finding reason code.
+
+Finding reason codes for functions include:
+
+- **`MemoryOverprovisioned`** — The function is over-provisioned when its memory configuration can be sized down while still meeting the performance requirements of your workload. An over-provisioned function might lead to unnecessary infrastructure cost. This finding reason code is part of the `NotOptimized` finding classification.
+
+- **`MemoryUnderprovisioned`** — The function is under-provisioned when its memory configuration doesn't meet the performance requirements of the workload. An under-provisioned function might lead to poor application performance. This finding reason code is part of the `NotOptimized` finding classification.
+
+- **`InsufficientData`** — The function does not have sufficient metric data for Compute Optimizer to generate a recommendation. For more information, see the [Supported resources and requirements](https://docs.aws.amazon.com/compute-optimizer/latest/ug/requirements.html) in the _Compute Optimizer User Guide_. This finding reason code is part of the `Unavailable` finding classification.
+
+- **`Inconclusive`** — The function does not qualify for a recommendation because Compute Optimizer cannot generate a recommendation with a high degree of confidence. This finding reason code is part of the `Unavailable` finding classification.>
+  take memory-size-recommendation-options, name <memorySizeRecommendationOptions>
+    like lambda-function-memory-recommendation-options
+    void take
+    note <An array of objects that describe the memory configuration recommendation options for the function.>

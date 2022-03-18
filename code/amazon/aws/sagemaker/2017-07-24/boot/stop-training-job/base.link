@@ -1,0 +1,27 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-not-found
+  take form resource-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot stop-training-job, name <StopTrainingJob>
+  note <Stops a training job. To stop a job, Amazon SageMaker sends the algorithm the `SIGTERM` signal, which delays job termination for 120 seconds. Algorithms might use this 120-second window to save the model artifacts, so the results of the training is not lost.
+
+When it receives a `StopTrainingJob` request, Amazon SageMaker changes the status of the job to `Stopping`. After Amazon SageMaker stops the job, it sets the status to `Stopped`.>
+
+  take x-amz-target
+    like native-string
+  take stop-training-job-request, like stop-training-job-request
+
+  line </#X-Amz-Target=SageMaker.StopTrainingJob>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan stop-training-job-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like resource-not-found
+    note <ResourceNotFound>

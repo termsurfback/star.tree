@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/health/2016-08-04/base/describe-affected-entities-response
+  take form describe-affected-entities-response
+
+load @drumwork/snow/amazonaws.com/health/2016-08-04/base/invalid-pagination-token
+  take form invalid-pagination-token
+
+load @drumwork/snow/amazonaws.com/health/2016-08-04/base/unsupported-locale
+  take form unsupported-locale
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-affected-entities, name <DescribeAffectedEntities>
+  note <Returns a list of entities that have been affected by the specified events, based on the specified filter criteria. Entities can refer to individual customer resources, groups of customer resources, or any other construct, depending on the AWS service. Events that have impact beyond that of the affected entities, or where the extent of impact is unknown, include at least one entity indicating this.
+
+At least one event ARN is required. Results are sorted by the `lastUpdatedTime` of the entity, starting with the most recent.
+
+- This API operation uses pagination. Specify the `nextToken` parameter in the next request to return more results.
+
+- This operation supports resource-level permissions. You can use this operation to allow or deny access to specific AWS Health events. For more information, see [Resource- and action-based conditions](https://docs.aws.amazon.com/health/latest/ug/security_iam_id-based-policy-examples.html#resource-action-based-conditions) in the _AWS Health User Guide_.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-affected-entities-request, like describe-affected-entities-request
+
+  line </#X-Amz-Target=AWSHealth_20160804.DescribeAffectedEntities>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan describe-affected-entities-request
+
+  loot 200
+    seed json, like describe-affected-entities-response
+    note <Success>
+  loot 480
+    seed json, like invalid-pagination-token
+    note <InvalidPaginationToken>
+  loot 481
+    seed json, like unsupported-locale
+    note <UnsupportedLocale>

@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/already-exists-exception
+  take form already-exists-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/create-crawler-response
+  take form create-crawler-response
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/operation-timeout-exception
+  take form operation-timeout-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/resource-number-limit-exceeded-exception
+  take form resource-number-limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-crawler, name <CreateCrawler>
+  note <Creates a new crawler with specified targets, role, configuration, and optional schedule. At least one crawl target must be specified, in the `s3Targets` field, the `jdbcTargets` field, or the `DynamoDBTargets` field.>
+
+  take x-amz-target
+    like native-string
+  take create-crawler-request, like create-crawler-request
+
+  line </#X-Amz-Target=AWSGlue.CreateCrawler>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-crawler-request
+
+  loot 200
+    seed json, like create-crawler-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like already-exists-exception
+    note <AlreadyExistsException>
+  loot 482
+    seed json, like operation-timeout-exception
+    note <OperationTimeoutException>
+  loot 483
+    seed json, like resource-number-limit-exceeded-exception
+    note <ResourceNumberLimitExceededException>

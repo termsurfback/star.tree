@@ -1,0 +1,38 @@
+
+load @drumwork/snow/amazonaws.com/lambda/2014-11-11/base/list-functions-response
+  take form list-functions-response
+
+load @drumwork/snow/amazonaws.com/lambda/2014-11-11/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-functions, name <ListFunctions>
+  note <Returns a list of your Lambda functions. For each function, the response includes the function configuration information. You must use GetFunction to retrieve the code for your function.
+
+This operation requires permission for the `lambda:ListFunctions` action.>
+
+  take marker
+    like native-string
+    note <Optional string. An opaque pagination token returned from a previous `ListFunctions` operation. If present, indicates where to continue the listing.>
+    void take
+  take max-items
+    like native-integer
+    note <Optional integer. Specifies the maximum number of AWS Lambda functions to return in response. This parameter value must be greater than 0.>
+    void take
+
+  line </2014-11-13/functions/>
+
+  find <Marker>, loan marker
+  find <MaxItems>, loan max-items
+
+  loot 200
+    seed json, like list-functions-response
+    note <Success>
+  loot 500
+    seed json, like service-exception
+    note <ServiceException>

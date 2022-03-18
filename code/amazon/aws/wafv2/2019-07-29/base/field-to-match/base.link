@@ -1,0 +1,77 @@
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/all-query-arguments
+  take form all-query-arguments
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/body
+  take form body
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/json-body
+  take form json-body
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/method
+  take form method
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/query-string
+  take form query-string
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/single-header
+  take form single-header
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/single-query-argument
+  take form single-query-argument
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/uri-path
+  take form uri-path
+
+form field-to-match, name <FieldToMatch>
+  note <The part of a web request that you want WAF to inspect. Include the single `FieldToMatch` type that you want to inspect, with additional specifications as needed, according to the type. You specify a single request component in `FieldToMatch` for each rule statement that requires it. To inspect more than one component of a web request, create a separate rule statement for each component.
+
+JSON specification for a `QueryString` field to match:
+
+`"FieldToMatch": { "QueryString": {} }`
+
+Example JSON for a `Method` field to match specification:
+
+`"FieldToMatch": { "Method": { "Name": "DELETE" } }`>
+  take single-header, name <SingleHeader>
+    like single-header
+    void take
+    note <Inspect a single header. Provide the name of the header to inspect, for example, `User-Agent` or `Referer`. This setting isn't case sensitive.
+
+Example JSON: `"SingleHeader": { "Name": "haystack" }`>
+  take single-query-argument, name <SingleQueryArgument>
+    like single-query-argument
+    void take
+    note <Inspect a single query argument. Provide the name of the query argument to inspect, such as _UserName_ or _SalesRegion_. The name can be up to 30 characters long and isn't case sensitive.
+
+This is used only to indicate the web request component for WAF to inspect, in the FieldToMatch specification.
+
+Example JSON: `"SingleQueryArgument": { "Name": "myArgument" }`>
+  take all-query-arguments, name <AllQueryArguments>
+    like all-query-arguments
+    void take
+    note <Inspect all query arguments.>
+  take uri-path, name <UriPath>
+    like uri-path
+    void take
+    note <Inspect the request URI path. This is the part of a web request that identifies a resource, for example, `/images/daily-ad.jpg`.>
+  take query-string, name <QueryString>
+    like query-string
+    void take
+    note <Inspect the query string. This is the part of a URL that appears after a `?` character, if any.>
+  take body, name <Body>
+    like body
+    void take
+    note <Inspect the request body as plain text. The request body immediately follows the request headers. This is the part of a request that contains any additional data that you want to send to your web server as the HTTP request body, such as data from a form.
+
+Note that only the first 8 KB (8192 bytes) of the request body are forwarded to WAF for inspection by the underlying host service. If you don't need to inspect more than 8 KB, you can guarantee that you don't allow additional bytes in by combining a statement that inspects the body of the web request, such as ByteMatchStatement or RegexPatternSetReferenceStatement, with a SizeConstraintStatement that enforces an 8 KB size limit on the body of the request. WAF doesn't support inspecting the entire contents of web requests whose bodies exceed the 8 KB limit.>
+  take method, name <Method>
+    like method
+    void take
+    note <Inspect the HTTP method. The method indicates the type of operation that the request is asking the origin to perform.>
+  take json-body, name <JsonBody>
+    like json-body
+    void take
+    note <Inspect the request body as JSON. The request body immediately follows the request headers. This is the part of a request that contains any additional data that you want to send to your web server as the HTTP request body, such as data from a form.
+
+Note that only the first 8 KB (8192 bytes) of the request body are forwarded to WAF for inspection by the underlying host service. If you don't need to inspect more than 8 KB, you can guarantee that you don't allow additional bytes in by combining a statement that inspects the body of the web request, such as ByteMatchStatement or RegexPatternSetReferenceStatement, with a SizeConstraintStatement that enforces an 8 KB size limit on the body of the request. WAF doesn't support inspecting the entire contents of web requests whose bodies exceed the 8 KB limit.>

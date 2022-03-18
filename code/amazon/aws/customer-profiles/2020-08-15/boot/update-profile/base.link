@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/update-profile-body
+  take form update-profile-body
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/update-profile-response
+  take form update-profile-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-profile, name <UpdateProfile>
+  note <Updates the properties of a profile. The ProfileId is required for updating a customer profile.
+
+When calling the UpdateProfile API, specifying an empty string value means that any existing value will be removed. Not specifying a string value means that any value already there will be kept.>
+
+  take domain-name
+    like native-string
+    note <The unique name of the domain.>
+  take update-profile-body, like update-profile-body
+
+  line </domains/{domain-name}/profiles>
+
+  seed json, loan update-profile-body
+
+  loot 200
+    seed json, like update-profile-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like internal-server-exception
+    note <InternalServerException>

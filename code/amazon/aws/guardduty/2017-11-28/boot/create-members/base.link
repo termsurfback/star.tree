@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/guardduty/2017-11-28/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/guardduty/2017-11-28/base/create-members-body
+  take form create-members-body
+
+load @drumwork/snow/amazonaws.com/guardduty/2017-11-28/base/create-members-response
+  take form create-members-response
+
+load @drumwork/snow/amazonaws.com/guardduty/2017-11-28/base/internal-server-error-exception
+  take form internal-server-error-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-members, name <CreateMembers>
+  note <Creates member accounts of the current AWS account by specifying a list of AWS account IDs. This step is a prerequisite for managing the associated member accounts either by invitation or through an organization.
+
+When using `Create Members` as an organizations delegated administrator this action will enable GuardDuty in the added member accounts, with the exception of the organization delegated administrator account, which must enable GuardDuty prior to being added as a member.
+
+If you are adding accounts by invitation use this action after GuardDuty has been enabled in potential member accounts and before using [`Invite Members`](https://docs.aws.amazon.com/guardduty/latest/APIReference/API_InviteMembers.html) .>
+
+  take detector-id
+    like native-string
+    note <The unique ID of the detector of the GuardDuty account that you want to associate member accounts with.>
+  take create-members-body, like create-members-body
+
+  line </detector/{detector-id}/member>
+
+  seed json, loan create-members-body
+
+  loot 200
+    seed json, like create-members-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like internal-server-error-exception
+    note <InternalServerErrorException>

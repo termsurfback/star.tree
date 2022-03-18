@@ -1,0 +1,34 @@
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/get-subscription-definition-version-response
+  take form get-subscription-definition-version-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-subscription-definition-version, name <GetSubscriptionDefinitionVersion>
+  note <Retrieves information about a subscription definition version.>
+
+  take subscription-definition-id
+    like native-string
+    note <The ID of the subscription definition.>
+  take subscription-definition-version-id
+    like native-string
+    note <The ID of the subscription definition version. This value maps to the ''Version'' property of the corresponding ''VersionInformation'' object, which is returned by ''ListSubscriptionDefinitionVersions'' requests. If the version is the last one that was associated with a subscription definition, the value also maps to the ''LatestVersion'' property of the corresponding ''DefinitionInformation'' object.>
+  take next-token
+    like native-string
+    note <The token for the next set of results, or ''null'' if there are no additional results.>
+    void take
+
+  line </greengrass/definition/subscriptions/{subscription-definition-id}/versions/{subscription-definition-version-id}>
+
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like get-subscription-definition-version-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>

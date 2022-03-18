@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/apprunner/2020-05-15/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/apprunner/2020-05-15/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/apprunner/2020-05-15/base/list-operations-response
+  take form list-operations-response
+
+load @drumwork/snow/amazonaws.com/apprunner/2020-05-15/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-operations, name <ListOperations>
+  note <Return a list of operations that occurred on an AWS App Runner service.
+
+The resulting list of OperationSummary objects is sorted in reverse chronological order. The first object on the list represents the last started operation.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-operations-request, like list-operations-request
+
+  line </#X-Amz-Target=AppRunner.ListOperations>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-operations-request
+
+  loot 200
+    seed json, like list-operations-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

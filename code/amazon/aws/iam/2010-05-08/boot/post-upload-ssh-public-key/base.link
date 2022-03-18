@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/duplicate-ssh-public-key-exception
+  take form duplicate-ssh-public-key-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/invalid-public-key-exception
+  take form invalid-public-key-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/unrecognized-public-key-encoding-exception
+  take form unrecognized-public-key-encoding-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/upload-ssh-public-key-response
+  take form upload-ssh-public-key-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-upload-ssh-public-key, name <POST_UploadSSHPublicKey>
+  note <Uploads an SSH public key and associates it with the specified IAM user.
+
+The SSH public key uploaded by this operation can be used only for authenticating the associated IAM user to an CodeCommit repository. For more information about using SSH keys to authenticate to an CodeCommit repository, see [Set up CodeCommit for SSH connections](https://docs.aws.amazon.com/codecommit/latest/userguide/setting-up-credentials-ssh.html) in the _CodeCommit User Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take upload-ssh-public-key-request, like upload-ssh-public-key-request
+    void take
+
+  line </#Action=UploadSSHPublicKey>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan upload-ssh-public-key-request
+
+  loot 200
+    seed xml, like upload-ssh-public-key-response
+    note <Success>
+  loot 480
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 482
+    seed xml, like invalid-public-key-exception
+    note <InvalidPublicKeyException>
+  loot 483
+    seed xml, like duplicate-ssh-public-key-exception
+    note <DuplicateSSHPublicKeyException>
+  loot 484
+    seed xml, like unrecognized-public-key-encoding-exception
+    note <UnrecognizedPublicKeyEncodingException>

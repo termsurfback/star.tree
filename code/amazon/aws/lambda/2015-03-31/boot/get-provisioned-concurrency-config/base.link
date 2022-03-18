@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/get-provisioned-concurrency-config-response
+  take form get-provisioned-concurrency-config-response
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/provisioned-concurrency-config-not-found-exception
+  take form provisioned-concurrency-config-not-found-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-provisioned-concurrency-config, name <GetProvisionedConcurrencyConfig>
+  note <Retrieves the provisioned concurrency configuration for a function's alias or version.>
+
+  take function-name
+    like native-string
+    note <The name of the Lambda function.
+
+**Name formats** - **Function name** - `my-function`.
+
+- **Function ARN** - `arn:aws:lambda:us-west-2:123456789012:function:my-function`.
+
+- **Partial ARN** - `123456789012:function:my-function`.
+
+The length constraint applies only to the full ARN. If you specify only the function name, it is limited to 64 characters in length.>
+  take qualifier
+    like native-string
+    note <The version number or alias name.>
+
+  line </2019-09-30/functions/{function-name}/provisioned-concurrency#Qualifier>
+
+  find <Qualifier>, loan qualifier
+
+  loot 200
+    seed json, like get-provisioned-concurrency-config-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 483
+    seed json, like service-exception
+    note <ServiceException>
+  loot 484
+    seed json, like provisioned-concurrency-config-not-found-exception
+    note <ProvisionedConcurrencyConfigNotFoundException>

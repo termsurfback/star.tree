@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/copy-image-response
+  take form copy-image-response
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/incompatible-image-exception
+  take form incompatible-image-exception
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/invalid-account-status-exception
+  take form invalid-account-status-exception
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/resource-already-exists-exception
+  take form resource-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/resource-not-available-exception
+  take form resource-not-available-exception
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot copy-image, name <CopyImage>
+  note <Copies the image within the same region or to a new region within the same AWS account. Note that any tags you added to the image will not be copied.>
+
+  take x-amz-target
+    like native-string
+  take copy-image-request, like copy-image-request
+
+  line </#X-Amz-Target=PhotonAdminProxyService.CopyImage>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan copy-image-request
+
+  loot 200
+    seed json, like copy-image-response
+    note <Success>
+  loot 480
+    seed json, like resource-already-exists-exception
+    note <ResourceAlreadyExistsException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like resource-not-available-exception
+    note <ResourceNotAvailableException>
+  loot 483
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 484
+    seed json, like invalid-account-status-exception
+    note <InvalidAccountStatusException>
+  loot 485
+    seed json, like incompatible-image-exception
+    note <IncompatibleImageException>

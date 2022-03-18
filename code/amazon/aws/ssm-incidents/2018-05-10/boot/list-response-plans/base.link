@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/ssm-incidents/2018-05-10/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/ssm-incidents/2018-05-10/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/ssm-incidents/2018-05-10/base/list-response-plans-body
+  take form list-response-plans-body
+
+load @drumwork/snow/amazonaws.com/ssm-incidents/2018-05-10/base/list-response-plans-output
+  take form list-response-plans-output
+
+load @drumwork/snow/amazonaws.com/ssm-incidents/2018-05-10/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/ssm-incidents/2018-05-10/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-response-plans, name <ListResponsePlans>
+  note <Lists all response plans in your account.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-response-plans-body, like list-response-plans-body
+
+  line </listResponsePlans>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-response-plans-body
+
+  loot 200
+    seed json, like list-response-plans-output
+    note <Success>
+  loot 480
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like internal-server-exception
+    note <InternalServerException>

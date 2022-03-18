@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/describe-recipe-response
+  take form describe-recipe-response
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-recipe, name <DescribeRecipe>
+  note <Returns the definition of a specific DataBrew recipe corresponding to a particular version.>
+
+  take name
+    like native-string
+    note <The name of the recipe to be described.>
+  take recipe-version
+    like native-string
+    note <The recipe version identifier. If this parameter isn't specified, then the latest published version is returned.>
+    void take
+
+  line </recipes/{name}>
+
+  find <recipeVersion>, loan recipe-version
+
+  loot 200
+    seed json, like describe-recipe-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>

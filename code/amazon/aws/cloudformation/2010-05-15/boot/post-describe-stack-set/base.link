@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/describe-stack-set-output
+  take form describe-stack-set-output
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/stack-set-not-found-exception
+  take form stack-set-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-stack-set, name <POST_DescribeStackSet>
+  note <Returns the description of the specified stack set.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-stack-set-input, like describe-stack-set-input
+    void take
+
+  line </#Action=DescribeStackSet>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-stack-set-input
+
+  loot 200
+    seed xml, like describe-stack-set-output
+    note <Success>
+  loot 480
+    seed xml, like stack-set-not-found-exception
+    note <StackSetNotFoundException>

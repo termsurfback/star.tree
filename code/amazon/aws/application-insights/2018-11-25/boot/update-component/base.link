@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/update-component-response
+  take form update-component-response
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-component, name <UpdateComponent>
+  note <Updates the custom component name and/or the list of resources that make up the component.>
+
+  take x-amz-target
+    like native-string
+  take update-component-request, like update-component-request
+
+  line </#X-Amz-Target=EC2WindowsBarleyService.UpdateComponent>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-component-request
+
+  loot 200
+    seed json, like update-component-response
+    note <Success>
+  loot 480
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like internal-server-exception
+    note <InternalServerException>

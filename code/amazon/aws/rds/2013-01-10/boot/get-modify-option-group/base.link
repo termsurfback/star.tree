@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/invalid-option-group-state-fault
+  take form invalid-option-group-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/modify-option-group-result
+  take form modify-option-group-result
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/option-configuration
+  take form option-configuration
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/option-group-not-found-fault
+  take form option-group-not-found-fault
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-modify-option-group, name <GET_ModifyOptionGroup>
+  take option-group-name
+    like native-string
+  take options-to-include
+    like list
+      like option-configuration
+    void take
+  take options-to-remove
+    like list
+      like string
+    void take
+  take apply-immediately
+    like native-boolean
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyOptionGroup>
+
+  find <OptionGroupName>, loan option-group-name
+  find <OptionsToInclude>, loan options-to-include
+  find <OptionsToRemove>, loan options-to-remove
+  find <ApplyImmediately>, loan apply-immediately
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-option-group-result
+    note <Success>
+  loot 480
+    seed xml, like invalid-option-group-state-fault
+    note <InvalidOptionGroupStateFault>
+  loot 481
+    seed xml, like option-group-not-found-fault
+    note <OptionGroupNotFoundFault>

@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/describe-addresses-result
+  take form describe-addresses-result
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/invalid-resource-exception
+  take form invalid-resource-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-addresses, name <DescribeAddresses>
+  note <Returns a specified number of `ADDRESS` objects. Calling this API in one of the US regions will return addresses from the list of all addresses associated with this account in all US regions.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-addresses-request, like describe-addresses-request
+
+  line </#X-Amz-Target=AWSIESnowballJobManagementService.DescribeAddresses>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-addresses-request
+
+  loot 200
+    seed json, like describe-addresses-result
+    note <Success>
+  loot 480
+    seed json, like invalid-resource-exception
+    note <InvalidResourceException>
+  loot 481
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>

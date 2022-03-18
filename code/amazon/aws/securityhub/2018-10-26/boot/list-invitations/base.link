@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/invalid-access-exception
+  take form invalid-access-exception
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/list-invitations-response
+  take form list-invitations-response
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-invitations, name <ListInvitations>
+  note <Lists all Security Hub membership invitations that were sent to the current Amazon Web Services account.
+
+This operation is only used by accounts that are managed by invitation. Accounts that are managed using the integration with Organizations do not receive invitations.>
+
+  take max-results
+    like native-integer
+    note <The maximum number of items to return in the response.>
+    void take
+  take next-token
+    like native-string
+    note <The token that is required for pagination. On your first call to the `ListInvitations` operation, set the value of this parameter to `NULL`.
+
+For subsequent calls to the operation, to continue listing data, set the value of this parameter to the value returned from the previous response.>
+    void take
+
+  line </invitations>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like list-invitations-response
+    note <Success>
+  loot 480
+    seed json, like internal-exception
+    note <InternalException>
+  loot 481
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 482
+    seed json, like invalid-access-exception
+    note <InvalidAccessException>
+  loot 483
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>

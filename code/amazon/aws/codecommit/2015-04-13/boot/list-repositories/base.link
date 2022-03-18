@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/codecommit/2015-04-13/base/invalid-continuation-token-exception
+  take form invalid-continuation-token-exception
+
+load @drumwork/snow/amazonaws.com/codecommit/2015-04-13/base/invalid-order-exception
+  take form invalid-order-exception
+
+load @drumwork/snow/amazonaws.com/codecommit/2015-04-13/base/invalid-sort-by-exception
+  take form invalid-sort-by-exception
+
+load @drumwork/snow/amazonaws.com/codecommit/2015-04-13/base/list-repositories-output
+  take form list-repositories-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-repositories, name <ListRepositories>
+  note <Gets information about one or more repositories.>
+
+  take x-amz-target
+    like native-string
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-repositories-input, like list-repositories-input
+
+  line </#X-Amz-Target=CodeCommit_20150413.ListRepositories>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <nextToken>, loan next-token
+
+  seed json, loan list-repositories-input
+
+  loot 200
+    seed json, like list-repositories-output
+    note <Success>
+  loot 480
+    seed json, like invalid-sort-by-exception
+    note <InvalidSortByException>
+  loot 481
+    seed json, like invalid-order-exception
+    note <InvalidOrderException>
+  loot 482
+    seed json, like invalid-continuation-token-exception
+    note <InvalidContinuationTokenException>

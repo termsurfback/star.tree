@@ -1,0 +1,79 @@
+
+load @drumwork/snow/amazonaws.com/schemas/2019-12-02/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/schemas/2019-12-02/base/forbidden-exception
+  take form forbidden-exception
+
+load @drumwork/snow/amazonaws.com/schemas/2019-12-02/base/internal-server-error-exception
+  take form internal-server-error-exception
+
+load @drumwork/snow/amazonaws.com/schemas/2019-12-02/base/list-registries-response
+  take form list-registries-response
+
+load @drumwork/snow/amazonaws.com/schemas/2019-12-02/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/schemas/2019-12-02/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-registries, name <ListRegistries>
+  note <List the registries.>
+
+  take limit
+    like native-integer
+    void take
+  take next-token
+    like native-string
+    note <The token that specifies the next page of results to return. To request the first page, leave NextToken empty. The token will expire in 24 hours, and cannot be shared with other accounts.>
+    void take
+  take registry-name-prefix
+    like native-string
+    note <Specifying this limits the results to only those registry names that start with the specified prefix.>
+    void take
+  take scope
+    like native-string
+    note <Can be set to Local or AWS to limit responses to your custom registries, or the ones provided by AWS.>
+    void take
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+
+  line </v1/registries>
+
+  find <limit>, loan limit
+  find <nextToken>, loan next-token
+  find <registryNamePrefix>, loan registry-name-prefix
+  find <scope>, loan scope
+  find <Limit>, loan limit
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like list-registries-response
+    note <Success>
+  loot 480
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 481
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 482
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 483
+    seed json, like internal-server-error-exception
+    note <InternalServerErrorException>
+  loot 484
+    seed json, like forbidden-exception
+    note <ForbiddenException>

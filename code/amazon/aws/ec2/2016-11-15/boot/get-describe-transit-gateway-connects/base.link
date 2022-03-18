@@ -1,0 +1,75 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-transit-gateway-connects-result
+  take form describe-transit-gateway-connects-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/transit-gateway-attachment-id
+  take form transit-gateway-attachment-id
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-transit-gateway-connects, name <GET_DescribeTransitGatewayConnects>
+  note <Describes one or more Connect attachments.>
+
+  take transit-gateway-attachment-ids
+    like list
+      like transit-gateway-attachment-id
+    note <The IDs of the attachments.>
+    void take
+  take filter
+    like list
+      like filter
+    note <One or more filters. The possible values are:
+
+- `options.protocol` - The tunnel protocol (`gre`).
+
+- `state` - The state of the attachment (`initiating` | `initiatingRequest` | `pendingAcceptance` | `rollingBack` | `pending` | `available` | `modifying` | `deleting` | `deleted` | `failed` | `rejected` | `rejecting` | `failing`).
+
+- `transit-gateway-attachment-id` - The ID of the Connect attachment.
+
+- `transit-gateway-id` - The ID of the transit gateway.
+
+- `transport-transit-gateway-attachment-id` - The ID of the transit gateway attachment from which the Connect attachment was created.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return with a single call. To retrieve the remaining results, make another call with the returned `nextToken` value.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next page of results.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeTransitGatewayConnects>
+
+  find <TransitGatewayAttachmentIds>, loan transit-gateway-attachment-ids
+  find <Filter>, loan filter
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <DryRun>, loan dry-run
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-transit-gateway-connects-result
+    note <Success>

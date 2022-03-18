@@ -1,0 +1,108 @@
+
+load @drumwork/snow/amazonaws.com/cloudfront/2019-03-26/base/allowed-methods
+  take form allowed-methods
+
+load @drumwork/snow/amazonaws.com/cloudfront/2019-03-26/base/forwarded-values
+  take form forwarded-values
+
+load @drumwork/snow/amazonaws.com/cloudfront/2019-03-26/base/lambda-function-associations
+  take form lambda-function-associations
+
+load @drumwork/snow/amazonaws.com/cloudfront/2019-03-26/base/long
+  take form long
+
+load @drumwork/snow/amazonaws.com/cloudfront/2019-03-26/base/trusted-signers
+  take form trusted-signers
+
+load @drumwork/snow/amazonaws.com/cloudfront/2019-03-26/base/viewer-protocol-policy
+  take form viewer-protocol-policy
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+load @drumwork/snow/base/string
+  take form string
+
+form cache-behavior, name <CacheBehavior>
+  note <A complex type that describes how CloudFront processes requests.
+
+You must create at least as many cache behaviors (including the default cache behavior) as you have origins if you want CloudFront to serve objects from all of the origins. Each cache behavior specifies the one origin from which you want CloudFront to get objects. If you have two origins and only the default cache behavior, the default cache behavior will cause CloudFront to get objects from one of the origins, but the other origin is never used.
+
+For the current quota (formerly known as limit) on the number of cache behaviors that you can add to a distribution, see [Quotas](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cloudfront-limits.html) in the _Amazon CloudFront Developer Guide_.
+
+If you don’t want to specify any cache behaviors, include only an empty `CacheBehaviors` element. Don’t include an empty `CacheBehavior` element because this is invalid.
+
+To delete all cache behaviors in an existing distribution, update the distribution configuration and include only an empty `CacheBehaviors` element.
+
+To add, change, or remove one or more cache behaviors, update the distribution configuration and specify all of the cache behaviors that you want to include in the updated distribution.
+
+For more information about cache behaviors, see [Cache Behavior Settings](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html#DownloadDistValuesCacheBehavior) in the _Amazon CloudFront Developer Guide_.>
+  take path-pattern, name <PathPattern>
+    like string
+    note <The pattern (for example, `images/*.jpg`) that specifies which requests to apply the behavior to. When CloudFront receives a viewer request, the requested path is compared with path patterns in the order in which cache behaviors are listed in the distribution.
+
+You can optionally include a slash (`/`) at the beginning of the path pattern. For example, `/images/*.jpg`. CloudFront behavior is the same with or without the leading `/`.
+
+The path pattern for the default cache behavior is `*` and cannot be changed. If the request for an object does not match the path pattern for any cache behaviors, CloudFront applies the behavior in the default cache behavior.
+
+For more information, see [Path Pattern](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html#DownloadDistValuesPathPattern) in the _Amazon CloudFront Developer Guide_.>
+  take target-origin-id, name <TargetOriginId>
+    like string
+    note <The value of `ID` for the origin that you want CloudFront to route requests to when they match this cache behavior.>
+  take forwarded-values, name <ForwardedValues>
+    like forwarded-values
+    note <A complex type that specifies how CloudFront handles query strings, cookies, and HTTP headers.>
+  take trusted-signers, name <TrustedSigners>
+    like trusted-signers
+    note <A complex type that specifies the AWS accounts, if any, that you want to allow to create signed URLs for private content.
+
+If you want to require signed URLs in requests for objects in the target origin that match the `PathPattern` for this cache behavior, specify `true` for `Enabled`, and specify the applicable values for `Quantity` and `Items`. For more information, see [Serving Private Content with Signed URLs and Signed Cookies](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/PrivateContent.html) in the _Amazon CloudFront Developer Guide_.
+
+If you don’t want to require signed URLs in requests for objects that match `PathPattern`, specify `false` for `Enabled` and `0` for `Quantity`. Omit `Items`.
+
+To add, change, or remove one or more trusted signers, change `Enabled` to `true` (if it’s currently `false`), change `Quantity` as applicable, and specify all of the trusted signers that you want to include in the updated distribution.>
+  take viewer-protocol-policy, name <ViewerProtocolPolicy>
+    like viewer-protocol-policy
+    note <The protocol that viewers can use to access the files in the origin specified by `TargetOriginId` when a request matches the path pattern in `PathPattern`. You can specify the following options:
+
+- `allow-all`: Viewers can use HTTP or HTTPS.
+
+- `redirect-to-https`: If a viewer submits an HTTP request, CloudFront returns an HTTP status code of 301 (Moved Permanently) to the viewer along with the HTTPS URL. The viewer then resubmits the request using the new URL.
+
+- `https-only`: If a viewer sends an HTTP request, CloudFront returns an HTTP status code of 403 (Forbidden).
+
+For more information about requiring the HTTPS protocol, see [Requiring HTTPS Between Viewers and CloudFront](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-https-viewers-to-cloudfront.html) in the _Amazon CloudFront Developer Guide_.
+
+The only way to guarantee that viewers retrieve an object that was fetched from the origin using HTTPS is never to use any other protocol to fetch the object. If you have recently changed from HTTP to HTTPS, we recommend that you clear your objects’ cache because cached objects are protocol agnostic. That means that an edge location will return an object from the cache regardless of whether the current request protocol matches the protocol used previously. For more information, see [Managing Cache Expiration](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Expiration.html) in the _Amazon CloudFront Developer Guide_.>
+  take min-ttl, name <MinTTL>
+    like long
+    note <The minimum amount of time that you want objects to stay in CloudFront caches before CloudFront forwards another request to your origin to determine whether the object has been updated. For more information, see [Managing How Long Content Stays in an Edge Cache (Expiration)](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Expiration.html) in the _Amazon CloudFront Developer Guide_.
+
+You must specify `0` for `MinTTL` if you configure CloudFront to forward all headers to your origin (under `Headers`, if you specify `1` for `Quantity` and `*` for `Name`).>
+  take allowed-methods, name <AllowedMethods>
+    like allowed-methods
+    void take
+  take smooth-streaming, name <SmoothStreaming>
+    like boolean
+    void take
+    note <Indicates whether you want to distribute media files in the Microsoft Smooth Streaming format using the origin that is associated with this cache behavior. If so, specify `true`; if not, specify `false`. If you specify `true` for `SmoothStreaming`, you can still distribute other content using this cache behavior if the content matches the value of `PathPattern`.>
+  take default-ttl, name <DefaultTTL>
+    like long
+    void take
+    note <The default amount of time that you want objects to stay in CloudFront caches before CloudFront forwards another request to your origin to determine whether the object has been updated. The value that you specify applies only when your origin does not add HTTP headers such as `Cache-Control max-age`, `Cache-Control s-maxage`, and `Expires` to objects. For more information, see [Managing How Long Content Stays in an Edge Cache (Expiration)](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Expiration.html) in the _Amazon CloudFront Developer Guide_.>
+  take max-ttl, name <MaxTTL>
+    like long
+    void take
+    note <The maximum amount of time that you want objects to stay in CloudFront caches before CloudFront forwards another request to your origin to determine whether the object has been updated. The value that you specify applies only when your origin adds HTTP headers such as `Cache-Control max-age`, `Cache-Control s-maxage`, and `Expires` to objects. For more information, see [Managing How Long Content Stays in an Edge Cache (Expiration)](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Expiration.html) in the _Amazon CloudFront Developer Guide_.>
+  take compress, name <Compress>
+    like boolean
+    void take
+    note <Whether you want CloudFront to automatically compress certain files for this cache behavior. If so, specify true; if not, specify false. For more information, see [Serving Compressed Files](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/ServingCompressedFiles.html) in the _Amazon CloudFront Developer Guide_.>
+  take lambda-function-associations, name <LambdaFunctionAssociations>
+    like lambda-function-associations
+    void take
+    note <A complex type that contains zero or more Lambda function associations for a cache behavior.>
+  take field-level-encryption-id, name <FieldLevelEncryptionId>
+    like string
+    void take
+    note <The value of `ID` for the field-level encryption configuration that you want CloudFront to use for encrypting specific fields of data for this cache behavior.>

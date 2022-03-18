@@ -1,0 +1,35 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/payment-intent
+  take form payment-intent
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-payment-intents-intent-capture-body
+  take form post-payment-intents-intent-capture-body
+
+boot post-payment-intents-intent-capture, name <PostPaymentIntentsIntentCapture>
+  note <Capture the funds of an existing uncaptured PaymentIntent when its status is `requires_capture`.
+
+Uncaptured PaymentIntents will be canceled exactly seven days after they are created.
+
+Learn more about [separate authorization and capture](/docs/payments/capture-later).>
+
+  take intent
+    like native-string
+  take post-payment-intents-intent-capture-body, like post-payment-intents-intent-capture-body
+    void take
+
+  line </v1/payment_intents/{intent}/capture>
+
+  seed x-www-form-urlencoded, loan post-payment-intents-intent-capture-body
+
+  loot 200
+    seed json, like payment-intent
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

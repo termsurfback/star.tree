@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/accept-domain-transfer-from-another-aws-account-response
+  take form accept-domain-transfer-from-another-aws-account-response
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/domain-limit-exceeded
+  take form domain-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/operation-limit-exceeded
+  take form operation-limit-exceeded
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot accept-domain-transfer-from-another-aws-account, name <AcceptDomainTransferFromAnotherAwsAccount>
+  note <Accepts the transfer of a domain from another AWS account to the current AWS account. You initiate a transfer between AWS accounts using [TransferDomainToAnotherAwsAccount](https://docs.aws.amazon.com/Route53/latest/APIReference/API_domains_TransferDomainToAnotherAwsAccount.html).
+
+Use either [ListOperations](https://docs.aws.amazon.com/Route53/latest/APIReference/API_domains_ListOperations.html) or [GetOperationDetail](https://docs.aws.amazon.com/Route53/latest/APIReference/API_domains_GetOperationDetail.html) to determine whether the operation succeeded. [GetOperationDetail](https://docs.aws.amazon.com/Route53/latest/APIReference/API_domains_GetOperationDetail.html) provides additional information, for example, `Domain Transfer from Aws Account 111122223333 has been cancelled`.>
+
+  take x-amz-target
+    like native-string
+  take accept-domain-transfer-from-another-aws-account-request, like accept-domain-transfer-from-another-aws-account-request
+
+  line </#X-Amz-Target=Route53Domains_v20140515.AcceptDomainTransferFromAnotherAwsAccount>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan accept-domain-transfer-from-another-aws-account-request
+
+  loot 200
+    seed json, like accept-domain-transfer-from-another-aws-account-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input
+    note <InvalidInput>
+  loot 481
+    seed json, like operation-limit-exceeded
+    note <OperationLimitExceeded>
+  loot 482
+    seed json, like domain-limit-exceeded
+    note <DomainLimitExceeded>

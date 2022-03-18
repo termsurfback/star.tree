@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/put-registry-policy-response
+  take form put-registry-policy-response
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-registry-policy, name <PutRegistryPolicy>
+  note <Creates or updates the permissions policy for your registry.
+
+A registry policy is used to specify permissions for another Amazon Web Services account and is used when configuring cross-account replication. For more information, see [Registry permissions](https://docs.aws.amazon.com/AmazonECR/latest/userguide/registry-permissions.html) in the _Amazon Elastic Container Registry User Guide_.>
+
+  take x-amz-target
+    like native-string
+  take put-registry-policy-request, like put-registry-policy-request
+
+  line </#X-Amz-Target=AmazonEC2ContainerRegistry_V20150921.PutRegistryPolicy>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan put-registry-policy-request
+
+  loot 200
+    seed json, like put-registry-policy-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>

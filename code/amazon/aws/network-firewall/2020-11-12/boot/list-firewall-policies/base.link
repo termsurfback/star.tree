@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/network-firewall/2020-11-12/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/network-firewall/2020-11-12/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/network-firewall/2020-11-12/base/list-firewall-policies-response
+  take form list-firewall-policies-response
+
+load @drumwork/snow/amazonaws.com/network-firewall/2020-11-12/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-firewall-policies, name <ListFirewallPolicies>
+  note <Retrieves the metadata for the firewall policies that you have defined. Depending on your setting for max results and the number of firewall policies, a single call might not return the full list.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-firewall-policies-request, like list-firewall-policies-request
+
+  line </#X-Amz-Target=NetworkFirewall_20201112.ListFirewallPolicies>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-firewall-policies-request
+
+  loot 200
+    seed json, like list-firewall-policies-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like internal-server-error
+    note <InternalServerError>

@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/delete-batch-prediction-output
+  take form delete-batch-prediction-output
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-batch-prediction, name <DeleteBatchPrediction>
+  note <Assigns the DELETED status to a `BatchPrediction`, rendering it unusable.
+
+After using the `DeleteBatchPrediction` operation, you can use the GetBatchPrediction operation to verify that the status of the `BatchPrediction` changed to DELETED.
+
+**Caution:** The result of the `DeleteBatchPrediction` operation is irreversible.>
+
+  take x-amz-target
+    like native-string
+  take delete-batch-prediction-input, like delete-batch-prediction-input
+
+  line </#X-Amz-Target=AmazonML_20141212.DeleteBatchPrediction>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-batch-prediction-input
+
+  loot 200
+    seed json, like delete-batch-prediction-output
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

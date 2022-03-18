@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/create-firewall-domain-list-response
+  take form create-firewall-domain-list-response
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-firewall-domain-list, name <CreateFirewallDomainList>
+  note <Creates an empty firewall domain list for use in DNS Firewall rules. You can populate the domains for the new list with a file, using ImportFirewallDomains, or with domain strings, using UpdateFirewallDomains.>
+
+  take x-amz-target
+    like native-string
+  take create-firewall-domain-list-request, like create-firewall-domain-list-request
+
+  line </#X-Amz-Target=Route53Resolver.CreateFirewallDomainList>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-firewall-domain-list-request
+
+  loot 200
+    seed json, like create-firewall-domain-list-response
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 483
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>
+  loot 484
+    seed json, like throttling-exception
+    note <ThrottlingException>

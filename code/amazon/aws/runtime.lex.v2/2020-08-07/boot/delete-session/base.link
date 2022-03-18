@@ -1,0 +1,72 @@
+
+load @drumwork/snow/amazonaws.com/runtime.lex.v2/2020-08-07/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/runtime.lex.v2/2020-08-07/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/runtime.lex.v2/2020-08-07/base/delete-session-response
+  take form delete-session-response
+
+load @drumwork/snow/amazonaws.com/runtime.lex.v2/2020-08-07/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/runtime.lex.v2/2020-08-07/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/runtime.lex.v2/2020-08-07/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/runtime.lex.v2/2020-08-07/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-session, name <DeleteSession>
+  note <Removes session information for a specified bot, alias, and user ID.
+
+You can use this operation to restart a conversation with a bot. When you remove a session, the entire history of the session is removed so that you can start again.
+
+You don't need to delete a session. Sessions have a time limit and will expire. Set the session time limit when you create the bot. The default is 5 minutes, but you can specify anything between 1 minute and 24 hours.
+
+If you specify a bot or alias ID that doesn't exist, you receive a `BadRequestException.`
+
+If the locale doesn't exist in the bot, or if the locale hasn't been enables for the alias, you receive a `BadRequestException`.>
+
+  take bot-id
+    like native-string
+    note <The identifier of the bot that contains the session data.>
+  take bot-alias-id
+    like native-string
+    note <The alias identifier in use for the bot that contains the session data.>
+  take locale-id
+    like native-string
+    note <The locale where the session is in use.>
+  take session-id
+    like native-string
+    note <The identifier of the session to delete.>
+
+  line </bots/{bot-id}/botAliases/{bot-alias-id}/botLocales/{locale-id}/sessions/{session-id}>
+
+  loot 200
+    seed json, like delete-session-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 485
+    seed json, like conflict-exception
+    note <ConflictException>

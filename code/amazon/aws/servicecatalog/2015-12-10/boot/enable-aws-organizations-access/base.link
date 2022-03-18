@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/enable-aws-organizations-access-output
+  take form enable-aws-organizations-access-output
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/invalid-state-exception
+  take form invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/operation-not-supported-exception
+  take form operation-not-supported-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot enable-aws-organizations-access, name <EnableAWSOrganizationsAccess>
+  note <Enable portfolio sharing feature through AWS Organizations. This API will allow Service Catalog to receive updates on your organization in order to sync your shares with the current structure. This API can only be called by the management account in the organization.
+
+By calling this API Service Catalog will make a call to organizations:EnableAWSServiceAccess on your behalf so that your shares can be in sync with any changes in your AWS Organizations structure.
+
+Note that a delegated administrator is not authorized to invoke `EnableAWSOrganizationsAccess`.>
+
+  take x-amz-target
+    like native-string
+  take enable-aws-organizations-access-input, like enable-aws-organizations-access-input
+
+  line </#X-Amz-Target=AWS242ServiceCatalogService.EnableAWSOrganizationsAccess>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan enable-aws-organizations-access-input
+
+  loot 200
+    seed json, like enable-aws-organizations-access-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-state-exception
+    note <InvalidStateException>
+  loot 482
+    seed json, like operation-not-supported-exception
+    note <OperationNotSupportedException>

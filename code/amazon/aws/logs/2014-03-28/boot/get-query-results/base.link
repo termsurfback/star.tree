@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/get-query-results-response
+  take form get-query-results-response
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-query-results, name <GetQueryResults>
+  note <Returns the results from the specified query.
+
+Only the fields requested in the query are returned, along with a `@ptr` field, which is the identifier for the log record. You can use the value of `@ptr` in a [GetLogRecord](https://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/API_GetLogRecord.html) operation to get the full log record.
+
+`GetQueryResults` does not start a query execution. To run a query, use [StartQuery](https://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/API_StartQuery.html).
+
+If the value of the `Status` field in the output is `Running`, this operation returns only partial results. If you see a value of `Scheduled` or `Running` for the status, you can retry the operation later to see the final results.>
+
+  take x-amz-target
+    like native-string
+  take get-query-results-request, like get-query-results-request
+
+  line </#X-Amz-Target=Logs_20140328.GetQueryResults>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-query-results-request
+
+  loot 200
+    seed json, like get-query-results-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

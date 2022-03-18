@@ -1,0 +1,87 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-instance-automated-backup-message
+  take form db-instance-automated-backup-message
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-instance-automated-backup-not-found-fault
+  take form db-instance-automated-backup-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/filter
+  take form filter
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-db-instance-automated-backups, name <GET_DescribeDBInstanceAutomatedBackups>
+  note <Displays backups for both current and deleted instances. For example, use this operation to find details about automated backups for previously deleted instances. Current instances with retention periods greater than zero (0) are returned for both the `DescribeDBInstanceAutomatedBackups` and `DescribeDBInstances` operations.
+
+All parameters are optional.>
+
+  take dbi-resource-id
+    like native-string
+    note <The resource ID of the DB instance that is the source of the automated backup. This parameter isn't case-sensitive.>
+    void take
+  take db-instance-identifier
+    like native-string
+    note <(Optional) The user-supplied instance identifier. If this parameter is specified, it must match the identifier of an existing DB instance. It returns information from the specific DB instance' automated backup. This parameter isn't case-sensitive.>
+    void take
+  take filters
+    like list
+      like filter
+    note <A filter that specifies which resources to return based on status.
+
+Supported filters are the following:
+
+- `status`
+
+  - `active` - automated backups for current instances
+
+  - `retained` - automated backups for deleted instances and after backup replication is stopped
+
+  - `creating` - automated backups that are waiting for the first automated snapshot to be available
+
+- `db-instance-id` - Accepts DB instance identifiers and Amazon Resource Names (ARNs). The results list includes only information about the DB instance automated backups identified by these ARNs.
+
+- `dbi-resource-id` - Accepts DB resource identifiers and Amazon Resource Names (ARNs). The results list includes only information about the DB instance resources identified by these ARNs.
+
+Returns all resources by default. The status for each resource is specified in the response.>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of records to include in the response. If more records exist than the specified `MaxRecords` value, a pagination token called a marker is included in the response so that you can retrieve the remaining results.>
+    void take
+  take marker
+    like native-string
+    note <The pagination token provided in the previous request. If this parameter is specified the response includes only records beyond the marker, up to `MaxRecords`.>
+    void take
+  take db-instance-automated-backups-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the replicated automated backups, for example, `arn:aws:rds:us-east-1:123456789012:auto-backup:ab-L2IJCEXJP7XQ7HOJ4SIEXAMPLE`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeDBInstanceAutomatedBackups>
+
+  find <DbiResourceId>, loan dbi-resource-id
+  find <DBInstanceIdentifier>, loan db-instance-identifier
+  find <Filters>, loan filters
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <DBInstanceAutomatedBackupsArn>, loan db-instance-automated-backups-arn
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like db-instance-automated-backup-message
+    note <Success>
+  loot 480
+    seed xml, like db-instance-automated-backup-not-found-fault
+    note <DBInstanceAutomatedBackupNotFoundFault>

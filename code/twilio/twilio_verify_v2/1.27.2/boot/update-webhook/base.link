@@ -1,0 +1,27 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_verify_v2/1.27.2/base/update-webhook-body
+  take form update-webhook-body
+
+load @drumwork/snow/twilio.com/twilio_verify_v2/1.27.2/base/verify-v2-service-webhook
+  take form verify-v2-service-webhook
+
+boot update-webhook, name <UpdateWebhook>
+  take service-sid
+    like native-string
+    note <The unique SID identifier of the Service.>
+  take sid
+    like native-string
+    note <The Twilio-provided string that uniquely identifies the Webhook resource to update.>
+  take update-webhook-body, like update-webhook-body
+    void take
+
+  line </v2/Services/{service-sid}/Webhooks/{sid}>
+
+  seed x-www-form-urlencoded, loan update-webhook-body
+
+  loot 200
+    seed json, like verify-v2-service-webhook
+    note <OK>

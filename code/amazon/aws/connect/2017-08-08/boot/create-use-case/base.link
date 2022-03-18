@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/create-use-case-body
+  take form create-use-case-body
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/create-use-case-response
+  take form create-use-case-response
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/duplicate-resource-exception
+  take form duplicate-resource-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-use-case, name <CreateUseCase>
+  note <Creates a use case for an AppIntegration association.>
+
+  take instance-id
+    like native-string
+    note <The identifier of the Amazon Connect instance. You can find the instanceId in the ARN of the instance.>
+  take integration-association-id
+    like native-string
+    note <The identifier for the AppIntegration association.>
+  take create-use-case-body, like create-use-case-body
+
+  line </instance/{instance-id}/integration-associations/{integration-association-id}/use-cases>
+
+  seed json, loan create-use-case-body
+
+  loot 200
+    seed json, like create-use-case-response
+    note <Success>
+  loot 480
+    seed json, like duplicate-resource-exception
+    note <DuplicateResourceException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 483
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 484
+    seed json, like throttling-exception
+    note <ThrottlingException>

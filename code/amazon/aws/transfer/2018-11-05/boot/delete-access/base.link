@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-access, name <DeleteAccess>
+  note <Allows you to delete the access specified in the `ServerID` and `ExternalID` parameters.>
+
+  take x-amz-target
+    like native-string
+  take delete-access-request, like delete-access-request
+
+  line </#X-Amz-Target=TransferService.DeleteAccess>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-access-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 481
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 482
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

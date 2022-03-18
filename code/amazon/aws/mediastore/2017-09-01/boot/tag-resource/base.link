@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/container-in-use-exception
+  take form container-in-use-exception
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/container-not-found-exception
+  take form container-not-found-exception
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/tag-resource-output
+  take form tag-resource-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot tag-resource, name <TagResource>
+  note <Adds tags to the specified AWS Elemental MediaStore container. Tags are key:value pairs that you can associate with AWS resources. For example, the tag key might be "customer" and the tag value might be "companyA." You can specify one or more tags to add to each container. You can add up to 50 tags to each container. For more information about tagging, including naming and usage conventions, see [Tagging Resources in MediaStore](https://docs.aws.amazon.com/mediastore/latest/ug/tagging.html).>
+
+  take x-amz-target
+    like native-string
+  take tag-resource-input, like tag-resource-input
+
+  line </#X-Amz-Target=MediaStore_20170901.TagResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan tag-resource-input
+
+  loot 200
+    seed json, like tag-resource-output
+    note <Success>
+  loot 480
+    seed json, like container-in-use-exception
+    note <ContainerInUseException>
+  loot 481
+    seed json, like container-not-found-exception
+    note <ContainerNotFoundException>
+  loot 482
+    seed json, like internal-server-error
+    note <InternalServerError>

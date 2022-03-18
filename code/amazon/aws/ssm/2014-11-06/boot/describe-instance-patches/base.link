@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/describe-instance-patches-result
+  take form describe-instance-patches-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-filter
+  take form invalid-filter
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-instance-id
+  take form invalid-instance-id
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-instance-patches, name <DescribeInstancePatches>
+  note <Retrieves information about the patches on the specified instance and their state relative to the patch baseline being used for the instance.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-instance-patches-request, like describe-instance-patches-request
+
+  line </#X-Amz-Target=AmazonSSM.DescribeInstancePatches>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-instance-patches-request
+
+  loot 200
+    seed json, like describe-instance-patches-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like invalid-instance-id
+    note <InvalidInstanceId>
+  loot 482
+    seed json, like invalid-filter
+    note <InvalidFilter>
+  loot 483
+    seed json, like invalid-next-token
+    note <InvalidNextToken>

@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/delete-bandwidth-rate-limit-output
+  take form delete-bandwidth-rate-limit-output
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-bandwidth-rate-limit, name <DeleteBandwidthRateLimit>
+  note <Deletes the bandwidth rate limits of a gateway. You can delete either the upload and download bandwidth rate limit, or you can delete both. If you delete only one of the limits, the other limit remains unchanged. To specify which gateway to work with, use the Amazon Resource Name (ARN) of the gateway in your request. This operation is supported for the stored volume, cached volume and tape gateway types.>
+
+  take x-amz-target
+    like native-string
+  take delete-bandwidth-rate-limit-input, like delete-bandwidth-rate-limit-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.DeleteBandwidthRateLimit>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-bandwidth-rate-limit-input
+
+  loot 200
+    seed json, like delete-bandwidth-rate-limit-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

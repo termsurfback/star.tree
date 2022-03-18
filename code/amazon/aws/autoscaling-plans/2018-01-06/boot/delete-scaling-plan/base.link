@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling-plans/2018-01-06/base/concurrent-update-exception
+  take form concurrent-update-exception
+
+load @drumwork/snow/amazonaws.com/autoscaling-plans/2018-01-06/base/delete-scaling-plan-response
+  take form delete-scaling-plan-response
+
+load @drumwork/snow/amazonaws.com/autoscaling-plans/2018-01-06/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/autoscaling-plans/2018-01-06/base/object-not-found-exception
+  take form object-not-found-exception
+
+load @drumwork/snow/amazonaws.com/autoscaling-plans/2018-01-06/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-scaling-plan, name <DeleteScalingPlan>
+  note <Deletes the specified scaling plan.
+
+Deleting a scaling plan deletes the underlying ScalingInstruction for all of the scalable resources that are covered by the plan.
+
+If the plan has launched resources or has scaling activities in progress, you must delete those resources separately.>
+
+  take x-amz-target
+    like native-string
+  take delete-scaling-plan-request, like delete-scaling-plan-request
+
+  line </#X-Amz-Target=AnyScaleScalingPlannerFrontendService.DeleteScalingPlan>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-scaling-plan-request
+
+  loot 200
+    seed json, like delete-scaling-plan-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like object-not-found-exception
+    note <ObjectNotFoundException>
+  loot 482
+    seed json, like concurrent-update-exception
+    note <ConcurrentUpdateException>
+  loot 483
+    seed json, like internal-service-exception
+    note <InternalServiceException>

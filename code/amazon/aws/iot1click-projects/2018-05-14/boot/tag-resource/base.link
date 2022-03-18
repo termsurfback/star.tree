@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/iot1click-projects/2018-05-14/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot1click-projects/2018-05-14/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot1click-projects/2018-05-14/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iot1click-projects/2018-05-14/base/tag-resource-body
+  take form tag-resource-body
+
+load @drumwork/snow/amazonaws.com/iot1click-projects/2018-05-14/base/tag-resource-response
+  take form tag-resource-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot tag-resource, name <TagResource>
+  note <Creates or modifies tags for a resource. Tags are key/value pairs (metadata) that can be used to manage a resource. For more information, see [AWS Tagging Strategies](https://aws.amazon.com/answers/account-management/aws-tagging-strategies/).>
+
+  take resource-arn
+    like native-string
+    note <The ARN of the resouce for which tag(s) should be added or modified.>
+  take tag-resource-body, like tag-resource-body
+
+  line </tags/{resource-arn}>
+
+  seed json, loan tag-resource-body
+
+  loot 200
+    seed json, like tag-resource-response
+    note <Success>
+  loot 480
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

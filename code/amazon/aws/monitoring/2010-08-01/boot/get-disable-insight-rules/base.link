@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/disable-insight-rules-output
+  take form disable-insight-rules-output
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/insight-rule-name
+  take form insight-rule-name
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/missing-required-parameter-exception
+  take form missing-required-parameter-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-disable-insight-rules, name <GET_DisableInsightRules>
+  note <Disables the specified Contributor Insights rules. When rules are disabled, they do not analyze log groups and do not incur costs.>
+
+  take rule-names
+    like list
+      like insight-rule-name
+    note <An array of the rule names to disable. If you need to find out the names of your rules, use [DescribeInsightRules](https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_DescribeInsightRules.html).>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DisableInsightRules>
+
+  find <RuleNames>, loan rule-names
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like disable-insight-rules-output
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 481
+    seed xml, like missing-required-parameter-exception
+    note <MissingRequiredParameterException>

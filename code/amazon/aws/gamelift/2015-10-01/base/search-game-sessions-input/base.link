@@ -1,0 +1,76 @@
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/alias-id-or-arn
+  take form alias-id-or-arn
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/fleet-id-or-arn
+  take form fleet-id-or-arn
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/location-string-model
+  take form location-string-model
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/non-zero-and-max-string
+  take form non-zero-and-max-string
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/positive-integer
+  take form positive-integer
+
+form search-game-sessions-input, name <SearchGameSessionsInput>
+  note <Represents the input for a request operation.>
+  take fleet-id, name <FleetId>
+    like fleet-id-or-arn
+    void take
+    note <A unique identifier for the fleet to search for active game sessions. You can use either the fleet ID or ARN value. Each request must reference either a fleet ID or alias ID, but not both.>
+  take alias-id, name <AliasId>
+    like alias-id-or-arn
+    void take
+    note <A unique identifier for the alias associated with the fleet to search for active game sessions. You can use either the alias ID or ARN value. Each request must reference either a fleet ID or alias ID, but not both.>
+  take location, name <Location>
+    like location-string-model
+    void take
+    note <A fleet location to search for game sessions. You can specify a fleet's home Region or a remote location. Use the AWS Region code format, such as `us-west-2`.>
+  take filter-expression, name <FilterExpression>
+    like non-zero-and-max-string
+    void take
+    note <String containing the search criteria for the session search. If no filter expression is included, the request returns results for all game sessions in the fleet that are in `ACTIVE` status.
+
+A filter expression can contain one or multiple conditions. Each condition consists of the following:
+
+- **Operand** -- Name of a game session attribute. Valid values are `gameSessionName`, `gameSessionId`, `gameSessionProperties`, `maximumSessions`, `creationTimeMillis`, `playerSessionCount`, `hasAvailablePlayerSessions`.
+
+- **Comparator** -- Valid comparators are: `=`, `&lt;&gt;`, `&lt;`, `&gt;`, `&lt;=`, `&gt;=`.
+
+- **Value** -- Value to be searched for. Values may be numbers, boolean values (true/false) or strings depending on the operand. String values are case sensitive and must be enclosed in single quotes. Special characters must be escaped. Boolean and string values can only be used with the comparators `=` and `&lt;&gt;`. For example, the following filter expression searches on `gameSessionName`: "`FilterExpression": "gameSessionName = 'Matt\\'s Awesome Game 1'"`.
+
+To chain multiple conditions in a single expression, use the logical keywords `AND`, `OR`, and `NOT` and parentheses as needed. For example: `x AND y AND NOT z`, `NOT (x OR y)`.
+
+Session search evaluates conditions from left to right using the following precedence rules:
+
+1. `=`, `&lt;&gt;`, `&lt;`, `&gt;`, `&lt;=`, `&gt;=`
+
+2. Parentheses
+
+3. NOT
+
+4. AND
+
+5. OR
+
+For example, this filter expression retrieves game sessions hosting at least ten players that have an open player slot: `"maximumSessions&gt;=10 AND hasAvailablePlayerSessions=true"`.>
+  take sort-expression, name <SortExpression>
+    like non-zero-and-max-string
+    void take
+    note <Instructions on how to sort the search results. If no sort expression is included, the request returns results in random order. A sort expression consists of the following elements:
+
+- **Operand** -- Name of a game session attribute. Valid values are `gameSessionName`, `gameSessionId`, `gameSessionProperties`, `maximumSessions`, `creationTimeMillis`, `playerSessionCount`, `hasAvailablePlayerSessions`.
+
+- **Order** -- Valid sort orders are `ASC` (ascending) and `DESC` (descending).
+
+For example, this sort expression returns the oldest active sessions first: `"SortExpression": "creationTimeMillis ASC"`. Results with a null value for the sort operand are returned at the end of the list.>
+  take limit, name <Limit>
+    like positive-integer
+    void take
+    note <The maximum number of results to return. Use this parameter with `NextToken` to get results as a set of sequential pages. The maximum number of results returned is 20, even if this value is not set or is set higher than 20.>
+  take next-token, name <NextToken>
+    like non-zero-and-max-string
+    void take
+    note <A token that indicates the start of the next sequential page of results. Use the token that is returned with a previous call to this operation. To start at the beginning of the result set, do not specify a value.>

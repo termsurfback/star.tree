@@ -1,0 +1,75 @@
+
+load @drumwork/snow/amazonaws.com/meteringmarketplace/2016-01-14/base/customer-not-entitled-exception
+  take form customer-not-entitled-exception
+
+load @drumwork/snow/amazonaws.com/meteringmarketplace/2016-01-14/base/disabled-api-exception
+  take form disabled-api-exception
+
+load @drumwork/snow/amazonaws.com/meteringmarketplace/2016-01-14/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/meteringmarketplace/2016-01-14/base/invalid-product-code-exception
+  take form invalid-product-code-exception
+
+load @drumwork/snow/amazonaws.com/meteringmarketplace/2016-01-14/base/invalid-public-key-version-exception
+  take form invalid-public-key-version-exception
+
+load @drumwork/snow/amazonaws.com/meteringmarketplace/2016-01-14/base/invalid-region-exception
+  take form invalid-region-exception
+
+load @drumwork/snow/amazonaws.com/meteringmarketplace/2016-01-14/base/platform-not-supported-exception
+  take form platform-not-supported-exception
+
+load @drumwork/snow/amazonaws.com/meteringmarketplace/2016-01-14/base/register-usage-result
+  take form register-usage-result
+
+load @drumwork/snow/amazonaws.com/meteringmarketplace/2016-01-14/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot register-usage, name <RegisterUsage>
+  note <Paid container software products sold through AWS Marketplace must integrate with the AWS Marketplace Metering Service and call the RegisterUsage operation for software entitlement and metering. Free and BYOL products for Amazon ECS or Amazon EKS aren't required to call RegisterUsage, but you may choose to do so if you would like to receive usage data in your seller reports. The sections below explain the behavior of RegisterUsage. RegisterUsage performs two primary functions: metering and entitlement.
+
+- _Entitlement_: RegisterUsage allows you to verify that the customer running your paid software is subscribed to your product on AWS Marketplace, enabling you to guard against unauthorized use. Your container image that integrates with RegisterUsage is only required to guard against unauthorized use at container startup, as such a CustomerNotSubscribedException/PlatformNotSupportedException will only be thrown on the initial call to RegisterUsage. Subsequent calls from the same Amazon ECS task instance (e.g. task-id) or Amazon EKS pod will not throw a CustomerNotSubscribedException, even if the customer unsubscribes while the Amazon ECS task or Amazon EKS pod is still running.
+
+- _Metering_: RegisterUsage meters software use per ECS task, per hour, or per pod for Amazon EKS with usage prorated to the second. A minimum of 1 minute of usage applies to tasks that are short lived. For example, if a customer has a 10 node Amazon ECS or Amazon EKS cluster and a service configured as a Daemon Set, then Amazon ECS or Amazon EKS will launch a task on all 10 cluster nodes and the customer will be charged: (10 * hourly_rate). Metering for software use is automatically handled by the AWS Marketplace Metering Control Plane -- your software is not required to perform any metering specific actions, other than call RegisterUsage once for metering of software use to commence. The AWS Marketplace Metering Control Plane will also continue to bill customers for running ECS tasks and Amazon EKS pods, regardless of the customers subscription state, removing the need for your software to perform entitlement checks at runtime.>
+
+  take x-amz-target
+    like native-string
+  take register-usage-request, like register-usage-request
+
+  line </#X-Amz-Target=AWSMPMeteringService.RegisterUsage>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan register-usage-request
+
+  loot 200
+    seed json, like register-usage-result
+    note <Success>
+  loot 480
+    seed json, like invalid-product-code-exception
+    note <InvalidProductCodeException>
+  loot 481
+    seed json, like invalid-region-exception
+    note <InvalidRegionException>
+  loot 482
+    seed json, like invalid-public-key-version-exception
+    note <InvalidPublicKeyVersionException>
+  loot 483
+    seed json, like platform-not-supported-exception
+    note <PlatformNotSupportedException>
+  loot 484
+    seed json, like customer-not-entitled-exception
+    note <CustomerNotEntitledException>
+  loot 485
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 486
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>
+  loot 487
+    seed json, like disabled-api-exception
+    note <DisabledApiException>

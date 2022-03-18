@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/already-exists-exception
+  take form already-exists-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/clone-receipt-rule-set-response
+  take form clone-receipt-rule-set-response
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/rule-set-does-not-exist-exception
+  take form rule-set-does-not-exist-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-clone-receipt-rule-set, name <GET_CloneReceiptRuleSet>
+  note <Creates a receipt rule set by cloning an existing one. All receipt rules and configurations are copied to the new receipt rule set and are completely independent of the source rule set.
+
+For information about setting up rule sets, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-receipt-rule-set.html).
+
+You can execute this operation no more than once per second.>
+
+  take rule-set-name
+    like native-string
+    note <The name of the rule set to create. The name must:
+
+- This value can only contain ASCII letters (a-z, A-Z), numbers (0-9), underscores (_), or dashes (-).
+
+- Start and end with a letter or number.
+
+- Contain less than 64 characters.>
+  take original-rule-set-name
+    like native-string
+    note <The name of the rule set to clone.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CloneReceiptRuleSet>
+
+  find <RuleSetName>, loan rule-set-name
+  find <OriginalRuleSetName>, loan original-rule-set-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like clone-receipt-rule-set-response
+    note <Success>
+  loot 480
+    seed xml, like rule-set-does-not-exist-exception
+    note <RuleSetDoesNotExistException>
+  loot 481
+    seed xml, like already-exists-exception
+    note <AlreadyExistsException>
+  loot 482
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>

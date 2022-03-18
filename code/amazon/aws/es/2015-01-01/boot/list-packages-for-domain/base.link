@@ -1,0 +1,73 @@
+
+load @drumwork/snow/amazonaws.com/es/2015-01-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/es/2015-01-01/base/base-exception
+  take form base-exception
+
+load @drumwork/snow/amazonaws.com/es/2015-01-01/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/es/2015-01-01/base/list-packages-for-domain-response
+  take form list-packages-for-domain-response
+
+load @drumwork/snow/amazonaws.com/es/2015-01-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/es/2015-01-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-packages-for-domain, name <ListPackagesForDomain>
+  note <Lists all packages associated with the Amazon ES domain.>
+
+  take domain-name
+    like native-string
+    note <The name of the domain for which you want to list associated packages.>
+  take max-results
+    like native-integer
+    note <Limits results to a maximum number of packages.>
+    void take
+  take next-token
+    like native-string
+    note <Used for pagination. Only necessary if a previous API call includes a non-null NextToken value. If provided, returns results for the next page.>
+    void take
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+
+  line </2015-01-01/domain/{domain-name}/packages>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like list-packages-for-domain-response
+    note <Success>
+  loot 480
+    seed json, like base-exception
+    note <BaseException>
+  loot 481
+    seed json, like internal-exception
+    note <InternalException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 484
+    seed json, like validation-exception
+    note <ValidationException>

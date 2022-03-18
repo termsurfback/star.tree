@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/direct-connect-client-exception
+  take form direct-connect-client-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/direct-connect-server-exception
+  take form direct-connect-server-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/duplicate-tag-keys-exception
+  take form duplicate-tag-keys-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/too-many-tags-exception
+  take form too-many-tags-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/virtual-interface
+  take form virtual-interface
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot allocate-public-virtual-interface, name <AllocatePublicVirtualInterface>
+  note <Provisions a public virtual interface to be owned by the specified account.
+
+The owner of a connection calls this function to provision a public virtual interface to be owned by the specified account.
+
+Virtual interfaces created using this function must be confirmed by the owner using ConfirmPublicVirtualInterface. Until this step has been completed, the virtual interface is in the `confirming` state and is not available to handle traffic.
+
+When creating an IPv6 public virtual interface, omit the Amazon address and customer address. IPv6 addresses are automatically assigned from the Amazon pool of IPv6 addresses; you cannot specify custom IPv6 addresses.>
+
+  take x-amz-target
+    like native-string
+  take allocate-public-virtual-interface-request, like allocate-public-virtual-interface-request
+
+  line </#X-Amz-Target=OvertureService.AllocatePublicVirtualInterface>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan allocate-public-virtual-interface-request
+
+  loot 200
+    seed json, like virtual-interface
+    note <Success>
+  loot 480
+    seed json, like duplicate-tag-keys-exception
+    note <DuplicateTagKeysException>
+  loot 481
+    seed json, like too-many-tags-exception
+    note <TooManyTagsException>
+  loot 482
+    seed json, like direct-connect-server-exception
+    note <DirectConnectServerException>
+  loot 483
+    seed json, like direct-connect-client-exception
+    note <DirectConnectClientException>

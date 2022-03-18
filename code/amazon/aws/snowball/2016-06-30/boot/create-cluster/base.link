@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/create-cluster-result
+  take form create-cluster-result
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/ec2-request-failed-exception
+  take form ec2-request-failed-exception
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/invalid-input-combination-exception
+  take form invalid-input-combination-exception
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/invalid-resource-exception
+  take form invalid-resource-exception
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/kms-request-failed-exception
+  take form kms-request-failed-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-cluster, name <CreateCluster>
+  note <Creates an empty cluster. Each cluster supports five nodes. You use the CreateJob action separately to create the jobs for each of these nodes. The cluster does not ship until these five node jobs have been created.>
+
+  take x-amz-target
+    like native-string
+  take create-cluster-request, like create-cluster-request
+
+  line </#X-Amz-Target=AWSIESnowballJobManagementService.CreateCluster>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-cluster-request
+
+  loot 200
+    seed json, like create-cluster-result
+    note <Success>
+  loot 480
+    seed json, like invalid-resource-exception
+    note <InvalidResourceException>
+  loot 481
+    seed json, like kms-request-failed-exception
+    note <KMSRequestFailedException>
+  loot 482
+    seed json, like invalid-input-combination-exception
+    note <InvalidInputCombinationException>
+  loot 483
+    seed json, like ec2-request-failed-exception
+    note <Ec2RequestFailedException>

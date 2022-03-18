@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/tag-key
+  take form tag-key
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/untag-resource-response
+  take form untag-resource-response
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot untag-resource, name <UntagResource>
+  note <Deletes specified tags from an Batch resource.>
+
+  take resource-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the resource from which to delete tags. Batch resources that support tags are compute environments, jobs, job definitions, and job queues. ARNs for child jobs of array and multi-node parallel (MNP) jobs are not supported.>
+  take tag-keys
+    like list
+      like tag-key
+    note <The keys of the tags to be removed.>
+
+  line </v1/tags/{resource-arn}#tagKeys>
+
+  find <tagKeys>, loan tag-keys
+
+  loot 200
+    seed json, like untag-resource-response
+    note <Success>
+  loot 480
+    seed json, like client-exception
+    note <ClientException>
+  loot 481
+    seed json, like server-exception
+    note <ServerException>

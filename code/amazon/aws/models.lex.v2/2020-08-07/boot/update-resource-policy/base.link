@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/precondition-failed-exception
+  take form precondition-failed-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/service-quota-exceeded-exception
+  take form service-quota-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/update-resource-policy-body
+  take form update-resource-policy-body
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/update-resource-policy-response
+  take form update-resource-policy-response
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-resource-policy, name <UpdateResourcePolicy>
+  note <Replaces the existing resource policy for a bot or bot alias with a new one. If the policy doesn't exist, Amazon Lex returns an exception.>
+
+  take resource-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the bot or bot alias that the resource policy is attached to.>
+  take expected-revision-id
+    like native-string
+    note <The identifier of the revision of the policy to update. If this revision ID doesn't match the current revision ID, Amazon Lex throws an exception.
+
+If you don't specify a revision, Amazon Lex overwrites the contents of the policy with the new values.>
+    void take
+  take update-resource-policy-body, like update-resource-policy-body
+
+  line </policy/{resource-arn}/>
+
+  find <expectedRevisionId>, loan expected-revision-id
+
+  seed json, loan update-resource-policy-body
+
+  loot 200
+    seed json, like update-resource-policy-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like service-quota-exceeded-exception
+    note <ServiceQuotaExceededException>
+  loot 482
+    seed json, like precondition-failed-exception
+    note <PreconditionFailedException>
+  loot 483
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 484
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 485
+    seed json, like throttling-exception
+    note <ThrottlingException>

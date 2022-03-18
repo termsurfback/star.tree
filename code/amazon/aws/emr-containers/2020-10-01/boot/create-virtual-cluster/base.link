@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/create-virtual-cluster-body
+  take form create-virtual-cluster-body
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/create-virtual-cluster-response
+  take form create-virtual-cluster-response
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/validation-exception
+  take form validation-exception
+
+boot create-virtual-cluster, name <CreateVirtualCluster>
+  note <Creates a virtual cluster. Virtual cluster is a managed entity on Amazon EMR on EKS. You can create, describe, list and delete virtual clusters. They do not consume any additional resource in your system. A single virtual cluster maps to a single Kubernetes namespace. Given this relationship, you can model virtual clusters the same way you model Kubernetes namespaces to meet your requirements.>
+
+  take create-virtual-cluster-body, like create-virtual-cluster-body
+
+  line </virtualclusters>
+
+  seed json, loan create-virtual-cluster-body
+
+  loot 200
+    seed json, like create-virtual-cluster-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

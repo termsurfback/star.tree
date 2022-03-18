@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/get-registry-policy-response
+  take form get-registry-policy-response
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/registry-policy-not-found-exception
+  take form registry-policy-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-registry-policy, name <GetRegistryPolicy>
+  note <Retrieves the permissions policy for a registry.>
+
+  take x-amz-target
+    like native-string
+  take get-registry-policy-request, like get-registry-policy-request
+
+  line </#X-Amz-Target=AmazonEC2ContainerRegistry_V20150921.GetRegistryPolicy>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-registry-policy-request
+
+  loot 200
+    seed json, like get-registry-policy-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like registry-policy-not-found-exception
+    note <RegistryPolicyNotFoundException>

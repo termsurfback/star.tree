@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/sqs/2012-11-05/base/list-queues-result
+  take form list-queues-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-list-queues, name <POST_ListQueues>
+  note <Returns a list of your queues in the current region. The response includes a maximum of 1,000 results. If you specify a value for the optional `QueueNamePrefix` parameter, only queues with a name that begins with the specified value are returned.
+
+The `listQueues` methods supports pagination. Set parameter `MaxResults` in the request to specify the maximum number of results to be returned in the response. If you do not set `MaxResults`, the response includes a maximum of 1,000 results. If you set `MaxResults` and there are additional results to display, the response includes a value for `NextToken`. Use `NextToken` as a parameter in your next request to `listQueues` to receive the next page of results.
+
+Cross-account permissions don't apply to this action. For more information, see [Grant cross-account permissions to a role and a user name](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-customer-managed-policy-examples.html#grant-cross-account-permissions-to-role-and-user-name) in the _Amazon SQS Developer Guide_.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take list-queues-request, like list-queues-request
+    void take
+
+  line </#Action=ListQueues>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan list-queues-request
+
+  loot 200
+    seed xml, like list-queues-result
+    note <Success>

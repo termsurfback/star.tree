@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-not-found-fault
+  take form db-proxy-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/describe-db-proxies-response
+  take form describe-db-proxies-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-db-proxies, name <POST_DescribeDBProxies>
+  note <Returns information about DB proxies.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-db-proxies-request, like describe-db-proxies-request
+    void take
+
+  line </#Action=DescribeDBProxies>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-db-proxies-request
+
+  loot 200
+    seed xml, like describe-db-proxies-response
+    note <Success>
+  loot 480
+    seed xml, like db-proxy-not-found-fault
+    note <DBProxyNotFoundFault>

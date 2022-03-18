@@ -1,0 +1,92 @@
+
+load @drumwork/snow/amazonaws.com/apigateway/2015-07-09/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/apigateway/2015-07-09/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/apigateway/2015-07-09/base/import-rest-api-body
+  take form import-rest-api-body
+
+load @drumwork/snow/amazonaws.com/apigateway/2015-07-09/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/apigateway/2015-07-09/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/apigateway/2015-07-09/base/rest-api
+  take form rest-api
+
+load @drumwork/snow/amazonaws.com/apigateway/2015-07-09/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/amazonaws.com/apigateway/2015-07-09/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot import-rest-api, name <ImportRestApi>
+  note <A feature of the API Gateway control service for creating a new API from an external API definition file.>
+
+  take failonwarnings
+    like native-boolean
+    note <A query parameter to indicate whether to rollback the API creation (`true`) or not (`false`) when a warning is encountered. The default value is `false`.>
+    void take
+  take parameters
+    like form
+    note <A key-value map of context-specific query string parameters specifying the behavior of different API importing operations. The following shows operation-specific parameters and their supported values.
+
+To exclude DocumentationParts from the import, set `parameters` as `ignore=documentation`.
+
+To configure the endpoint type, set `parameters` as `endpointConfigurationTypes=EDGE`, `endpointConfigurationTypes=REGIONAL`, or `endpointConfigurationTypes=PRIVATE`. The default endpoint type is `EDGE`.
+
+To handle imported `basepath`, set `parameters` as `basepath=ignore`, `basepath=prepend` or `basepath=split`.
+
+For example, the AWS CLI command to exclude documentation from the imported API is:
+
+    aws apigateway import-rest-api --parameters ignore=documentation --body 'file:///path/to/imported-api-body.json'
+
+The AWS CLI command to set the regional endpoint on the imported API is:
+
+    aws apigateway import-rest-api --parameters endpointConfigurationTypes=REGIONAL --body 'file:///path/to/imported-api-body.json'>
+    void take
+  take mode
+    like native-string
+  take import-rest-api-body, like import-rest-api-body
+
+  line </restapis#mode=import>
+
+  find <failonwarnings>, loan failonwarnings
+  find <parameters>, loan parameters
+  find <mode>, loan mode
+
+  seed json, loan import-rest-api-body
+
+  loot 201
+    seed json, like rest-api
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 482
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 483
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 484
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 485
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>

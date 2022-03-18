@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/list-stack-set-operation-results-output
+  take form list-stack-set-operation-results-output
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/operation-not-found-exception
+  take form operation-not-found-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/stack-set-not-found-exception
+  take form stack-set-not-found-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-list-stack-set-operation-results, name <GET_ListStackSetOperationResults>
+  note <Returns summary information about the results of a stack set operation.>
+
+  take stack-set-name
+    like native-string
+    note <The name or unique ID of the stack set that you want to get operation results for.>
+  take operation-id
+    like native-string
+    note <The ID of the stack set operation.>
+  take next-token
+    like native-string
+    note <If the previous request didn't return all of the remaining results, the response object's `NextToken` parameter value is set to a token. To retrieve the next set of results, call `ListStackSetOperationResults` again and assign that token to the request object's `NextToken` parameter. If there are no remaining results, the previous response object's `NextToken` parameter is set to `null`.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to be returned with a single call. If the number of available results exceeds this maximum, the response includes a `NextToken` value that you can assign to the `NextToken` request parameter to get the next set of results.>
+    void take
+  take call-as
+    like native-string
+    note <[Service-managed permissions] Specifies whether you are acting as an account administrator in the organization's management account or as a delegated administrator in a member account.
+
+By default, `SELF` is specified. Use `SELF` for stack sets with self-managed permissions.
+
+- If you are signed in to the management account, specify `SELF`.
+
+- If you are signed in to a delegated administrator account, specify `DELEGATED_ADMIN`.
+
+  Your Amazon Web Services account must be registered as a delegated administrator in the management account. For more information, see [Register a delegated administrator](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-orgs-delegated-admin.html) in the _CloudFormation User Guide_.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ListStackSetOperationResults>
+
+  find <StackSetName>, loan stack-set-name
+  find <OperationId>, loan operation-id
+  find <NextToken>, loan next-token
+  find <MaxResults>, loan max-results
+  find <CallAs>, loan call-as
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like list-stack-set-operation-results-output
+    note <Success>
+  loot 480
+    seed xml, like stack-set-not-found-exception
+    note <StackSetNotFoundException>
+  loot 481
+    seed xml, like operation-not-found-exception
+    note <OperationNotFoundException>

@@ -1,0 +1,108 @@
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/backfill-mode
+  take form backfill-mode
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/boolean-model
+  take form boolean-model
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/custom-event-data
+  take form custom-event-data
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/flex-match-mode
+  take form flex-match-mode
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/game-property-list
+  take form game-property-list
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/game-session-data
+  take form game-session-data
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/matchmaking-acceptance-timeout-integer
+  take form matchmaking-acceptance-timeout-integer
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/matchmaking-id-string-model
+  take form matchmaking-id-string-model
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/matchmaking-request-timeout-integer
+  take form matchmaking-request-timeout-integer
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/matchmaking-rule-set-name
+  take form matchmaking-rule-set-name
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/non-zero-and-max-string
+  take form non-zero-and-max-string
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/queue-arns-list
+  take form queue-arns-list
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/sns-arn-string-model
+  take form sns-arn-string-model
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/tag-list
+  take form tag-list
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/whole-number
+  take form whole-number
+
+form create-matchmaking-configuration-input, name <CreateMatchmakingConfigurationInput>
+  note <Represents the input for a request operation.>
+  take name, name <Name>
+    like matchmaking-id-string-model
+    note <A unique identifier for the matchmaking configuration. This name is used to identify the configuration associated with a matchmaking request or ticket.>
+  take description, name <Description>
+    like non-zero-and-max-string
+    void take
+    note <A human-readable description of the matchmaking configuration.>
+  take game-session-queue-arns, name <GameSessionQueueArns>
+    like queue-arns-list
+    void take
+    note <The Amazon Resource Name ([ARN](https://docs.aws.amazon.com/AmazonS3/latest/dev/s3-arn-format.html)) that is assigned to a GameLift game session queue resource and uniquely identifies it. ARNs are unique across all Regions. Format is `arn:aws:gamelift:&lt;region&gt;::gamesessionqueue/&lt;queue name&gt;`. Queues can be located in any Region. Queues are used to start new GameLift-hosted game sessions for matches that are created with this matchmaking configuration. If `FlexMatchMode` is set to `STANDALONE`, do not set this parameter.>
+  take request-timeout-seconds, name <RequestTimeoutSeconds>
+    like matchmaking-request-timeout-integer
+    note <The maximum duration, in seconds, that a matchmaking ticket can remain in process before timing out. Requests that fail due to timing out can be resubmitted as needed.>
+  take acceptance-timeout-seconds, name <AcceptanceTimeoutSeconds>
+    like matchmaking-acceptance-timeout-integer
+    void take
+    note <The length of time (in seconds) to wait for players to accept a proposed match, if acceptance is required.>
+  take acceptance-required, name <AcceptanceRequired>
+    like boolean-model
+    note <A flag that determines whether a match that was created with this configuration must be accepted by the matched players. To require acceptance, set to `TRUE`. With this option enabled, matchmaking tickets use the status `REQUIRES_ACCEPTANCE` to indicate when a completed potential match is waiting for player acceptance.>
+  take rule-set-name, name <RuleSetName>
+    like matchmaking-rule-set-name
+    note <A unique identifier for the matchmaking rule set to use with this configuration. You can use either the rule set name or ARN value. A matchmaking configuration can only use rule sets that are defined in the same Region.>
+  take notification-target, name <NotificationTarget>
+    like sns-arn-string-model
+    void take
+    note <An SNS topic ARN that is set up to receive matchmaking notifications. See [Setting up notifications for matchmaking](https://docs.aws.amazon.com/gamelift/latest/flexmatchguide/match-notification.html) for more information.>
+  take additional-player-count, name <AdditionalPlayerCount>
+    like whole-number
+    void take
+    note <The number of player slots in a match to keep open for future players. For example, if the configuration's rule set specifies a match for a single 12-person team, and the additional player count is set to 2, only 10 players are selected for the match. This parameter is not used if `FlexMatchMode` is set to `STANDALONE`.>
+  take custom-event-data, name <CustomEventData>
+    like custom-event-data
+    void take
+    note <Information to be added to all events related to this matchmaking configuration.>
+  take game-properties, name <GameProperties>
+    like game-property-list
+    void take
+    note <A set of custom properties for a game session, formatted as key:value pairs. These properties are passed to a game server process in the GameSession object with a request to start a new game session (see [Start a Game Session](https://docs.aws.amazon.com/gamelift/latest/developerguide/gamelift-sdk-server-api.html#gamelift-sdk-server-startsession)). This information is added to the new GameSession object that is created for a successful match. This parameter is not used if `FlexMatchMode` is set to `STANDALONE`.>
+  take game-session-data, name <GameSessionData>
+    like game-session-data
+    void take
+    note <A set of custom game session properties, formatted as a single string value. This data is passed to a game server process in the GameSession object with a request to start a new game session (see [Start a Game Session](https://docs.aws.amazon.com/gamelift/latest/developerguide/gamelift-sdk-server-api.html#gamelift-sdk-server-startsession)). This information is added to the new GameSession object that is created for a successful match. This parameter is not used if `FlexMatchMode` is set to `STANDALONE`.>
+  take backfill-mode, name <BackfillMode>
+    like backfill-mode
+    void take
+    note <The method used to backfill game sessions that are created with this matchmaking configuration. Specify `MANUAL` when your game manages backfill requests manually or does not use the match backfill feature. Specify `AUTOMATIC` to have GameLift create a StartMatchBackfill request whenever a game session has one or more open slots. Learn more about manual and automatic backfill in [Backfill Existing Games with FlexMatch](https://docs.aws.amazon.com/gamelift/latest/flexmatchguide/match-backfill.html). Automatic backfill is not available when `FlexMatchMode` is set to `STANDALONE`.>
+  take flex-match-mode, name <FlexMatchMode>
+    like flex-match-mode
+    void take
+    note <Indicates whether this matchmaking configuration is being used with GameLift hosting or as a standalone matchmaking solution.
+
+- **STANDALONE** - FlexMatch forms matches and returns match information, including players and team assignments, in a [MatchmakingSucceeded](https://docs.aws.amazon.com/gamelift/latest/flexmatchguide/match-events.html#match-events-matchmakingsucceeded) event.
+
+- **WITH_QUEUE** - FlexMatch forms matches and uses the specified GameLift queue to start a game session for the match.>
+  take tags, name <Tags>
+    like tag-list
+    void take
+    note <A list of labels to assign to the new matchmaking configuration resource. Tags are developer-defined key-value pairs. Tagging AWS resources are useful for resource management, access management and cost allocation. For more information, see [Tagging AWS Resources](https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html) in the _AWS General Reference_. Once the resource is created, you can use TagResource, UntagResource, and ListTagsForResource to add, remove, and view tags. The maximum tag limit may be lower than stated. See the AWS General Reference for actual tagging limits.>

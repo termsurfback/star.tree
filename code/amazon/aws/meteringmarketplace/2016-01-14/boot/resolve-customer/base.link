@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/meteringmarketplace/2016-01-14/base/disabled-api-exception
+  take form disabled-api-exception
+
+load @drumwork/snow/amazonaws.com/meteringmarketplace/2016-01-14/base/expired-token-exception
+  take form expired-token-exception
+
+load @drumwork/snow/amazonaws.com/meteringmarketplace/2016-01-14/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/meteringmarketplace/2016-01-14/base/invalid-token-exception
+  take form invalid-token-exception
+
+load @drumwork/snow/amazonaws.com/meteringmarketplace/2016-01-14/base/resolve-customer-result
+  take form resolve-customer-result
+
+load @drumwork/snow/amazonaws.com/meteringmarketplace/2016-01-14/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot resolve-customer, name <ResolveCustomer>
+  note <ResolveCustomer is called by a SaaS application during the registration process. When a buyer visits your website during the registration process, the buyer submits a registration token through their browser. The registration token is resolved through this API to obtain a CustomerIdentifier and product code.>
+
+  take x-amz-target
+    like native-string
+  take resolve-customer-request, like resolve-customer-request
+
+  line </#X-Amz-Target=AWSMPMeteringService.ResolveCustomer>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan resolve-customer-request
+
+  loot 200
+    seed json, like resolve-customer-result
+    note <Success>
+  loot 480
+    seed json, like invalid-token-exception
+    note <InvalidTokenException>
+  loot 481
+    seed json, like expired-token-exception
+    note <ExpiredTokenException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>
+  loot 484
+    seed json, like disabled-api-exception
+    note <DisabledApiException>

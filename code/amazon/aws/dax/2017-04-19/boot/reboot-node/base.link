@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/invalid-cluster-state-fault
+  take form invalid-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/node-not-found-fault
+  take form node-not-found-fault
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/reboot-node-response
+  take form reboot-node-response
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/service-linked-role-not-found-fault
+  take form service-linked-role-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot reboot-node, name <RebootNode>
+  note <Reboots a single node of a DAX cluster. The reboot action takes place as soon as possible. During the reboot, the node status is set to REBOOTING.
+
+`RebootNode` restarts the DAX engine process and does not remove the contents of the cache.>
+
+  take x-amz-target
+    like native-string
+  take reboot-node-request, like reboot-node-request
+
+  line </#X-Amz-Target=AmazonDAXV3.RebootNode>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan reboot-node-request
+
+  loot 200
+    seed json, like reboot-node-response
+    note <Success>
+  loot 480
+    seed json, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 481
+    seed json, like node-not-found-fault
+    note <NodeNotFoundFault>
+  loot 482
+    seed json, like invalid-cluster-state-fault
+    note <InvalidClusterStateFault>
+  loot 483
+    seed json, like service-linked-role-not-found-fault
+    note <ServiceLinkedRoleNotFoundFault>
+  loot 484
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 485
+    seed json, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

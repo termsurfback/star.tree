@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/invalid-argument-exception
+  take form invalid-argument-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot allow-custom-routing-traffic, name <AllowCustomRoutingTraffic>
+  note <Specify the Amazon EC2 instance (destination) IP addresses and ports for a VPC subnet endpoint that can receive traffic for a custom routing accelerator. You can allow traffic to all destinations in the subnet endpoint, or allow traffic to a specified list of destination IP addresses and ports in the subnet. Note that you cannot specify IP addresses or ports outside of the range that you configured for the endpoint group.
+
+After you make changes, you can verify that the updates are complete by checking the status of your accelerator: the status changes from IN_PROGRESS to DEPLOYED.>
+
+  take x-amz-target
+    like native-string
+  take allow-custom-routing-traffic-request, like allow-custom-routing-traffic-request
+
+  line </#X-Amz-Target=GlobalAccelerator_V20180706.AllowCustomRoutingTraffic>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan allow-custom-routing-traffic-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like invalid-argument-exception
+    note <InvalidArgumentException>
+  loot 481
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>

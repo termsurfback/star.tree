@@ -1,0 +1,79 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-tag-fault
+  take form invalid-tag-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/snapshot-copy-grant-message
+  take form snapshot-copy-grant-message
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/snapshot-copy-grant-not-found-fault
+  take form snapshot-copy-grant-not-found-fault
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-describe-snapshot-copy-grants, name <GET_DescribeSnapshotCopyGrants>
+  note <Returns a list of snapshot copy grants owned by the Amazon Web Services account in the destination region.
+
+For more information about managing snapshot copy grants, go to [Amazon Redshift Database Encryption](https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-db-encryption.html) in the _Amazon Redshift Cluster Management Guide_.>
+
+  take snapshot-copy-grant-name
+    like native-string
+    note <The name of the snapshot copy grant.>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of response records to return in each call. If the number of remaining response records exceeds the specified `MaxRecords` value, a value is returned in a `marker` field of the response. You can retrieve the next set of records by retrying the command with the returned marker value.
+
+Default: `100`
+
+Constraints: minimum 20, maximum 100.>
+    void take
+  take marker
+    like native-string
+    note <An optional parameter that specifies the starting point to return a set of response records. When the results of a `DescribeSnapshotCopyGrant` request exceed the value specified in `MaxRecords`, Amazon Web Services returns a value in the `Marker` field of the response. You can retrieve the next set of response records by providing the returned marker value in the `Marker` parameter and retrying the request.
+
+Constraints: You can specify either the **SnapshotCopyGrantName** parameter or the **Marker** parameter, but not both.>
+    void take
+  take tag-keys
+    like list
+      like string
+    note <A tag key or keys for which you want to return all matching resources that are associated with the specified key or keys. For example, suppose that you have resources tagged with keys called `owner` and `environment`. If you specify both of these tag keys in the request, Amazon Redshift returns a response with all resources that have either or both of these tag keys associated with them.>
+    void take
+  take tag-values
+    like list
+      like string
+    note <A tag value or values for which you want to return all matching resources that are associated with the specified value or values. For example, suppose that you have resources tagged with values called `admin` and `test`. If you specify both of these tag values in the request, Amazon Redshift returns a response with all resources that have either or both of these tag values associated with them.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeSnapshotCopyGrants>
+
+  find <SnapshotCopyGrantName>, loan snapshot-copy-grant-name
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <TagKeys>, loan tag-keys
+  find <TagValues>, loan tag-values
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like snapshot-copy-grant-message
+    note <Success>
+  loot 480
+    seed xml, like snapshot-copy-grant-not-found-fault
+    note <SnapshotCopyGrantNotFoundFault>
+  loot 481
+    seed xml, like invalid-tag-fault
+    note <InvalidTagFault>

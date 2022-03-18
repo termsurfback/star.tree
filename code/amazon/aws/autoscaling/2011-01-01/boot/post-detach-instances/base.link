@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/detach-instances-answer
+  take form detach-instances-answer
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-detach-instances, name <POST_DetachInstances>
+  note <Removes one or more instances from the specified Auto Scaling group.
+
+After the instances are detached, you can manage them independent of the Auto Scaling group.
+
+If you do not specify the option to decrement the desired capacity, Amazon EC2 Auto Scaling launches instances to replace the ones that are detached.
+
+If there is a Classic Load Balancer attached to the Auto Scaling group, the instances are deregistered from the load balancer. If there are target groups attached to the Auto Scaling group, the instances are deregistered from the target groups.
+
+For more information, see [Detach EC2 instances from your Auto Scaling group](https://docs.aws.amazon.com/autoscaling/ec2/userguide/detach-instance-asg.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take detach-instances-query, like detach-instances-query
+    void take
+
+  line </#Action=DetachInstances>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan detach-instances-query
+
+  loot 200
+    seed xml, like detach-instances-answer
+    note <Success>
+  loot 480
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

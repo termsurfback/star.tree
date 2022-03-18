@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/codestar-connections/2019-12-01/base/create-connection-output
+  take form create-connection-output
+
+load @drumwork/snow/amazonaws.com/codestar-connections/2019-12-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/codestar-connections/2019-12-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codestar-connections/2019-12-01/base/resource-unavailable-exception
+  take form resource-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-connection, name <CreateConnection>
+  note <Creates a connection that can then be given to other AWS services like CodePipeline so that it can access third-party code repositories. The connection is in pending status until the third-party connection handshake is completed from the console.>
+
+  take x-amz-target
+    like native-string
+  take create-connection-input, like create-connection-input
+
+  line </#X-Amz-Target=com.amazonaws.codestar.connections.CodeStar_connections_20191201.CreateConnection>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-connection-input
+
+  loot 200
+    seed json, like create-connection-output
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like resource-unavailable-exception
+    note <ResourceUnavailableException>

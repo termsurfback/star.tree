@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-in-use-fault
+  take form resource-in-use-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/scaling-activity-in-progress-fault
+  take form scaling-activity-in-progress-fault
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-auto-scaling-group, name <GET_DeleteAutoScalingGroup>
+  note <Deletes the specified Auto Scaling group.
+
+If the group has instances or scaling activities in progress, you must specify the option to force the deletion in order for it to succeed.
+
+If the group has policies, deleting the group deletes the policies, the underlying alarm actions, and any alarm that no longer has an associated action.
+
+To remove instances from the Auto Scaling group before deleting it, call the DetachInstances API with the list of instances and the option to decrement the desired capacity. This ensures that Amazon EC2 Auto Scaling does not launch replacement instances.
+
+To terminate all instances before deleting the Auto Scaling group, call the UpdateAutoScalingGroup API and set the minimum size and desired capacity of the Auto Scaling group to zero.>
+
+  take auto-scaling-group-name
+    like native-string
+    note <The name of the Auto Scaling group.>
+  take force-delete
+    like native-boolean
+    note <Specifies that the group is to be deleted along with all instances associated with the group, without waiting for all instances to be terminated. This parameter also deletes any outstanding lifecycle actions associated with the group.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteAutoScalingGroup>
+
+  find <AutoScalingGroupName>, loan auto-scaling-group-name
+  find <ForceDelete>, loan force-delete
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like scaling-activity-in-progress-fault
+    note <ScalingActivityInProgressFault>
+  loot 481
+    seed xml, like resource-in-use-fault
+    note <ResourceInUseFault>
+  loot 482
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

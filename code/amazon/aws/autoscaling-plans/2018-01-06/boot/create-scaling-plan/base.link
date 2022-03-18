@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling-plans/2018-01-06/base/concurrent-update-exception
+  take form concurrent-update-exception
+
+load @drumwork/snow/amazonaws.com/autoscaling-plans/2018-01-06/base/create-scaling-plan-response
+  take form create-scaling-plan-response
+
+load @drumwork/snow/amazonaws.com/autoscaling-plans/2018-01-06/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/autoscaling-plans/2018-01-06/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/autoscaling-plans/2018-01-06/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-scaling-plan, name <CreateScalingPlan>
+  note <Creates a scaling plan.>
+
+  take x-amz-target
+    like native-string
+  take create-scaling-plan-request, like create-scaling-plan-request
+
+  line </#X-Amz-Target=AnyScaleScalingPlannerFrontendService.CreateScalingPlan>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-scaling-plan-request
+
+  loot 200
+    seed json, like create-scaling-plan-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like concurrent-update-exception
+    note <ConcurrentUpdateException>
+  loot 483
+    seed json, like internal-service-exception
+    note <InternalServiceException>

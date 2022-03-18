@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/get-role-response
+  take form get-role-response
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-get-role, name <POST_GetRole>
+  note <Retrieves information about the specified role, including the role's path, GUID, ARN, and the role's trust policy that grants permission to assume the role. For more information about roles, see [Working with roles](https://docs.aws.amazon.com/IAM/latest/UserGuide/WorkingWithRoles.html).
+
+Policies returned by this operation are URL-encoded compliant with [RFC 3986](https://tools.ietf.org/html/rfc3986). You can use a URL decoding method to convert the policy back to plain JSON text. For example, if you use Java, you can use the `decode` method of the `java.net.URLDecoder` utility class in the Java SDK. Other languages and SDKs provide similar functionality.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take get-role-request, like get-role-request
+    void take
+
+  line </#Action=GetRole>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan get-role-request
+
+  loot 200
+    seed xml, like get-role-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

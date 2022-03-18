@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/account-limit-exceeded-exception
+  take form account-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/start-build-output
+  take form start-build-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-build, name <StartBuild>
+  note <Starts running a build.>
+
+  take x-amz-target
+    like native-string
+  take start-build-input, like start-build-input
+
+  line </#X-Amz-Target=CodeBuild_20161006.StartBuild>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan start-build-input
+
+  loot 200
+    seed json, like start-build-output
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like account-limit-exceeded-exception
+    note <AccountLimitExceededException>

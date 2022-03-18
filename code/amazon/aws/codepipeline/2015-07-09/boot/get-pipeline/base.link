@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/get-pipeline-output
+  take form get-pipeline-output
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/pipeline-not-found-exception
+  take form pipeline-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/pipeline-version-not-found-exception
+  take form pipeline-version-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-pipeline, name <GetPipeline>
+  note <Returns the metadata, structure, stages, and actions of a pipeline. Can be used to return the entire structure of a pipeline in JSON format, which can then be modified and used to update the pipeline structure with UpdatePipeline.>
+
+  take x-amz-target
+    like native-string
+  take get-pipeline-input, like get-pipeline-input
+
+  line </#X-Amz-Target=CodePipeline_20150709.GetPipeline>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-pipeline-input
+
+  loot 200
+    seed json, like get-pipeline-output
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like pipeline-not-found-exception
+    note <PipelineNotFoundException>
+  loot 482
+    seed json, like pipeline-version-not-found-exception
+    note <PipelineVersionNotFoundException>

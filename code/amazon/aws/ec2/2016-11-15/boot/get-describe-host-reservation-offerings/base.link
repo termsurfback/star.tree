@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-host-reservation-offerings-result
+  take form describe-host-reservation-offerings-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-host-reservation-offerings, name <GET_DescribeHostReservationOfferings>
+  note <Describes the Dedicated Host reservations that are available to purchase.
+
+The results describe all of the Dedicated Host reservation offerings, including offerings that might not match the instance family and Region of your Dedicated Hosts. When purchasing an offering, ensure that the instance family and Region of the offering matches that of the Dedicated Hosts with which it is to be associated. For more information about supported instance types, see [Dedicated Hosts](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/dedicated-hosts-overview.html) in the _Amazon EC2 User Guide_.>
+
+  take filter
+    like list
+      like filter
+    note <The filters.
+
+- `instance-family` - The instance family of the offering (for example, `m4`).
+
+- `payment-option` - The payment option (`NoUpfront` | `PartialUpfront` | `AllUpfront`).>
+    void take
+  take max-duration
+    like native-integer
+    note <This is the maximum duration of the reservation to purchase, specified in seconds. Reservations are available in one-year and three-year terms. The number of seconds specified must be the number of seconds in a year (365x24x60x60) times one of the supported durations (1 or 3). For example, specify 94608000 for three years.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return for the request in a single page. The remaining results can be seen by sending another request with the returned `nextToken` value. This value can be between 5 and 500. If `maxResults` is given a larger value than 500, you receive an error.>
+    void take
+  take min-duration
+    like native-integer
+    note <This is the minimum duration of the reservation you'd like to purchase, specified in seconds. Reservations are available in one-year and three-year terms. The number of seconds specified must be the number of seconds in a year (365x24x60x60) times one of the supported durations (1 or 3). For example, specify 31536000 for one year.>
+    void take
+  take next-token
+    like native-string
+    note <The token to use to retrieve the next page of results.>
+    void take
+  take offering-id
+    like native-string
+    note <The ID of the reservation offering.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeHostReservationOfferings>
+
+  find <Filter>, loan filter
+  find <MaxDuration>, loan max-duration
+  find <MaxResults>, loan max-results
+  find <MinDuration>, loan min-duration
+  find <NextToken>, loan next-token
+  find <OfferingId>, loan offering-id
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-host-reservation-offerings-result
+    note <Success>

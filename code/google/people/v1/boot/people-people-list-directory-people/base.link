@@ -1,0 +1,63 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/people/v1/base/list-directory-people-response
+  take form list-directory-people-response
+
+boot people-people-list-directory-people, name <people.people.listDirectoryPeople>
+  note <Provides a list of domain profiles and domain contacts in the authenticated user's domain directory. When the `sync_token` is specified, resources deleted since the last sync will be returned as a person with `PersonMetadata.deleted` set to true. When the `page_token` or `sync_token` is specified, all other request parameters must match the first call. Writes may have a propagation delay of several minutes for sync requests. Incremental syncs are not intended for read-after-write use cases. See example usage at [List the directory people that have changed](/people/v1/directory#list_the_directory_people_that_have_changed).>
+
+  take merge-sources
+    like list
+      like native-string
+    note <Optional. Additional data to merge into the directory sources if they are connected through verified join keys such as email addresses or phone numbers.>
+    void take
+  take page-size
+    like native-integer
+    note <Optional. The number of people to include in the response. Valid values are between 1 and 1000, inclusive. Defaults to 100 if not set or set to 0.>
+    void take
+  take page-token
+    like native-string
+    note <Optional. A page token, received from a previous response `next_page_token`. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `people.listDirectoryPeople` must match the first call that provided the page token.>
+    void take
+  take read-mask
+    like native-string
+    note <Required. A field mask to restrict which fields on each person are returned. Multiple fields can be specified by separating them with commas. Valid values are: * addresses * ageRanges * biographies * birthdays * calendarUrls * clientData * coverPhotos * emailAddresses * events * externalIds * genders * imClients * interests * locales * locations * memberships * metadata * miscKeywords * names * nicknames * occupations * organizations * phoneNumbers * photos * relations * sipAddresses * skills * urls * userDefined>
+    void take
+  take request-sync-token
+    like native-boolean
+    note <Optional. Whether the response should return `next_sync_token`. It can be used to get incremental changes since the last request by setting it on the request `sync_token`. More details about sync behavior at `people.listDirectoryPeople`.>
+    void take
+  take sources
+    like list
+      like native-string
+    note <Required. Directory sources to return.>
+    void take
+  take sync-token
+    like native-string
+    note <Optional. A sync token, received from a previous response `next_sync_token` Provide this to retrieve only the resources changed since the last request. When syncing, all other parameters provided to `people.listDirectoryPeople` must match the first call that provided the sync token. More details about sync behavior at `people.listDirectoryPeople`.>
+    void take
+
+  line </v1/people:listDirectoryPeople>
+
+  find <mergeSources>, loan merge-sources
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+  find <readMask>, loan read-mask
+  find <requestSyncToken>, loan request-sync-token
+  find <sources>, loan sources
+  find <syncToken>, loan sync-token
+
+  loot 200
+    seed json, like list-directory-people-response
+    note <Successful response>

@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/update-ledger-body
+  take form update-ledger-body
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/update-ledger-response
+  take form update-ledger-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-ledger, name <UpdateLedger>
+  note <Updates properties on a ledger.>
+
+  take name
+    like native-string
+    note <The name of the ledger.>
+  take update-ledger-body, like update-ledger-body
+
+  line </ledgers/{name}>
+
+  seed json, loan update-ledger-body
+
+  loot 200
+    seed json, like update-ledger-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

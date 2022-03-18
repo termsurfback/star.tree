@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/file
+  take form file
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-files-file-body
+  take form get-files-file-body
+
+boot get-files-file, name <GetFilesFile>
+  note <Retrieves the details of an existing file object. Supply the unique file ID from a file, and Stripe will return the corresponding file object. To access file contents, see the [File Upload Guide](/docs/file-upload#download-file-contents).>
+
+  take file
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-files-file-body, like get-files-file-body
+    void take
+
+  line </v1/files/{file}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-files-file-body
+
+  loot 200
+    seed json, like file
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

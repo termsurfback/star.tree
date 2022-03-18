@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/bitcoin-receiver
+  take form bitcoin-receiver
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-bitcoin-receivers-id-body
+  take form get-bitcoin-receivers-id-body
+
+boot get-bitcoin-receivers-id, name <GetBitcoinReceiversId>
+  note <Retrieves the Bitcoin receiver with the given ID.>
+
+  take id
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-bitcoin-receivers-id-body, like get-bitcoin-receivers-id-body
+    void take
+
+  line </v1/bitcoin/receivers/{id}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-bitcoin-receivers-id-body
+
+  loot 200
+    seed json, like bitcoin-receiver
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

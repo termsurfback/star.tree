@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/invalid-argument-exception
+  take form invalid-argument-exception
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/list-byoip-cidrs-response
+  take form list-byoip-cidrs-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-byoip-cidrs, name <ListByoipCidrs>
+  note <Lists the IP address ranges that were specified in calls to [ProvisionByoipCidr](https://docs.aws.amazon.com/global-accelerator/latest/api/ProvisionByoipCidr.html), including the current state and a history of state changes.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-byoip-cidrs-request, like list-byoip-cidrs-request
+
+  line </#X-Amz-Target=GlobalAccelerator_V20180706.ListByoipCidrs>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-byoip-cidrs-request
+
+  loot 200
+    seed json, like list-byoip-cidrs-response
+    note <Success>
+  loot 480
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>
+  loot 481
+    seed json, like invalid-argument-exception
+    note <InvalidArgumentException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 483
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>

@@ -1,0 +1,89 @@
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/create-reusable-delegation-set-body
+  take form create-reusable-delegation-set-body
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/create-reusable-delegation-set-response
+  take form create-reusable-delegation-set-response
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/delegation-set-already-created
+  take form delegation-set-already-created
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/delegation-set-already-reusable
+  take form delegation-set-already-reusable
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/delegation-set-not-available
+  take form delegation-set-not-available
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/hosted-zone-not-found
+  take form hosted-zone-not-found
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-argument
+  take form invalid-argument
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/limits-exceeded
+  take form limits-exceeded
+
+boot create-reusable-delegation-set, name <CreateReusableDelegationSet>
+  note <Creates a delegation set (a group of four name servers) that can be reused by multiple hosted zones that were created by the same Amazon Web Services account.
+
+You can also create a reusable delegation set that uses the four name servers that are associated with an existing hosted zone. Specify the hosted zone ID in the `CreateReusableDelegationSet` request.
+
+You can't associate a reusable delegation set with a private hosted zone.
+
+For information about using a reusable delegation set to configure white label name servers, see [Configuring White Label Name Servers](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/white-label-name-servers.html).
+
+The process for migrating existing hosted zones to use a reusable delegation set is comparable to the process for configuring white label name servers. You need to perform the following steps:
+
+1. Create a reusable delegation set.
+
+2. Recreate hosted zones, and reduce the TTL to 60 seconds or less.
+
+3. Recreate resource record sets in the new hosted zones.
+
+4. Change the registrar's name servers to use the name servers for the new hosted zones.
+
+5. Monitor traffic for the website or application.
+
+6. Change TTLs back to their original values.
+
+If you want to migrate existing hosted zones to use a reusable delegation set, the existing hosted zones can't use any of the name servers that are assigned to the reusable delegation set. If one or more hosted zones do use one or more name servers that are assigned to the reusable delegation set, you can do one of the following:
+
+- For small numbers of hosted zones—up to a few hundred—it's relatively easy to create reusable delegation sets until you get one that has four name servers that don't overlap with any of the name servers in your hosted zones.
+
+- For larger numbers of hosted zones, the easiest solution is to use more than one reusable delegation set.
+
+- For larger numbers of hosted zones, you can also migrate hosted zones that have overlapping name servers to hosted zones that don't have overlapping name servers, then migrate the hosted zones again to use the reusable delegation set.>
+
+  take create-reusable-delegation-set-body, like create-reusable-delegation-set-body
+
+  line </2013-04-01/delegationset>
+
+  seed xml, loan create-reusable-delegation-set-body
+
+  loot 201
+    seed xml, like create-reusable-delegation-set-response
+    note <Success>
+  loot 480
+    seed xml, like delegation-set-already-created
+    note <DelegationSetAlreadyCreated>
+  loot 481
+    seed xml, like limits-exceeded
+    note <LimitsExceeded>
+  loot 482
+    seed xml, like hosted-zone-not-found
+    note <HostedZoneNotFound>
+  loot 483
+    seed xml, like invalid-argument
+    note <InvalidArgument>
+  loot 484
+    seed xml, like invalid-input
+    note <InvalidInput>
+  loot 485
+    seed xml, like delegation-set-not-available
+    note <DelegationSetNotAvailable>
+  loot 486
+    seed xml, like delegation-set-already-reusable
+    note <DelegationSetAlreadyReusable>

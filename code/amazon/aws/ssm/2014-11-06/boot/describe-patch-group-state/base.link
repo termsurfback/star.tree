@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/describe-patch-group-state-result
+  take form describe-patch-group-state-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-patch-group-state, name <DescribePatchGroupState>
+  note <Returns high-level aggregated patch compliance state information for a patch group.>
+
+  take x-amz-target
+    like native-string
+  take describe-patch-group-state-request, like describe-patch-group-state-request
+
+  line </#X-Amz-Target=AmazonSSM.DescribePatchGroupState>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-patch-group-state-request
+
+  loot 200
+    seed json, like describe-patch-group-state-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like invalid-next-token
+    note <InvalidNextToken>

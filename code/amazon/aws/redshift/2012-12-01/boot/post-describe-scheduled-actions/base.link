@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/scheduled-action-not-found-fault
+  take form scheduled-action-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/scheduled-actions-message
+  take form scheduled-actions-message
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unauthorized-operation
+  take form unauthorized-operation
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-scheduled-actions, name <POST_DescribeScheduledActions>
+  note <Describes properties of scheduled actions.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-scheduled-actions-message, like describe-scheduled-actions-message
+    void take
+
+  line </#Action=DescribeScheduledActions>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-scheduled-actions-message
+
+  loot 200
+    seed xml, like scheduled-actions-message
+    note <Success>
+  loot 480
+    seed xml, like scheduled-action-not-found-fault
+    note <ScheduledActionNotFoundFault>
+  loot 481
+    seed xml, like unauthorized-operation
+    note <UnauthorizedOperation>

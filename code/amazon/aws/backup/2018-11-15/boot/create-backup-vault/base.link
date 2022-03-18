@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/already-exists-exception
+  take form already-exists-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/create-backup-vault-body
+  take form create-backup-vault-body
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/create-backup-vault-output
+  take form create-backup-vault-output
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/missing-parameter-value-exception
+  take form missing-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-backup-vault, name <CreateBackupVault>
+  note <Creates a logical container where backups are stored. A `CreateBackupVault` request includes a name, optionally one or more resource tags, an encryption key, and a request ID.
+
+Do not include sensitive data, such as passport numbers, in the name of a backup vault.>
+
+  take backup-vault-name
+    like native-string
+    note <The name of a logical container where backups are stored. Backup vaults are identified by names that are unique to the account used to create them and the Amazon Web Services Region where they are created. They consist of letters, numbers, and hyphens.>
+  take create-backup-vault-body, like create-backup-vault-body
+
+  line </backup-vaults/{backup-vault-name}>
+
+  seed json, loan create-backup-vault-body
+
+  loot 200
+    seed json, like create-backup-vault-output
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 481
+    seed json, like missing-parameter-value-exception
+    note <MissingParameterValueException>
+  loot 482
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 483
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 484
+    seed json, like already-exists-exception
+    note <AlreadyExistsException>

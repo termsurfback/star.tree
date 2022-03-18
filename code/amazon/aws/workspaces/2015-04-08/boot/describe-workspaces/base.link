@@ -1,0 +1,48 @@
+
+load @drumwork/snow/amazonaws.com/workspaces/2015-04-08/base/describe-workspaces-result
+  take form describe-workspaces-result
+
+load @drumwork/snow/amazonaws.com/workspaces/2015-04-08/base/invalid-parameter-values-exception
+  take form invalid-parameter-values-exception
+
+load @drumwork/snow/amazonaws.com/workspaces/2015-04-08/base/resource-unavailable-exception
+  take form resource-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-workspaces, name <DescribeWorkspaces>
+  note <Describes the specified WorkSpaces.
+
+You can filter the results by using the bundle identifier, directory identifier, or owner, but you can specify only one filter at a time.>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-workspaces-request, like describe-workspaces-request
+
+  line </#X-Amz-Target=WorkspacesService.DescribeWorkspaces>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <Limit>, loan limit
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-workspaces-request
+
+  loot 200
+    seed json, like describe-workspaces-result
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-values-exception
+    note <InvalidParameterValuesException>
+  loot 481
+    seed json, like resource-unavailable-exception
+    note <ResourceUnavailableException>

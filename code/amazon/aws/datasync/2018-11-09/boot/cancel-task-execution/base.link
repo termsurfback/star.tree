@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/datasync/2018-11-09/base/cancel-task-execution-response
+  take form cancel-task-execution-response
+
+load @drumwork/snow/amazonaws.com/datasync/2018-11-09/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/datasync/2018-11-09/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot cancel-task-execution, name <CancelTaskExecution>
+  note <Cancels execution of a task.
+
+When you cancel a task execution, the transfer of some files is abruptly interrupted. The contents of files that are transferred to the destination might be incomplete or inconsistent with the source files. However, if you start a new task execution on the same task and you allow the task execution to complete, file content on the destination is complete and consistent. This applies to other unexpected failures that interrupt a task execution. In all of these cases, DataSync successfully complete the transfer when you start the next task execution.>
+
+  take x-amz-target
+    like native-string
+  take cancel-task-execution-request, like cancel-task-execution-request
+
+  line </#X-Amz-Target=FmrsService.CancelTaskExecution>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan cancel-task-execution-request
+
+  loot 200
+    seed json, like cancel-task-execution-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like internal-exception
+    note <InternalException>

@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/tag-key
+  take form tag-key
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/untag-resource-response
+  take form untag-resource-response
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot untag-resource, name <UntagResource>
+  note <Removes one or more tags from a specified Amazon QLDB resource. You can specify up to 50 tag keys to remove.>
+
+  take resource-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) from which to remove the tags. For example:
+
+`arn:aws:qldb:us-east-1:123456789012:ledger/exampleLedger`>
+  take tag-keys
+    like list
+      like tag-key
+    note <The list of tag keys to remove.>
+
+  line </tags/{resource-arn}#tagKeys>
+
+  find <tagKeys>, loan tag-keys
+
+  loot 200
+    seed json, like untag-resource-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

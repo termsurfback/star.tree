@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-parameter-group-not-found-fault
+  take form db-parameter-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-parameter-group-state-fault
+  take form invalid-db-parameter-group-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-db-cluster-parameter-group, name <GET_DeleteDBClusterParameterGroup>
+  note <Deletes a specified DB cluster parameter group. The DB cluster parameter group to be deleted can't be associated with any DB clusters.
+
+For more information on Amazon Aurora, see [What Is Amazon Aurora?](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_AuroraOverview.html) in the _Amazon Aurora User Guide._
+
+This action only applies to Aurora DB clusters.>
+
+  take db-cluster-parameter-group-name
+    like native-string
+    note <The name of the DB cluster parameter group.
+
+Constraints:
+
+- Must be the name of an existing DB cluster parameter group.
+
+- You can't delete a default DB cluster parameter group.
+
+- Can't be associated with any DB clusters.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteDBClusterParameterGroup>
+
+  find <DBClusterParameterGroupName>, loan db-cluster-parameter-group-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like invalid-db-parameter-group-state-fault
+    note <InvalidDBParameterGroupStateFault>
+  loot 481
+    seed xml, like db-parameter-group-not-found-fault
+    note <DBParameterGroupNotFoundFault>

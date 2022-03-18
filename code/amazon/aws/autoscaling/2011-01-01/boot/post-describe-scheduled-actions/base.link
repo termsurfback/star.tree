@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/scheduled-actions-type
+  take form scheduled-actions-type
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-scheduled-actions, name <POST_DescribeScheduledActions>
+  note <Gets information about the scheduled actions that haven't run or that have not reached their end time.
+
+To describe the scaling activities for scheduled actions that have already run, call the DescribeScalingActivities API.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-scheduled-actions-type, like describe-scheduled-actions-type
+    void take
+
+  line </#Action=DescribeScheduledActions>
+
+  find <MaxRecords>, loan max-records
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-scheduled-actions-type
+
+  loot 200
+    seed xml, like scheduled-actions-type
+    note <Success>
+  loot 480
+    seed xml, like invalid-next-token
+    note <InvalidNextToken>
+  loot 481
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/not-latest-pipeline-execution-exception
+  take form not-latest-pipeline-execution-exception
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/pipeline-not-found-exception
+  take form pipeline-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/retry-stage-execution-output
+  take form retry-stage-execution-output
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/stage-not-found-exception
+  take form stage-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/stage-not-retryable-exception
+  take form stage-not-retryable-exception
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot retry-stage-execution, name <RetryStageExecution>
+  note <Resumes the pipeline execution by retrying the last failed actions in a stage. You can retry a stage immediately if any of the actions in the stage fail. When you retry, all actions that are still in progress continue working, and failed actions are triggered again.>
+
+  take x-amz-target
+    like native-string
+  take retry-stage-execution-input, like retry-stage-execution-input
+
+  line </#X-Amz-Target=CodePipeline_20150709.RetryStageExecution>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan retry-stage-execution-input
+
+  loot 200
+    seed json, like retry-stage-execution-output
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 482
+    seed json, like pipeline-not-found-exception
+    note <PipelineNotFoundException>
+  loot 483
+    seed json, like stage-not-found-exception
+    note <StageNotFoundException>
+  loot 484
+    seed json, like stage-not-retryable-exception
+    note <StageNotRetryableException>
+  loot 485
+    seed json, like not-latest-pipeline-execution-exception
+    note <NotLatestPipelineExecutionException>

@@ -1,0 +1,68 @@
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/delete-bot-response
+  take form delete-bot-response
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/precondition-failed-exception
+  take form precondition-failed-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/service-quota-exceeded-exception
+  take form service-quota-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-bot, name <DeleteBot>
+  note <Deletes all versions of a bot, including the `Draft` version. To delete a specific version, use the `DeleteBotVersion` operation.
+
+When you delete a bot, all of the resources contained in the bot are also deleted. Deleting a bot removes all locales, intents, slot, and slot types defined for the bot.
+
+If a bot has an alias, the `DeleteBot` operation returns a `ResourceInUseException` exception. If you want to delete the bot and the alias, set the `skipResourceInUseCheck` parameter to `true`.>
+
+  take bot-id
+    like native-string
+    note <The identifier of the bot to delete.>
+  take skip-resource-in-use-check
+    like native-boolean
+    note <When `true`, Amazon Lex doesn't check to see if another resource, such as an alias, is using the bot before it is deleted.>
+    void take
+
+  line </bots/{bot-id}/>
+
+  find <skipResourceInUseCheck>, loan skip-resource-in-use-check
+
+  loot 202
+    seed json, like delete-bot-response
+    note <Success>
+  loot 480
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 481
+    seed json, like service-quota-exceeded-exception
+    note <ServiceQuotaExceededException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 484
+    seed json, like precondition-failed-exception
+    note <PreconditionFailedException>
+  loot 485
+    seed json, like internal-server-exception
+    note <InternalServerException>

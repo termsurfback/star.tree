@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/list-tags-for-resource-body
+  take form list-tags-for-resource-body
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/list-tags-for-resource-response
+  take form list-tags-for-resource-response
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-tags-for-resource, name <ListTagsForResource>
+  note <Gets information about AWS tags for the specified ARN.>
+
+  take resource-arn
+    like native-string
+    note <The ARN of the resource to be retrieved.>
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-tags-for-resource-body, like list-tags-for-resource-body
+
+  line </tags/{resource-arn}>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-tags-for-resource-body
+
+  loot 200
+    seed json, like list-tags-for-resource-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

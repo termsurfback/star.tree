@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/capacity-reservation-preference
+  take form capacity-reservation-preference
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/capacity-reservation-target
+  take form capacity-reservation-target
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/modify-instance-capacity-reservation-attributes-result
+  take form modify-instance-capacity-reservation-attributes-result
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-modify-instance-capacity-reservation-attributes, name <GET_ModifyInstanceCapacityReservationAttributes>
+  note <Modifies the Capacity Reservation settings for a stopped instance. Use this action to configure an instance to target a specific Capacity Reservation, run in any `open` Capacity Reservation with matching attributes, or run On-Demand Instance capacity.>
+
+  take instance-id
+    like native-string
+    note <The ID of the instance to be modified.>
+  take capacity-reservation-specification
+    like form
+      take capacity-reservation-preference, name <CapacityReservationPreference>
+        like capacity-reservation-preference
+        void take
+        note <Indicates the instance's Capacity Reservation preferences. Possible preferences include:
+
+- `open` - The instance can run in any `open` Capacity Reservation that has matching attributes (instance type, platform, Availability Zone).
+
+- `none` - The instance avoids running in a Capacity Reservation even if one is available. The instance runs as an On-Demand Instance.>
+      take capacity-reservation-target, name <CapacityReservationTarget>
+        like capacity-reservation-target
+        void take
+        note <Information about the target Capacity Reservation or Capacity Reservation group.>
+    note <Information about the Capacity Reservation targeting option.>
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyInstanceCapacityReservationAttributes>
+
+  find <InstanceId>, loan instance-id
+  find <CapacityReservationSpecification>, loan capacity-reservation-specification
+  find <DryRun>, loan dry-run
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-instance-capacity-reservation-attributes-result
+    note <Success>

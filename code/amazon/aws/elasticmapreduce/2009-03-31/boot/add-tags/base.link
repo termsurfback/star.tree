@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/add-tags-output
+  take form add-tags-output
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot add-tags, name <AddTags>
+  note <Adds tags to an Amazon EMR resource, such as a cluster or an Amazon EMR Studio. Tags make it easier to associate resources in various ways, such as grouping clusters to track your Amazon EMR resource allocation costs. For more information, see [Tag Clusters](https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-plan-tags.html).>
+
+  take x-amz-target
+    like native-string
+  take add-tags-input, like add-tags-input
+
+  line </#X-Amz-Target=ElasticMapReduce.AddTags>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan add-tags-input
+
+  loot 200
+    seed json, like add-tags-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

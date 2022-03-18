@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/macie/2017-12-19/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/macie/2017-12-19/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/macie/2017-12-19/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot associate-member-account, name <AssociateMemberAccount>
+  note <Associates a specified AWS account with Amazon Macie Classic as a member account.>
+
+  take x-amz-target
+    like native-string
+  take associate-member-account-request, like associate-member-account-request
+
+  line </#X-Amz-Target=MacieService.AssociateMemberAccount>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan associate-member-account-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like internal-exception
+    note <InternalException>

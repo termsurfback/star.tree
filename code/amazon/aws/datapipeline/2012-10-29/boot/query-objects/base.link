@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/pipeline-deleted-exception
+  take form pipeline-deleted-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/pipeline-not-found-exception
+  take form pipeline-not-found-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/query-objects-output
+  take form query-objects-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot query-objects, name <QueryObjects>
+  note <Queries the specified pipeline for the names of objects that match the specified set of conditions.>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take query-objects-input, like query-objects-input
+
+  line </#X-Amz-Target=DataPipeline.QueryObjects>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <limit>, loan limit
+  find <marker>, loan marker
+
+  seed json, loan query-objects-input
+
+  loot 200
+    seed json, like query-objects-output
+    note <Success>
+  loot 480
+    seed json, like pipeline-not-found-exception
+    note <PipelineNotFoundException>
+  loot 481
+    seed json, like pipeline-deleted-exception
+    note <PipelineDeletedException>
+  loot 482
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 483
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

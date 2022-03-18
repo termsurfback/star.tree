@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/describe-template-alias-response
+  take form describe-template-alias-response
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/unsupported-user-edition-exception
+  take form unsupported-user-edition-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-template-alias, name <DescribeTemplateAlias>
+  note <Describes the template alias for a template.>
+
+  take aws-account-id
+    like native-string
+    note <The ID of the Amazon Web Services account that contains the template alias that you're describing.>
+  take template-id
+    like native-string
+    note <The ID for the template.>
+  take alias-name
+    like native-string
+    note <The name of the template alias that you want to describe. If you name a specific alias, you describe the version that the alias points to. You can specify the latest version of the template by providing the keyword `$LATEST` in the `AliasName` parameter. The keyword `$PUBLISHED` doesn't apply to templates.>
+
+  line </accounts/{aws-account-id}/templates/{template-id}/aliases/{alias-name}>
+
+  loot 200
+    seed json, like describe-template-alias-response
+    note <Success>
+  loot 480
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like unsupported-user-edition-exception
+    note <UnsupportedUserEditionException>
+  loot 483
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

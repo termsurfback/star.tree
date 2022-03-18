@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/container-in-use-exception
+  take form container-in-use-exception
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/container-not-found-exception
+  take form container-not-found-exception
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/stop-access-logging-output
+  take form stop-access-logging-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot stop-access-logging, name <StopAccessLogging>
+  note <Stops access logging on the specified container. When you stop access logging on a container, MediaStore stops sending access logs to Amazon CloudWatch Logs. These access logs are not saved and are not retrievable.>
+
+  take x-amz-target
+    like native-string
+  take stop-access-logging-input, like stop-access-logging-input
+
+  line </#X-Amz-Target=MediaStore_20170901.StopAccessLogging>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan stop-access-logging-input
+
+  loot 200
+    seed json, like stop-access-logging-output
+    note <Success>
+  loot 480
+    seed json, like container-in-use-exception
+    note <ContainerInUseException>
+  loot 481
+    seed json, like container-not-found-exception
+    note <ContainerNotFoundException>
+  loot 482
+    seed json, like internal-server-error
+    note <InternalServerError>

@@ -1,0 +1,76 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/authorization-already-exists-fault
+  take form authorization-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/authorization-quota-exceeded-fault
+  take form authorization-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/authorize-snapshot-access-result
+  take form authorize-snapshot-access-result
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-snapshot-not-found-fault
+  take form cluster-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/dependent-service-request-throttling-fault
+  take form dependent-service-request-throttling-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-snapshot-state-fault
+  take form invalid-cluster-snapshot-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/limit-exceeded-fault
+  take form limit-exceeded-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-authorize-snapshot-access, name <GET_AuthorizeSnapshotAccess>
+  note <Authorizes the specified Amazon Web Services account to restore the specified snapshot.
+
+For more information about working with snapshots, go to [Amazon Redshift Snapshots](https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-snapshots.html) in the _Amazon Redshift Cluster Management Guide_.>
+
+  take snapshot-identifier
+    like native-string
+    note <The identifier of the snapshot the account is authorized to restore.>
+  take snapshot-cluster-identifier
+    like native-string
+    note <The identifier of the cluster the snapshot was created from. This parameter is required if your IAM user has a policy containing a snapshot resource element that specifies anything other than * for the cluster name.>
+    void take
+  take account-with-restore-access
+    like native-string
+    note <The identifier of the Amazon Web Services account authorized to restore the specified snapshot.
+
+To share a snapshot with Amazon Web Services Support, specify amazon-redshift-support.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=AuthorizeSnapshotAccess>
+
+  find <SnapshotIdentifier>, loan snapshot-identifier
+  find <SnapshotClusterIdentifier>, loan snapshot-cluster-identifier
+  find <AccountWithRestoreAccess>, loan account-with-restore-access
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like authorize-snapshot-access-result
+    note <Success>
+  loot 480
+    seed xml, like cluster-snapshot-not-found-fault
+    note <ClusterSnapshotNotFoundFault>
+  loot 481
+    seed xml, like authorization-already-exists-fault
+    note <AuthorizationAlreadyExistsFault>
+  loot 482
+    seed xml, like authorization-quota-exceeded-fault
+    note <AuthorizationQuotaExceededFault>
+  loot 483
+    seed xml, like dependent-service-request-throttling-fault
+    note <DependentServiceRequestThrottlingFault>
+  loot 484
+    seed xml, like invalid-cluster-snapshot-state-fault
+    note <InvalidClusterSnapshotStateFault>
+  loot 485
+    seed xml, like limit-exceeded-fault
+    note <LimitExceededFault>

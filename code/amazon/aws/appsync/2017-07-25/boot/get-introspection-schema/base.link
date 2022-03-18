@@ -1,0 +1,56 @@
+
+load @drumwork/snow/amazonaws.com/appsync/2017-07-25/base/get-introspection-schema-response
+  take form get-introspection-schema-response
+
+load @drumwork/snow/amazonaws.com/appsync/2017-07-25/base/graph-ql-schema-exception
+  take form graph-ql-schema-exception
+
+load @drumwork/snow/amazonaws.com/appsync/2017-07-25/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/appsync/2017-07-25/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/appsync/2017-07-25/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-introspection-schema, name <GetIntrospectionSchema>
+  note <Retrieves the introspection schema for a GraphQL API.>
+
+  take api-id
+    like native-string
+    note <The API ID.>
+  take format
+    like native-string
+    note <The schema format: SDL or JSON.>
+  take include-directives
+    like native-boolean
+    note <A flag that specifies whether the schema introspection should contain directives.>
+    void take
+
+  line </v1/apis/{api-id}/schema#format>
+
+  find <format>, loan format
+  find <includeDirectives>, loan include-directives
+
+  loot 200
+    seed json, like get-introspection-schema-response
+    note <Success>
+  loot 480
+    seed json, like graph-ql-schema-exception
+    note <GraphQLSchemaException>
+  loot 481
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 482
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 483
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

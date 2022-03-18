@@ -1,0 +1,50 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/displayvideo/v1/base/list-inventory-sources-response
+  take form list-inventory-sources-response
+
+boot displayvideo-inventory-sources-list, name <displayvideo.inventorySources.list>
+  note <Lists inventory sources that are accessible to the current user. The order is defined by the order_by parameter. If a filter by entity_status is not specified, inventory sources with entity status `ENTITY_STATUS_ARCHIVED` will not be included in the results.>
+
+  take advertiser-id
+    like native-string
+    note <The ID of the advertiser that has access to the inventory source.>
+    void take
+  take filter
+    like native-string
+    note <Allows filtering by inventory source properties. Supported syntax: * Filter expressions are made up of one or more restrictions. * Restrictions can be combined by `AND` or `OR` logical operators. A sequence of restrictions implicitly uses `AND`. * A restriction has the form of `{field} {operator} {value}`. * The operator must be `EQUALS (=)`. * Supported fields: - `status.entityStatus` - `commitment` - `deliveryMethod` - `rateDetails.rateType` - `exchange` Examples: * All active inventory sources: `status.entityStatus="ENTITY_STATUS_ACTIVE"` * Inventory sources belonging to Google Ad Manager or Rubicon exchanges: `exchange="EXCHANGE_GOOGLE_AD_MANAGER" OR exchange="EXCHANGE_RUBICON"` The length of this field should be no more than 500 characters.>
+    void take
+  take order-by
+    like native-string
+    note <Field by which to sort the list. Acceptable values are: * `displayName` (default) The default sorting order is ascending. To specify descending order for a field, a suffix "desc" should be added to the field name. For example, `displayName desc`.>
+    void take
+  take page-size
+    like native-integer
+    note <Requested page size. Must be between `1` and `100`. If unspecified will default to `100`.>
+    void take
+  take page-token
+    like native-string
+    note <A token identifying a page of results the server should return. Typically, this is the value of next_page_token returned from the previous call to `ListInventorySources` method. If not specified, the first page of results will be returned.>
+    void take
+  take partner-id
+    like native-string
+    note <The ID of the partner that has access to the inventory source.>
+    void take
+
+  line </v1/inventorySources>
+
+  find <advertiserId>, loan advertiser-id
+  find <filter>, loan filter
+  find <orderBy>, loan order-by
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+  find <partnerId>, loan partner-id
+
+  loot 200
+    seed json, like list-inventory-sources-response
+    note <Successful response>

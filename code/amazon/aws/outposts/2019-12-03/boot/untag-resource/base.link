@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/outposts/2019-12-03/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/outposts/2019-12-03/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/outposts/2019-12-03/base/tag-key
+  take form tag-key
+
+load @drumwork/snow/amazonaws.com/outposts/2019-12-03/base/untag-resource-response
+  take form untag-resource-response
+
+load @drumwork/snow/amazonaws.com/outposts/2019-12-03/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot untag-resource, name <UntagResource>
+  note <Removes tags from the specified resource.>
+
+  take resource-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the resource.>
+  take tag-keys
+    like list
+      like tag-key
+    note <The tag keys.>
+
+  line </tags/{resource-arn}#tagKeys>
+
+  find <tagKeys>, loan tag-keys
+
+  loot 200
+    seed json, like untag-resource-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like not-found-exception
+    note <NotFoundException>

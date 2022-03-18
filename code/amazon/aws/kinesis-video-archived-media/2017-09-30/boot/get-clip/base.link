@@ -1,0 +1,79 @@
+
+load @drumwork/snow/amazonaws.com/kinesis-video-archived-media/2017-09-30/base/client-limit-exceeded-exception
+  take form client-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/kinesis-video-archived-media/2017-09-30/base/get-clip-body
+  take form get-clip-body
+
+load @drumwork/snow/amazonaws.com/kinesis-video-archived-media/2017-09-30/base/get-clip-output
+  take form get-clip-output
+
+load @drumwork/snow/amazonaws.com/kinesis-video-archived-media/2017-09-30/base/invalid-argument-exception
+  take form invalid-argument-exception
+
+load @drumwork/snow/amazonaws.com/kinesis-video-archived-media/2017-09-30/base/invalid-codec-private-data-exception
+  take form invalid-codec-private-data-exception
+
+load @drumwork/snow/amazonaws.com/kinesis-video-archived-media/2017-09-30/base/invalid-media-frame-exception
+  take form invalid-media-frame-exception
+
+load @drumwork/snow/amazonaws.com/kinesis-video-archived-media/2017-09-30/base/missing-codec-private-data-exception
+  take form missing-codec-private-data-exception
+
+load @drumwork/snow/amazonaws.com/kinesis-video-archived-media/2017-09-30/base/no-data-retention-exception
+  take form no-data-retention-exception
+
+load @drumwork/snow/amazonaws.com/kinesis-video-archived-media/2017-09-30/base/not-authorized-exception
+  take form not-authorized-exception
+
+load @drumwork/snow/amazonaws.com/kinesis-video-archived-media/2017-09-30/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/kinesis-video-archived-media/2017-09-30/base/unsupported-stream-media-type-exception
+  take form unsupported-stream-media-type-exception
+
+boot get-clip, name <GetClip>
+  note <Downloads an MP4 file (clip) containing the archived, on-demand media from the specified video stream over the specified time range.
+
+Both the StreamName and the StreamARN parameters are optional, but you must specify either the StreamName or the StreamARN when invoking this API operation.
+
+As a prerequisite to using GetCLip API, you must obtain an endpoint using `GetDataEndpoint`, specifying GET_CLIP for ``the `APIName` parameter.``
+
+``   An Amazon Kinesis video stream has the following requirements for providing data through MP4:  - The media must contain h.264 or h.265 encoded video and, optionally, AAC or G.711 encoded audio. Specifically, the codec ID of track 1 should be `V_MPEG/ISO/AVC` (for h.264) or V_MPEGH/ISO/HEVC (for H.265). Optionally, the codec ID of track 2 should be `A_AAC` (for AAC) or A_MS/ACM (for G.711).    - Data retention must be greater than 0.    - The video track of each fragment must contain codec private data in the Advanced Video Coding (AVC) for H.264 format and HEVC for H.265 format. For more information, see [MPEG-4 specification ISO/IEC 14496-15](https://www.iso.org/standard/55980.html). For information about adapting stream data to a given format, see [NAL Adaptation Flags](http://docs.aws.amazon.com/kinesisvideostreams/latest/dg/producer-reference-nal.html).    - The audio track (if present) of each fragment must contain codec private data in the AAC format ([AAC specification ISO/IEC 13818-7](https://www.iso.org/standard/43345.html)) or the [MS Wave format](http://www-mmsp.ece.mcgill.ca/Documents/AudioFormats/WAVE/WAVE.html).     You can monitor the amount of outgoing data by monitoring the `GetClip.OutgoingBytes` Amazon CloudWatch metric. For information about using CloudWatch to monitor Kinesis Video Streams, see [Monitoring Kinesis Video Streams](http://docs.aws.amazon.com/kinesisvideostreams/latest/dg/monitoring.html). For pricing information, see [Amazon Kinesis Video Streams Pricing](https://aws.amazon.com/kinesis/video-streams/pricing/) and [AWS Pricing](https://aws.amazon.com/pricing/). Charges for outgoing AWS data apply.   ``>
+
+  take get-clip-body, like get-clip-body
+
+  line </getClip>
+
+  seed json, loan get-clip-body
+
+  loot 200
+    seed json, like get-clip-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-argument-exception
+    note <InvalidArgumentException>
+  loot 482
+    seed json, like client-limit-exceeded-exception
+    note <ClientLimitExceededException>
+  loot 483
+    seed json, like not-authorized-exception
+    note <NotAuthorizedException>
+  loot 484
+    seed json, like unsupported-stream-media-type-exception
+    note <UnsupportedStreamMediaTypeException>
+  loot 485
+    seed json, like missing-codec-private-data-exception
+    note <MissingCodecPrivateDataException>
+  loot 486
+    seed json, like invalid-codec-private-data-exception
+    note <InvalidCodecPrivateDataException>
+  loot 487
+    seed json, like invalid-media-frame-exception
+    note <InvalidMediaFrameException>
+  loot 488
+    seed json, like no-data-retention-exception
+    note <NoDataRetentionException>

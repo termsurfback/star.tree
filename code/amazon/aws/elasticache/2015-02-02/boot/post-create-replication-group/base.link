@@ -1,0 +1,155 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-cluster-not-found-fault
+  take form cache-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-parameter-group-not-found-fault
+  take form cache-parameter-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-security-group-not-found-fault
+  take form cache-security-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-subnet-group-not-found-fault
+  take form cache-subnet-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cluster-quota-for-customer-exceeded-fault
+  take form cluster-quota-for-customer-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/create-replication-group-result
+  take form create-replication-group-result
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/global-replication-group-not-found-fault
+  take form global-replication-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/insufficient-cache-cluster-capacity-fault
+  take form insufficient-cache-cluster-capacity-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-cache-cluster-state-fault
+  take form invalid-cache-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-global-replication-group-state-fault
+  take form invalid-global-replication-group-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-user-group-state-fault
+  take form invalid-user-group-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-vpc-network-state-fault
+  take form invalid-vpc-network-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/node-groups-per-replication-group-quota-exceeded-fault
+  take form node-groups-per-replication-group-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/node-quota-for-cluster-exceeded-fault
+  take form node-quota-for-cluster-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/node-quota-for-customer-exceeded-fault
+  take form node-quota-for-customer-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/replication-group-already-exists-fault
+  take form replication-group-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/tag-quota-per-resource-exceeded
+  take form tag-quota-per-resource-exceeded
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/user-group-not-found-fault
+  take form user-group-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-replication-group, name <POST_CreateReplicationGroup>
+  note <Creates a Redis (cluster mode disabled) or a Redis (cluster mode enabled) replication group.
+
+This API can be used to create a standalone regional replication group or a secondary replication group associated with a Global datastore.
+
+A Redis (cluster mode disabled) replication group is a collection of clusters, where one of the clusters is a read/write primary and the others are read-only replicas. Writes to the primary are asynchronously propagated to the replicas.
+
+A Redis cluster-mode enabled cluster is comprised of from 1 to 90 shards (API/CLI: node groups). Each shard has a primary node and up to 5 read-only replica nodes. The configuration can range from 90 shards and 0 replicas to 15 shards and 5 replicas, which is the maximum number or replicas allowed.
+
+The node or shard limit can be increased to a maximum of 500 per cluster if the Redis engine version is 5.0.6 or higher. For example, you can choose to configure a 500 node cluster that ranges between 83 shards (one primary and 5 replicas per shard) and 500 shards (single primary and no replicas). Make sure there are enough available IP addresses to accommodate the increase. Common pitfalls include the subnets in the subnet group have too small a CIDR range or the subnets are shared and heavily used by other clusters. For more information, see [Creating a Subnet Group](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/SubnetGroups.Creating.html). For versions below 5.0.6, the limit is 250 per cluster.
+
+To request a limit increase, see [Amazon Service Limits](https://docs.aws.amazon.com/general/latest/gr/aws_service_limits.html) and choose the limit type **Nodes per cluster per instance type**.
+
+When a Redis (cluster mode disabled) replication group has been successfully created, you can add one or more read replicas to it, up to a total of 5 read replicas. If you need to increase or decrease the number of node groups (console: shards), you can avail yourself of ElastiCache for Redis' scaling. For more information, see [Scaling ElastiCache for Redis Clusters](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/Scaling.html) in the _ElastiCache User Guide_.
+
+This operation is valid for Redis only.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-replication-group-message, like create-replication-group-message
+    void take
+
+  line </#Action=CreateReplicationGroup>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-replication-group-message
+
+  loot 200
+    seed xml, like create-replication-group-result
+    note <Success>
+  loot 480
+    seed xml, like cache-cluster-not-found-fault
+    note <CacheClusterNotFoundFault>
+  loot 481
+    seed xml, like invalid-cache-cluster-state-fault
+    note <InvalidCacheClusterStateFault>
+  loot 482
+    seed xml, like replication-group-already-exists-fault
+    note <ReplicationGroupAlreadyExistsFault>
+  loot 483
+    seed xml, like invalid-user-group-state-fault
+    note <InvalidUserGroupStateFault>
+  loot 484
+    seed xml, like user-group-not-found-fault
+    note <UserGroupNotFoundFault>
+  loot 485
+    seed xml, like insufficient-cache-cluster-capacity-fault
+    note <InsufficientCacheClusterCapacityFault>
+  loot 486
+    seed xml, like cache-security-group-not-found-fault
+    note <CacheSecurityGroupNotFoundFault>
+  loot 487
+    seed xml, like cache-subnet-group-not-found-fault
+    note <CacheSubnetGroupNotFoundFault>
+  loot 488
+    seed xml, like cluster-quota-for-customer-exceeded-fault
+    note <ClusterQuotaForCustomerExceededFault>
+  loot 489
+    seed xml, like node-quota-for-cluster-exceeded-fault
+    note <NodeQuotaForClusterExceededFault>
+  loot 490
+    seed xml, like node-quota-for-customer-exceeded-fault
+    note <NodeQuotaForCustomerExceededFault>
+  loot 491
+    seed xml, like cache-parameter-group-not-found-fault
+    note <CacheParameterGroupNotFoundFault>
+  loot 492
+    seed xml, like invalid-vpc-network-state-fault
+    note <InvalidVPCNetworkStateFault>
+  loot 493
+    seed xml, like tag-quota-per-resource-exceeded
+    note <TagQuotaPerResourceExceeded>
+  loot 494
+    seed xml, like node-groups-per-replication-group-quota-exceeded-fault
+    note <NodeGroupsPerReplicationGroupQuotaExceededFault>
+  loot 495
+    seed xml, like global-replication-group-not-found-fault
+    note <GlobalReplicationGroupNotFoundFault>
+  loot 496
+    seed xml, like invalid-global-replication-group-state-fault
+    note <InvalidGlobalReplicationGroupStateFault>
+  loot 497
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 498
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

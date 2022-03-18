@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/post-agent-profile-body
+  take form post-agent-profile-body
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/post-agent-profile-response
+  take form post-agent-profile-response
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-agent-profile, name <PostAgentProfile>
+  note <Submits profiling data to an aggregated profile of a profiling group. To get an aggregated profile that is created with this profiling data, use [`GetProfile`](https://docs.aws.amazon.com/codeguru/latest/profiler-api/API_GetProfile.html) .>
+
+  take profiling-group-name
+    like native-string
+    note <The name of the profiling group with the aggregated profile that receives the submitted profiling data.>
+  take content-type
+    like native-string
+    note <The format of the submitted profiling data. The format maps to the `Accept` and `Content-Type` headers of the HTTP request. You can specify one of the following: or the default .
+
+     &lt;ul&gt; &lt;li&gt; &lt;p&gt; &lt;code&gt;application/json&lt;/code&gt; — standard JSON format &lt;/p&gt; &lt;/li&gt; &lt;li&gt; &lt;p&gt; &lt;code&gt;application/x-amzn-ion&lt;/code&gt; — the Amazon Ion data format. For more information, see &lt;a href="http://amzn.github.io/ion-docs/"&gt;Amazon Ion&lt;/a&gt;. &lt;/p&gt; &lt;/li&gt; &lt;/ul&gt;>
+  take profile-token
+    like native-string
+    note <Amazon CodeGuru Profiler uses this universally unique identifier (UUID) to prevent the accidental submission of duplicate profiling data if there are failures and retries.>
+    void take
+  take post-agent-profile-body, like post-agent-profile-body
+
+  line </profilingGroups/{profiling-group-name}/agentProfile#Content-Type>
+
+  hint <Content-Type>, loan content-type
+
+  find <profileToken>, loan profile-token
+
+  seed json, loan post-agent-profile-body
+
+  loot 204
+    seed json, like post-agent-profile-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

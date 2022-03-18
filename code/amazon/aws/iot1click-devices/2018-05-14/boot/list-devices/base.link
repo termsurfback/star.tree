@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/list-devices-response
+  take form list-devices-response
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/range-not-satisfiable-exception
+  take form range-not-satisfiable-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-devices, name <ListDevices>
+  note <Lists the 1-Click compatible devices associated with your AWS account.>
+
+  take device-type
+    like native-string
+    note <The type of the device, such as "button".>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return per request. If not set, a default value of 100 is used.>
+    void take
+  take next-token
+    like native-string
+    note <The token to retrieve the next set of results.>
+    void take
+
+  line </devices>
+
+  find <deviceType>, loan device-type
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  loot 200
+    seed json, like list-devices-response
+    note <Success>
+  loot 480
+    seed json, like range-not-satisfiable-exception
+    note <RangeNotSatisfiableException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

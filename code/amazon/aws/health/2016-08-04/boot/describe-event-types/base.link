@@ -1,0 +1,50 @@
+
+load @drumwork/snow/amazonaws.com/health/2016-08-04/base/describe-event-types-response
+  take form describe-event-types-response
+
+load @drumwork/snow/amazonaws.com/health/2016-08-04/base/invalid-pagination-token
+  take form invalid-pagination-token
+
+load @drumwork/snow/amazonaws.com/health/2016-08-04/base/unsupported-locale
+  take form unsupported-locale
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-event-types, name <DescribeEventTypes>
+  note <Returns the event types that meet the specified filter criteria. You can use this API operation to find information about the AWS Health event, such as the category, AWS service, and event code. The metadata for each event appears in the [EventType](https://docs.aws.amazon.com/health/latest/APIReference/API_EventType.html) object.
+
+If you don't specify a filter criteria, the API operation returns all event types, in no particular order.
+
+This API operation uses pagination. Specify the `nextToken` parameter in the next request to return more results.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-event-types-request, like describe-event-types-request
+
+  line </#X-Amz-Target=AWSHealth_20160804.DescribeEventTypes>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan describe-event-types-request
+
+  loot 200
+    seed json, like describe-event-types-response
+    note <Success>
+  loot 480
+    seed json, like invalid-pagination-token
+    note <InvalidPaginationToken>
+  loot 481
+    seed json, like unsupported-locale
+    note <UnsupportedLocale>

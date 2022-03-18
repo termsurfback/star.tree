@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/initiate-device-claim-response
+  take form initiate-device-claim-response
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/resource-conflict-exception
+  take form resource-conflict-exception
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot initiate-device-claim, name <InitiateDeviceClaim>
+  note <Given a device ID, initiates a claim request for the associated device.
+
+Claiming a device consists of initiating a claim, then publishing a device event, and finalizing the claim. For a device of type button, a device event can be published by simply clicking the device.>
+
+  take device-id
+    like native-string
+    note <The unique identifier of the device.>
+
+  line </devices/{device-id}/initiate-claim>
+
+  loot 200
+    seed json, like initiate-device-claim-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 483
+    seed json, like resource-conflict-exception
+    note <ResourceConflictException>

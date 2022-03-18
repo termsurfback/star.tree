@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/describe-chap-credentials-output
+  take form describe-chap-credentials-output
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-chap-credentials, name <DescribeChapCredentials>
+  note <Returns an array of Challenge-Handshake Authentication Protocol (CHAP) credentials information for a specified iSCSI target, one for each target-initiator pair. This operation is supported in the volume and tape gateway types.>
+
+  take x-amz-target
+    like native-string
+  take describe-chap-credentials-input, like describe-chap-credentials-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.DescribeChapCredentials>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-chap-credentials-input
+
+  loot 200
+    seed json, like describe-chap-credentials-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

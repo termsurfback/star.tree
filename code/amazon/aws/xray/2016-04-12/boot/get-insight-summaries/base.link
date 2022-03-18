@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/xray/2016-04-12/base/get-insight-summaries-body
+  take form get-insight-summaries-body
+
+load @drumwork/snow/amazonaws.com/xray/2016-04-12/base/get-insight-summaries-result
+  take form get-insight-summaries-result
+
+load @drumwork/snow/amazonaws.com/xray/2016-04-12/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/xray/2016-04-12/base/throttled-exception
+  take form throttled-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-insight-summaries, name <GetInsightSummaries>
+  note <Retrieves the summaries of all insights in the specified group matching the provided filter values.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-insight-summaries-body, like get-insight-summaries-body
+
+  line </InsightSummaries>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan get-insight-summaries-body
+
+  loot 200
+    seed json, like get-insight-summaries-result
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like throttled-exception
+    note <ThrottledException>

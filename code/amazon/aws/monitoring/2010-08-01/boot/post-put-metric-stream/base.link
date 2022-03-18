@@ -1,0 +1,71 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/internal-service-fault
+  take form internal-service-fault
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/missing-required-parameter-exception
+  take form missing-required-parameter-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/put-metric-stream-output
+  take form put-metric-stream-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-put-metric-stream, name <POST_PutMetricStream>
+  note <Creates or updates a metric stream. Metric streams can automatically stream CloudWatch metrics to Amazon Web Services destinations including Amazon S3 and to many third-party solutions.
+
+For more information, see [Using Metric Streams](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Metric-Streams.html).
+
+To create a metric stream, you must be logged on to an account that has the `iam:PassRole` permission and either the `CloudWatchFullAccess` policy or the `cloudwatch:PutMetricStream` permission.
+
+When you create or update a metric stream, you choose one of the following:
+
+- Stream metrics from all metric namespaces in the account.
+
+- Stream metrics from all metric namespaces in the account, except for the namespaces that you list in `ExcludeFilters`.
+
+- Stream metrics from only the metric namespaces that you list in `IncludeFilters`.
+
+When you use `PutMetricStream` to create a new metric stream, the stream is created in the `running` state. If you use it to update an existing stream, the state of the stream is not changed.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take put-metric-stream-input, like put-metric-stream-input
+    void take
+
+  line </#Action=PutMetricStream>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan put-metric-stream-input
+
+  loot 200
+    seed xml, like put-metric-stream-output
+    note <Success>
+  loot 480
+    seed xml, like concurrent-modification-exception
+    note <ConcurrentModificationException>
+  loot 481
+    seed xml, like internal-service-fault
+    note <InternalServiceFault>
+  loot 482
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed xml, like missing-required-parameter-exception
+    note <MissingRequiredParameterException>
+  loot 484
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

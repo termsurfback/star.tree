@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/delete-tape-pool-output
+  take form delete-tape-pool-output
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-tape-pool, name <DeleteTapePool>
+  note <Delete a custom tape pool. A custom tape pool can only be deleted if there are no tapes in the pool and if there are no automatic tape creation policies that reference the custom tape pool.>
+
+  take x-amz-target
+    like native-string
+  take delete-tape-pool-input, like delete-tape-pool-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.DeleteTapePool>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-tape-pool-input
+
+  loot 200
+    seed json, like delete-tape-pool-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

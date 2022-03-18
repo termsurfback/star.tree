@@ -1,0 +1,77 @@
+
+load @drumwork/snow/amazonaws.com/organizations/2016-11-28/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/organizations/2016-11-28/base/aws-organizations-not-in-use-exception
+  take form aws-organizations-not-in-use-exception
+
+load @drumwork/snow/amazonaws.com/organizations/2016-11-28/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/organizations/2016-11-28/base/list-tags-for-resource-response
+  take form list-tags-for-resource-response
+
+load @drumwork/snow/amazonaws.com/organizations/2016-11-28/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/amazonaws.com/organizations/2016-11-28/base/target-not-found-exception
+  take form target-not-found-exception
+
+load @drumwork/snow/amazonaws.com/organizations/2016-11-28/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-tags-for-resource, name <ListTagsForResource>
+  note <Lists tags that are attached to the specified resource.
+
+You can attach tags to the following resources in AWS Organizations.
+
+- AWS account
+
+- Organization root
+
+- Organizational unit (OU)
+
+- Policy (any type)
+
+This operation can be called only from the organization's management account or by a member account that is a delegated administrator for an AWS service.>
+
+  take x-amz-target
+    like native-string
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-tags-for-resource-request, like list-tags-for-resource-request
+
+  line </#X-Amz-Target=AWSOrganizationsV20161128.ListTagsForResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <NextToken>, loan next-token
+
+  seed json, loan list-tags-for-resource-request
+
+  loot 200
+    seed json, like list-tags-for-resource-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like aws-organizations-not-in-use-exception
+    note <AWSOrganizationsNotInUseException>
+  loot 482
+    seed json, like target-not-found-exception
+    note <TargetNotFoundException>
+  loot 483
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 484
+    seed json, like service-exception
+    note <ServiceException>
+  loot 485
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>

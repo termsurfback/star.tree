@@ -1,0 +1,67 @@
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/malformed-policy-document-exception
+  take form malformed-policy-document-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/validate-resource-policy-response
+  take form validate-resource-policy-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot validate-resource-policy, name <ValidateResourcePolicy>
+  note <Validates that the resource policy does not grant a wide range of IAM principals access to your secret. The JSON request string input and response output displays formatted code with white space and line breaks for better readability. Submit your input as a single line JSON string. A resource-based policy is optional for secrets.
+
+The API performs three checks when validating the secret:
+
+- Sends a call to [Zelkova](https://aws.amazon.com/blogs/security/protect-sensitive-data-in-the-cloud-with-automated-reasoning-zelkova/), an automated reasoning engine, to ensure your Resource Policy does not allow broad access to your secret.
+
+- Checks for correct syntax in a policy.
+
+- Verifies the policy does not lock out a caller.
+
+**Minimum Permissions** You must have the permissions required to access the following APIs:
+
+- `secretsmanager:PutResourcePolicy`
+
+- `secretsmanager:ValidateResourcePolicy`>
+
+  take x-amz-target
+    like native-string
+  take validate-resource-policy-request, like validate-resource-policy-request
+
+  line </#X-Amz-Target=secretsmanager.ValidateResourcePolicy>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan validate-resource-policy-request
+
+  loot 200
+    seed json, like validate-resource-policy-response
+    note <Success>
+  loot 480
+    seed json, like malformed-policy-document-exception
+    note <MalformedPolicyDocumentException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 483
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 484
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

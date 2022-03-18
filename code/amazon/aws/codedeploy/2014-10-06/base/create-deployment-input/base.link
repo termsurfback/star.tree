@@ -1,0 +1,85 @@
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/application-name
+  take form application-name
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/auto-rollback-configuration
+  take form auto-rollback-configuration
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/deployment-config-name
+  take form deployment-config-name
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/deployment-group-name
+  take form deployment-group-name
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/description
+  take form description
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/file-exists-behavior
+  take form file-exists-behavior
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/revision-location
+  take form revision-location
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/target-instances
+  take form target-instances
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+form create-deployment-input, name <CreateDeploymentInput>
+  note <Represents the input of a `CreateDeployment` operation.>
+  take application-name, name <applicationName>
+    like application-name
+    note <The name of an AWS CodeDeploy application associated with the IAM user or AWS account.>
+  take deployment-group-name, name <deploymentGroupName>
+    like deployment-group-name
+    void take
+    note <The name of the deployment group.>
+  take revision, name <revision>
+    like revision-location
+    void take
+    note <The type and location of the revision to deploy.>
+  take deployment-config-name, name <deploymentConfigName>
+    like deployment-config-name
+    void take
+    note <The name of a deployment configuration associated with the IAM user or AWS account.
+
+If not specified, the value configured in the deployment group is used as the default. If the deployment group does not have a deployment configuration associated with it, `CodeDeployDefault`.`OneAtATime` is used by default.>
+  take description, name <description>
+    like description
+    void take
+    note <A comment about the deployment.>
+  take ignore-application-stop-failures, name <ignoreApplicationStopFailures>
+    like boolean
+    void take
+    note <If true, then if an `ApplicationStop`, `BeforeBlockTraffic`, or `AfterBlockTraffic` deployment lifecycle event to an instance fails, then the deployment continues to the next deployment lifecycle event. For example, if `ApplicationStop` fails, the deployment continues with `DownloadBundle`. If `BeforeBlockTraffic` fails, the deployment continues with `BlockTraffic`. If `AfterBlockTraffic` fails, the deployment continues with `ApplicationStop`.
+
+If false or not specified, then if a lifecycle event fails during a deployment to an instance, that deployment fails. If deployment to that instance is part of an overall deployment and the number of healthy hosts is not less than the minimum number of healthy hosts, then a deployment to the next instance is attempted.
+
+During a deployment, the AWS CodeDeploy agent runs the scripts specified for `ApplicationStop`, `BeforeBlockTraffic`, and `AfterBlockTraffic` in the AppSpec file from the previous successful deployment. (All other scripts are run from the AppSpec file in the current deployment.) If one of these scripts contains an error and does not run successfully, the deployment can fail.
+
+If the cause of the failure is a script from the last successful deployment that will never run successfully, create a new deployment and use `ignoreApplicationStopFailures` to specify that the `ApplicationStop`, `BeforeBlockTraffic`, and `AfterBlockTraffic` failures should be ignored.>
+  take target-instances, name <targetInstances>
+    like target-instances
+    void take
+    note <Information about the instances that belong to the replacement environment in a blue/green deployment.>
+  take auto-rollback-configuration, name <autoRollbackConfiguration>
+    like auto-rollback-configuration
+    void take
+    note <Configuration information for an automatic rollback that is added when a deployment is created.>
+  take update-outdated-instances-only, name <updateOutdatedInstancesOnly>
+    like boolean
+    void take
+    note <Indicates whether to deploy to all instances or only to instances that are not running the latest application revision.>
+  take file-exists-behavior, name <fileExistsBehavior>
+    like file-exists-behavior
+    void take
+    note <Information about how AWS CodeDeploy handles files that already exist in a deployment target location but weren't part of the previous successful deployment.
+
+The `fileExistsBehavior` parameter takes any of the following values:
+
+- DISALLOW: The deployment fails. This is also the default behavior if no option is specified.
+
+- OVERWRITE: The version of the file from the application revision currently being deployed replaces the version already on the instance.
+
+- RETAIN: The version of the file already on the instance is kept and used as part of the new deployment.>

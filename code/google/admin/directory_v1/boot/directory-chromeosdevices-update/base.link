@@ -1,0 +1,32 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/admin/directory_v1/base/chrome-os-device
+  take form chrome-os-device
+
+boot directory-chromeosdevices-update, name <directory.chromeosdevices.update>
+  note <Updates a device's updatable properties, such as `annotatedUser`, `annotatedLocation`, `notes`, `orgUnitPath`, or `annotatedAssetId`.>
+
+  take customer-id
+    like native-string
+    note <The unique ID for the customer's Google Workspace account. As an account administrator, you can also use the `my_customer` alias to represent your account's `customerId`. The `customerId` is also returned as part of the [Users resource](/admin-sdk/directory/v1/reference/users).>
+  take device-id
+    like native-string
+    note <The unique ID of the device. The `deviceId`s are returned in the response from the [chromeosdevices.list](/admin-sdk/v1/reference/chromeosdevices/list) method.>
+  take projection
+    like native-string
+    note <Restrict information returned to a set of selected fields.>
+    void take
+  take chrome-os-device, like chrome-os-device
+    void take
+
+  line </admin/directory/v1/customer/{customer-id}/devices/chromeos/{device-id}>
+
+  find <projection>, loan projection
+
+  seed json, loan chrome-os-device
+
+  loot 200
+    seed json, like chrome-os-device
+    note <Successful response>

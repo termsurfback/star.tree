@@ -1,0 +1,49 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/games/v1/base/player-leaderboard-score-list-response
+  take form player-leaderboard-score-list-response
+
+boot games-scores-get, name <games.scores.get>
+  note <Get high scores, and optionally ranks, in leaderboards for the currently authenticated player. For a specific time span, `leaderboardId` can be set to `ALL` to retrieve data for all leaderboards in a given time span. `NOTE: You cannot ask for 'ALL' leaderboards and 'ALL' timeSpans in the same request; only one parameter may be set to 'ALL'.>
+
+  take player-id
+    like native-string
+    note <A player ID. A value of `me` may be used in place of the authenticated player's ID.>
+  take leaderboard-id
+    like native-string
+    note <The ID of the leaderboard. Can be set to 'ALL' to retrieve data for all leaderboards for this application.>
+  take time-span
+    like native-string
+    note <The time span for the scores and ranks you're requesting.>
+  take include-rank-type
+    like native-string
+    note <The types of ranks to return. If the parameter is omitted, no ranks will be returned.>
+    void take
+  take language
+    like native-string
+    note <The preferred language to use for strings returned by this method.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of leaderboard scores to return in the response. For any response, the actual number of leaderboard scores returned may be less than the specified `maxResults`.>
+    void take
+  take page-token
+    like native-string
+    note <The token returned by the previous request.>
+    void take
+
+  line </games/v1/players/{player-id}/leaderboards/{leaderboard-id}/scores/{time-span}>
+
+  find <includeRankType>, loan include-rank-type
+  find <language>, loan language
+  find <maxResults>, loan max-results
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like player-leaderboard-score-list-response
+    note <Successful response>

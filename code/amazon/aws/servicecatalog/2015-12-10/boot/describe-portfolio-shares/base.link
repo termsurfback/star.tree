@@ -1,0 +1,50 @@
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/describe-portfolio-shares-output
+  take form describe-portfolio-shares-output
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/invalid-parameters-exception
+  take form invalid-parameters-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-portfolio-shares, name <DescribePortfolioShares>
+  note <Returns a summary of each of the portfolio shares that were created for the specified portfolio.
+
+You can use this API to determine which accounts or organizational nodes this portfolio have been shared, whether the recipient entity has imported the share, and whether TagOptions are included with the share.
+
+The `PortfolioId` and `Type` parameters are both required.>
+
+  take x-amz-target
+    like native-string
+  take page-size
+    like native-string
+    note <Pagination limit>
+    void take
+  take page-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-portfolio-shares-input, like describe-portfolio-shares-input
+
+  line </#X-Amz-Target=AWS242ServiceCatalogService.DescribePortfolioShares>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <PageSize>, loan page-size
+  find <PageToken>, loan page-token
+
+  seed json, loan describe-portfolio-shares-input
+
+  loot 200
+    seed json, like describe-portfolio-shares-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-parameters-exception
+    note <InvalidParametersException>

@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/invalid-argument-exception
+  take form invalid-argument-exception
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot stop-stream-encryption, name <StopStreamEncryption>
+  note <Disables server-side encryption for a specified stream.
+
+Stopping encryption is an asynchronous operation. Upon receiving the request, Kinesis Data Streams returns immediately and sets the status of the stream to `UPDATING`. After the update is complete, Kinesis Data Streams sets the status of the stream back to `ACTIVE`. Stopping encryption normally takes a few seconds to complete, but it can take minutes. You can continue to read and write data to your stream while its status is `UPDATING`. Once the status of the stream is `ACTIVE`, records written to the stream are no longer encrypted by Kinesis Data Streams.
+
+API Limits: You can successfully disable server-side encryption 25 times in a rolling 24-hour period.
+
+Note: It can take up to 5 seconds after the stream is in an `ACTIVE` status before all records written to the stream are no longer subject to encryption. After you disabled encryption, you can verify that encryption is not applied by inspecting the API response from `PutRecord` or `PutRecords`.>
+
+  take x-amz-target
+    like native-string
+  take stop-stream-encryption-input, like stop-stream-encryption-input
+
+  line </#X-Amz-Target=Kinesis_20131202.StopStreamEncryption>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan stop-stream-encryption-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like invalid-argument-exception
+    note <InvalidArgumentException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

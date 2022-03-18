@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/ec2-request-failed-exception
+  take form ec2-request-failed-exception
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/list-compatible-images-result
+  take form list-compatible-images-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-compatible-images, name <ListCompatibleImages>
+  note <This action returns a list of the different Amazon EC2 Amazon Machine Images (AMIs) that are owned by your AWS account that would be supported for use on a Snow device. Currently, supported AMIs are based on the CentOS 7 (x86_64) - with Updates HVM, Ubuntu Server 14.04 LTS (HVM), and Ubuntu 16.04 LTS - Xenial (HVM) images, available on the AWS Marketplace.>
+
+  take x-amz-target
+    like native-string
+  take list-compatible-images-request, like list-compatible-images-request
+
+  line </#X-Amz-Target=AWSIESnowballJobManagementService.ListCompatibleImages>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-compatible-images-request
+
+  loot 200
+    seed json, like list-compatible-images-result
+    note <Success>
+  loot 480
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 481
+    seed json, like ec2-request-failed-exception
+    note <Ec2RequestFailedException>

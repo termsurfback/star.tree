@@ -1,0 +1,31 @@
+
+load @drumwork/snow/amazonaws.com/macie/2017-12-19/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/macie/2017-12-19/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot disassociate-member-account, name <DisassociateMemberAccount>
+  note <Removes the specified member account from Amazon Macie Classic.>
+
+  take x-amz-target
+    like native-string
+  take disassociate-member-account-request, like disassociate-member-account-request
+
+  line </#X-Amz-Target=MacieService.DisassociateMemberAccount>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan disassociate-member-account-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like internal-exception
+    note <InternalException>

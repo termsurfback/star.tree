@@ -1,0 +1,31 @@
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-studio-session-mapping, name <CreateStudioSessionMapping>
+  note <Maps a user or group to the Amazon EMR Studio specified by `StudioId`, and applies a session policy to refine Studio permissions for that user or group. Use `CreateStudioSessionMapping` to assign users to a Studio when you use Amazon Web Services SSO authentication. For instructions on how to assign users to a Studio when you use IAM authentication, see [Assign a user or group to your EMR Studio](https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-studio-manage-users.html#emr-studio-assign-users-groups).>
+
+  take x-amz-target
+    like native-string
+  take create-studio-session-mapping-input, like create-studio-session-mapping-input
+
+  line </#X-Amz-Target=ElasticMapReduce.CreateStudioSessionMapping>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-studio-session-mapping-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

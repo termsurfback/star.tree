@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/account-attribute-name
+  take form account-attribute-name
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-account-attributes-result
+  take form describe-account-attributes-result
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-account-attributes, name <GET_DescribeAccountAttributes>
+  note <Describes attributes of your AWS account. The following are the supported account attributes:
+
+- `supported-platforms`: Indicates whether your account can launch instances into EC2-Classic and EC2-VPC, or only into EC2-VPC.
+
+- `default-vpc`: The ID of the default VPC for your account, or `none`.
+
+- `max-instances`: This attribute is no longer supported. The returned value does not reflect your actual vCPU limit for running On-Demand Instances. For more information, see [On-Demand Instance Limits](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-on-demand-instances.html#ec2-on-demand-instances-limits) in the _Amazon Elastic Compute Cloud User Guide_.
+
+- `vpc-max-security-groups-per-interface`: The maximum number of security groups that you can assign to a network interface.
+
+- `max-elastic-ips`: The maximum number of Elastic IP addresses that you can allocate for use with EC2-Classic.
+
+- `vpc-max-elastic-ips`: The maximum number of Elastic IP addresses that you can allocate for use with EC2-VPC.>
+
+  take attribute-name
+    like list
+      like account-attribute-name
+    note <The account attribute names.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeAccountAttributes>
+
+  find <AttributeName>, loan attribute-name
+  find <DryRun>, loan dry-run
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-account-attributes-result
+    note <Success>

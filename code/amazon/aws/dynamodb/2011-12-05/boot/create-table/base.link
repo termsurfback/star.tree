@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/dynamodb/2011-12-05/base/create-table-output
+  take form create-table-output
+
+load @drumwork/snow/amazonaws.com/dynamodb/2011-12-05/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/dynamodb/2011-12-05/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2011-12-05/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-table, name <CreateTable>
+  note <Adds a new table to your account.
+
+The table name must be unique among those associated with the AWS Account issuing the request, and the AWS Region that receives the request (e.g. `us-east-1`).
+
+The `CreateTable` operation triggers an asynchronous workflow to begin creating the table. Amazon DynamoDB immediately returns the state of the table (`CREATING`) until the table is in the `ACTIVE` state. Once the table is in the `ACTIVE` state, you can perform data plane operations.>
+
+  take x-amz-target
+    like native-string
+  take create-table-input, like create-table-input
+
+  line </#X-Amz-Target=DynamoDB_20111205.CreateTable>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-table-input
+
+  loot 200
+    seed json, like create-table-output
+    note <Success>
+  loot 480
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like internal-server-error
+    note <InternalServerError>

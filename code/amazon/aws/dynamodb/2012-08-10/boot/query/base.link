@@ -1,0 +1,74 @@
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/provisioned-throughput-exceeded-exception
+  take form provisioned-throughput-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/query-output
+  take form query-output
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/request-limit-exceeded
+  take form request-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot query, name <Query>
+  note <The `Query` operation finds items based on primary key values. You can query any table or secondary index that has a composite primary key (a partition key and a sort key).
+
+Use the `KeyConditionExpression` parameter to provide a specific value for the partition key. The `Query` operation will return all of the items from the table or index with that partition key value. You can optionally narrow the scope of the `Query` operation by specifying a sort key value and a comparison operator in `KeyConditionExpression`. To further refine the `Query` results, you can optionally provide a `FilterExpression`. A `FilterExpression` determines which items within the results should be returned to you. All of the other results are discarded.
+
+A `Query` operation always returns a result set. If no matching items are found, the result set will be empty. Queries that do not return results consume the minimum number of read capacity units for that type of read operation.
+
+DynamoDB calculates the number of read capacity units consumed based on item size, not on the amount of data that is returned to an application. The number of capacity units consumed will be the same whether you request all of the attributes (the default behavior) or just some of them (using a projection expression). The number will also be the same whether or not you use a `FilterExpression`.
+
+`Query` results are always sorted by the sort key value. If the data type of the sort key is Number, the results are returned in numeric order; otherwise, the results are returned in order of UTF-8 bytes. By default, the sort order is ascending. To reverse the order, set the `ScanIndexForward` parameter to false.
+
+A single `Query` operation will read up to the maximum number of items set (if using the `Limit` parameter) or a maximum of 1 MB of data and then apply any filtering to the results using `FilterExpression`. If `LastEvaluatedKey` is present in the response, you will need to paginate the result set. For more information, see [Paginating the Results](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#Query.Pagination) in the _Amazon DynamoDB Developer Guide_.
+
+`FilterExpression` is applied after a `Query` finishes, but before the results are returned. A `FilterExpression` cannot contain partition key or sort key attributes. You need to specify those attributes in the `KeyConditionExpression`.
+
+A `Query` operation can return an empty result set and a `LastEvaluatedKey` if all the items read for the page of results are filtered out.
+
+You can query a table, a local secondary index, or a global secondary index. For a query on a table or on a local secondary index, you can set the `ConsistentRead` parameter to `true` and obtain a strongly consistent result. Global secondary indexes support eventually consistent reads only, so do not specify `ConsistentRead` when querying a global secondary index.>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take exclusive-start-key
+    like native-string
+    note <Pagination token>
+    void take
+  take query-input, like query-input
+
+  line </#X-Amz-Target=DynamoDB_20120810.Query>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <Limit>, loan limit
+  find <ExclusiveStartKey>, loan exclusive-start-key
+
+  seed json, loan query-input
+
+  loot 200
+    seed json, like query-output
+    note <Success>
+  loot 480
+    seed json, like provisioned-throughput-exceeded-exception
+    note <ProvisionedThroughputExceededException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like request-limit-exceeded
+    note <RequestLimitExceeded>
+  loot 483
+    seed json, like internal-server-error
+    note <InternalServerError>

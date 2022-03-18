@@ -1,0 +1,31 @@
+
+load @drumwork/snow/amazonaws.com/worklink/2018-09-25/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/worklink/2018-09-25/base/tag-resource-body
+  take form tag-resource-body
+
+load @drumwork/snow/amazonaws.com/worklink/2018-09-25/base/tag-resource-response
+  take form tag-resource-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot tag-resource, name <TagResource>
+  note <Adds or overwrites one or more tags for the specified resource, such as a fleet. Each tag consists of a key and an optional value. If a resource already has a tag with the same key, this operation updates its value.>
+
+  take resource-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the fleet.>
+  take tag-resource-body, like tag-resource-body
+
+  line </tags/{resource-arn}>
+
+  seed json, loan tag-resource-body
+
+  loot 200
+    seed json, like tag-resource-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

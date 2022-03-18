@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/list-endpoints-by-platform-application-response
+  take form list-endpoints-by-platform-application-response
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-list-endpoints-by-platform-application, name <GET_ListEndpointsByPlatformApplication>
+  note <Lists the endpoints and endpoint attributes for devices in a supported push notification service, such as GCM (Firebase Cloud Messaging) and APNS. The results for `ListEndpointsByPlatformApplication` are paginated and return a limited list of endpoints, up to 100. If additional records are available after the first page results, then a NextToken string will be returned. To receive the next page, you call `ListEndpointsByPlatformApplication` again using the NextToken string received from the previous call. When there are no more records to return, NextToken will be null. For more information, see [Using Amazon SNS Mobile Push Notifications](https://docs.aws.amazon.com/sns/latest/dg/SNSMobilePush.html).
+
+This action is throttled at 30 transactions per second (TPS).>
+
+  take platform-application-arn
+    like native-string
+    note <PlatformApplicationArn for ListEndpointsByPlatformApplicationInput action.>
+  take next-token
+    like native-string
+    note <NextToken string is used when calling ListEndpointsByPlatformApplication action to retrieve additional records that are available after the first page results.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ListEndpointsByPlatformApplication>
+
+  find <PlatformApplicationArn>, loan platform-application-arn
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like list-endpoints-by-platform-application-response
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 482
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>
+  loot 483
+    seed xml, like not-found-exception
+    note <NotFoundException>

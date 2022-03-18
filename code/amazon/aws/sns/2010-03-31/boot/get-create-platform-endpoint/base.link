@@ -1,0 +1,70 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/create-endpoint-response
+  take form create-endpoint-response
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-platform-endpoint, name <GET_CreatePlatformEndpoint>
+  note <Creates an endpoint for a device and mobile app on one of the supported push notification services, such as GCM (Firebase Cloud Messaging) and APNS. `CreatePlatformEndpoint` requires the `PlatformApplicationArn` that is returned from `CreatePlatformApplication`. You can use the returned `EndpointArn` to send a message to a mobile app or by the `Subscribe` action for subscription to a topic. The `CreatePlatformEndpoint` action is idempotent, so if the requester already owns an endpoint with the same device token and attributes, that endpoint's ARN is returned without creating a new endpoint. For more information, see [Using Amazon SNS Mobile Push Notifications](https://docs.aws.amazon.com/sns/latest/dg/SNSMobilePush.html).
+
+When using `CreatePlatformEndpoint` with Baidu, two attributes must be provided: ChannelId and UserId. The token field must also contain the ChannelId. For more information, see [Creating an Amazon SNS Endpoint for Baidu](https://docs.aws.amazon.com/sns/latest/dg/SNSMobilePushBaiduEndpoint.html).>
+
+  take platform-application-arn
+    like native-string
+    note <PlatformApplicationArn returned from CreatePlatformApplication is used to create a an endpoint.>
+  take token
+    like native-string
+    note <Unique identifier created by the notification service for an app on a device. The specific name for Token will vary, depending on which notification service is being used. For example, when using APNS as the notification service, you need the device token. Alternatively, when using GCM (Firebase Cloud Messaging) or ADM, the device token equivalent is called the registration ID.>
+  take custom-user-data
+    like native-string
+    note <Arbitrary user data to associate with the endpoint. Amazon SNS does not use this data. The data must be in UTF-8 format and less than 2KB.>
+    void take
+  take attributes
+    like form
+    note <For a list of attributes, see [SetEndpointAttributes](https://docs.aws.amazon.com/sns/latest/api/API_SetEndpointAttributes.html).>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreatePlatformEndpoint>
+
+  find <PlatformApplicationArn>, loan platform-application-arn
+  find <Token>, loan token
+  find <CustomUserData>, loan custom-user-data
+  find <Attributes>, loan attributes
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-endpoint-response
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 482
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>
+  loot 483
+    seed xml, like not-found-exception
+    note <NotFoundException>

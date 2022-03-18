@@ -1,0 +1,98 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/modify-vpc-endpoint-result
+  take form modify-vpc-endpoint-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/route-table-id
+  take form route-table-id
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/security-group-id
+  take form security-group-id
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/subnet-id
+  take form subnet-id
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-modify-vpc-endpoint, name <GET_ModifyVpcEndpoint>
+  note <Modifies attributes of a specified VPC endpoint. The attributes that you can modify depend on the type of VPC endpoint (interface, gateway, or Gateway Load Balancer). For more information, see [VPC Endpoints](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-endpoints.html) in the _Amazon Virtual Private Cloud User Guide_.>
+
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take vpc-endpoint-id
+    like native-string
+    note <The ID of the endpoint.>
+  take reset-policy
+    like native-boolean
+    note <(Gateway endpoint) Specify `true` to reset the policy document to the default policy. The default policy allows full access to the service.>
+    void take
+  take policy-document
+    like native-string
+    note <(Interface and gateway endpoints) A policy to attach to the endpoint that controls access to the service. The policy must be in valid JSON format.>
+    void take
+  take add-route-table-id
+    like list
+      like route-table-id
+    note <(Gateway endpoint) One or more route tables IDs to associate with the endpoint.>
+    void take
+  take remove-route-table-id
+    like list
+      like route-table-id
+    note <(Gateway endpoint) One or more route table IDs to disassociate from the endpoint.>
+    void take
+  take add-subnet-id
+    like list
+      like subnet-id
+    note <(Interface and Gateway Load Balancer endpoints) One or more subnet IDs in which to serve the endpoint. For a Gateway Load Balancer endpoint, you can specify only one subnet.>
+    void take
+  take remove-subnet-id
+    like list
+      like subnet-id
+    note <(Interface endpoint) One or more subnets IDs in which to remove the endpoint.>
+    void take
+  take add-security-group-id
+    like list
+      like security-group-id
+    note <(Interface endpoint) One or more security group IDs to associate with the network interface.>
+    void take
+  take remove-security-group-id
+    like list
+      like security-group-id
+    note <(Interface endpoint) One or more security group IDs to disassociate from the network interface.>
+    void take
+  take private-dns-enabled
+    like native-boolean
+    note <(Interface endpoint) Indicates whether a private hosted zone is associated with the VPC.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyVpcEndpoint>
+
+  find <DryRun>, loan dry-run
+  find <VpcEndpointId>, loan vpc-endpoint-id
+  find <ResetPolicy>, loan reset-policy
+  find <PolicyDocument>, loan policy-document
+  find <AddRouteTableId>, loan add-route-table-id
+  find <RemoveRouteTableId>, loan remove-route-table-id
+  find <AddSubnetId>, loan add-subnet-id
+  find <RemoveSubnetId>, loan remove-subnet-id
+  find <AddSecurityGroupId>, loan add-security-group-id
+  find <RemoveSecurityGroupId>, loan remove-security-group-id
+  find <PrivateDnsEnabled>, loan private-dns-enabled
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-vpc-endpoint-result
+    note <Success>

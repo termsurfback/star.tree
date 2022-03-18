@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/stop-replication-to-replica-response
+  take form stop-replication-to-replica-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot stop-replication-to-replica, name <StopReplicationToReplica>
+  note <Removes the secret from replication and promotes the secret to a regional secret in the replica Region.>
+
+  take x-amz-target
+    like native-string
+  take stop-replication-to-replica-request, like stop-replication-to-replica-request
+
+  line </#X-Amz-Target=secretsmanager.StopReplicationToReplica>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan stop-replication-to-replica-request
+
+  loot 200
+    seed json, like stop-replication-to-replica-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 483
+    seed json, like internal-service-error
+    note <InternalServiceError>

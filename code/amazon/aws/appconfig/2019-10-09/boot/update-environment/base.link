@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/environment
+  take form environment
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/update-environment-body
+  take form update-environment-body
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-environment, name <UpdateEnvironment>
+  note <Updates an environment.>
+
+  take application-id
+    like native-string
+    note <The application ID.>
+  take environment-id
+    like native-string
+    note <The environment ID.>
+  take update-environment-body, like update-environment-body
+
+  line </applications/{application-id}/environments/{environment-id}>
+
+  seed json, loan update-environment-body
+
+  loot 200
+    seed json, like environment
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

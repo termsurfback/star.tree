@@ -1,0 +1,50 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-payment-intents-intent-body
+  take form get-payment-intents-intent-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/payment-intent
+  take form payment-intent
+
+boot get-payment-intents-intent, name <GetPaymentIntentsIntent>
+  note <Retrieves the details of a PaymentIntent that has previously been created.
+
+Client-side retrieval using a publishable key is allowed when the `client_secret` is provided in the query string.
+
+When retrieved with a publishable key, only a subset of properties will be returned. Please refer to the [payment intent](#payment_intent_object) object reference for more details.>
+
+  take intent
+    like native-string
+  take client-secret
+    like native-string
+    note <The client secret of the PaymentIntent. Required if a publishable key is used to retrieve the source.>
+    void take
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-payment-intents-intent-body, like get-payment-intents-intent-body
+    void take
+
+  line </v1/payment_intents/{intent}>
+
+  find <client_secret>, loan client-secret
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-payment-intents-intent-body
+
+  loot 200
+    seed json, like payment-intent
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

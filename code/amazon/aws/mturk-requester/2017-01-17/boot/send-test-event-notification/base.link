@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/request-error
+  take form request-error
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/send-test-event-notification-response
+  take form send-test-event-notification-response
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/service-fault
+  take form service-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot send-test-event-notification, name <SendTestEventNotification>
+  note <The `SendTestEventNotification` operation causes Amazon Mechanical Turk to send a notification message as if a HIT event occurred, according to the provided notification specification. This allows you to test notifications without setting up notifications for a real HIT type and trying to trigger them using the website. When you call this operation, the service attempts to send the test notification immediately.>
+
+  take x-amz-target
+    like native-string
+  take send-test-event-notification-request, like send-test-event-notification-request
+
+  line </#X-Amz-Target=MTurkRequesterServiceV20170117.SendTestEventNotification>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan send-test-event-notification-request
+
+  loot 200
+    seed json, like send-test-event-notification-response
+    note <Success>
+  loot 480
+    seed json, like service-fault
+    note <ServiceFault>
+  loot 481
+    seed json, like request-error
+    note <RequestError>

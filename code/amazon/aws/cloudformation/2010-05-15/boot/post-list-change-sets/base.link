@@ -1,0 +1,32 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/list-change-sets-output
+  take form list-change-sets-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-list-change-sets, name <POST_ListChangeSets>
+  note <Returns the ID and status of each active change set for a stack. For example, CloudFormation lists change sets that are in the `CREATE_IN_PROGRESS` or `CREATE_PENDING` state.>
+
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take list-change-sets-input, like list-change-sets-input
+    void take
+
+  line </#Action=ListChangeSets>
+
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan list-change-sets-input
+
+  loot 200
+    seed xml, like list-change-sets-output
+    note <Success>

@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/mgn/2020-02-26/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/mgn/2020-02-26/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/mgn/2020-02-26/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/mgn/2020-02-26/base/tag-key
+  take form tag-key
+
+load @drumwork/snow/amazonaws.com/mgn/2020-02-26/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/mgn/2020-02-26/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot untag-resource, name <UntagResource>
+  note <Deletes the specified set of tags from the specified set of Application Migration Service resources.>
+
+  take resource-arn
+    like native-string
+    note <Untag resource by ARN.>
+  take tag-keys
+    like list
+      like tag-key
+    note <Untag resource by Keys.>
+
+  line </tags/{resource-arn}#tagKeys>
+
+  find <tagKeys>, loan tag-keys
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 484
+    seed json, like internal-server-exception
+    note <InternalServerException>

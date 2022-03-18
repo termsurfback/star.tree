@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/guardduty/2017-11-28/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/guardduty/2017-11-28/base/internal-server-error-exception
+  take form internal-server-error-exception
+
+load @drumwork/snow/amazonaws.com/guardduty/2017-11-28/base/stop-monitoring-members-body
+  take form stop-monitoring-members-body
+
+load @drumwork/snow/amazonaws.com/guardduty/2017-11-28/base/stop-monitoring-members-response
+  take form stop-monitoring-members-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot stop-monitoring-members, name <StopMonitoringMembers>
+  note <Stops GuardDuty monitoring for the specified member accounts. Use the `StartMonitoringMembers` operation to restart monitoring for those accounts.>
+
+  take detector-id
+    like native-string
+    note <The unique ID of the detector associated with the GuardDuty administrator account that is monitoring member accounts.>
+  take stop-monitoring-members-body, like stop-monitoring-members-body
+
+  line </detector/{detector-id}/member/stop>
+
+  seed json, loan stop-monitoring-members-body
+
+  loot 200
+    seed json, like stop-monitoring-members-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like internal-server-error-exception
+    note <InternalServerErrorException>

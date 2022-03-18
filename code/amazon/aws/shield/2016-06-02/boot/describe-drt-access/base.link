@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/describe-drt-access-response
+  take form describe-drt-access-response
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-drt-access, name <DescribeDRTAccess>
+  note <Returns the current role and list of Amazon S3 log buckets used by the Shield Response Team (SRT) to access your Amazon Web Services account while assisting with attack mitigation.>
+
+  take x-amz-target
+    like native-string
+  take describe-drt-access-request, like describe-drt-access-request
+
+  line </#X-Amz-Target=AWSShield_20160616.DescribeDRTAccess>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-drt-access-request
+
+  loot 200
+    seed json, like describe-drt-access-response
+    note <Success>
+  loot 480
+    seed json, like internal-error-exception
+    note <InternalErrorException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

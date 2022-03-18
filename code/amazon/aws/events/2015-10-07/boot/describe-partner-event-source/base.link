@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/describe-partner-event-source-response
+  take form describe-partner-event-source-response
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/operation-disabled-exception
+  take form operation-disabled-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-partner-event-source, name <DescribePartnerEventSource>
+  note <An SaaS partner can use this operation to list details about a partner event source that they have created. Amazon Web Services customers do not use this operation. Instead, Amazon Web Services customers can use [DescribeEventSource](https://docs.aws.amazon.com/eventbridge/latest/APIReference/API_DescribeEventSource.html) to see details about a partner event source that is shared with them.>
+
+  take x-amz-target
+    like native-string
+  take describe-partner-event-source-request, like describe-partner-event-source-request
+
+  line </#X-Amz-Target=AWSEvents.DescribePartnerEventSource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-partner-event-source-request
+
+  loot 200
+    seed json, like describe-partner-event-source-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like internal-exception
+    note <InternalException>
+  loot 482
+    seed json, like operation-disabled-exception
+    note <OperationDisabledException>

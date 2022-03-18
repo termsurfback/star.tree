@@ -1,0 +1,32 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/manufacturers/v1/base/product
+  take form product
+
+boot manufacturers-accounts-products-get, name <manufacturers.accounts.products.get>
+  note <Gets the product from a Manufacturer Center account, including product issues. A recently updated product takes around 15 minutes to process. Changes are only visible after it has been processed. While some issues may be available once the product has been processed, other issues may take days to appear.>
+
+  take parent
+    like native-string
+    note <Parent ID in the format `accounts/{account_id}`. `account_id` - The ID of the Manufacturer Center account.>
+  take name
+    like native-string
+    note <Name in the format `{target_country}:{content_language}:{product_id}`. `target_country` - The target country of the product as a CLDR territory code (for example, US). `content_language` - The content language of the product as a two-letter ISO 639-1 language code (for example, en). `product_id` - The ID of the product. For more information, see https://support.google.com/manufacturers/answer/6124116#id.>
+  take include
+    like list
+      like native-string
+    note <The information to be included in the response. Only sections listed here will be returned.>
+    void take
+
+  line </v1/{parent}/products/{name}>
+
+  find <include>, loan include
+
+  loot 200
+    seed json, like product
+    note <Successful response>

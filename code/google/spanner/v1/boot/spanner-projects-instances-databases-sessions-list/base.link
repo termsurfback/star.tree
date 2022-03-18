@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/spanner/v1/base/list-sessions-response
+  take form list-sessions-response
+
+boot spanner-projects-instances-databases-sessions-list, name <spanner.projects.instances.databases.sessions.list>
+  note <Lists all sessions in a given database.>
+
+  take database
+    like native-string
+    note <Required. The database in which to list sessions.>
+  take filter
+    like native-string
+    note <An expression for filtering the results of the request. Filter rules are case insensitive. The fields eligible for filtering are: * `labels.key` where key is the name of a label Some examples of using filters are: * `labels.env:*` --&gt; The session has the label "env". * `labels.env:dev` --&gt; The session has the label "env" and the value of the label contains the string "dev".>
+    void take
+  take page-size
+    like native-integer
+    note <Number of sessions to be returned in the response. If 0 or less, defaults to the server's maximum allowed page size.>
+    void take
+  take page-token
+    like native-string
+    note <If non-empty, `page_token` should contain a next_page_token from a previous ListSessionsResponse.>
+    void take
+
+  line </v1/{database}/sessions>
+
+  find <filter>, loan filter
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-sessions-response
+    note <Successful response>

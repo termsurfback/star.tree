@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/iotdeviceadvisor/2020-09-18/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/iotdeviceadvisor/2020-09-18/base/list-suite-runs-response
+  take form list-suite-runs-response
+
+load @drumwork/snow/amazonaws.com/iotdeviceadvisor/2020-09-18/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-suite-runs, name <ListSuiteRuns>
+  note <Lists the runs of the specified Device Advisor test suite. You can list all runs of the test suite, or the runs of a specific version of the test suite.>
+
+  take suite-definition-id
+    like native-string
+    note <Lists the test suite runs of the specified test suite based on suite definition Id.>
+    void take
+  take suite-definition-version
+    like native-string
+    note <Must be passed along with suiteDefinitionId. Lists the test suite runs of the specified test suite based on suite definition version.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return at once.>
+    void take
+  take next-token
+    like native-string
+    note <A token to retrieve the next set of results.>
+    void take
+
+  line </suiteRuns>
+
+  find <suiteDefinitionId>, loan suite-definition-id
+  find <suiteDefinitionVersion>, loan suite-definition-version
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  loot 200
+    seed json, like list-suite-runs-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>

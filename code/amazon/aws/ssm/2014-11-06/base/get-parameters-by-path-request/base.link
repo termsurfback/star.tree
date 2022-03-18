@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/get-parameters-by-path-max-results
+  take form get-parameters-by-path-max-results
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/next-token
+  take form next-token
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/parameter-string-filter-list
+  take form parameter-string-filter-list
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/ps-parameter-name
+  take form ps-parameter-name
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+form get-parameters-by-path-request, name <GetParametersByPathRequest>
+  take path, name <Path>
+    like ps-parameter-name
+    note <The hierarchy for the parameter. Hierarchies start with a forward slash (/). The hierachy is the parameter name except the last part of the parameter. For the API call to succeeed, the last part of the parameter name can't be in the path. A parameter name hierarchy can have a maximum of 15 levels. Here is an example of a hierarchy: `/Finance/Prod/IAD/WinServ2016/license33`>
+  take recursive, name <Recursive>
+    like boolean
+    void take
+    note <Retrieve all parameters within a hierarchy.
+
+If a user has access to a path, then the user can access all levels of that path. For example, if a user has permission to access path `/a`, then the user can also access `/a/b`. Even if a user has explicitly been denied access in IAM for parameter `/a/b`, they can still call the GetParametersByPath API operation recursively for `/a` and view `/a/b`.>
+  take parameter-filters, name <ParameterFilters>
+    like parameter-string-filter-list
+    void take
+    note <Filters to limit the request results.
+
+For `GetParametersByPath`, the following filter `Key` names are supported: `Type`, `KeyId`, `Label`, and `DataType`.
+
+The following `Key` values are not supported for `GetParametersByPath`: `tag`, `Name`, `Path`, and `Tier`.>
+  take with-decryption, name <WithDecryption>
+    like boolean
+    void take
+    note <Retrieve all parameters in a hierarchy with their value decrypted.>
+  take max-results, name <MaxResults>
+    like get-parameters-by-path-max-results
+    void take
+    note <The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.>
+  take next-token, name <NextToken>
+    like next-token
+    void take
+    note <A token to start the list. Use this token to get the next set of results.>

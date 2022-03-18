@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/list-pipelines-output
+  take form list-pipelines-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-pipelines, name <ListPipelines>
+  note <Lists the pipeline identifiers for all active pipelines that you have permission to access.>
+
+  take x-amz-target
+    like native-string
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take list-pipelines-input, like list-pipelines-input
+
+  line </#X-Amz-Target=DataPipeline.ListPipelines>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <marker>, loan marker
+
+  seed json, loan list-pipelines-input
+
+  loot 200
+    seed json, like list-pipelines-output
+    note <Success>
+  loot 480
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

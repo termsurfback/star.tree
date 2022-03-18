@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/search-things-response
+  take form search-things-response
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot search-things, name <SearchThings>
+  note <Searches for things associated with the specified entity. You can search by both device and device model.
+
+For example, if two different devices, camera1 and camera2, implement the camera device model, the user can associate thing1 to camera1 and thing2 to camera2. `SearchThings(camera2)` will return only thing2, but `SearchThings(camera)` will return both thing1 and thing2.
+
+This action searches for exact matches and doesn't perform partial text matching.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take search-things-request, like search-things-request
+
+  line </#X-Amz-Target=IotThingsGraphFrontEndService.SearchThings>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan search-things-request
+
+  loot 200
+    seed json, like search-things-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>

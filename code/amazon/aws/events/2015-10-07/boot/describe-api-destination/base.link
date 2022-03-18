@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/describe-api-destination-response
+  take form describe-api-destination-response
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-api-destination, name <DescribeApiDestination>
+  note <Retrieves details about an API destination.>
+
+  take x-amz-target
+    like native-string
+  take describe-api-destination-request, like describe-api-destination-request
+
+  line </#X-Amz-Target=AWSEvents.DescribeApiDestination>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-api-destination-request
+
+  loot 200
+    seed json, like describe-api-destination-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like internal-exception
+    note <InternalException>

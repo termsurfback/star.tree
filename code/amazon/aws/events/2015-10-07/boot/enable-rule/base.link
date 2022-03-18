@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/managed-rule-exception
+  take form managed-rule-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot enable-rule, name <EnableRule>
+  note <Enables the specified rule. If the rule does not exist, the operation fails.
+
+When you enable a rule, incoming events might not immediately start matching to a newly enabled rule. Allow a short period of time for changes to take effect.>
+
+  take x-amz-target
+    like native-string
+  take enable-rule-request, like enable-rule-request
+
+  line </#X-Amz-Target=AWSEvents.EnableRule>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan enable-rule-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>
+  loot 482
+    seed json, like managed-rule-exception
+    note <ManagedRuleException>
+  loot 483
+    seed json, like internal-exception
+    note <InternalException>

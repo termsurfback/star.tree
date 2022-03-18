@@ -1,0 +1,30 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/proximitybeacon/v1beta1/base/delete-attachments-response
+  take form delete-attachments-response
+
+boot proximitybeacon-beacons-attachments-batch-delete, name <proximitybeacon.beacons.attachments.batchDelete>
+  note <Deletes multiple attachments on a given beacon. This operation is permanent and cannot be undone. You can optionally specify `namespacedType` to choose which attachments should be deleted. If you do not specify `namespacedType`, all your attachments on the given beacon will be deleted. You also may explicitly specify `*/*` to delete all. Authenticate using an [OAuth access token](https://developers.google.com/identity/protocols/OAuth2) from a signed-in user with **Is owner** or **Can edit** permissions in the Google Developers Console project.>
+
+  take beacon-name
+    like native-string
+    note <The beacon whose attachments should be deleted. A beacon name has the format "beacons/N!beaconId" where the beaconId is the base16 ID broadcast by the beacon and N is a code for the beacon's type. Possible values are `3` for Eddystone-UID, `4` for Eddystone-EID, `1` for iBeacon, or `5` for AltBeacon. For Eddystone-EID beacons, you may use either the current EID or the beacon's "stable" UID. Required.>
+  take namespaced-type
+    like native-string
+    note <Specifies the namespace and type of attachments to delete in `namespace/type` format. Accepts `*/*` to specify "all types in all namespaces". Optional.>
+    void take
+  take project-id
+    like native-string
+    note <The project id to delete beacon attachments under. This field can be used when "*" is specified to mean all attachment namespaces. Projects may have multiple attachments with multiple namespaces. If "*" is specified and the projectId string is empty, then the project making the request is used. Optional.>
+    void take
+
+  line </v1beta1/{beacon-name}/attachments:batchDelete>
+
+  find <namespacedType>, loan namespaced-type
+  find <projectId>, loan project-id
+
+  loot 200
+    seed json, like delete-attachments-response
+    note <Successful response>

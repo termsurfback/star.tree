@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/start-game-session-placement-output
+  take form start-game-session-placement-output
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-game-session-placement, name <StartGameSessionPlacement>
+  note <Places a request for a new game session in a queue (see CreateGameSessionQueue). When processing a placement request, Amazon GameLift searches for available resources on the queue's destinations, scanning each until it finds resources or the placement request times out.
+
+A game session placement request can also request player sessions. When a new game session is successfully created, Amazon GameLift creates a player session for each player included in the request.
+
+When placing a game session, by default Amazon GameLift tries each fleet in the order they are listed in the queue configuration. Ideally, a queue's destinations are listed in preference order.
+
+Alternatively, when requesting a game session with players, you can also provide latency data for each player in relevant Regions. Latency data indicates the performance lag a player experiences when connected to a fleet in the Region. Amazon GameLift uses latency data to reorder the list of destinations to place the game session in a Region with minimal lag. If latency data is provided for multiple players, Amazon GameLift calculates each Region's average lag for all players and reorders to get the best game play across all players.
+
+To place a new game session request, specify the following:
+
+- The queue name and a set of game session properties and settings
+
+- A unique ID (such as a UUID) for the placement. You use this ID to track the status of the placement request
+
+- (Optional) A set of player data and a unique player ID for each player that you are joining to the new game session (player data is optional, but if you include it, you must also provide a unique ID for each player)
+
+- Latency data for all players (if you want to optimize game play for the players)
+
+If successful, a new game session placement is created.
+
+To track the status of a placement request, call DescribeGameSessionPlacement and check the request's status. If the status is `FULFILLED`, a new game session has been created and a game session ARN and Region are referenced. If the placement request times out, you can resubmit the request or retry it with a different queue.
+
+**Related actions** CreateGameSession | DescribeGameSessions | DescribeGameSessionDetails | SearchGameSessions | UpdateGameSession | GetGameSessionLogUrl | StartGameSessionPlacement | DescribeGameSessionPlacement | StopGameSessionPlacement | [All APIs by task](https://docs.aws.amazon.com/gamelift/latest/developerguide/reference-awssdk.html#reference-awssdk-resources-fleets)>
+
+  take x-amz-target
+    like native-string
+  take start-game-session-placement-input, like start-game-session-placement-input
+
+  line </#X-Amz-Target=GameLift.StartGameSessionPlacement>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan start-game-session-placement-input
+
+  loot 200
+    seed json, like start-game-session-placement-output
+    note <Success>
+  loot 480
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 483
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>

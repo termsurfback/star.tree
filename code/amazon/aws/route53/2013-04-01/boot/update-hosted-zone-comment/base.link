@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/no-such-hosted-zone
+  take form no-such-hosted-zone
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/update-hosted-zone-comment-body
+  take form update-hosted-zone-comment-body
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/update-hosted-zone-comment-response
+  take form update-hosted-zone-comment-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-hosted-zone-comment, name <UpdateHostedZoneComment>
+  note <Updates the comment for a specified hosted zone.>
+
+  take id
+    like native-string
+    note <The ID for the hosted zone that you want to update the comment for.>
+  take update-hosted-zone-comment-body, like update-hosted-zone-comment-body
+
+  line </2013-04-01/hostedzone/{id}>
+
+  seed xml, loan update-hosted-zone-comment-body
+
+  loot 200
+    seed xml, like update-hosted-zone-comment-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-hosted-zone
+    note <NoSuchHostedZone>
+  loot 481
+    seed xml, like invalid-input
+    note <InvalidInput>

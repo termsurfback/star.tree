@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/kms-key-id
+  take form kms-key-id
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/training-instance-count
+  take form training-instance-count
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/training-instance-type
+  take form training-instance-type
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/volume-size-in-gb
+  take form volume-size-in-gb
+
+form resource-config, name <ResourceConfig>
+  note <Describes the resources, including ML compute instances and ML storage volumes, to use for model training.>
+  take instance-type, name <InstanceType>
+    like training-instance-type
+    note <The ML compute instance type.>
+  take instance-count, name <InstanceCount>
+    like training-instance-count
+    note <The number of ML compute instances to use. For distributed training, provide a value greater than 1.>
+  take volume-size-in-gb, name <VolumeSizeInGB>
+    like volume-size-in-gb
+    note <The size of the ML storage volume that you want to provision.
+
+ML storage volumes store model artifacts and incremental states. Training algorithms might also use the ML storage volume for scratch space. If you want to store the training data in the ML storage volume, choose `File` as the `TrainingInputMode` in the algorithm specification.
+
+You must specify sufficient ML storage for your scenario.
+
+Amazon SageMaker supports only the General Purpose SSD (gp2) ML storage volume type.
+
+Certain Nitro-based instances include local storage with a fixed total size, dependent on the instance type. When using these instances for training, Amazon SageMaker mounts the local instance storage instead of Amazon EBS gp2 storage. You can't request a `VolumeSizeInGB` greater than the total size of the local instance storage.
+
+For a list of instance types that support local instance storage, including the total size per instance type, see [Instance Store Volumes](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/InstanceStorage.html#instance-store-volumes).>
+  take volume-kms-key-id, name <VolumeKmsKeyId>
+    like kms-key-id
+    void take
+    note <The Amazon Web Services KMS key that Amazon SageMaker uses to encrypt data on the storage volume attached to the ML compute instance(s) that run the training job.
+
+Certain Nitro-based instances include local storage, dependent on the instance type. Local storage volumes are encrypted using a hardware module on the instance. You can't request a `VolumeKmsKeyId` when using an instance type with local storage.
+
+For a list of instance types that support local instance storage, see [Instance Store Volumes](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/InstanceStorage.html#instance-store-volumes).
+
+For more information about local instance storage encryption, see [SSD Instance Store Volumes](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ssd-instance-store.html).
+
+The `VolumeKmsKeyId` can be in any of the following formats:
+
+- // KMS Key ID
+
+  `"1234abcd-12ab-34cd-56ef-1234567890ab"`
+
+- // Amazon Resource Name (ARN) of a KMS Key
+
+  `"arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab"`>

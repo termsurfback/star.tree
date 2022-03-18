@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/list-world-export-jobs-body
+  take form list-world-export-jobs-body
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/list-world-export-jobs-response
+  take form list-world-export-jobs-response
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-world-export-jobs, name <ListWorldExportJobs>
+  note <Lists world export jobs.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-world-export-jobs-body, like list-world-export-jobs-body
+
+  line </listWorldExportJobs>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-world-export-jobs-body
+
+  loot 200
+    seed json, like list-world-export-jobs-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>

@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/batch-execute-statement-output
+  take form batch-execute-statement-output
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/request-limit-exceeded
+  take form request-limit-exceeded
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot batch-execute-statement, name <BatchExecuteStatement>
+  note <This operation allows you to perform batch reads and writes on data stored in DynamoDB, using PartiQL.>
+
+  take x-amz-target
+    like native-string
+  take batch-execute-statement-input, like batch-execute-statement-input
+
+  line </#X-Amz-Target=DynamoDB_20120810.BatchExecuteStatement>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan batch-execute-statement-input
+
+  loot 200
+    seed json, like batch-execute-statement-output
+    note <Success>
+  loot 480
+    seed json, like request-limit-exceeded
+    note <RequestLimitExceeded>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

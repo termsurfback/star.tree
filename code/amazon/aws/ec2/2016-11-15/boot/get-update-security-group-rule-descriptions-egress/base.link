@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/ip-permission
+  take form ip-permission
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/security-group-rule-description
+  take form security-group-rule-description
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/update-security-group-rule-descriptions-egress-result
+  take form update-security-group-rule-descriptions-egress-result
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-update-security-group-rule-descriptions-egress, name <GET_UpdateSecurityGroupRuleDescriptionsEgress>
+  note <[VPC only] Updates the description of an egress (outbound) security group rule. You can replace an existing description, or add a description to a rule that did not have one previously. You can remove a description for a security group rule by omitting the description parameter in the request.>
+
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take group-id
+    like native-string
+    note <The ID of the security group. You must specify either the security group ID or the security group name in the request. For security groups in a nondefault VPC, you must specify the security group ID.>
+    void take
+  take group-name
+    like native-string
+    note <[Default VPC] The name of the security group. You must specify either the security group ID or the security group name in the request.>
+    void take
+  take ip-permissions
+    like list
+      like ip-permission
+    note <The IP permissions for the security group rule. You must specify either the IP permissions or the description.>
+    void take
+  take security-group-rule-description
+    like list
+      like security-group-rule-description
+    note <The description for the egress security group rules. You must specify either the description or the IP permissions.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=UpdateSecurityGroupRuleDescriptionsEgress>
+
+  find <DryRun>, loan dry-run
+  find <GroupId>, loan group-id
+  find <GroupName>, loan group-name
+  find <IpPermissions>, loan ip-permissions
+  find <SecurityGroupRuleDescription>, loan security-group-rule-description
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like update-security-group-rule-descriptions-egress-result
+    note <Success>

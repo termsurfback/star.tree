@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/describe-component-response
+  take form describe-component-response
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-component, name <DescribeComponent>
+  note <Describes a component and lists the resources that are grouped together in a component.>
+
+  take x-amz-target
+    like native-string
+  take describe-component-request, like describe-component-request
+
+  line </#X-Amz-Target=EC2WindowsBarleyService.DescribeComponent>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-component-request
+
+  loot 200
+    seed json, like describe-component-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

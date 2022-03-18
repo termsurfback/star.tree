@@ -1,0 +1,48 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/conversations-mark-body
+  take form conversations-mark-body
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+boot conversations-mark, name <conversations_mark>
+  note <Sets the read cursor in a channel.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `conversations:write`>
+    void take
+  take conversations-mark-body, like conversations-mark-body
+    void take
+
+  line </conversations.mark>
+
+  hint <token>, loan token
+
+  seed x-www-form-urlencoded, loan conversations-mark-body
+
+  loot 200
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-true
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take callstack, name <callstack>
+          void take
+        take error, name <error>
+        take needed, name <needed>
+          void take
+        take ok, name <ok>
+          like defs-ok-false
+        take provided, name <provided>
+          void take
+    note <Typical error response>

@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-security-group-not-found-fault
+  take form db-security-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-security-group-state-fault
+  take form invalid-db-security-group-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-db-security-group, name <GET_DeleteDBSecurityGroup>
+  note <Deletes a DB security group.
+
+The specified DB security group must not be associated with any DB instances.>
+
+  take db-security-group-name
+    like native-string
+    note <The name of the DB security group to delete.
+
+You can't delete the default DB security group.
+
+Constraints:
+
+- Must be 1 to 255 letters, numbers, or hyphens.
+
+- First character must be a letter
+
+- Can't end with a hyphen or contain two consecutive hyphens
+
+- Must not be "Default">
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteDBSecurityGroup>
+
+  find <DBSecurityGroupName>, loan db-security-group-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like invalid-db-security-group-state-fault
+    note <InvalidDBSecurityGroupStateFault>
+  loot 481
+    seed xml, like db-security-group-not-found-fault
+    note <DBSecurityGroupNotFoundFault>

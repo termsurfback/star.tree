@@ -1,0 +1,48 @@
+
+load @drumwork/snow/amazonaws.com/cloudfront/2016-11-25/base/access-denied
+  take form access-denied
+
+load @drumwork/snow/amazonaws.com/cloudfront/2016-11-25/base/invalid-argument
+  take form invalid-argument
+
+load @drumwork/snow/amazonaws.com/cloudfront/2016-11-25/base/list-invalidations-result
+  take form list-invalidations-result
+
+load @drumwork/snow/amazonaws.com/cloudfront/2016-11-25/base/no-such-distribution
+  take form no-such-distribution
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-invalidations2016-11-25, name <ListInvalidations2016_11_25>
+  note <Lists invalidation batches.>
+
+  take distribution-id
+    like native-string
+    note <The distribution's ID.>
+  take marker
+    like native-string
+    note <Use this parameter when paginating results to indicate where to begin in your list of invalidation batches. Because the results are returned in decreasing order from most recent to oldest, the most recent results are on the first page, the second page will contain earlier results, and so on. To get the next page of results, set `Marker` to the value of the `NextMarker` from the current page's response. This value is the same as the ID of the last invalidation batch on that page.>
+    void take
+  take max-items
+    like native-string
+    note <The maximum number of invalidation batches that you want in the response body.>
+    void take
+
+  line </2016-11-25/distribution/{distribution-id}/invalidation>
+
+  find <Marker>, loan marker
+  find <MaxItems>, loan max-items
+
+  loot 200
+    seed xml, like list-invalidations-result
+    note <Success>
+  loot 480
+    seed xml, like invalid-argument
+    note <InvalidArgument>
+  loot 481
+    seed xml, like no-such-distribution
+    note <NoSuchDistribution>
+  loot 482
+    seed xml, like access-denied
+    note <AccessDenied>

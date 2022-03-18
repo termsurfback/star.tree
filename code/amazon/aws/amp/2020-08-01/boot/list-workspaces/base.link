@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/amp/2020-08-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/amp/2020-08-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/amp/2020-08-01/base/list-workspaces-response
+  take form list-workspaces-response
+
+load @drumwork/snow/amazonaws.com/amp/2020-08-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/amp/2020-08-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-workspaces, name <ListWorkspaces>
+  note <Lists all AMP workspaces, including workspaces being created or deleted.>
+
+  take alias
+    like native-string
+    note <Optional filter for workspace alias. Only the workspaces with aliases that begin with this value will be returned.>
+    void take
+  take max-results
+    like native-integer
+    note <Maximum results to return in response (default=100, maximum=1000).>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token to request the next page in a paginated list. This token is obtained from the output of the previous ListWorkspaces request.>
+    void take
+
+  line </workspaces>
+
+  find <alias>, loan alias
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  loot 200
+    seed json, like list-workspaces-response
+    note <Success>
+  loot 480
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 483
+    seed json, like internal-server-exception
+    note <InternalServerException>

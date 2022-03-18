@@ -1,0 +1,29 @@
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/list-tags-for-resource-response
+  take form list-tags-for-resource-response
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/resource-not-found-fault
+  take form resource-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-tags-for-resource, name <ListTagsForResource>
+  note <Lists all metadata tags attached to an DMS resource, including replication instance, endpoint, security group, and migration task. For more information, see [`Tag`](https://docs.aws.amazon.com/dms/latest/APIReference/API_Tag.html) data type description.>
+
+  take x-amz-target
+    like native-string
+  take list-tags-for-resource-message, like list-tags-for-resource-message
+
+  line </#X-Amz-Target=AmazonDMSv20160101.ListTagsForResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-tags-for-resource-message
+
+  loot 200
+    seed json, like list-tags-for-resource-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-fault
+    note <ResourceNotFoundFault>

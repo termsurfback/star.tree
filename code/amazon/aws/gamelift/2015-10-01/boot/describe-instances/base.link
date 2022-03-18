@@ -1,0 +1,76 @@
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/describe-instances-output
+  take form describe-instances-output
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-instances, name <DescribeInstances>
+  note <Retrieves information about a fleet's instances, including instance IDs, connection data, and status.
+
+This operation can be used in the following ways:
+
+- To get information on all instances that are deployed to a fleet's home Region, provide the fleet ID.
+
+- To get information on all instances that are deployed to a fleet's remote location, provide the fleet ID and location name.
+
+- To get information on a specific instance in a fleet, provide the fleet ID and instance ID.
+
+Use the pagination parameters to retrieve results as a set of sequential pages.
+
+If successful, an `Instance` object is returned for each requested instance. Instances are not returned in any particular order.
+
+**Learn more** [Remotely Access Fleet Instances](https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-remote-access.html)
+
+[Debug Fleet Issues](https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-creating-debug.html)
+
+**Related actions** DescribeInstances | GetInstanceAccess | DescribeEC2InstanceLimits | [All APIs by task](https://docs.aws.amazon.com/gamelift/latest/developerguide/reference-awssdk.html#reference-awssdk-resources-fleets)>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-instances-input, like describe-instances-input
+
+  line </#X-Amz-Target=GameLift.DescribeInstances>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <Limit>, loan limit
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-instances-input
+
+  loot 200
+    seed json, like describe-instances-output
+    note <Success>
+  loot 480
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 483
+    seed json, like internal-service-exception
+    note <InternalServiceException>

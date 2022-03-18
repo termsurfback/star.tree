@@ -1,0 +1,56 @@
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/delete-domain-result
+  take form delete-domain-result
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-domain, name <DeleteDomain>
+  note <Deletes a domain. You cannot delete a domain that contains repositories. If you want to delete a domain with repositories, first delete its repositories.>
+
+  take domain
+    like native-string
+    note <The name of the domain to delete.>
+  take domain-owner
+    like native-string
+    note <The 12-digit account number of the AWS account that owns the domain. It does not include dashes or spaces.>
+    void take
+
+  line </v1/domain#domain>
+
+  find <domain>, loan domain
+  find <domain-owner>, loan domain-owner
+
+  loot 200
+    seed json, like delete-domain-result
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like validation-exception
+    note <ValidationException>

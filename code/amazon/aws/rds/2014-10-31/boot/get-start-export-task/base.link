@@ -1,0 +1,140 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-snapshot-not-found-fault
+  take form db-cluster-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-snapshot-not-found-fault
+  take form db-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/export-task
+  take form export-task
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/export-task-already-exists-fault
+  take form export-task-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/iam-role-missing-permissions-fault
+  take form iam-role-missing-permissions-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/iam-role-not-found-fault
+  take form iam-role-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-export-only-fault
+  take form invalid-export-only-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-export-source-state-fault
+  take form invalid-export-source-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-s3-bucket-fault
+  take form invalid-s3-bucket-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/kms-key-not-accessible-fault
+  take form kms-key-not-accessible-fault
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-start-export-task, name <GET_StartExportTask>
+  note <Starts an export of a snapshot to Amazon S3. The provided IAM role must have access to the S3 bucket.>
+
+  take export-task-identifier
+    like native-string
+    note <A unique identifier for the snapshot export task. This ID isn't an identifier for the Amazon S3 bucket where the snapshot is to be exported to.>
+  take source-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the snapshot to export to Amazon S3.>
+  take s3-bucket-name
+    like native-string
+    note <The name of the Amazon S3 bucket to export the snapshot to.>
+  take iam-role-arn
+    like native-string
+    note <The name of the IAM role to use for writing to the Amazon S3 bucket when exporting a snapshot.>
+  take kms-key-id
+    like native-string
+    note <The ID of the Amazon Web Services KMS customer master key (CMK) to use to encrypt the snapshot exported to Amazon S3. The Amazon Web Services KMS key identifier is the key ARN, key ID, alias ARN, or alias name for the Amazon Web Services KMS customer master key (CMK). The caller of this operation must be authorized to execute the following operations. These can be set in the Amazon Web Services KMS key policy:
+
+- GrantOperation.Encrypt
+
+- GrantOperation.Decrypt
+
+- GrantOperation.GenerateDataKey
+
+- GrantOperation.GenerateDataKeyWithoutPlaintext
+
+- GrantOperation.ReEncryptFrom
+
+- GrantOperation.ReEncryptTo
+
+- GrantOperation.CreateGrant
+
+- GrantOperation.DescribeKey
+
+- GrantOperation.RetireGrant>
+  take s3-prefix
+    like native-string
+    note <The Amazon S3 bucket prefix to use as the file name and path of the exported snapshot.>
+    void take
+  take export-only
+    like list
+      like string
+    note <The data to be exported from the snapshot. If this parameter is not provided, all the snapshot data is exported. Valid values are the following:
+
+- `database` - Export all the data from a specified database.
+
+- `database.table` _table-name_ - Export a table of the snapshot. This format is valid only for RDS for MySQL, RDS for MariaDB, and Aurora MySQL.
+
+- `database.schema` _schema-name_ - Export a database schema of the snapshot. This format is valid only for RDS for PostgreSQL and Aurora PostgreSQL.
+
+- `database.schema.table` _table-name_ - Export a table of the database schema. This format is valid only for RDS for PostgreSQL and Aurora PostgreSQL.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=StartExportTask>
+
+  find <ExportTaskIdentifier>, loan export-task-identifier
+  find <SourceArn>, loan source-arn
+  find <S3BucketName>, loan s3-bucket-name
+  find <IamRoleArn>, loan iam-role-arn
+  find <KmsKeyId>, loan kms-key-id
+  find <S3Prefix>, loan s3-prefix
+  find <ExportOnly>, loan export-only
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like export-task
+    note <Success>
+  loot 480
+    seed xml, like db-snapshot-not-found-fault
+    note <DBSnapshotNotFoundFault>
+  loot 481
+    seed xml, like db-cluster-snapshot-not-found-fault
+    note <DBClusterSnapshotNotFoundFault>
+  loot 482
+    seed xml, like export-task-already-exists-fault
+    note <ExportTaskAlreadyExistsFault>
+  loot 483
+    seed xml, like invalid-s3-bucket-fault
+    note <InvalidS3BucketFault>
+  loot 484
+    seed xml, like iam-role-not-found-fault
+    note <IamRoleNotFoundFault>
+  loot 485
+    seed xml, like iam-role-missing-permissions-fault
+    note <IamRoleMissingPermissionsFault>
+  loot 486
+    seed xml, like invalid-export-only-fault
+    note <InvalidExportOnlyFault>
+  loot 487
+    seed xml, like kms-key-not-accessible-fault
+    note <KMSKeyNotAccessibleFault>
+  loot 488
+    seed xml, like invalid-export-source-state-fault
+    note <InvalidExportSourceStateFault>

@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/entity-not-found-exception
+  take form entity-not-found-exception
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/list-mailbox-permissions-response
+  take form list-mailbox-permissions-response
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/organization-not-found-exception
+  take form organization-not-found-exception
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/organization-state-exception
+  take form organization-state-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-mailbox-permissions, name <ListMailboxPermissions>
+  note <Lists the mailbox permissions associated with a user, group, or resource mailbox.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-mailbox-permissions-request, like list-mailbox-permissions-request
+
+  line </#X-Amz-Target=WorkMailService.ListMailboxPermissions>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-mailbox-permissions-request
+
+  loot 200
+    seed json, like list-mailbox-permissions-response
+    note <Success>
+  loot 480
+    seed json, like entity-not-found-exception
+    note <EntityNotFoundException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like organization-not-found-exception
+    note <OrganizationNotFoundException>
+  loot 483
+    seed json, like organization-state-exception
+    note <OrganizationStateException>

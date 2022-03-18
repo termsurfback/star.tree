@@ -1,0 +1,34 @@
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/describe-journal-s3-export-response
+  take form describe-journal-s3-export-response
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-journal-s3-export, name <DescribeJournalS3Export>
+  note <Returns information about a journal export job, including the ledger name, export ID, creation time, current status, and the parameters of the original export creation request.
+
+This action does not return any expired export jobs. For more information, see [Export job expiration](https://docs.aws.amazon.com/qldb/latest/developerguide/export-journal.request.html#export-journal.request.expiration) in the _Amazon QLDB Developer Guide_.
+
+If the export job with the given `ExportId` doesn't exist, then throws `ResourceNotFoundException`.
+
+If the ledger with the given `Name` doesn't exist, then throws `ResourceNotFoundException`.>
+
+  take name
+    like native-string
+    note <The name of the ledger.>
+  take export-id
+    like native-string
+    note <The UUID (represented in Base62-encoded text) of the journal export job to describe.>
+
+  line </ledgers/{name}/journal-s3-exports/{export-id}>
+
+  loot 200
+    seed json, like describe-journal-s3-export-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

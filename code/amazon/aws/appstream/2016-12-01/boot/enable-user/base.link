@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/enable-user-result
+  take form enable-user-result
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/invalid-account-status-exception
+  take form invalid-account-status-exception
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot enable-user, name <EnableUser>
+  note <Enables a user in the user pool. After being enabled, users can sign in to AppStream 2.0 and open applications from the stacks to which they are assigned.>
+
+  take x-amz-target
+    like native-string
+  take enable-user-request, like enable-user-request
+
+  line </#X-Amz-Target=PhotonAdminProxyService.EnableUser>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan enable-user-request
+
+  loot 200
+    seed json, like enable-user-result
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-account-status-exception
+    note <InvalidAccountStatusException>

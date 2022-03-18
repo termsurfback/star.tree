@@ -1,0 +1,75 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-key-pairs-result
+  take form describe-key-pairs-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/key-pair-id
+  take form key-pair-id
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/key-pair-name
+  take form key-pair-name
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-key-pairs, name <GET_DescribeKeyPairs>
+  note <Describes the specified key pairs or all of your key pairs.
+
+For more information about key pairs, see [Amazon EC2 key pairs](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html) in the _Amazon Elastic Compute Cloud User Guide_.>
+
+  take filter
+    like list
+      like filter
+    note <The filters.
+
+- `key-pair-id` - The ID of the key pair.
+
+- `fingerprint` - The fingerprint of the key pair.
+
+- `key-name` - The name of the key pair.
+
+- `tag-key` - The key of a tag assigned to the resource. Use this filter to find all resources assigned a tag with a specific key, regardless of the tag value.
+
+- `tag`:&lt;key&gt; - The key/value combination of a tag assigned to the resource. Use the tag key in the filter name and the tag value as the filter value. For example, to find all resources that have a tag with the key `Owner` and the value `TeamA`, specify `tag:Owner` for the filter name and `TeamA` for the filter value.>
+    void take
+  take key-name
+    like list
+      like key-pair-name
+    note <The key pair names.
+
+Default: Describes all of your key pairs.>
+    void take
+  take key-pair-id
+    like list
+      like key-pair-id
+    note <The IDs of the key pairs.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeKeyPairs>
+
+  find <Filter>, loan filter
+  find <KeyName>, loan key-name
+  find <KeyPairId>, loan key-pair-id
+  find <DryRun>, loan dry-run
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-key-pairs-result
+    note <Success>

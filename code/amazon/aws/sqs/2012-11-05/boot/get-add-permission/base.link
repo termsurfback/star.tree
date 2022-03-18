@@ -1,0 +1,74 @@
+
+load @drumwork/snow/amazonaws.com/sqs/2012-11-05/base/over-limit
+  take form over-limit
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-add-permission, name <GET_AddPermission>
+  note <Adds a permission to a queue for a specific [principal](https://docs.aws.amazon.com/general/latest/gr/glos-chap.html#P). This allows sharing access to the queue.
+
+When you create a queue, you have full control access rights for the queue. Only you, the owner of the queue, can grant or deny permissions to the queue. For more information about these permissions, see [Allow Developers to Write Messages to a Shared Queue](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-writing-an-sqs-policy.html#write-messages-to-shared-queue) in the _Amazon SQS Developer Guide_.
+
+- `AddPermission` generates a policy for you. You can use `SetQueueAttributes` to upload your policy. For more information, see [Using Custom Policies with the Amazon SQS Access Policy Language](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-creating-custom-policies.html) in the _Amazon SQS Developer Guide_.
+
+- An Amazon SQS policy can have a maximum of 7 actions.
+
+- To remove the ability to change queue permissions, you must deny permission to the `AddPermission`, `RemovePermission`, and `SetQueueAttributes` actions in your IAM policy.
+
+Some actions take lists of parameters. These lists are specified using the `param.n` notation. Values of `n` are integers starting from 1. For example, a parameter list with two elements looks like this:
+
+`&AttributeName.1=first`
+
+`&AttributeName.2=second`
+
+Cross-account permissions don't apply to this action. For more information, see [Grant cross-account permissions to a role and a user name](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-customer-managed-policy-examples.html#grant-cross-account-permissions-to-role-and-user-name) in the _Amazon SQS Developer Guide_.>
+
+  take account-number
+    like native-integer
+    note <The AWS account number>
+  take queue-name
+    like native-string
+    note <The name of the queue>
+  take label
+    like native-string
+    note <The unique identification of the permission you're setting (for example, `AliceSendMessage`). Maximum 80 characters. Allowed characters include alphanumeric characters, hyphens (`-`), and underscores (`_`).>
+  take aws-account-ids
+    like list
+      like string
+    note <The account numbers of the [principals](https://docs.aws.amazon.com/general/latest/gr/glos-chap.html#P) who are to receive permission. For information about locating the account identification, see [Your Amazon Web Services Identifiers](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-making-api-requests.html#sqs-api-request-authentication) in the _Amazon SQS Developer Guide_.>
+  take actions
+    like list
+      like string
+    note <The action the client wants to allow for the specified principal. Valid values: the name of any action or `*`.
+
+For more information about these actions, see [Overview of Managing Access Permissions to Your Amazon Simple Queue Service Resource](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-overview-of-managing-access.html) in the _Amazon SQS Developer Guide_.
+
+Specifying `SendMessage`, `DeleteMessage`, or `ChangeMessageVisibility` for `ActionName.n` also grants permissions for the corresponding batch versions of those actions: `SendMessageBatch`, `DeleteMessageBatch`, and `ChangeMessageVisibilityBatch`.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </{account-number}/{queue-name}/#Action=AddPermission>
+
+  find <Label>, loan label
+  find <AWSAccountIds>, loan aws-account-ids
+  find <Actions>, loan actions
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like over-limit
+    note <OverLimit>

@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/get-health-check-status-response
+  take form get-health-check-status-response
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/no-such-health-check
+  take form no-such-health-check
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-health-check-status, name <GetHealthCheckStatus>
+  note <Gets status of a specified health check.
+
+This API is intended for use during development to diagnose behavior. It doesn’t support production use-cases with high query rates that require immediate and actionable responses.>
+
+  take health-check-id
+    like native-string
+    note <The ID for the health check that you want the current status for. When you created the health check, `CreateHealthCheck` returned the ID in the response, in the `HealthCheckId` element.
+
+If you want to check the status of a calculated health check, you must use the Amazon Route 53 console or the CloudWatch console. You can't use `GetHealthCheckStatus` to get the status of a calculated health check.>
+
+  line </2013-04-01/healthcheck/{health-check-id}/status>
+
+  loot 200
+    seed xml, like get-health-check-status-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-health-check
+    note <NoSuchHealthCheck>
+  loot 481
+    seed xml, like invalid-input
+    note <InvalidInput>

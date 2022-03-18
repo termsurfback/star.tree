@@ -1,0 +1,68 @@
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/db-subnet-group-does-not-cover-enough-a-zs
+  take form db-subnet-group-does-not-cover-enough-a-zs
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/db-subnet-group-not-found-fault
+  take form db-subnet-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/db-subnet-quota-exceeded-fault
+  take form db-subnet-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/invalid-subnet
+  take form invalid-subnet
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/modify-db-subnet-group-result
+  take form modify-db-subnet-group-result
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/subnet-already-in-use
+  take form subnet-already-in-use
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-modify-db-subnet-group, name <GET_ModifyDBSubnetGroup>
+  take db-subnet-group-name
+    like native-string
+  take db-subnet-group-description
+    like native-string
+    void take
+  take subnet-ids
+    like list
+      like string
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyDBSubnetGroup>
+
+  find <DBSubnetGroupName>, loan db-subnet-group-name
+  find <DBSubnetGroupDescription>, loan db-subnet-group-description
+  find <SubnetIds>, loan subnet-ids
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-db-subnet-group-result
+    note <Success>
+  loot 480
+    seed xml, like db-subnet-group-not-found-fault
+    note <DBSubnetGroupNotFoundFault>
+  loot 481
+    seed xml, like db-subnet-quota-exceeded-fault
+    note <DBSubnetQuotaExceededFault>
+  loot 482
+    seed xml, like subnet-already-in-use
+    note <SubnetAlreadyInUse>
+  loot 483
+    seed xml, like db-subnet-group-does-not-cover-enough-a-zs
+    note <DBSubnetGroupDoesNotCoverEnoughAZs>
+  loot 484
+    seed xml, like invalid-subnet
+    note <InvalidSubnet>

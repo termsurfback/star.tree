@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/custom-key-store-invalid-state-exception
+  take form custom-key-store-invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/custom-key-store-not-found-exception
+  take form custom-key-store-not-found-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/disconnect-custom-key-store-response
+  take form disconnect-custom-key-store-response
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-internal-exception
+  take form kms-internal-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot disconnect-custom-key-store, name <DisconnectCustomKeyStore>
+  note <Disconnects the [custom key store](https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html) from its associated CloudHSM cluster. While a custom key store is disconnected, you can manage the custom key store and its KMS keys, but you cannot create or use KMS keys in the custom key store. You can reconnect the custom key store at any time.
+
+While a custom key store is disconnected, all attempts to create KMS keys in the custom key store or to use existing KMS keys in [cryptographic operations](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#cryptographic-operations) will fail. This action can prevent users from storing and accessing sensitive data.
+
+To find the connection state of a custom key store, use the DescribeCustomKeyStores operation. To reconnect a custom key store, use the ConnectCustomKeyStore operation.
+
+If the operation succeeds, it returns a JSON object with no properties.
+
+This operation is part of the [Custom Key Store feature](https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html) feature in KMS, which combines the convenience and extensive integration of KMS with the isolation and control of a single-tenant key store.
+
+**Cross-account use**: No. You cannot perform this operation on a custom key store in a different Amazon Web Services account.
+
+**Required permissions**: [kms:DisconnectCustomKeyStore](https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html) (IAM policy)
+
+**Related operations:** - ConnectCustomKeyStore
+
+- CreateCustomKeyStore
+
+- DeleteCustomKeyStore
+
+- DescribeCustomKeyStores
+
+- UpdateCustomKeyStore>
+
+  take x-amz-target
+    like native-string
+  take disconnect-custom-key-store-request, like disconnect-custom-key-store-request
+
+  line </#X-Amz-Target=TrentService.DisconnectCustomKeyStore>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan disconnect-custom-key-store-request
+
+  loot 200
+    seed json, like disconnect-custom-key-store-response
+    note <Success>
+  loot 480
+    seed json, like custom-key-store-invalid-state-exception
+    note <CustomKeyStoreInvalidStateException>
+  loot 481
+    seed json, like custom-key-store-not-found-exception
+    note <CustomKeyStoreNotFoundException>
+  loot 482
+    seed json, like kms-internal-exception
+    note <KMSInternalException>

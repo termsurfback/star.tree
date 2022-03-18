@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/appengine/v1/base/list-ingress-rules-response
+  take form list-ingress-rules-response
+
+boot appengine-apps-firewall-ingress-rules-list, name <appengine.apps.firewall.ingressRules.list>
+  note <Lists the firewall rules of an application.>
+
+  take apps-id
+    like native-string
+    note <Part of `parent`. Name of the Firewall collection to retrieve. Example: apps/myapp/firewall/ingressRules.>
+  take matching-address
+    like native-string
+    note <A valid IP Address. If set, only rules matching this address will be returned. The first returned rule will be the rule that fires on requests from this IP.>
+    void take
+  take page-size
+    like native-integer
+    note <Maximum results to return per page.>
+    void take
+  take page-token
+    like native-string
+    note <Continuation token for fetching the next page of results.>
+    void take
+
+  line </v1/apps/{apps-id}/firewall/ingressRules>
+
+  find <matchingAddress>, loan matching-address
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-ingress-rules-response
+    note <Successful response>

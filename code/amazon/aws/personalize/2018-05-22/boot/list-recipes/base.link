@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/list-recipes-response
+  take form list-recipes-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-recipes, name <ListRecipes>
+  note <Returns a list of available recipes. The response provides the properties for each recipe, including the recipe's Amazon Resource Name (ARN).>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-recipes-request, like list-recipes-request
+
+  line </#X-Amz-Target=AmazonPersonalize.ListRecipes>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-recipes-request
+
+  loot 200
+    seed json, like list-recipes-response
+    note <Success>
+  loot 480
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>

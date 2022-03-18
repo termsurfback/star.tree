@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/pipeline-not-found-exception
+  take form pipeline-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/start-pipeline-execution-output
+  take form start-pipeline-execution-output
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-pipeline-execution, name <StartPipelineExecution>
+  note <Starts the specified pipeline. Specifically, it begins processing the latest commit to the source location specified as part of the pipeline.>
+
+  take x-amz-target
+    like native-string
+  take start-pipeline-execution-input, like start-pipeline-execution-input
+
+  line </#X-Amz-Target=CodePipeline_20150709.StartPipelineExecution>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan start-pipeline-execution-input
+
+  loot 200
+    seed json, like start-pipeline-execution-output
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 482
+    seed json, like pipeline-not-found-exception
+    note <PipelineNotFoundException>

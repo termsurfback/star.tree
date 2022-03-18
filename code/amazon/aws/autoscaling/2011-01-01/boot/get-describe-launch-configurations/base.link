@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/launch-configurations-type
+  take form launch-configurations-type
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/xml-string-max-len255
+  take form xml-string-max-len255
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-launch-configurations, name <GET_DescribeLaunchConfigurations>
+  note <Gets information about the launch configurations in the account and Region.>
+
+  take launch-configuration-names
+    like list
+      like xml-string-max-len255
+    note <The launch configuration names. If you omit this parameter, all launch configurations are described.
+
+Array Members: Maximum number of 50 items.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next set of items to return. (You received this token from a previous call.)>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of items to return with this call. The default value is `50` and the maximum value is `100`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeLaunchConfigurations>
+
+  find <LaunchConfigurationNames>, loan launch-configuration-names
+  find <NextToken>, loan next-token
+  find <MaxRecords>, loan max-records
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like launch-configurations-type
+    note <Success>
+  loot 480
+    seed xml, like invalid-next-token
+    note <InvalidNextToken>
+  loot 481
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

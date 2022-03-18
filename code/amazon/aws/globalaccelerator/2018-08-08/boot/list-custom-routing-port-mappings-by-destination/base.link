@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/endpoint-not-found-exception
+  take form endpoint-not-found-exception
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/invalid-argument-exception
+  take form invalid-argument-exception
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/list-custom-routing-port-mappings-by-destination-response
+  take form list-custom-routing-port-mappings-by-destination-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-custom-routing-port-mappings-by-destination, name <ListCustomRoutingPortMappingsByDestination>
+  note <List the port mappings for a specific EC2 instance (destination) in a VPC subnet endpoint. The response is the mappings for one destination IP address. This is useful when your subnet endpoint has mappings that span multiple custom routing accelerators in your account, or for scenarios where you only want to list the port mappings for a specific destination instance.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-custom-routing-port-mappings-by-destination-request, like list-custom-routing-port-mappings-by-destination-request
+
+  line </#X-Amz-Target=GlobalAccelerator_V20180706.ListCustomRoutingPortMappingsByDestination>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-custom-routing-port-mappings-by-destination-request
+
+  loot 200
+    seed json, like list-custom-routing-port-mappings-by-destination-response
+    note <Success>
+  loot 480
+    seed json, like invalid-argument-exception
+    note <InvalidArgumentException>
+  loot 481
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 482
+    seed json, like endpoint-not-found-exception
+    note <EndpointNotFoundException>
+  loot 483
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>

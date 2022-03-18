@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/entity-does-not-exist-exception
+  take form entity-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/register-event-topic-result
+  take form register-event-topic-result
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot register-event-topic, name <RegisterEventTopic>
+  note <Associates a directory with an Amazon SNS topic. This establishes the directory as a publisher to the specified Amazon SNS topic. You can then receive email or text (SMS) messages when the status of your directory changes. You get notified if your directory goes from an Active status to an Impaired or Inoperable status. You also receive a notification when the directory returns to an Active status.>
+
+  take x-amz-target
+    like native-string
+  take register-event-topic-request, like register-event-topic-request
+
+  line </#X-Amz-Target=DirectoryService_20150416.RegisterEventTopic>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan register-event-topic-request
+
+  loot 200
+    seed json, like register-event-topic-result
+    note <Success>
+  loot 480
+    seed json, like entity-does-not-exist-exception
+    note <EntityDoesNotExistException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like client-exception
+    note <ClientException>
+  loot 483
+    seed json, like service-exception
+    note <ServiceException>

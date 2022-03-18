@@ -1,0 +1,31 @@
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/delete-virtual-cluster-response
+  take form delete-virtual-cluster-response
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-virtual-cluster, name <DeleteVirtualCluster>
+  note <Deletes a virtual cluster. Virtual cluster is a managed entity on Amazon EMR on EKS. You can create, describe, list and delete virtual clusters. They do not consume any additional resource in your system. A single virtual cluster maps to a single Kubernetes namespace. Given this relationship, you can model virtual clusters the same way you model Kubernetes namespaces to meet your requirements.>
+
+  take virtual-cluster-id
+    like native-string
+    note <The ID of the virtual cluster that will be deleted.>
+
+  line </virtualclusters/{virtual-cluster-id}>
+
+  loot 200
+    seed json, like delete-virtual-cluster-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>

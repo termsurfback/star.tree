@@ -1,0 +1,43 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/drive/v3/base/file
+  take form file
+
+boot drive-files-get, name <drive.files.get>
+  note <Gets a file's metadata or content by ID.>
+
+  take file-id
+    like native-string
+    note <The ID of the file.>
+  take acknowledge-abuse
+    like native-boolean
+    note <Whether the user is acknowledging the risk of downloading known malware or other abusive files. This is only applicable when alt=media.>
+    void take
+  take include-permissions-for-view
+    like native-string
+    note <Specifies which additional view's permissions to include in the response. Only 'published' is supported.>
+    void take
+  take supports-all-drives
+    like native-boolean
+    note <Whether the requesting application supports both My Drives and shared drives.>
+    void take
+  take supports-team-drives
+    like native-boolean
+    note <Deprecated use supportsAllDrives instead.>
+    void take
+
+  line </files/{file-id}>
+
+  find <acknowledgeAbuse>, loan acknowledge-abuse
+  find <includePermissionsForView>, loan include-permissions-for-view
+  find <supportsAllDrives>, loan supports-all-drives
+  find <supportsTeamDrives>, loan supports-team-drives
+
+  loot 200
+    seed json, like file
+    note <Successful response>

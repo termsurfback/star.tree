@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/worklink/2018-09-25/base/internal-server-error-exception
+  take form internal-server-error-exception
+
+load @drumwork/snow/amazonaws.com/worklink/2018-09-25/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/worklink/2018-09-25/base/list-domains-body
+  take form list-domains-body
+
+load @drumwork/snow/amazonaws.com/worklink/2018-09-25/base/list-domains-response
+  take form list-domains-response
+
+load @drumwork/snow/amazonaws.com/worklink/2018-09-25/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/worklink/2018-09-25/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/amazonaws.com/worklink/2018-09-25/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-domains, name <ListDomains>
+  note <Retrieves a list of domains associated to a specified fleet.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-domains-body, like list-domains-body
+
+  line </listDomains>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-domains-body
+
+  loot 200
+    seed json, like list-domains-response
+    note <Success>
+  loot 480
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 481
+    seed json, like internal-server-error-exception
+    note <InternalServerErrorException>
+  loot 482
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 484
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>

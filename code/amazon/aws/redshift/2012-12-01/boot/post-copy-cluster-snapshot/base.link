@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-snapshot-already-exists-fault
+  take form cluster-snapshot-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-snapshot-not-found-fault
+  take form cluster-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-snapshot-quota-exceeded-fault
+  take form cluster-snapshot-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/copy-cluster-snapshot-result
+  take form copy-cluster-snapshot-result
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-snapshot-state-fault
+  take form invalid-cluster-snapshot-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-retention-period-fault
+  take form invalid-retention-period-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-copy-cluster-snapshot, name <POST_CopyClusterSnapshot>
+  note <Copies the specified automated cluster snapshot to a new manual cluster snapshot. The source must be an automated snapshot and it must be in the available state.
+
+When you delete a cluster, Amazon Redshift deletes any automated snapshots of the cluster. Also, when the retention period of the snapshot expires, Amazon Redshift automatically deletes it. If you want to keep an automated snapshot for a longer period, you can make a manual copy of the snapshot. Manual snapshots are retained until you delete them.
+
+For more information about working with snapshots, go to [Amazon Redshift Snapshots](https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-snapshots.html) in the _Amazon Redshift Cluster Management Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take copy-cluster-snapshot-message, like copy-cluster-snapshot-message
+    void take
+
+  line </#Action=CopyClusterSnapshot>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan copy-cluster-snapshot-message
+
+  loot 200
+    seed xml, like copy-cluster-snapshot-result
+    note <Success>
+  loot 480
+    seed xml, like cluster-snapshot-already-exists-fault
+    note <ClusterSnapshotAlreadyExistsFault>
+  loot 481
+    seed xml, like cluster-snapshot-not-found-fault
+    note <ClusterSnapshotNotFoundFault>
+  loot 482
+    seed xml, like invalid-cluster-snapshot-state-fault
+    note <InvalidClusterSnapshotStateFault>
+  loot 483
+    seed xml, like cluster-snapshot-quota-exceeded-fault
+    note <ClusterSnapshotQuotaExceededFault>
+  loot 484
+    seed xml, like invalid-retention-period-fault
+    note <InvalidRetentionPeriodFault>

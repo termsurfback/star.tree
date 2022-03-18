@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/add-attachments-to-set-response
+  take form add-attachments-to-set-response
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/attachment-limit-exceeded
+  take form attachment-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/attachment-set-expired
+  take form attachment-set-expired
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/attachment-set-id-not-found
+  take form attachment-set-id-not-found
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/attachment-set-size-limit-exceeded
+  take form attachment-set-size-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot add-attachments-to-set, name <AddAttachmentsToSet>
+  note <Adds one or more attachments to an attachment set.
+
+An attachment set is a temporary container for attachments that you add to a case or case communication. The set is available for 1 hour after it's created. The `expiryTime` returned in the response is when the set expires.
+
+- You must have a Business or Enterprise Support plan to use the AWS Support API.
+
+- If you call the AWS Support API from an account that does not have a Business or Enterprise Support plan, the `SubscriptionRequiredException` error message appears. For information about changing your support plan, see [AWS Support](http://aws.amazon.com/premiumsupport/).>
+
+  take x-amz-target
+    like native-string
+  take add-attachments-to-set-request, like add-attachments-to-set-request
+
+  line </#X-Amz-Target=AWSSupport_20130415.AddAttachmentsToSet>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan add-attachments-to-set-request
+
+  loot 200
+    seed json, like add-attachments-to-set-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like attachment-set-id-not-found
+    note <AttachmentSetIdNotFound>
+  loot 482
+    seed json, like attachment-set-expired
+    note <AttachmentSetExpired>
+  loot 483
+    seed json, like attachment-set-size-limit-exceeded
+    note <AttachmentSetSizeLimitExceeded>
+  loot 484
+    seed json, like attachment-limit-exceeded
+    note <AttachmentLimitExceeded>

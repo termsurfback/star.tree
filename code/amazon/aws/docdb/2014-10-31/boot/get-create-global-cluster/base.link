@@ -1,0 +1,88 @@
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/create-global-cluster-result
+  take form create-global-cluster-result
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/global-cluster-already-exists-fault
+  take form global-cluster-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/global-cluster-quota-exceeded-fault
+  take form global-cluster-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-global-cluster, name <GET_CreateGlobalCluster>
+  note <Creates an Amazon DocumentDB global cluster that can span multiple multiple Regions. The global cluster contains one primary cluster with read-write capability, and up-to give read-only secondary clusters. Global clusters uses storage-based fast replication across regions with latencies less than one second, using dedicated infrastructure with no impact to your workload’s performance.
+
+You can create a global cluster that is initially empty, and then add a primary and a secondary to it. Or you can specify an existing cluster during the create operation, and this cluster becomes the primary of the global cluster.
+
+This action only applies to Amazon DocumentDB clusters.>
+
+  take global-cluster-identifier
+    like native-string
+    note <The cluster identifier of the new global cluster.>
+  take source-db-cluster-identifier
+    like native-string
+    note <The Amazon Resource Name (ARN) to use as the primary cluster of the global cluster. This parameter is optional.>
+    void take
+  take engine
+    like native-string
+    note <The name of the database engine to be used for this cluster.>
+    void take
+  take engine-version
+    like native-string
+    note <The engine version of the global cluster.>
+    void take
+  take deletion-protection
+    like native-boolean
+    note <The deletion protection setting for the new global cluster. The global cluster can't be deleted when deletion protection is enabled.>
+    void take
+  take database-name
+    like native-string
+    note <The name for your database of up to 64 alpha-numeric characters. If you do not provide a name, Amazon DocumentDB will not create a database in the global cluster you are creating.>
+    void take
+  take storage-encrypted
+    like native-boolean
+    note <The storage encryption setting for the new global cluster.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateGlobalCluster>
+
+  find <GlobalClusterIdentifier>, loan global-cluster-identifier
+  find <SourceDBClusterIdentifier>, loan source-db-cluster-identifier
+  find <Engine>, loan engine
+  find <EngineVersion>, loan engine-version
+  find <DeletionProtection>, loan deletion-protection
+  find <DatabaseName>, loan database-name
+  find <StorageEncrypted>, loan storage-encrypted
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-global-cluster-result
+    note <Success>
+  loot 480
+    seed xml, like global-cluster-already-exists-fault
+    note <GlobalClusterAlreadyExistsFault>
+  loot 481
+    seed xml, like global-cluster-quota-exceeded-fault
+    note <GlobalClusterQuotaExceededFault>
+  loot 482
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>
+  loot 483
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>

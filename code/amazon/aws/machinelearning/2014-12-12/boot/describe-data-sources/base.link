@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/describe-data-sources-output
+  take form describe-data-sources-output
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-data-sources, name <DescribeDataSources>
+  note <Returns a list of `DataSource` that match the search criteria in the request.>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-data-sources-input, like describe-data-sources-input
+
+  line </#X-Amz-Target=AmazonML_20141212.DescribeDataSources>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <Limit>, loan limit
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-data-sources-input
+
+  loot 200
+    seed json, like describe-data-sources-output
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>

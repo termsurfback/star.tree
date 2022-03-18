@@ -1,0 +1,37 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/payment-intent
+  take form payment-intent
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-payment-intents-intent-confirm-body
+  take form post-payment-intents-intent-confirm-body
+
+boot post-payment-intents-intent-confirm, name <PostPaymentIntentsIntentConfirm>
+  note <Confirm that your customer intends to pay with current or provided payment method. Upon confirmation, the PaymentIntent will attempt to initiate a payment.
+
+If the selected payment method requires additional authentication steps, the PaymentIntent will transition to the `requires_action` status and suggest additional actions via `next_action`. If payment fails, the PaymentIntent will transition to the `requires_payment_method` status. If payment succeeds, the PaymentIntent will transition to the `succeeded` status (or `requires_capture`, if `capture_method` is set to `manual`).
+
+If the `confirmation_method` is `automatic`, payment may be attempted using our [client SDKs](/docs/stripe-js/reference#stripe-handle-card-payment) and the PaymentIntent’s [client_secret](#payment_intent_object-client_secret). After `next_action`s are handled by the client, no additional confirmation is required to complete the payment.
+
+If the `confirmation_method` is `manual`, all payment attempts must be initiated using a secret key. If any actions are required for the payment, the PaymentIntent will return to the `requires_confirmation` state after those actions are completed. Your server needs to then explicitly re-confirm the PaymentIntent to initiate the next payment attempt. Read the [expanded documentation](/docs/payments/payment-intents/web-manual) to learn more about manual confirmation.>
+
+  take intent
+    like native-string
+  take post-payment-intents-intent-confirm-body, like post-payment-intents-intent-confirm-body
+    void take
+
+  line </v1/payment_intents/{intent}/confirm>
+
+  seed x-www-form-urlencoded, loan post-payment-intents-intent-confirm-body
+
+  loot 200
+    seed json, like payment-intent
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

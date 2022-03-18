@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/iotdeviceadvisor/2020-09-18/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/iotdeviceadvisor/2020-09-18/base/update-suite-definition-body
+  take form update-suite-definition-body
+
+load @drumwork/snow/amazonaws.com/iotdeviceadvisor/2020-09-18/base/update-suite-definition-response
+  take form update-suite-definition-response
+
+load @drumwork/snow/amazonaws.com/iotdeviceadvisor/2020-09-18/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-suite-definition, name <UpdateSuiteDefinition>
+  note <Updates a Device Advisor test suite.>
+
+  take suite-definition-id
+    like native-string
+    note <Suite definition Id of the test suite to be updated.>
+  take update-suite-definition-body, like update-suite-definition-body
+
+  line </suiteDefinitions/{suite-definition-id}>
+
+  seed json, loan update-suite-definition-body
+
+  loot 200
+    seed json, like update-suite-definition-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>

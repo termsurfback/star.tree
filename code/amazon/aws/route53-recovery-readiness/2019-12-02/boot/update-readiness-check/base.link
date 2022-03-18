@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/route53-recovery-readiness/2019-12-02/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-readiness/2019-12-02/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-readiness/2019-12-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-readiness/2019-12-02/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-readiness/2019-12-02/base/update-readiness-check-body
+  take form update-readiness-check-body
+
+load @drumwork/snow/amazonaws.com/route53-recovery-readiness/2019-12-02/base/update-readiness-check-response
+  take form update-readiness-check-response
+
+load @drumwork/snow/amazonaws.com/route53-recovery-readiness/2019-12-02/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-readiness-check, name <UpdateReadinessCheck>
+  note <Updates an exisiting Readiness Check.>
+
+  take readiness-check-name
+    like native-string
+    note <The ReadinessCheck to update>
+  take update-readiness-check-body, like update-readiness-check-body
+
+  line </readinesschecks/{readiness-check-name}>
+
+  seed json, loan update-readiness-check-body
+
+  loot 200
+    seed json, like update-readiness-check-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 484
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

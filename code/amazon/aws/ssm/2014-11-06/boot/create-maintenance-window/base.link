@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/create-maintenance-window-result
+  take form create-maintenance-window-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/idempotent-parameter-mismatch
+  take form idempotent-parameter-mismatch
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/resource-limit-exceeded-exception
+  take form resource-limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-maintenance-window, name <CreateMaintenanceWindow>
+  note <Creates a new maintenance window.
+
+The value you specify for `Duration` determines the specific end time for the maintenance window based on the time it begins. No maintenance window tasks are permitted to start after the resulting endtime minus the number of hours you specify for `Cutoff`. For example, if the maintenance window starts at 3 PM, the duration is three hours, and the value you specify for `Cutoff` is one hour, no maintenance window tasks can start after 5 PM.>
+
+  take x-amz-target
+    like native-string
+  take create-maintenance-window-request, like create-maintenance-window-request
+
+  line </#X-Amz-Target=AmazonSSM.CreateMaintenanceWindow>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-maintenance-window-request
+
+  loot 200
+    seed json, like create-maintenance-window-result
+    note <Success>
+  loot 480
+    seed json, like idempotent-parameter-mismatch
+    note <IdempotentParameterMismatch>
+  loot 481
+    seed json, like resource-limit-exceeded-exception
+    note <ResourceLimitExceededException>
+  loot 482
+    seed json, like internal-server-error
+    note <InternalServerError>

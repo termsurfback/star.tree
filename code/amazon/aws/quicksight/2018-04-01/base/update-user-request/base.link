@@ -1,0 +1,68 @@
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/role-name
+  take form role-name
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/user-role
+  take form user-role
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+load @drumwork/snow/base/string
+  take form string
+
+form update-user-request, name <UpdateUserRequest>
+  take email, name <Email>
+    like string
+    note <The email address of the user that you want to update.>
+  take role, name <Role>
+    like user-role
+    note <The Amazon QuickSight role of the user. The role can be one of the following default security cohorts:
+
+- `READER`: A user who has read-only access to dashboards.
+
+- `AUTHOR`: A user who can create data sources, datasets, analyses, and dashboards.
+
+- `ADMIN`: A user who is an author, who can also manage Amazon QuickSight settings.
+
+The name of the Amazon QuickSight role is invisible to the user except for the console screens dealing with permissions.>
+  take custom-permissions-name, name <CustomPermissionsName>
+    like role-name
+    void take
+    note <(Enterprise edition only) The name of the custom permissions profile that you want to assign to this user. Customized permissions allows you to control a user's access by restricting access the following operations:
+
+- Create and update data sources
+
+- Create and update datasets
+
+- Create and update email reports
+
+- Subscribe to email reports
+
+A set of custom permissions includes any combination of these restrictions. Currently, you need to create the profile names for custom permission sets by using the Amazon QuickSight console. Then, you use the `RegisterUser` API operation to assign the named set of permissions to a Amazon QuickSight user.
+
+Amazon QuickSight custom permissions are applied through IAMpolicies. Therefore, they override the permissions typically granted by assigning Amazon QuickSight users to one of the default security cohorts in Amazon QuickSight (admin, author, reader).
+
+This feature is available only to Amazon QuickSight Enterprise edition subscriptions.>
+  take unapply-custom-permissions, name <UnapplyCustomPermissions>
+    like boolean
+    void take
+    note <A flag that you use to indicate that you want to remove all custom permissions from this user. Using this parameter resets the user to the state it was in before a custom permissions profile was applied. This parameter defaults to NULL and it doesn't accept any other value.>
+  take external-login-federation-provider-type, name <ExternalLoginFederationProviderType>
+    like string
+    void take
+    note <The type of supported external login provider that provides identity to let a user federate into Amazon QuickSight with an associated Identity and Access Management(IAM) role. The type of supported external login provider can be one of the following.
+
+- `COGNITO`: Amazon Cognito. The provider URL is cognito-identity.amazonaws.com. When choosing the `COGNITO` provider type, don’t use the "CustomFederationProviderUrl" parameter which is only needed when the external provider is custom.
+
+- `CUSTOM_OIDC`: Custom OpenID Connect (OIDC) provider. When choosing `CUSTOM_OIDC` type, use the `CustomFederationProviderUrl` parameter to provide the custom OIDC provider URL.
+
+- `NONE`: This clears all the previously saved external login information for a user. Use `DescribeUser` API to check the external login information.>
+  take custom-federation-provider-url, name <CustomFederationProviderUrl>
+    like string
+    void take
+    note <The URL of the custom OpenID Connect (OIDC) provider that provides identity to let a user federate into Amazon QuickSight with an associated Identity and Access Management(IAM) role. This parameter should only be used when `ExternalLoginFederationProviderType` parameter is set to `CUSTOM_OIDC`.>
+  take external-login-id, name <ExternalLoginId>
+    like string
+    void take
+    note <The identity ID for a user in the external login provider.>

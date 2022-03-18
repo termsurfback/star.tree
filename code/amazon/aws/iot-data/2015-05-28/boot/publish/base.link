@@ -1,0 +1,74 @@
+
+load @drumwork/snow/amazonaws.com/iot-data/2015-05-28/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot-data/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot-data/2015-05-28/base/method-not-allowed-exception
+  take form method-not-allowed-exception
+
+load @drumwork/snow/amazonaws.com/iot-data/2015-05-28/base/publish-body
+  take form publish-body
+
+load @drumwork/snow/amazonaws.com/iot-data/2015-05-28/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot publish, name <Publish>
+  note <Publishes an MQTT message.
+
+Requires permission to access the [Publish](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiot.html#awsiot-actions-as-permissions) action.
+
+For more information about MQTT messages, see [MQTT Protocol](http://docs.aws.amazon.com/iot/latest/developerguide/mqtt.html) in the IoT Developer Guide.
+
+For more information about messaging costs, see [IoT Core pricing - Messaging](http://aws.amazon.com/iot-core/pricing/#Messaging).>
+
+  take topic
+    like native-string
+    note <The name of the MQTT topic.>
+  take qos
+    like native-integer
+    note <The Quality of Service (QoS) level.>
+    void take
+  take retain
+    like native-boolean
+    note <A Boolean value that determines whether to set the RETAIN flag when the message is published.
+
+Setting the RETAIN flag causes the message to be retained and sent to new subscribers to the topic.
+
+Valid values: `true` | `false`
+
+Default value: `false`>
+    void take
+  take publish-body, like publish-body
+
+  line </topics/{topic}>
+
+  find <qos>, loan qos
+  find <retain>, loan retain
+
+  seed json, loan publish-body
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 483
+    seed json, like method-not-allowed-exception
+    note <MethodNotAllowedException>

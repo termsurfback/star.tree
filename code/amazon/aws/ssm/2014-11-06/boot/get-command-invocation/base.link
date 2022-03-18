@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/get-command-invocation-result
+  take form get-command-invocation-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-command-id
+  take form invalid-command-id
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-instance-id
+  take form invalid-instance-id
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-plugin-name
+  take form invalid-plugin-name
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invocation-does-not-exist
+  take form invocation-does-not-exist
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-command-invocation, name <GetCommandInvocation>
+  note <Returns detailed information about command execution for an invocation or plugin.
+
+`GetCommandInvocation` only gives the execution status of a plugin in a document. To get the command execution status on a specific instance, use ListCommandInvocations. To get the command execution status across instances, use ListCommands.>
+
+  take x-amz-target
+    like native-string
+  take get-command-invocation-request, like get-command-invocation-request
+
+  line </#X-Amz-Target=AmazonSSM.GetCommandInvocation>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-command-invocation-request
+
+  loot 200
+    seed json, like get-command-invocation-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like invalid-command-id
+    note <InvalidCommandId>
+  loot 482
+    seed json, like invalid-instance-id
+    note <InvalidInstanceId>
+  loot 483
+    seed json, like invalid-plugin-name
+    note <InvalidPluginName>
+  loot 484
+    seed json, like invocation-does-not-exist
+    note <InvocationDoesNotExist>

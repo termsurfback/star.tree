@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/cluster-not-found-exception
+  take form cluster-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/list-attributes-response
+  take form list-attributes-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-attributes, name <ListAttributes>
+  note <Lists the attributes for Amazon ECS resources within a specified target type and cluster. When you specify a target type and cluster, `ListAttributes` returns a list of attribute objects, one for each attribute on each resource. You can filter the list of results to a single attribute name to only return results that have that name. You can also filter the results by attribute name and value, for example, to see which container instances in a cluster are running a Linux AMI (`ecs.os-type=linux`).>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-attributes-request, like list-attributes-request
+
+  line </#X-Amz-Target=AmazonEC2ContainerServiceV20141113.ListAttributes>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-attributes-request
+
+  loot 200
+    seed json, like list-attributes-response
+    note <Success>
+  loot 480
+    seed json, like cluster-not-found-exception
+    note <ClusterNotFoundException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>

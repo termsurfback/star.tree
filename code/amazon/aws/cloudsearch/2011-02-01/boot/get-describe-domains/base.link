@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/base-exception
+  take form base-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/describe-domains-response
+  take form describe-domains-response
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/domain-name
+  take form domain-name
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-domains, name <GET_DescribeDomains>
+  note <Gets information about the search domains owned by this account. Can be limited to specific domains. Shows all domains by default.>
+
+  take domain-names
+    like list
+      like domain-name
+    note <Limits the DescribeDomains response to the specified search domains.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeDomains>
+
+  find <DomainNames>, loan domain-names
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-domains-response
+    note <Success>
+  loot 480
+    seed xml, like base-exception
+    note <BaseException>
+  loot 500
+    seed xml, like internal-exception
+    note <InternalException>

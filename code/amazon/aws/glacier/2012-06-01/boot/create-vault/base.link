@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/glacier/2012-06-01/base/create-vault-output
+  take form create-vault-output
+
+load @drumwork/snow/amazonaws.com/glacier/2012-06-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/glacier/2012-06-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/glacier/2012-06-01/base/missing-parameter-value-exception
+  take form missing-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/glacier/2012-06-01/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-vault, name <CreateVault>
+  note <This operation creates a new vault with the specified name. The name of the vault must be unique within a region for an AWS account. You can create up to 1,000 vaults per account. If you need to create more vaults, contact Amazon S3 Glacier.
+
+You must use the following guidelines when naming a vault.
+
+- Names can be between 1 and 255 characters long.
+
+- Allowed characters are a-z, A-Z, 0-9, '_' (underscore), '-' (hyphen), and '.' (period).
+
+This operation is idempotent.
+
+An AWS account has full permission to perform all operations (actions). However, AWS Identity and Access Management (IAM) users don't have any permissions by default. You must grant them explicit permission to perform specific actions. For more information, see [Access Control Using AWS Identity and Access Management (IAM)](https://docs.aws.amazon.com/amazonglacier/latest/dev/using-iam-with-amazon-glacier.html).
+
+For conceptual information and underlying REST API, see [Creating a Vault in Amazon Glacier](https://docs.aws.amazon.com/amazonglacier/latest/dev/creating-vaults.html) and [Create Vault](https://docs.aws.amazon.com/amazonglacier/latest/dev/api-vault-put.html) in the _Amazon Glacier Developer Guide_.>
+
+  take account-id
+    like native-string
+    note <The `AccountId` value is the AWS account ID. This value must match the AWS account ID associated with the credentials used to sign the request. You can either specify an AWS account ID or optionally a single '`-`' (hyphen), in which case Amazon S3 Glacier uses the AWS account ID associated with the credentials used to sign the request. If you specify your account ID, do not include any hyphens ('-') in the ID.>
+  take vault-name
+    like native-string
+    note <The name of the vault.>
+
+  line </{account-id}/vaults/{vault-name}>
+
+  loot 201
+    seed json, like create-vault-output
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 481
+    seed json, like missing-parameter-value-exception
+    note <MissingParameterValueException>
+  loot 482
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 483
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>

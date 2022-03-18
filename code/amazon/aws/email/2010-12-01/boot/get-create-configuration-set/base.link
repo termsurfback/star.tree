@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/configuration-set-already-exists-exception
+  take form configuration-set-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/configuration-set-name
+  take form configuration-set-name
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/create-configuration-set-response
+  take form create-configuration-set-response
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/invalid-configuration-set-exception
+  take form invalid-configuration-set-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-configuration-set, name <GET_CreateConfigurationSet>
+  note <Creates a configuration set.
+
+Configuration sets enable you to publish email sending events. For information about using configuration sets, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/monitor-sending-activity.html).
+
+You can execute this operation no more than once per second.>
+
+  take configuration-set
+    like form
+      take name, name <Name>
+        like configuration-set-name
+        note <The name of the configuration set. The name must meet the following requirements:
+
+- Contain only letters (a-z, A-Z), numbers (0-9), underscores (_), or dashes (-).
+
+- Contain 64 characters or fewer.>
+    note <A data structure that contains the name of the configuration set.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateConfigurationSet>
+
+  find <ConfigurationSet>, loan configuration-set
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-configuration-set-response
+    note <Success>
+  loot 480
+    seed xml, like configuration-set-already-exists-exception
+    note <ConfigurationSetAlreadyExistsException>
+  loot 481
+    seed xml, like invalid-configuration-set-exception
+    note <InvalidConfigurationSetException>
+  loot 482
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>

@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/argument-exception
+  take form argument-exception
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/list-unique-problems-result
+  take form list-unique-problems-result
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/service-account-exception
+  take form service-account-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-unique-problems, name <ListUniqueProblems>
+  note <Gets information about unique problems, such as exceptions or crashes.
+
+Unique problems are defined as a single instance of an error across a run, job, or suite. For example, if a call in your application consistently raises an exception (`OutOfBoundsException in MyActivity.java:386`), `ListUniqueProblems` returns a single entry instead of many individual entries for that exception.>
+
+  take x-amz-target
+    like native-string
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-unique-problems-request, like list-unique-problems-request
+
+  line </#X-Amz-Target=DeviceFarm_20150623.ListUniqueProblems>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <nextToken>, loan next-token
+
+  seed json, loan list-unique-problems-request
+
+  loot 200
+    seed json, like list-unique-problems-result
+    note <Success>
+  loot 480
+    seed json, like argument-exception
+    note <ArgumentException>
+  loot 481
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 482
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 483
+    seed json, like service-account-exception
+    note <ServiceAccountException>

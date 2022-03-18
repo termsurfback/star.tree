@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/create-managed-endpoint-body
+  take form create-managed-endpoint-body
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/create-managed-endpoint-response
+  take form create-managed-endpoint-response
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-managed-endpoint, name <CreateManagedEndpoint>
+  note <Creates a managed endpoint. A managed endpoint is a gateway that connects EMR Studio to Amazon EMR on EKS so that EMR Studio can communicate with your virtual cluster.>
+
+  take virtual-cluster-id
+    like native-string
+    note <The ID of the virtual cluster for which a managed endpoint is created.>
+  take create-managed-endpoint-body, like create-managed-endpoint-body
+
+  line </virtualclusters/{virtual-cluster-id}/endpoints>
+
+  seed json, loan create-managed-endpoint-body
+
+  loot 200
+    seed json, like create-managed-endpoint-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

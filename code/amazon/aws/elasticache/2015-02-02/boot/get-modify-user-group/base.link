@@ -1,0 +1,87 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/default-user-required
+  take form default-user-required
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/duplicate-user-name-fault
+  take form duplicate-user-name-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-user-group-state-fault
+  take form invalid-user-group-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/user-group
+  take form user-group
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/user-group-not-found-fault
+  take form user-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/user-id
+  take form user-id
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/user-not-found-fault
+  take form user-not-found-fault
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-modify-user-group, name <GET_ModifyUserGroup>
+  note <Changes the list of users that belong to the user group.>
+
+  take user-group-id
+    like native-string
+    note <The ID of the user group.>
+  take user-ids-to-add
+    like list
+      like user-id
+    note <The list of user IDs to add to the user group.>
+    void take
+  take user-ids-to-remove
+    like list
+      like user-id
+    note <The list of user IDs to remove from the user group.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyUserGroup>
+
+  find <UserGroupId>, loan user-group-id
+  find <UserIdsToAdd>, loan user-ids-to-add
+  find <UserIdsToRemove>, loan user-ids-to-remove
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like user-group
+    note <Success>
+  loot 480
+    seed xml, like user-group-not-found-fault
+    note <UserGroupNotFoundFault>
+  loot 481
+    seed xml, like user-not-found-fault
+    note <UserNotFoundFault>
+  loot 482
+    seed xml, like duplicate-user-name-fault
+    note <DuplicateUserNameFault>
+  loot 483
+    seed xml, like default-user-required
+    note <DefaultUserRequired>
+  loot 484
+    seed xml, like invalid-user-group-state-fault
+    note <InvalidUserGroupStateFault>
+  loot 485
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 486
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/create-ops-metadata-result
+  take form create-ops-metadata-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/ops-metadata-already-exists-exception
+  take form ops-metadata-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/ops-metadata-invalid-argument-exception
+  take form ops-metadata-invalid-argument-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/ops-metadata-limit-exceeded-exception
+  take form ops-metadata-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/ops-metadata-too-many-updates-exception
+  take form ops-metadata-too-many-updates-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-ops-metadata, name <CreateOpsMetadata>
+  note <If you create a new application in Application Manager, Amazon Web Services Systems Manager calls this API operation to specify information about the new application, including the application type.>
+
+  take x-amz-target
+    like native-string
+  take create-ops-metadata-request, like create-ops-metadata-request
+
+  line </#X-Amz-Target=AmazonSSM.CreateOpsMetadata>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-ops-metadata-request
+
+  loot 200
+    seed json, like create-ops-metadata-result
+    note <Success>
+  loot 480
+    seed json, like ops-metadata-already-exists-exception
+    note <OpsMetadataAlreadyExistsException>
+  loot 481
+    seed json, like ops-metadata-too-many-updates-exception
+    note <OpsMetadataTooManyUpdatesException>
+  loot 482
+    seed json, like ops-metadata-invalid-argument-exception
+    note <OpsMetadataInvalidArgumentException>
+  loot 483
+    seed json, like ops-metadata-limit-exceeded-exception
+    note <OpsMetadataLimitExceededException>
+  loot 484
+    seed json, like internal-server-error
+    note <InternalServerError>

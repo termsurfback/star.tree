@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/list-tags-for-resource-response
+  take form list-tags-for-resource-response
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-tags-for-resource, name <ListTagsForResource>
+  note <Returns a list of tags that are applied to the specified AWS OpsWorks for Chef Automate or AWS OpsWorks for Puppet Enterprise servers or backups.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-tags-for-resource-request, like list-tags-for-resource-request
+
+  line </#X-Amz-Target=OpsWorksCM_V2016_11_01.ListTagsForResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-tags-for-resource-request
+
+  loot 200
+    seed json, like list-tags-for-resource-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>

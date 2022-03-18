@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/list-versions-by-function-response
+  take form list-versions-by-function-response
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-versions-by-function, name <ListVersionsByFunction>
+  note <Returns a list of [versions](https://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html), with the version-specific configuration of each. Lambda returns up to 50 versions per call.>
+
+  take function-name
+    like native-string
+    note <The name of the Lambda function.
+
+**Name formats** - **Function name** - `MyFunction`.
+
+- **Function ARN** - `arn:aws:lambda:us-west-2:123456789012:function:MyFunction`.
+
+- **Partial ARN** - `123456789012:function:MyFunction`.
+
+The length constraint applies only to the full ARN. If you specify only the function name, it is limited to 64 characters in length.>
+  take marker
+    like native-string
+    note <Specify the pagination token that's returned by a previous request to retrieve the next page of results.>
+    void take
+  take max-items
+    like native-integer
+    note <The maximum number of versions to return. Note that `ListVersionsByFunction` returns a maximum of 50 items in each response, even if you set the number higher.>
+    void take
+
+  line </2015-03-31/functions/{function-name}/versions>
+
+  find <Marker>, loan marker
+  find <MaxItems>, loan max-items
+
+  loot 200
+    seed json, like list-versions-by-function-response
+    note <Success>
+  loot 480
+    seed json, like service-exception
+    note <ServiceException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>

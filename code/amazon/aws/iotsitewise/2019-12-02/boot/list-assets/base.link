@@ -1,0 +1,80 @@
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/list-assets-response
+  take form list-assets-response
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-assets, name <ListAssets>
+  note <Retrieves a paginated list of asset summaries.
+
+You can use this operation to do the following:
+
+- List assets based on a specific asset model.
+
+- List top-level assets.
+
+You can't use this operation to list all assets. To retrieve summaries for all of your assets, use [ListAssetModels](https://docs.aws.amazon.com/iot-sitewise/latest/APIReference/API_ListAssetModels.html) to get all of your asset model IDs. Then, use ListAssets to get all assets for each asset model.>
+
+  take next-token
+    like native-string
+    note <The token to be used for the next set of paginated results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return for each paginated request.
+
+Default: 50>
+    void take
+  take asset-model-id
+    like native-string
+    note <The ID of the asset model by which to filter the list of assets. This parameter is required if you choose `ALL` for `filter`.>
+    void take
+  take filter
+    like native-string
+    note <The filter for the requested list of assets. Choose one of the following options:
+
+- `ALL` - The list includes all assets for a given asset model ID. The `assetModelId` parameter is required if you filter by `ALL`.
+
+- `TOP_LEVEL` - The list includes only top-level assets in the asset hierarchy tree.
+
+Default: `ALL`>
+    void take
+
+  line </assets>
+
+  find <nextToken>, loan next-token
+  find <maxResults>, loan max-results
+  find <assetModelId>, loan asset-model-id
+  find <filter>, loan filter
+
+  loot 200
+    seed json, like list-assets-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>

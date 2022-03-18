@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/start-chat-contact-body
+  take form start-chat-contact-body
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/start-chat-contact-response
+  take form start-chat-contact-response
+
+boot start-chat-contact, name <StartChatContact>
+  note <Initiates a contact flow to start a new chat for the customer. Response of this API provides a token required to obtain credentials from the [CreateParticipantConnection](https://docs.aws.amazon.com/connect-participant/latest/APIReference/API_CreateParticipantConnection.html) API in the Amazon Connect Participant Service.
+
+When a new chat contact is successfully created, clients must subscribe to the participant’s connection for the created chat within 5 minutes. This is achieved by invoking [CreateParticipantConnection](https://docs.aws.amazon.com/connect-participant/latest/APIReference/API_CreateParticipantConnection.html) with WEBSOCKET and CONNECTION_CREDENTIALS.
+
+A 429 error occurs in two situations:
+
+- API rate limit is exceeded. API TPS throttling returns a `TooManyRequests` exception.
+
+- The [quota for concurrent active chats](https://docs.aws.amazon.com/connect/latest/adminguide/amazon-connect-service-limits.html) is exceeded. Active chat throttling returns a `LimitExceededException`.
+
+For more information about chat, see [Chat](https://docs.aws.amazon.com/connect/latest/adminguide/chat.html) in the _Amazon Connect Administrator Guide_.>
+
+  take start-chat-contact-body, like start-chat-contact-body
+
+  line </contact/chat>
+
+  seed json, loan start-chat-contact-body
+
+  loot 200
+    seed json, like start-chat-contact-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 484
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>

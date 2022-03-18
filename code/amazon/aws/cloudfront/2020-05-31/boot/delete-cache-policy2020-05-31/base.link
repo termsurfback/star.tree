@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/access-denied
+  take form access-denied
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/cache-policy-in-use
+  take form cache-policy-in-use
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/illegal-delete
+  take form illegal-delete
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/invalid-if-match-version
+  take form invalid-if-match-version
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/no-such-cache-policy
+  take form no-such-cache-policy
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/precondition-failed
+  take form precondition-failed
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-cache-policy2020-05-31, name <DeleteCachePolicy2020_05_31>
+  note <Deletes a cache policy.
+
+You cannot delete a cache policy if it’s attached to a cache behavior. First update your distributions to remove the cache policy from all cache behaviors, then delete the cache policy.
+
+To delete a cache policy, you must provide the policy’s identifier and version. To get these values, you can use `ListCachePolicies` or `GetCachePolicy`.>
+
+  take id
+    like native-string
+    note <The unique identifier for the cache policy that you are deleting. To get the identifier, you can use `ListCachePolicies`.>
+  take if-match
+    like native-string
+    note <The version of the cache policy that you are deleting. The version is the cache policy’s `ETag` value, which you can get using `ListCachePolicies`, `GetCachePolicy`, or `GetCachePolicyConfig`.>
+    void take
+
+  line </2020-05-31/cache-policy/{id}>
+
+  hint <If-Match>, loan if-match
+
+  loot 204
+    note <Success>
+  loot 480
+    seed xml, like access-denied
+    note <AccessDenied>
+  loot 481
+    seed xml, like invalid-if-match-version
+    note <InvalidIfMatchVersion>
+  loot 482
+    seed xml, like no-such-cache-policy
+    note <NoSuchCachePolicy>
+  loot 483
+    seed xml, like precondition-failed
+    note <PreconditionFailed>
+  loot 484
+    seed xml, like illegal-delete
+    note <IllegalDelete>
+  loot 485
+    seed xml, like cache-policy-in-use
+    note <CachePolicyInUse>

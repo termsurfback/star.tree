@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/modify-vpc-endpoint-service-permissions-result
+  take form modify-vpc-endpoint-service-permissions-result
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-modify-vpc-endpoint-service-permissions, name <GET_ModifyVpcEndpointServicePermissions>
+  note <Modifies the permissions for your [VPC endpoint service](https://docs.aws.amazon.com/vpc/latest/userguide/endpoint-service.html). You can add or remove permissions for service consumers (IAM users, IAM roles, and AWS accounts) to connect to your endpoint service.
+
+If you grant permissions to all principals, the service is public. Any users who know the name of a public service can send a request to attach an endpoint. If the service does not require manual approval, attachments are automatically approved.>
+
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take service-id
+    like native-string
+    note <The ID of the service.>
+  take add-allowed-principals
+    like list
+      like string
+    note <The Amazon Resource Names (ARN) of one or more principals. Permissions are granted to the principals in this list. To grant permissions to all principals, specify an asterisk (*).>
+    void take
+  take remove-allowed-principals
+    like list
+      like string
+    note <The Amazon Resource Names (ARN) of one or more principals. Permissions are revoked for principals in this list.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyVpcEndpointServicePermissions>
+
+  find <DryRun>, loan dry-run
+  find <ServiceId>, loan service-id
+  find <AddAllowedPrincipals>, loan add-allowed-principals
+  find <RemoveAllowedPrincipals>, loan remove-allowed-principals
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-vpc-endpoint-service-permissions-result
+    note <Success>

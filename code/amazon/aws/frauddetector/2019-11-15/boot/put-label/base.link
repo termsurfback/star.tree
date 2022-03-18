@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/frauddetector/2019-11-15/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/frauddetector/2019-11-15/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/frauddetector/2019-11-15/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/frauddetector/2019-11-15/base/put-label-result
+  take form put-label-result
+
+load @drumwork/snow/amazonaws.com/frauddetector/2019-11-15/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/frauddetector/2019-11-15/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-label, name <PutLabel>
+  note <Creates or updates label. A label classifies an event as fraudulent or legitimate. Labels are associated with event types and used to train supervised machine learning models in Amazon Fraud Detector.>
+
+  take x-amz-target
+    like native-string
+  take put-label-request, like put-label-request
+
+  line </#X-Amz-Target=AWSHawksNestServiceFacade.PutLabel>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan put-label-request
+
+  loot 200
+    seed json, like put-label-result
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 484
+    seed json, like conflict-exception
+    note <ConflictException>

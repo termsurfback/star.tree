@@ -1,0 +1,29 @@
+
+load @drumwork/snow/amazonaws.com/iotsecuretunneling/2018-10-05/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/iotsecuretunneling/2018-10-05/base/open-tunnel-response
+  take form open-tunnel-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot open-tunnel, name <OpenTunnel>
+  note <Creates a new tunnel, and returns two client access tokens for clients to use to connect to the AWS IoT Secure Tunneling proxy server.>
+
+  take x-amz-target
+    like native-string
+  take open-tunnel-request, like open-tunnel-request
+
+  line </#X-Amz-Target=IoTSecuredTunneling.OpenTunnel>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan open-tunnel-request
+
+  loot 200
+    seed json, like open-tunnel-response
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>

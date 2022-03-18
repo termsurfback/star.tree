@@ -1,0 +1,66 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/environment-description
+  take form environment-description
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/insufficient-privileges-exception
+  take form insufficient-privileges-exception
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-terminate-environment, name <GET_TerminateEnvironment>
+  note <Terminates the specified environment.>
+
+  take environment-id
+    like native-string
+    note <The ID of the environment to terminate.
+
+Condition: You must specify either this or an EnvironmentName, or both. If you do not specify either, AWS Elastic Beanstalk returns `MissingRequiredParameter` error.>
+    void take
+  take environment-name
+    like native-string
+    note <The name of the environment to terminate.
+
+Condition: You must specify either this or an EnvironmentId, or both. If you do not specify either, AWS Elastic Beanstalk returns `MissingRequiredParameter` error.>
+    void take
+  take terminate-resources
+    like native-boolean
+    note <Indicates whether the associated AWS resources should shut down when the environment is terminated:
+
+- `true`: The specified environment as well as the associated AWS resources, such as Auto Scaling group and LoadBalancer, are terminated.
+
+- `false`: AWS Elastic Beanstalk resource management is removed from the environment, but the AWS resources continue to operate.
+
+For more information, see the [AWS Elastic Beanstalk User Guide.](https://docs.aws.amazon.com/elasticbeanstalk/latest/ug/)
+
+Default: `true`
+
+Valid Values: `true` | `false`>
+    void take
+  take force-terminate
+    like native-boolean
+    note <Terminates the target environment even if another environment in the same group is dependent on it.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=TerminateEnvironment>
+
+  find <EnvironmentId>, loan environment-id
+  find <EnvironmentName>, loan environment-name
+  find <TerminateResources>, loan terminate-resources
+  find <ForceTerminate>, loan force-terminate
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like environment-description
+    note <Success>
+  loot 480
+    seed xml, like insufficient-privileges-exception
+    note <InsufficientPrivilegesException>

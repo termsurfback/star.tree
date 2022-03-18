@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-setup-intents-intent-cancel-body
+  take form post-setup-intents-intent-cancel-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/setup-intent
+  take form setup-intent
+
+boot post-setup-intents-intent-cancel, name <PostSetupIntentsIntentCancel>
+  note <A SetupIntent object can be canceled when it is in one of these statuses: `requires_payment_method`, `requires_confirmation`, or `requires_action`.
+
+Once canceled, setup is abandoned and any operations on the SetupIntent will fail with an error.>
+
+  take intent
+    like native-string
+  take post-setup-intents-intent-cancel-body, like post-setup-intents-intent-cancel-body
+    void take
+
+  line </v1/setup_intents/{intent}/cancel>
+
+  seed x-www-form-urlencoded, loan post-setup-intents-intent-cancel-body
+
+  loot 200
+    seed json, like setup-intent
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/mgn/2020-02-26/base/describe-jobs-body
+  take form describe-jobs-body
+
+load @drumwork/snow/amazonaws.com/mgn/2020-02-26/base/describe-jobs-response
+  take form describe-jobs-response
+
+load @drumwork/snow/amazonaws.com/mgn/2020-02-26/base/uninitialized-account-exception
+  take form uninitialized-account-exception
+
+load @drumwork/snow/amazonaws.com/mgn/2020-02-26/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-jobs, name <DescribeJobs>
+  note <Returns a list of Jobs. Use the JobsID and fromDate and toData filters to limit which jobs are returned. The response is sorted by creationDataTime - latest date first. Jobs are normaly created by the StartTest, StartCutover, and TerminateTargetInstances APIs. Jobs are also created by DiagnosticLaunch and TerminateDiagnosticInstances, which are APIs available only to *Support* and only used in response to relevant support tickets.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-jobs-body, like describe-jobs-body
+
+  line </DescribeJobs>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan describe-jobs-body
+
+  loot 200
+    seed json, like describe-jobs-response
+    note <Success>
+  loot 480
+    seed json, like uninitialized-account-exception
+    note <UninitializedAccountException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>

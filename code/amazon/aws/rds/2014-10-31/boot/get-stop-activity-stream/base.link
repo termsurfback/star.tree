@@ -1,0 +1,67 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-instance-state-fault
+  take form invalid-db-instance-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/resource-not-found-fault
+  take form resource-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/stop-activity-stream-response
+  take form stop-activity-stream-response
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-stop-activity-stream, name <GET_StopActivityStream>
+  note <Stops a database activity stream that was started using the Amazon Web Services console, the `start-activity-stream` CLI command, or the `StartActivityStream` action.
+
+For more information, see [Database Activity Streams](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/DBActivityStreams.html) in the _Amazon Aurora User Guide_.>
+
+  take resource-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the DB cluster for the database activity stream. For example, `arn:aws:rds:us-east-1:12345667890:cluster:das-cluster`.>
+  take apply-immediately
+    like native-boolean
+    note <Specifies whether or not the database activity stream is to stop as soon as possible, regardless of the maintenance window for the database.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=StopActivityStream>
+
+  find <ResourceArn>, loan resource-arn
+  find <ApplyImmediately>, loan apply-immediately
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like stop-activity-stream-response
+    note <Success>
+  loot 480
+    seed xml, like invalid-db-instance-state-fault
+    note <InvalidDBInstanceStateFault>
+  loot 481
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>
+  loot 482
+    seed xml, like resource-not-found-fault
+    note <ResourceNotFoundFault>
+  loot 483
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>
+  loot 484
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>

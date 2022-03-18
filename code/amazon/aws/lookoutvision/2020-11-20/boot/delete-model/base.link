@@ -1,0 +1,68 @@
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/delete-model-response
+  take form delete-model-response
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-model, name <DeleteModel>
+  note <Deletes an Amazon Lookout for Vision model. You can't delete a running model. To stop a running model, use the StopModel operation.
+
+It might take a few seconds to delete a model. To determine if a model has been deleted, call ListProjects and check if the version of the model (`ModelVersion`) is in the `Models` array.
+
+This operation requires permissions to perform the `lookoutvision:DeleteModel` operation.>
+
+  take project-name
+    like native-string
+    note <The name of the project that contains the model that you want to delete.>
+  take model-version
+    like native-string
+    note <The version of the model that you want to delete.>
+  take x-amzn-client-token
+    like native-string
+    note <ClientToken is an idempotency token that ensures a call to `DeleteModel` completes only once. You choose the value to pass. For example, An issue, such as an network outage, might prevent you from getting a response from `DeleteModel`. In this case, safely retry your call to `DeleteModel` by using the same `ClientToken` parameter value. An error occurs if the other input parameters are not the same as in the first request. Using a different value for `ClientToken` is considered a new call to `DeleteModel`. An idempotency token is active for 8 hours.>
+    void take
+
+  line </2020-11-20/projects/{project-name}/models/{model-version}>
+
+  hint <X-Amzn-Client-Token>, loan x-amzn-client-token
+
+  loot 202
+    seed json, like delete-model-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 484
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 485
+    seed json, like throttling-exception
+    note <ThrottlingException>

@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/access-point-not-found-exception
+  take form access-point-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/create-app-cookie-stickiness-policy-output
+  take form create-app-cookie-stickiness-policy-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/duplicate-policy-name-exception
+  take form duplicate-policy-name-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/invalid-configuration-request-exception
+  take form invalid-configuration-request-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/too-many-policies-exception
+  take form too-many-policies-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-app-cookie-stickiness-policy, name <GET_CreateAppCookieStickinessPolicy>
+  note <Generates a stickiness policy with sticky session lifetimes that follow that of an application-generated cookie. This policy can be associated only with HTTP/HTTPS listeners.
+
+This policy is similar to the policy created by CreateLBCookieStickinessPolicy, except that the lifetime of the special Elastic Load Balancing cookie, `AWSELB`, follows the lifetime of the application-generated cookie specified in the policy configuration. The load balancer only inserts a new stickiness cookie when the application response includes a new application cookie.
+
+If the application cookie is explicitly removed or expires, the session stops being sticky until a new application cookie is issued.
+
+For more information, see [Application-Controlled Session Stickiness](https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/elb-sticky-sessions.html#enable-sticky-sessions-application) in the _Classic Load Balancers Guide_.>
+
+  take load-balancer-name
+    like native-string
+    note <The name of the load balancer.>
+  take policy-name
+    like native-string
+    note <The name of the policy being created. Policy names must consist of alphanumeric characters and dashes (-). This name must be unique within the set of policies for this load balancer.>
+  take cookie-name
+    like native-string
+    note <The name of the application cookie used for stickiness.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateAppCookieStickinessPolicy>
+
+  find <LoadBalancerName>, loan load-balancer-name
+  find <PolicyName>, loan policy-name
+  find <CookieName>, loan cookie-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-app-cookie-stickiness-policy-output
+    note <Success>
+  loot 480
+    seed xml, like access-point-not-found-exception
+    note <AccessPointNotFoundException>
+  loot 481
+    seed xml, like duplicate-policy-name-exception
+    note <DuplicatePolicyNameException>
+  loot 482
+    seed xml, like too-many-policies-exception
+    note <TooManyPoliciesException>
+  loot 483
+    seed xml, like invalid-configuration-request-exception
+    note <InvalidConfigurationRequestException>

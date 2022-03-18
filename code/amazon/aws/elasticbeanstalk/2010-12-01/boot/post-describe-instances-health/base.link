@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/describe-instances-health-result
+  take form describe-instances-health-result
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/elastic-beanstalk-service-exception
+  take form elastic-beanstalk-service-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-instances-health, name <POST_DescribeInstancesHealth>
+  note <Retrieves detailed information about the health of instances in your AWS Elastic Beanstalk. This operation requires [enhanced health reporting](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/health-enhanced.html).>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-instances-health-request, like describe-instances-health-request
+    void take
+
+  line </#Action=DescribeInstancesHealth>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-instances-health-request
+
+  loot 200
+    seed xml, like describe-instances-health-result
+    note <Success>
+  loot 480
+    seed xml, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed xml, like elastic-beanstalk-service-exception
+    note <ElasticBeanstalkServiceException>

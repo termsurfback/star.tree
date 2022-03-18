@@ -1,0 +1,35 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/delete-accounts-account-body
+  take form delete-accounts-account-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/deleted-account
+  take form deleted-account
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+boot delete-accounts-account, name <DeleteAccountsAccount>
+  note <With [Connect](/docs/connect), you can delete accounts you manage.
+
+Accounts created using test-mode keys can be deleted at any time. Custom or Express accounts created using live-mode keys can only be deleted once all balances are zero.
+
+If you want to delete your own account, use the [account information tab in your account settings](https://dashboard.stripe.com/account) instead.>
+
+  take account
+    like native-string
+  take delete-accounts-account-body, like delete-accounts-account-body
+    void take
+
+  line </v1/accounts/{account}>
+
+  seed x-www-form-urlencoded, loan delete-accounts-account-body
+
+  loot 200
+    seed json, like deleted-account
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

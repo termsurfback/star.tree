@@ -1,0 +1,73 @@
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/cluster-contains-container-instances-exception
+  take form cluster-contains-container-instances-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/cluster-contains-services-exception
+  take form cluster-contains-services-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/cluster-contains-tasks-exception
+  take form cluster-contains-tasks-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/cluster-not-found-exception
+  take form cluster-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/delete-cluster-response
+  take form delete-cluster-response
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/update-in-progress-exception
+  take form update-in-progress-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-cluster, name <DeleteCluster>
+  note <Deletes the specified cluster. The cluster will transition to the `INACTIVE` state. Clusters with an `INACTIVE` status may remain discoverable in your account for a period of time. However, this behavior is subject to change in the future, so you should not rely on `INACTIVE` clusters persisting.
+
+You must deregister all container instances from this cluster before you may delete it. You can list the container instances in a cluster with ListContainerInstances and deregister them with DeregisterContainerInstance.>
+
+  take x-amz-target
+    like native-string
+  take delete-cluster-request, like delete-cluster-request
+
+  line </#X-Amz-Target=AmazonEC2ContainerServiceV20141113.DeleteCluster>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-cluster-request
+
+  loot 200
+    seed json, like delete-cluster-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like client-exception
+    note <ClientException>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 483
+    seed json, like cluster-not-found-exception
+    note <ClusterNotFoundException>
+  loot 484
+    seed json, like cluster-contains-container-instances-exception
+    note <ClusterContainsContainerInstancesException>
+  loot 485
+    seed json, like cluster-contains-services-exception
+    note <ClusterContainsServicesException>
+  loot 486
+    seed json, like cluster-contains-tasks-exception
+    note <ClusterContainsTasksException>
+  loot 487
+    seed json, like update-in-progress-exception
+    note <UpdateInProgressException>

@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/invalid-arn-exception
+  take form invalid-arn-exception
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/invalid-domain-validation-options-exception
+  take form invalid-domain-validation-options-exception
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/invalid-tag-exception
+  take form invalid-tag-exception
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/request-certificate-response
+  take form request-certificate-response
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/tag-policy-exception
+  take form tag-policy-exception
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/too-many-tags-exception
+  take form too-many-tags-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot request-certificate, name <RequestCertificate>
+  note <Requests an ACM certificate for use with other Amazon Web Services services. To request an ACM certificate, you must specify a fully qualified domain name (FQDN) in the `DomainName` parameter. You can also specify additional FQDNs in the `SubjectAlternativeNames` parameter.
+
+If you are requesting a private certificate, domain validation is not required. If you are requesting a public certificate, each domain name that you specify must be validated to verify that you own or control the domain. You can use [DNS validation](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-validate-dns.html) or [email validation](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-validate-email.html). We recommend that you use DNS validation. ACM issues public certificates after receiving approval from the domain owner.
+
+ACM behavior differs from the [https://tools.ietf.org/html/rfc6125#appendix-B.2](https://tools.ietf.org/html/rfc6125#appendix-B.2)RFC 6125 specification of the certificate validation process. first checks for a subject alternative name, and, if it finds one, ignores the common name (CN)>
+
+  take x-amz-target
+    like native-string
+  take request-certificate-request, like request-certificate-request
+
+  line </#X-Amz-Target=CertificateManager.RequestCertificate>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan request-certificate-request
+
+  loot 200
+    seed json, like request-certificate-response
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed json, like invalid-domain-validation-options-exception
+    note <InvalidDomainValidationOptionsException>
+  loot 482
+    seed json, like invalid-arn-exception
+    note <InvalidArnException>
+  loot 483
+    seed json, like invalid-tag-exception
+    note <InvalidTagException>
+  loot 484
+    seed json, like too-many-tags-exception
+    note <TooManyTagsException>
+  loot 485
+    seed json, like tag-policy-exception
+    note <TagPolicyException>
+  loot 486
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>

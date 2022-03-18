@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/marketplace-catalog/2018-09-17/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/marketplace-catalog/2018-09-17/base/cancel-change-set-response
+  take form cancel-change-set-response
+
+load @drumwork/snow/amazonaws.com/marketplace-catalog/2018-09-17/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/marketplace-catalog/2018-09-17/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/marketplace-catalog/2018-09-17/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/marketplace-catalog/2018-09-17/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/marketplace-catalog/2018-09-17/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot cancel-change-set, name <CancelChangeSet>
+  note <Used to cancel an open change request. Must be sent before the status of the request changes to `APPLYING`, the final stage of completing your change request. You can describe a change during the 60-day request history retention period for API calls.>
+
+  take catalog
+    like native-string
+    note <Required. The catalog related to the request. Fixed value: `AWSMarketplace`.>
+  take change-set-id
+    like native-string
+    note <Required. The unique identifier of the `StartChangeSet` request that you want to cancel.>
+
+  line </CancelChangeSet#catalog&changeSetId>
+
+  find <catalog>, loan catalog
+  find <changeSetId>, loan change-set-id
+
+  loot 200
+    seed json, like cancel-change-set-response
+    note <Success>
+  loot 480
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 484
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>
+  loot 485
+    seed json, like throttling-exception
+    note <ThrottlingException>

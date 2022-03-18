@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/invoice
+  take form invoice
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-invoices-invoice-send-body
+  take form post-invoices-invoice-send-body
+
+boot post-invoices-invoice-send, name <PostInvoicesInvoiceSend>
+  note <Stripe will automatically send invoices to customers according to your [subscriptions settings](https://dashboard.stripe.com/account/billing/automatic). However, if you’d like to manually send an invoice to your customer out of the normal schedule, you can do so. When sending invoices that have already been paid, there will be no reference to the payment in the email.
+
+Requests made in test-mode result in no emails being sent, despite sending an `invoice.sent` event.>
+
+  take invoice
+    like native-string
+  take post-invoices-invoice-send-body, like post-invoices-invoice-send-body
+    void take
+
+  line </v1/invoices/{invoice}/send>
+
+  seed x-www-form-urlencoded, loan post-invoices-invoice-send-body
+
+  loot 200
+    seed json, like invoice
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

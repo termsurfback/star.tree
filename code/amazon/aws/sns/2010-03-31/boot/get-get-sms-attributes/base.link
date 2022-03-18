@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/get-sms-attributes-response
+  take form get-sms-attributes-response
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/throttled-exception
+  take form throttled-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-get-sms-attributes, name <GET_GetSMSAttributes>
+  note <Returns the settings for sending SMS messages from your account.
+
+These settings are set with the `SetSMSAttributes` action.>
+
+  take attributes
+    like list
+      like string
+    note <A list of the individual attribute names, such as `MonthlySpendLimit`, for which you want values.
+
+For all attribute names, see [SetSMSAttributes](https://docs.aws.amazon.com/sns/latest/api/API_SetSMSAttributes.html).
+
+If you don't use this parameter, Amazon SNS returns all SMS attributes.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=GetSMSAttributes>
+
+  find <attributes>, loan attributes
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like get-sms-attributes-response
+    note <Success>
+  loot 480
+    seed xml, like throttled-exception
+    note <ThrottledException>
+  loot 481
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 482
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>
+  loot 483
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>

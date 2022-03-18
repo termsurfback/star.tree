@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/invalid-token
+  take form invalid-token
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/send-task-failure-output
+  take form send-task-failure-output
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/task-does-not-exist
+  take form task-does-not-exist
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/task-timed-out
+  take form task-timed-out
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot send-task-failure, name <SendTaskFailure>
+  note <Used by activity workers and task states using the [callback](https://docs.aws.amazon.com/step-functions/latest/dg/connect-to-resource.html#connect-wait-token) pattern to report that the task identified by the `taskToken` failed.>
+
+  take x-amz-target
+    like native-string
+  take send-task-failure-input, like send-task-failure-input
+
+  line </#X-Amz-Target=AWSStepFunctions.SendTaskFailure>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan send-task-failure-input
+
+  loot 200
+    seed json, like send-task-failure-output
+    note <Success>
+  loot 480
+    seed json, like task-does-not-exist
+    note <TaskDoesNotExist>
+  loot 481
+    seed json, like invalid-token
+    note <InvalidToken>
+  loot 482
+    seed json, like task-timed-out
+    note <TaskTimedOut>

@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/update-time-to-live-output
+  take form update-time-to-live-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-time-to-live, name <UpdateTimeToLive>
+  note <The `UpdateTimeToLive` method enables or disables Time to Live (TTL) for the specified table. A successful `UpdateTimeToLive` call returns the current `TimeToLiveSpecification`. It can take up to one hour for the change to fully process. Any additional `UpdateTimeToLive` calls for the same table during this one hour duration result in a `ValidationException`.
+
+TTL compares the current time in epoch time format to the time stored in the TTL attribute of an item. If the epoch time value stored in the attribute is less than the current time, the item is marked as expired and subsequently deleted.
+
+The epoch time format is the number of seconds elapsed since 12:00:00 AM January 1, 1970 UTC.
+
+DynamoDB deletes expired items on a best-effort basis to ensure availability of throughput for other data operations.
+
+DynamoDB typically deletes expired items within two days of expiration. The exact duration within which an item gets deleted after expiration is specific to the nature of the workload. Items that have expired and not been deleted will still show up in reads, queries, and scans.
+
+As items are deleted, they are removed from any local secondary index and global secondary index immediately in the same eventually consistent way as a standard delete operation.
+
+For more information, see [Time To Live](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/TTL.html) in the Amazon DynamoDB Developer Guide.>
+
+  take x-amz-target
+    like native-string
+  take update-time-to-live-input, like update-time-to-live-input
+
+  line </#X-Amz-Target=DynamoDB_20120810.UpdateTimeToLive>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-time-to-live-input
+
+  loot 200
+    seed json, like update-time-to-live-output
+    note <Success>
+  loot 480
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 483
+    seed json, like internal-server-error
+    note <InternalServerError>

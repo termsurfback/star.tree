@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot modify-instance-fleet, name <ModifyInstanceFleet>
+  note <Modifies the target On-Demand and target Spot capacities for the instance fleet with the specified InstanceFleetID within the cluster specified using ClusterID. The call either succeeds or fails atomically.
+
+The instance fleet configuration is available only in Amazon EMR versions 4.8.0 and later, excluding 5.0.x versions.>
+
+  take x-amz-target
+    like native-string
+  take modify-instance-fleet-input, like modify-instance-fleet-input
+
+  line </#X-Amz-Target=ElasticMapReduce.ModifyInstanceFleet>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan modify-instance-fleet-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

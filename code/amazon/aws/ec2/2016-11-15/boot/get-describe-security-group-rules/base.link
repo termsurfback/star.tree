@@ -1,0 +1,71 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-security-group-rules-result
+  take form describe-security-group-rules-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-describe-security-group-rules, name <GET_DescribeSecurityGroupRules>
+  note <Describes one or more of your security group rules.>
+
+  take filter
+    like list
+      like filter
+    note <One or more filters.
+
+- `group-id` - The ID of the security group.
+
+- `security-group-rule-id` - The ID of the security group rule.
+
+- `tag`:&lt;key&gt; - The key/value combination of a tag assigned to the resource. Use the tag key in the filter name and the tag value as the filter value. For example, to find all resources that have a tag with the key `Owner` and the value `TeamA`, specify `tag:Owner` for the filter name and `TeamA` for the filter value.>
+    void take
+  take security-group-rule-id
+    like list
+      like string
+    note <The IDs of the security group rules.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next page of results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return in a single call. To retrieve the remaining results, make another request with the returned `NextToken` value. This value can be between 5 and 1000. If this parameter is not specified, then all results are returned.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeSecurityGroupRules>
+
+  find <Filter>, loan filter
+  find <SecurityGroupRuleId>, loan security-group-rule-id
+  find <DryRun>, loan dry-run
+  find <NextToken>, loan next-token
+  find <MaxResults>, loan max-results
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-security-group-rules-result
+    note <Success>

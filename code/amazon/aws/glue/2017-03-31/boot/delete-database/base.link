@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/delete-database-response
+  take form delete-database-response
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/entity-not-found-exception
+  take form entity-not-found-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/operation-timeout-exception
+  take form operation-timeout-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-database, name <DeleteDatabase>
+  note <Removes a specified database from a Data Catalog.
+
+After completing this operation, you no longer have access to the tables (and all table versions and partitions that might belong to the tables) and the user-defined functions in the deleted database. Glue deletes these "orphaned" resources asynchronously in a timely manner, at the discretion of the service.
+
+To ensure the immediate deletion of all related resources, before calling `DeleteDatabase`, use `DeleteTableVersion` or `BatchDeleteTableVersion`, `DeletePartition` or `BatchDeletePartition`, `DeleteUserDefinedFunction`, and `DeleteTable` or `BatchDeleteTable`, to delete any resources that belong to the database.>
+
+  take x-amz-target
+    like native-string
+  take delete-database-request, like delete-database-request
+
+  line </#X-Amz-Target=AWSGlue.DeleteDatabase>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-database-request
+
+  loot 200
+    seed json, like delete-database-response
+    note <Success>
+  loot 480
+    seed json, like entity-not-found-exception
+    note <EntityNotFoundException>
+  loot 481
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 482
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 483
+    seed json, like operation-timeout-exception
+    note <OperationTimeoutException>
+  loot 484
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>

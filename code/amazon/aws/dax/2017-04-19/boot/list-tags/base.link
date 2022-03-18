@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/invalid-arn-fault
+  take form invalid-arn-fault
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/invalid-cluster-state-fault
+  take form invalid-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/list-tags-response
+  take form list-tags-response
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/service-linked-role-not-found-fault
+  take form service-linked-role-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-tags, name <ListTags>
+  note <List all of the tags for a DAX cluster. You can call `ListTags` up to 10 times per second, per account.>
+
+  take x-amz-target
+    like native-string
+  take list-tags-request, like list-tags-request
+
+  line </#X-Amz-Target=AmazonDAXV3.ListTags>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-tags-request
+
+  loot 200
+    seed json, like list-tags-response
+    note <Success>
+  loot 480
+    seed json, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 481
+    seed json, like invalid-arn-fault
+    note <InvalidARNFault>
+  loot 482
+    seed json, like invalid-cluster-state-fault
+    note <InvalidClusterStateFault>
+  loot 483
+    seed json, like service-linked-role-not-found-fault
+    note <ServiceLinkedRoleNotFoundFault>
+  loot 484
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 485
+    seed json, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

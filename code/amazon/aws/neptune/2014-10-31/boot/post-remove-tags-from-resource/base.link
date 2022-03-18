@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-snapshot-not-found-fault
+  take form db-snapshot-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-remove-tags-from-resource, name <POST_RemoveTagsFromResource>
+  note <Removes metadata tags from an Amazon Neptune resource.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take remove-tags-from-resource-message, like remove-tags-from-resource-message
+    void take
+
+  line </#Action=RemoveTagsFromResource>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan remove-tags-from-resource-message
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>
+  loot 481
+    seed xml, like db-snapshot-not-found-fault
+    note <DBSnapshotNotFoundFault>
+  loot 482
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>

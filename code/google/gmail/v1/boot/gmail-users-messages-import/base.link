@@ -1,0 +1,66 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/gmail/v1/base/message
+  take form message
+
+boot gmail-users-messages-import, name <gmail.users.messages.import>
+  note <Imports a message into only this user's mailbox, with standard email delivery scanning and classification similar to receiving via SMTP. This method doesn't perform SPF checks, so it might not work for some spam messages, such as those attempting to perform domain spoofing. This method does not send a message. Note: This function doesn't trigger forwarding rules or filters set up by the user.>
+
+  take user-id
+    like native-string
+    note <The user's email address. The special value `me` can be used to indicate the authenticated user.>
+  take deleted
+    like native-boolean
+    note <Mark the email as permanently deleted (not TRASH) and only visible in Google Vault to a Vault administrator. Only used for G Suite accounts.>
+    void take
+  take internal-date-source
+    like native-string
+    note <Source for Gmail's internal date of the message.>
+    void take
+  take never-mark-spam
+    like native-boolean
+    note <Ignore the Gmail spam classifier decision and never mark this email as SPAM in the mailbox.>
+    void take
+  take process-for-calendar
+    like native-boolean
+    note <Process calendar invites in the email and add any extracted meetings to the Google Calendar for this user.>
+    void take
+  take message, like message
+    void take
+
+  line </gmail/v1/users/{user-id}/messages/import>
+
+  find <deleted>, loan deleted
+  find <internalDateSource>, loan internal-date-source
+  find <neverMarkSpam>, loan never-mark-spam
+  find <processForCalendar>, loan process-for-calendar
+
+  seed cpim, loan message
+  seed delivery-status, loan message
+  seed disposition-notification, loan message
+  seed external-body, loan message
+  seed feedback-report, loan message
+  seed global, loan message
+  seed global-delivery-status, loan message
+  seed global-disposition-notification, loan message
+  seed global-headers, loan message
+  seed http, loan message
+  seed imdn+xml, loan message
+  seed news, loan message
+  seed partial, loan message
+  seed rfc822, loan message
+  seed s-http, loan message
+  seed sip, loan message
+  seed sipfrag, loan message
+  seed tracking-status, loan message
+  seed vnd.si.simp, loan message
+  seed vnd.wfa.wsc, loan message
+
+  loot 200
+    seed json, like message
+    note <Successful response>

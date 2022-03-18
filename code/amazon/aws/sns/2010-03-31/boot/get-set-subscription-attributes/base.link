@@ -1,0 +1,82 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/filter-policy-limit-exceeded-exception
+  take form filter-policy-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-set-subscription-attributes, name <GET_SetSubscriptionAttributes>
+  note <Allows a subscription owner to set an attribute of the subscription to a new value.>
+
+  take subscription-arn
+    like native-string
+    note <The ARN of the subscription to modify.>
+  take attribute-name
+    like native-string
+    note <A map of attributes with their corresponding values.
+
+The following lists the names, descriptions, and values of the special request parameters that this action uses:
+
+- `DeliveryPolicy` - The policy that defines how Amazon SNS retries failed deliveries to HTTP/S endpoints.
+
+- `FilterPolicy` - The simple JSON object that lets your subscriber receive only a subset of messages, rather than receiving every message published to the topic.
+
+- `RawMessageDelivery` - When set to `true`, enables raw message delivery to Amazon SQS or HTTP/S endpoints. This eliminates the need for the endpoints to process JSON formatting, which is otherwise created for Amazon SNS metadata.
+
+- `RedrivePolicy` - When specified, sends undeliverable messages to the specified Amazon SQS dead-letter queue. Messages that can't be delivered due to client errors (for example, when the subscribed endpoint is unreachable) or server errors (for example, when the service that powers the subscribed endpoint becomes unavailable) are held in the dead-letter queue for further analysis or reprocessing.
+
+The following attribute applies only to Amazon Kinesis Data Firehose delivery stream subscriptions:
+
+- `SubscriptionRoleArn` - The ARN of the IAM role that has the following:
+
+  - Permission to write to the Kinesis Data Firehose delivery stream
+
+  - Amazon SNS listed as a trusted entity
+
+  Specifying a valid ARN for this attribute is required for Kinesis Data Firehose delivery stream subscriptions. For more information, see [Fanout to Kinesis Data Firehose delivery streams](https://docs.aws.amazon.com/sns/latest/dg/sns-firehose-as-subscriber.html) in the _Amazon SNS Developer Guide_.>
+  take attribute-value
+    like native-string
+    note <The new value for the attribute in JSON format.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=SetSubscriptionAttributes>
+
+  find <SubscriptionArn>, loan subscription-arn
+  find <AttributeName>, loan attribute-name
+  find <AttributeValue>, loan attribute-value
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed xml, like filter-policy-limit-exceeded-exception
+    note <FilterPolicyLimitExceededException>
+  loot 482
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 483
+    seed xml, like not-found-exception
+    note <NotFoundException>
+  loot 484
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>

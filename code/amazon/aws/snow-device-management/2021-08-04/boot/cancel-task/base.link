@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/snow-device-management/2021-08-04/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/snow-device-management/2021-08-04/base/cancel-task-output
+  take form cancel-task-output
+
+load @drumwork/snow/amazonaws.com/snow-device-management/2021-08-04/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/snow-device-management/2021-08-04/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/snow-device-management/2021-08-04/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/snow-device-management/2021-08-04/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot cancel-task, name <CancelTask>
+  note <Sends a cancel request for a specified task. You can cancel a task only if it's still in a `QUEUED` state. Tasks that are already running can't be cancelled.
+
+A task might still run if it's processed from the queue before the `CancelTask` operation changes the task's state.>
+
+  take task-id
+    like native-string
+    note <The ID of the task that you are attempting to cancel. You can retrieve a task ID by using the `ListTasks` operation.>
+
+  line </task/{task-id}/cancel>
+
+  loot 200
+    seed json, like cancel-task-output
+    note <Success>
+  loot 480
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 484
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

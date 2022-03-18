@@ -1,0 +1,79 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/scheduled-actions-type
+  take form scheduled-actions-type
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/xml-string-max-len255
+  take form xml-string-max-len255
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-scheduled-actions, name <GET_DescribeScheduledActions>
+  note <Gets information about the scheduled actions that haven't run or that have not reached their end time.
+
+To describe the scaling activities for scheduled actions that have already run, call the DescribeScalingActivities API.>
+
+  take auto-scaling-group-name
+    like native-string
+    note <The name of the Auto Scaling group.>
+    void take
+  take scheduled-action-names
+    like list
+      like xml-string-max-len255
+    note <The names of one or more scheduled actions. If you omit this parameter, all scheduled actions are described. If you specify an unknown scheduled action, it is ignored with no error.
+
+Array Members: Maximum number of 50 actions.>
+    void take
+  take start-time
+    like native-string
+    note <The earliest scheduled start time to return. If scheduled action names are provided, this parameter is ignored.>
+    void take
+  take end-time
+    like native-string
+    note <The latest scheduled start time to return. If scheduled action names are provided, this parameter is ignored.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next set of items to return. (You received this token from a previous call.)>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of items to return with this call. The default value is `50` and the maximum value is `100`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeScheduledActions>
+
+  find <AutoScalingGroupName>, loan auto-scaling-group-name
+  find <ScheduledActionNames>, loan scheduled-action-names
+  find <StartTime>, loan start-time
+  find <EndTime>, loan end-time
+  find <NextToken>, loan next-token
+  find <MaxRecords>, loan max-records
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like scheduled-actions-type
+    note <Success>
+  loot 480
+    seed xml, like invalid-next-token
+    note <InvalidNextToken>
+  loot 481
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

@@ -1,0 +1,77 @@
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/create-resource-policy-statement-body
+  take form create-resource-policy-statement-body
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/create-resource-policy-statement-response
+  take form create-resource-policy-statement-response
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/precondition-failed-exception
+  take form precondition-failed-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/service-quota-exceeded-exception
+  take form service-quota-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-resource-policy-statement, name <CreateResourcePolicyStatement>
+  note <Adds a new resource policy statement to a bot or bot alias. If a resource policy exists, the statement is added to the current resource policy. If a policy doesn't exist, a new policy is created.
+
+You can't create a resource policy statement that allows cross-account access.>
+
+  take resource-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the bot or bot alias that the resource policy is attached to.>
+  take expected-revision-id
+    like native-string
+    note <The identifier of the revision of the policy to edit. If this revision ID doesn't match the current revision ID, Amazon Lex throws an exception.
+
+If you don't specify a revision, Amazon Lex overwrites the contents of the policy with the new values.>
+    void take
+  take create-resource-policy-statement-body, like create-resource-policy-statement-body
+
+  line </policy/{resource-arn}/statements/>
+
+  find <expectedRevisionId>, loan expected-revision-id
+
+  seed json, loan create-resource-policy-statement-body
+
+  loot 200
+    seed json, like create-resource-policy-statement-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 482
+    seed json, like service-quota-exceeded-exception
+    note <ServiceQuotaExceededException>
+  loot 483
+    seed json, like precondition-failed-exception
+    note <PreconditionFailedException>
+  loot 484
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 485
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 486
+    seed json, like throttling-exception
+    note <ThrottlingException>

@@ -1,0 +1,39 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/cloudbuild/v1/base/receive-trigger-webhook-response
+  take form receive-trigger-webhook-response
+
+boot cloudbuild-projects-locations-triggers-webhook, name <cloudbuild.projects.locations.triggers.webhook>
+  note <ReceiveTriggerWebhook [Experimental] is called when the API receives a webhook request targeted at a specific trigger.>
+
+  take name
+    like native-string
+    note <The name of the `ReceiveTriggerWebhook` to retrieve. Format: `projects/{project}/locations/{location}/triggers/{trigger}`>
+  take project-id
+    like native-string
+    note <Project in which the specified trigger lives>
+    void take
+  take secret
+    like native-string
+    note <Secret token used for authorization if an OAuth token isn't provided.>
+    void take
+  take trigger
+    like native-string
+    note <Name of the trigger to run the payload against>
+    void take
+  take http-body, like http-body
+    void take
+
+  line </v1/{name}:webhook>
+
+  find <projectId>, loan project-id
+  find <secret>, loan secret
+  find <trigger>, loan trigger
+
+  seed json, loan http-body
+
+  loot 200
+    seed json, like receive-trigger-webhook-response
+    note <Successful response>

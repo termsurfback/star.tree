@@ -1,0 +1,26 @@
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-quotes-body
+  take form post-quotes-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/quote
+  take form quote
+
+boot post-quotes, name <PostQuotes>
+  note <A quote models prices and services for a customer. Default options for `header`, `description`, `footer`, and `expires_at` can be set in the dashboard via the [quote template](https://dashboard.stripe.com/settings/billing/quote).>
+
+  take post-quotes-body, like post-quotes-body
+    void take
+
+  line </v1/quotes>
+
+  seed x-www-form-urlencoded, loan post-quotes-body
+
+  loot 200
+    seed json, like quote
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

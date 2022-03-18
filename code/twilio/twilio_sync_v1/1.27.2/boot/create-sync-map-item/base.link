@@ -1,0 +1,27 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_sync_v1/1.27.2/base/create-sync-map-item-body
+  take form create-sync-map-item-body
+
+load @drumwork/snow/twilio.com/twilio_sync_v1/1.27.2/base/sync-v1-service-sync-map-sync-map-item
+  take form sync-v1-service-sync-map-sync-map-item
+
+boot create-sync-map-item, name <CreateSyncMapItem>
+  take service-sid
+    like native-string
+    note <The SID of the \[Sync Service\](https://www.twilio.com/docs/sync/api/service) to create the Map Item in.>
+  take map-sid
+    like native-string
+    note <The SID of the Sync Map to add the new Map Item to. Can be the Sync Map resource&#39;s \`sid\` or its \`unique\_name\`.>
+  take create-sync-map-item-body, like create-sync-map-item-body
+    void take
+
+  line </v1/Services/{service-sid}/Maps/{map-sid}/Items>
+
+  seed x-www-form-urlencoded, loan create-sync-map-item-body
+
+  loot 201
+    seed json, like sync-v1-service-sync-map-sync-map-item
+    note <Created>

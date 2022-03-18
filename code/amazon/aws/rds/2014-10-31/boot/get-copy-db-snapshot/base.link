@@ -1,0 +1,173 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/copy-db-snapshot-result
+  take form copy-db-snapshot-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/custom-availability-zone-not-found-fault
+  take form custom-availability-zone-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-snapshot-already-exists-fault
+  take form db-snapshot-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-snapshot-not-found-fault
+  take form db-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-snapshot-state-fault
+  take form invalid-db-snapshot-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/kms-key-not-accessible-fault
+  take form kms-key-not-accessible-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/snapshot-quota-exceeded-fault
+  take form snapshot-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/tag
+  take form tag
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-copy-db-snapshot, name <GET_CopyDBSnapshot>
+  note <Copies the specified DB snapshot. The source DB snapshot must be in the `available` state.
+
+You can copy a snapshot from one Amazon Web Services Region to another. In that case, the Amazon Web Services Region where you call the `CopyDBSnapshot` action is the destination Amazon Web Services Region for the DB snapshot copy.
+
+For more information about copying snapshots, see [Copying a DB Snapshot](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_CopySnapshot.html#USER_CopyDBSnapshot) in the _Amazon RDS User Guide._>
+
+  take source-db-snapshot-identifier
+    like native-string
+    note <The identifier for the source DB snapshot.
+
+If the source snapshot is in the same Amazon Web Services Region as the copy, specify a valid DB snapshot identifier. For example, you might specify `rds:mysql-instance1-snapshot-20130805`.
+
+If the source snapshot is in a different Amazon Web Services Region than the copy, specify a valid DB snapshot ARN. For example, you might specify `arn:aws:rds:us-west-2:123456789012:snapshot:mysql-instance1-snapshot-20130805`.
+
+If you are copying from a shared manual DB snapshot, this parameter must be the Amazon Resource Name (ARN) of the shared DB snapshot.
+
+If you are copying an encrypted snapshot this parameter must be in the ARN format for the source Amazon Web Services Region, and must match the `SourceDBSnapshotIdentifier` in the `PreSignedUrl` parameter.
+
+Constraints:
+
+- Must specify a valid system snapshot in the "available" state.
+
+Example: `rds:mydb-2012-04-02-00-01`
+
+Example: `arn:aws:rds:us-west-2:123456789012:snapshot:mysql-instance1-snapshot-20130805`>
+  take target-db-snapshot-identifier
+    like native-string
+    note <The identifier for the copy of the snapshot.
+
+Constraints:
+
+- Can't be null, empty, or blank
+
+- Must contain from 1 to 255 letters, numbers, or hyphens
+
+- First character must be a letter
+
+- Can't end with a hyphen or contain two consecutive hyphens
+
+Example: `my-db-snapshot`>
+  take kms-key-id
+    like native-string
+    note <The Amazon Web Services KMS key identifier for an encrypted DB snapshot. The Amazon Web Services KMS key identifier is the key ARN, key ID, alias ARN, or alias name for the Amazon Web Services KMS customer master key (CMK).
+
+If you copy an encrypted DB snapshot from your Amazon Web Services account, you can specify a value for this parameter to encrypt the copy with a new Amazon Web Services KMS CMK. If you don't specify a value for this parameter, then the copy of the DB snapshot is encrypted with the same Amazon Web Services KMS key as the source DB snapshot.
+
+If you copy an encrypted DB snapshot that is shared from another Amazon Web Services account, then you must specify a value for this parameter.
+
+If you specify this parameter when you copy an unencrypted snapshot, the copy is encrypted.
+
+If you copy an encrypted snapshot to a different Amazon Web Services Region, then you must specify a Amazon Web Services KMS key identifier for the destination Amazon Web Services Region. Amazon Web Services KMS CMKs are specific to the Amazon Web Services Region that they are created in, and you can't use CMKs from one Amazon Web Services Region in another Amazon Web Services Region.>
+    void take
+  take tags
+    like list
+      like tag
+    void take
+  take copy-tags
+    like native-boolean
+    note <A value that indicates whether to copy all tags from the source DB snapshot to the target DB snapshot. By default, tags are not copied.>
+    void take
+  take pre-signed-url
+    like native-string
+    note <The URL that contains a Signature Version 4 signed request for the `CopyDBSnapshot` API action in the source Amazon Web Services Region that contains the source DB snapshot to copy.
+
+You must specify this parameter when you copy an encrypted DB snapshot from another Amazon Web Services Region by using the Amazon RDS API. Don't specify `PreSignedUrl` when you are copying an encrypted DB snapshot in the same Amazon Web Services Region.
+
+The presigned URL must be a valid request for the `CopyDBSnapshot` API action that can be executed in the source Amazon Web Services Region that contains the encrypted DB snapshot to be copied. The presigned URL request must contain the following parameter values:
+
+- `DestinationRegion` - The Amazon Web Services Region that the encrypted DB snapshot is copied to. This Amazon Web Services Region is the same one where the `CopyDBSnapshot` action is called that contains this presigned URL.
+
+  For example, if you copy an encrypted DB snapshot from the us-west-2 Amazon Web Services Region to the us-east-1 Amazon Web Services Region, then you call the `CopyDBSnapshot` action in the us-east-1 Amazon Web Services Region and provide a presigned URL that contains a call to the `CopyDBSnapshot` action in the us-west-2 Amazon Web Services Region. For this example, the `DestinationRegion` in the presigned URL must be set to the us-east-1 Amazon Web Services Region.
+
+- `KmsKeyId` - The Amazon Web Services KMS key identifier for the customer master key (CMK) to use to encrypt the copy of the DB snapshot in the destination Amazon Web Services Region. This is the same identifier for both the `CopyDBSnapshot` action that is called in the destination Amazon Web Services Region, and the action contained in the presigned URL.
+
+- `SourceDBSnapshotIdentifier` - The DB snapshot identifier for the encrypted snapshot to be copied. This identifier must be in the Amazon Resource Name (ARN) format for the source Amazon Web Services Region. For example, if you are copying an encrypted DB snapshot from the us-west-2 Amazon Web Services Region, then your `SourceDBSnapshotIdentifier` looks like the following example: `arn:aws:rds:us-west-2:123456789012:snapshot:mysql-instance1-snapshot-20161115`.
+
+To learn how to generate a Signature Version 4 signed request, see [Authenticating Requests: Using Query Parameters (Amazon Web Services Signature Version 4)](https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-query-string-auth.html) and [Signature Version 4 Signing Process](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html).
+
+If you are using an Amazon Web Services SDK tool or the CLI, you can specify `SourceRegion` (or `--source-region` for the CLI) instead of specifying `PreSignedUrl` manually. Specifying `SourceRegion` autogenerates a pre-signed URL that is a valid request for the operation that can be executed in the source Amazon Web Services Region.
+
+If you supply a value for this operation's `SourceRegion` parameter, a pre-signed URL will be calculated on your behalf.>
+    void take
+  take option-group-name
+    like native-string
+    note <The name of an option group to associate with the copy of the snapshot.
+
+Specify this option if you are copying a snapshot from one Amazon Web Services Region to another, and your DB instance uses a nondefault option group. If your source DB instance uses Transparent Data Encryption for Oracle or Microsoft SQL Server, you must specify this option when copying across Amazon Web Services Regions. For more information, see [Option group considerations](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_CopySnapshot.html#USER_CopySnapshot.Options) in the _Amazon RDS User Guide._>
+    void take
+  take target-custom-availability-zone
+    like native-string
+    note <The external custom Availability Zone (CAZ) identifier for the target CAZ.
+
+Example: `rds-caz-aiqhTgQv`.>
+    void take
+  take source-region
+    like native-string
+    note <The ID of the region that contains the snapshot to be copied.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CopyDBSnapshot>
+
+  find <SourceDBSnapshotIdentifier>, loan source-db-snapshot-identifier
+  find <TargetDBSnapshotIdentifier>, loan target-db-snapshot-identifier
+  find <KmsKeyId>, loan kms-key-id
+  find <Tags>, loan tags
+  find <CopyTags>, loan copy-tags
+  find <PreSignedUrl>, loan pre-signed-url
+  find <OptionGroupName>, loan option-group-name
+  find <TargetCustomAvailabilityZone>, loan target-custom-availability-zone
+  find <SourceRegion>, loan source-region
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like copy-db-snapshot-result
+    note <Success>
+  loot 480
+    seed xml, like db-snapshot-already-exists-fault
+    note <DBSnapshotAlreadyExistsFault>
+  loot 481
+    seed xml, like db-snapshot-not-found-fault
+    note <DBSnapshotNotFoundFault>
+  loot 482
+    seed xml, like invalid-db-snapshot-state-fault
+    note <InvalidDBSnapshotStateFault>
+  loot 483
+    seed xml, like snapshot-quota-exceeded-fault
+    note <SnapshotQuotaExceededFault>
+  loot 484
+    seed xml, like kms-key-not-accessible-fault
+    note <KMSKeyNotAccessibleFault>
+  loot 485
+    seed xml, like custom-availability-zone-not-found-fault
+    note <CustomAvailabilityZoneNotFoundFault>

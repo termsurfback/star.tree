@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/polly/2016-06-10/base/get-speech-synthesis-task-output
+  take form get-speech-synthesis-task-output
+
+load @drumwork/snow/amazonaws.com/polly/2016-06-10/base/invalid-task-id-exception
+  take form invalid-task-id-exception
+
+load @drumwork/snow/amazonaws.com/polly/2016-06-10/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/amazonaws.com/polly/2016-06-10/base/synthesis-task-not-found-exception
+  take form synthesis-task-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-speech-synthesis-task, name <GetSpeechSynthesisTask>
+  note <Retrieves a specific SpeechSynthesisTask object based on its TaskID. This object contains information about the given speech synthesis task, including the status of the task, and a link to the S3 bucket containing the output of the task.>
+
+  take task-id
+    like native-string
+    note <The Amazon Polly generated identifier for a speech synthesis task.>
+
+  line </v1/synthesisTasks/{task-id}>
+
+  loot 200
+    seed json, like get-speech-synthesis-task-output
+    note <Success>
+  loot 480
+    seed json, like invalid-task-id-exception
+    note <InvalidTaskIdException>
+  loot 481
+    seed json, like service-failure-exception
+    note <ServiceFailureException>
+  loot 482
+    seed json, like synthesis-task-not-found-exception
+    note <SynthesisTaskNotFoundException>

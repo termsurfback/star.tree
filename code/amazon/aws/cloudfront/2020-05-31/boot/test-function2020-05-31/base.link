@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/invalid-argument
+  take form invalid-argument
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/invalid-if-match-version
+  take form invalid-if-match-version
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/no-such-function-exists
+  take form no-such-function-exists
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/test-function-failed
+  take form test-function-failed
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/test-function-result
+  take form test-function-result
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/test-function2020-05-31-body
+  take form test-function2020-05-31-body
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/unsupported-operation
+  take form unsupported-operation
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot test-function2020-05-31, name <TestFunction2020_05_31>
+  note <Tests a CloudFront function.
+
+To test a function, you provide an _event object_ that represents an HTTP request or response that your CloudFront distribution could receive in production. CloudFront runs the function, passing it the event object that you provided, and returns the function’s result (the modified event object) in the response. The response also contains function logs and error messages, if any exist. For more information about testing functions, see [Testing functions](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/managing-functions.html#test-function) in the _Amazon CloudFront Developer Guide_.
+
+To test a function, you provide the function’s name and version (`ETag` value) along with the event object. To get the function’s name and version, you can use `ListFunctions` and `DescribeFunction`.>
+
+  take name
+    like native-string
+    note <The name of the function that you are testing.>
+  take if-match
+    like native-string
+    note <The current version (`ETag` value) of the function that you are testing, which you can get using `DescribeFunction`.>
+  take test-function2020-05-31-body, like test-function2020-05-31-body
+
+  line </2020-05-31/function/{name}/test#If-Match>
+
+  hint <If-Match>, loan if-match
+
+  seed xml, loan test-function2020-05-31-body
+
+  loot 200
+    seed xml, like test-function-result
+    note <Success>
+  loot 480
+    seed xml, like invalid-argument
+    note <InvalidArgument>
+  loot 481
+    seed xml, like invalid-if-match-version
+    note <InvalidIfMatchVersion>
+  loot 482
+    seed xml, like no-such-function-exists
+    note <NoSuchFunctionExists>
+  loot 483
+    seed xml, like test-function-failed
+    note <TestFunctionFailed>
+  loot 484
+    seed xml, like unsupported-operation
+    note <UnsupportedOperation>

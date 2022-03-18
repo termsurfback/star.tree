@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/mwaa/2020-07-01/base/get-environment-output
+  take form get-environment-output
+
+load @drumwork/snow/amazonaws.com/mwaa/2020-07-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/mwaa/2020-07-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/mwaa/2020-07-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-environment, name <GetEnvironment>
+  note <Retrieves the details of an Amazon Managed Workflows for Apache Airflow (MWAA) environment.>
+
+  take name
+    like native-string
+    note <The name of the Amazon MWAA environment. For example, `MyMWAAEnvironment`.>
+
+  line </environments/{name}>
+
+  loot 200
+    seed json, like get-environment-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/transcribe/2017-10-26/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/transcribe/2017-10-26/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/transcribe/2017-10-26/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/transcribe/2017-10-26/base/list-call-analytics-jobs-response
+  take form list-call-analytics-jobs-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-call-analytics-jobs, name <ListCallAnalyticsJobs>
+  note <List call analytics jobs with a specified status or substring that matches their names.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-call-analytics-jobs-request, like list-call-analytics-jobs-request
+
+  line </#X-Amz-Target=Transcribe.ListCallAnalyticsJobs>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-call-analytics-jobs-request
+
+  loot 200
+    seed json, like list-call-analytics-jobs-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

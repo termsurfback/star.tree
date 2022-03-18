@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/outposts/2019-12-03/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/outposts/2019-12-03/base/get-outpost-instance-types-output
+  take form get-outpost-instance-types-output
+
+load @drumwork/snow/amazonaws.com/outposts/2019-12-03/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/outposts/2019-12-03/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/outposts/2019-12-03/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-outpost-instance-types, name <GetOutpostInstanceTypes>
+  note <Lists the instance types for the specified Outpost.>
+
+  take outpost-id
+    like native-string
+    note <The ID of the Outpost.>
+  take next-token
+    like native-string
+    void take
+  take max-results
+    like native-integer
+    void take
+
+  line </outposts/{outpost-id}/instanceTypes>
+
+  find <NextToken>, loan next-token
+  find <MaxResults>, loan max-results
+
+  loot 200
+    seed json, like get-outpost-instance-types-output
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 483
+    seed json, like internal-server-exception
+    note <InternalServerException>

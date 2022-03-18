@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/acl-not-found-fault
+  take form acl-not-found-fault
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/describe-ac-ls-response
+  take form describe-ac-ls-response
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-ac-ls, name <DescribeACLs>
+  note <Returns a list of ACLs>
+
+  take x-amz-target
+    like native-string
+  take describe-ac-ls-request, like describe-ac-ls-request
+
+  line </#X-Amz-Target=AmazonMemoryDB.DescribeACLs>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-ac-ls-request
+
+  loot 200
+    seed json, like describe-ac-ls-response
+    note <Success>
+  loot 480
+    seed json, like acl-not-found-fault
+    note <ACLNotFoundFault>
+  loot 481
+    seed json, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

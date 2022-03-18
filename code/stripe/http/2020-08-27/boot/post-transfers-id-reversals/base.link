@@ -1,0 +1,35 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-transfers-id-reversals-body
+  take form post-transfers-id-reversals-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/transfer-reversal
+  take form transfer-reversal
+
+boot post-transfers-id-reversals, name <PostTransfersIdReversals>
+  note <When you create a new reversal, you must specify a transfer to create it on.
+
+When reversing transfers, you can optionally reverse part of the transfer. You can do so as many times as you wish until the entire transfer has been reversed.
+
+Once entirely reversed, a transfer can’t be reversed again. This method will return an error when called on an already-reversed transfer, or when trying to reverse more money than is left on a transfer.>
+
+  take id
+    like native-string
+  take post-transfers-id-reversals-body, like post-transfers-id-reversals-body
+    void take
+
+  line </v1/transfers/{id}/reversals>
+
+  seed x-www-form-urlencoded, loan post-transfers-id-reversals-body
+
+  loot 200
+    seed json, like transfer-reversal
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

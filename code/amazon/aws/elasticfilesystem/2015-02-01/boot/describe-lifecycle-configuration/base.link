@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/bad-request
+  take form bad-request
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/file-system-not-found
+  take form file-system-not-found
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/lifecycle-configuration-description
+  take form lifecycle-configuration-description
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-lifecycle-configuration, name <DescribeLifecycleConfiguration>
+  note <Returns the current `LifecycleConfiguration` object for the specified Amazon EFS file system. EFS lifecycle management uses the `LifecycleConfiguration` object to identify which files to move to the EFS Infrequent Access (IA) storage class. For a file system without a `LifecycleConfiguration` object, the call returns an empty array in the response.
+
+When EFS Intelligent Tiering is enabled, `TransitionToPrimaryStorageClass` has a value of `AFTER_1_ACCESS`.
+
+This operation requires permissions for the `elasticfilesystem:DescribeLifecycleConfiguration` operation.>
+
+  take file-system-id
+    like native-string
+    note <The ID of the file system whose `LifecycleConfiguration` object you want to retrieve (String).>
+
+  line </2015-02-01/file-systems/{file-system-id}/lifecycle-configuration>
+
+  loot 200
+    seed json, like lifecycle-configuration-description
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like bad-request
+    note <BadRequest>
+  loot 482
+    seed json, like file-system-not-found
+    note <FileSystemNotFound>

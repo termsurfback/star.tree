@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/authorization-not-found-fault
+  take form authorization-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/db-security-group-not-found-fault
+  take form db-security-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/invalid-db-security-group-state-fault
+  take form invalid-db-security-group-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/revoke-db-security-group-ingress-result
+  take form revoke-db-security-group-ingress-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-revoke-db-security-group-ingress, name <POST_RevokeDBSecurityGroupIngress>
+  take action
+    like native-string
+  take version
+    like native-string
+  take revoke-db-security-group-ingress-message, like revoke-db-security-group-ingress-message
+    void take
+
+  line </#Action=RevokeDBSecurityGroupIngress>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan revoke-db-security-group-ingress-message
+
+  loot 200
+    seed xml, like revoke-db-security-group-ingress-result
+    note <Success>
+  loot 480
+    seed xml, like db-security-group-not-found-fault
+    note <DBSecurityGroupNotFoundFault>
+  loot 481
+    seed xml, like authorization-not-found-fault
+    note <AuthorizationNotFoundFault>
+  loot 482
+    seed xml, like invalid-db-security-group-state-fault
+    note <InvalidDBSecurityGroupStateFault>

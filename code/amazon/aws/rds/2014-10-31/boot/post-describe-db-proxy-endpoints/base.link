@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-endpoint-not-found-fault
+  take form db-proxy-endpoint-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-not-found-fault
+  take form db-proxy-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/describe-db-proxy-endpoints-response
+  take form describe-db-proxy-endpoints-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-db-proxy-endpoints, name <POST_DescribeDBProxyEndpoints>
+  note <Returns information about DB proxy endpoints.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-db-proxy-endpoints-request, like describe-db-proxy-endpoints-request
+    void take
+
+  line </#Action=DescribeDBProxyEndpoints>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-db-proxy-endpoints-request
+
+  loot 200
+    seed xml, like describe-db-proxy-endpoints-response
+    note <Success>
+  loot 480
+    seed xml, like db-proxy-not-found-fault
+    note <DBProxyNotFoundFault>
+  loot 481
+    seed xml, like db-proxy-endpoint-not-found-fault
+    note <DBProxyEndpointNotFoundFault>

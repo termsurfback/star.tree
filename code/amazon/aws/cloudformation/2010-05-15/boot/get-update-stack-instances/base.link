@@ -1,0 +1,238 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/account
+  take form account
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/account-list
+  take form account-list
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/accounts-url
+  take form accounts-url
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/failure-tolerance-count
+  take form failure-tolerance-count
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/failure-tolerance-percentage
+  take form failure-tolerance-percentage
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/invalid-operation-exception
+  take form invalid-operation-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/max-concurrent-count
+  take form max-concurrent-count
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/max-concurrent-percentage
+  take form max-concurrent-percentage
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/operation-id-already-exists-exception
+  take form operation-id-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/operation-in-progress-exception
+  take form operation-in-progress-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/organizational-unit-id-list
+  take form organizational-unit-id-list
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/parameter
+  take form parameter
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/region
+  take form region
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/region-concurrency-type
+  take form region-concurrency-type
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/region-list
+  take form region-list
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/stack-instance-not-found-exception
+  take form stack-instance-not-found-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/stack-set-not-found-exception
+  take form stack-set-not-found-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/stale-request-exception
+  take form stale-request-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/update-stack-instances-output
+  take form update-stack-instances-output
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-update-stack-instances, name <GET_UpdateStackInstances>
+  note <Updates the parameter values for stack instances for the specified accounts, within the specified Regions. A stack instance refers to a stack in a specific account and Region.
+
+You can only update stack instances in Regions and accounts where they already exist; to create additional stack instances, use [CreateStackInstances](https://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_CreateStackInstances.html).
+
+During stack set updates, any parameters overridden for a stack instance are not updated, but retain their overridden value.
+
+You can only update the parameter _values_ that are specified in the stack set; to add or delete a parameter itself, use [UpdateStackSet](https://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_UpdateStackSet.html) to update the stack set template. If you add a parameter to a template, before you can override the parameter value specified in the stack set you must first use [UpdateStackSet](https://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_UpdateStackSet.html) to update all stack instances with the updated template and parameter value specified in the stack set. Once a stack instance has been updated with the new parameter, you can then override the parameter value using `UpdateStackInstances`.>
+
+  take stack-set-name
+    like native-string
+    note <The name or unique ID of the stack set associated with the stack instances.>
+  take accounts
+    like list
+      like account
+    note <[Self-managed permissions] The names of one or more Amazon Web Services accounts for which you want to update parameter values for stack instances. The overridden parameter values will be applied to all stack instances in the specified accounts and Regions.
+
+You can specify `Accounts` or `DeploymentTargets`, but not both.>
+    void take
+  take deployment-targets
+    like form
+      take accounts, name <Accounts>
+        like account-list
+        void take
+        note <The names of one or more Amazon Web Services accounts for which you want to deploy stack set updates.>
+      take accounts-url, name <AccountsUrl>
+        like accounts-url
+        void take
+        note <Returns the value of the `AccountsUrl` property.>
+      take organizational-unit-ids, name <OrganizationalUnitIds>
+        like organizational-unit-id-list
+        void take
+        note <The organization root ID or organizational unit (OU) IDs to which StackSets deploys.>
+    note <[Service-managed permissions] The Organizations accounts for which you want to update parameter values for stack instances. If your update targets OUs, the overridden parameter values only apply to the accounts that are currently in the target OUs and their child OUs. Accounts added to the target OUs and their child OUs in the future won't use the overridden values.
+
+You can specify `Accounts` or `DeploymentTargets`, but not both.>
+    void take
+  take regions
+    like list
+      like region
+    note <The names of one or more Regions in which you want to update parameter values for stack instances. The overridden parameter values will be applied to all stack instances in the specified accounts and Regions.>
+  take parameter-overrides
+    like list
+      like parameter
+    note <A list of input parameters whose values you want to update for the specified stack instances.
+
+Any overridden parameter values will be applied to all stack instances in the specified accounts and Regions. When specifying parameters and their values, be aware of how CloudFormation sets parameter values during stack instance update operations:
+
+- To override the current value for a parameter, include the parameter and specify its value.
+
+- To leave an overridden parameter set to its present value, include the parameter and specify `UsePreviousValue` as `true`. (You cannot specify both a value and set `UsePreviousValue` to `true`.)
+
+- To set an overridden parameter back to the value specified in the stack set, specify a parameter list but do not include the parameter in the list.
+
+- To leave all parameters set to their present values, do not specify this property at all.
+
+During stack set updates, any parameter values overridden for a stack instance are not updated, but retain their overridden value.
+
+You can only override the parameter _values_ that are specified in the stack set; to add or delete a parameter itself, use `UpdateStackSet` to update the stack set template. If you add a parameter to a template, before you can override the parameter value specified in the stack set you must first use [UpdateStackSet](https://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_UpdateStackSet.html) to update all stack instances with the updated template and parameter value specified in the stack set. Once a stack instance has been updated with the new parameter, you can then override the parameter value using `UpdateStackInstances`.>
+    void take
+  take operation-preferences
+    like form
+      take region-concurrency-type, name <RegionConcurrencyType>
+        like region-concurrency-type
+        void take
+        note <The concurrency type of deploying StackSets operations in Regions, could be in parallel or one Region at a time.>
+      take region-order, name <RegionOrder>
+        like region-list
+        void take
+        note <The order of the Regions in where you want to perform the stack operation.>
+      take failure-tolerance-count, name <FailureToleranceCount>
+        like failure-tolerance-count
+        void take
+        note <The number of accounts, per Region, for which this operation can fail before CloudFormation stops the operation in that Region. If the operation is stopped in a Region, CloudFormation doesn't attempt the operation in any subsequent Regions.
+
+Conditional: You must specify either `FailureToleranceCount` or `FailureTolerancePercentage` (but not both).
+
+By default, `0` is specified.>
+      take failure-tolerance-percentage, name <FailureTolerancePercentage>
+        like failure-tolerance-percentage
+        void take
+        note <The percentage of accounts, per Region, for which this stack operation can fail before CloudFormation stops the operation in that Region. If the operation is stopped in a Region, CloudFormation doesn't attempt the operation in any subsequent Regions.
+
+When calculating the number of accounts based on the specified percentage, CloudFormation rounds _down_ to the next whole number.
+
+Conditional: You must specify either `FailureToleranceCount` or `FailureTolerancePercentage`, but not both.
+
+By default, `0` is specified.>
+      take max-concurrent-count, name <MaxConcurrentCount>
+        like max-concurrent-count
+        void take
+        note <The maximum number of accounts in which to perform this operation at one time. This is dependent on the value of `FailureToleranceCount`. `MaxConcurrentCount` is at most one more than the `FailureToleranceCount`.
+
+Note that this setting lets you specify the _maximum_ for operations. For large deployments, under certain circumstances the actual number of accounts acted upon concurrently may be lower due to service throttling.
+
+Conditional: You must specify either `MaxConcurrentCount` or `MaxConcurrentPercentage`, but not both.
+
+By default, `1` is specified.>
+      take max-concurrent-percentage, name <MaxConcurrentPercentage>
+        like max-concurrent-percentage
+        void take
+        note <The maximum percentage of accounts in which to perform this operation at one time.
+
+When calculating the number of accounts based on the specified percentage, CloudFormation rounds down to the next whole number. This is true except in cases where rounding down would result is zero. In this case, CloudFormation sets the number as one instead.
+
+Note that this setting lets you specify the _maximum_ for operations. For large deployments, under certain circumstances the actual number of accounts acted upon concurrently may be lower due to service throttling.
+
+Conditional: You must specify either `MaxConcurrentCount` or `MaxConcurrentPercentage`, but not both.
+
+By default, `1` is specified.>
+    note <Preferences for how CloudFormation performs this stack set operation.>
+    void take
+  take operation-id
+    like native-string
+    note <The unique identifier for this stack set operation.
+
+The operation ID also functions as an idempotency token, to ensure that CloudFormation performs the stack set operation only once, even if you retry the request multiple times. You might retry stack set operation requests to ensure that CloudFormation successfully received them.
+
+If you don't specify an operation ID, the SDK generates one automatically.>
+    void take
+  take call-as
+    like native-string
+    note <[Service-managed permissions] Specifies whether you are acting as an account administrator in the organization's management account or as a delegated administrator in a member account.
+
+By default, `SELF` is specified. Use `SELF` for stack sets with self-managed permissions.
+
+- If you are signed in to the management account, specify `SELF`.
+
+- If you are signed in to a delegated administrator account, specify `DELEGATED_ADMIN`.
+
+  Your Amazon Web Services account must be registered as a delegated administrator in the management account. For more information, see [Register a delegated administrator](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-orgs-delegated-admin.html) in the _CloudFormation User Guide_.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=UpdateStackInstances>
+
+  find <StackSetName>, loan stack-set-name
+  find <Accounts>, loan accounts
+  find <DeploymentTargets>, loan deployment-targets
+  find <Regions>, loan regions
+  find <ParameterOverrides>, loan parameter-overrides
+  find <OperationPreferences>, loan operation-preferences
+  find <OperationId>, loan operation-id
+  find <CallAs>, loan call-as
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like update-stack-instances-output
+    note <Success>
+  loot 480
+    seed xml, like stack-set-not-found-exception
+    note <StackSetNotFoundException>
+  loot 481
+    seed xml, like stack-instance-not-found-exception
+    note <StackInstanceNotFoundException>
+  loot 482
+    seed xml, like operation-in-progress-exception
+    note <OperationInProgressException>
+  loot 483
+    seed xml, like operation-id-already-exists-exception
+    note <OperationIdAlreadyExistsException>
+  loot 484
+    seed xml, like stale-request-exception
+    note <StaleRequestException>
+  loot 485
+    seed xml, like invalid-operation-exception
+    note <InvalidOperationException>

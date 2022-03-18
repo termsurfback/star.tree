@@ -1,0 +1,72 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/action
+  take form action
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/delegate
+  take form delegate
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-add-permission, name <GET_AddPermission>
+  note <Adds a statement to a topic's access control policy, granting access for the specified accounts to the specified actions.>
+
+  take topic-arn
+    like native-string
+    note <The ARN of the topic whose access control policy you wish to modify.>
+  take label
+    like native-string
+    note <A unique identifier for the new policy statement.>
+  take aws-account-id
+    like list
+      like delegate
+    note <The account IDs of the users (principals) who will be given access to the specified actions. The users must have account, but do not need to be signed up for this service.>
+  take action-name
+    like list
+      like action
+    note <The action you want to allow for the specified principal(s).
+
+Valid values: Any Amazon SNS action name, for example `Publish`.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=AddPermission>
+
+  find <TopicArn>, loan topic-arn
+  find <Label>, loan label
+  find <AWSAccountId>, loan aws-account-id
+  find <ActionName>, loan action-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 482
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>
+  loot 483
+    seed xml, like not-found-exception
+    note <NotFoundException>

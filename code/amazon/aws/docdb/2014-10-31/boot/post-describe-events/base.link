@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/events-message
+  take form events-message
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-events, name <POST_DescribeEvents>
+  note <Returns events related to instances, security groups, snapshots, and DB parameter groups for the past 14 days. You can obtain events specific to a particular DB instance, security group, snapshot, or parameter group by providing the name as a parameter. By default, the events of the past hour are returned.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-events-message, like describe-events-message
+    void take
+
+  line </#Action=DescribeEvents>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-events-message
+
+  loot 200
+    seed xml, like events-message
+    note <Success>

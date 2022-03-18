@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/create-connection-response
+  take form create-connection-response
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/resource-already-exists-exception
+  take form resource-already-exists-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-connection, name <CreateConnection>
+  note <Creates a connection. A connection defines the authorization type and credentials to use for authorization with an API destination HTTP endpoint.>
+
+  take x-amz-target
+    like native-string
+  take create-connection-request, like create-connection-request
+
+  line </#X-Amz-Target=AWSEvents.CreateConnection>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-connection-request
+
+  loot 200
+    seed json, like create-connection-response
+    note <Success>
+  loot 480
+    seed json, like resource-already-exists-exception
+    note <ResourceAlreadyExistsException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like internal-exception
+    note <InternalException>

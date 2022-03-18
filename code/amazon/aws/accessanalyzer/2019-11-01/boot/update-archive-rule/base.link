@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/update-archive-rule-body
+  take form update-archive-rule-body
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-archive-rule, name <UpdateArchiveRule>
+  note <Updates the criteria and values for the specified archive rule.>
+
+  take analyzer-name
+    like native-string
+    note <The name of the analyzer to update the archive rules for.>
+  take rule-name
+    like native-string
+    note <The name of the rule to update.>
+  take update-archive-rule-body, like update-archive-rule-body
+
+  line </analyzer/{analyzer-name}/archive-rule/{rule-name}>
+
+  seed json, loan update-archive-rule-body
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

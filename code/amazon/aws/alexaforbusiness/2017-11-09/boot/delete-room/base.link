@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/delete-room-response
+  take form delete-room-response
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-room, name <DeleteRoom>
+  note <Deletes a room by the room ARN.>
+
+  take x-amz-target
+    like native-string
+  take delete-room-request, like delete-room-request
+
+  line </#X-Amz-Target=AlexaForBusiness.DeleteRoom>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-room-request
+
+  loot 200
+    seed json, like delete-room-response
+    note <Success>
+  loot 480
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 481
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>

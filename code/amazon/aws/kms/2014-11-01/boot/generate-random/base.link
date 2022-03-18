@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/custom-key-store-invalid-state-exception
+  take form custom-key-store-invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/custom-key-store-not-found-exception
+  take form custom-key-store-not-found-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/dependency-timeout-exception
+  take form dependency-timeout-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/generate-random-response
+  take form generate-random-response
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-internal-exception
+  take form kms-internal-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot generate-random, name <GenerateRandom>
+  note <Returns a random byte string that is cryptographically secure.
+
+By default, the random byte string is generated in KMS. To generate the byte string in the CloudHSM cluster that is associated with a [custom key store](https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html), specify the custom key store ID.
+
+Applications in Amazon Web Services Nitro Enclaves can call this operation by using the [Amazon Web Services Nitro Enclaves Development Kit](https://github.com/aws/aws-nitro-enclaves-sdk-c). For information about the supporting parameters, see [How Amazon Web Services Nitro Enclaves use KMS](https://docs.aws.amazon.com/kms/latest/developerguide/services-nitro-enclaves.html) in the _Key Management Service Developer Guide_.
+
+For more information about entropy and random number generation, see [Key Management Service Cryptographic Details](https://docs.aws.amazon.com/kms/latest/cryptographic-details/).
+
+**Required permissions**: [kms:GenerateRandom](https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html) (IAM policy)>
+
+  take x-amz-target
+    like native-string
+  take generate-random-request, like generate-random-request
+
+  line </#X-Amz-Target=TrentService.GenerateRandom>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan generate-random-request
+
+  loot 200
+    seed json, like generate-random-response
+    note <Success>
+  loot 480
+    seed json, like dependency-timeout-exception
+    note <DependencyTimeoutException>
+  loot 481
+    seed json, like kms-internal-exception
+    note <KMSInternalException>
+  loot 482
+    seed json, like custom-key-store-not-found-exception
+    note <CustomKeyStoreNotFoundException>
+  loot 483
+    seed json, like custom-key-store-invalid-state-exception
+    note <CustomKeyStoreInvalidStateException>

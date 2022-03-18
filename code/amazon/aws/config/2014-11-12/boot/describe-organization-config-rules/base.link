@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/describe-organization-config-rules-response
+  take form describe-organization-config-rules-response
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-limit-exception
+  take form invalid-limit-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/no-such-organization-config-rule-exception
+  take form no-such-organization-config-rule-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/organization-access-denied-exception
+  take form organization-access-denied-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-organization-config-rules, name <DescribeOrganizationConfigRules>
+  note <Returns a list of organization config rules.
+
+When you specify the limit and the next token, you receive a paginated response. Limit and next token are not applicable if you specify organization config rule names. It is only applicable, when you request all the organization config rules.>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-organization-config-rules-request, like describe-organization-config-rules-request
+
+  line </#X-Amz-Target=StarlingDoveService.DescribeOrganizationConfigRules>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <Limit>, loan limit
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-organization-config-rules-request
+
+  loot 200
+    seed json, like describe-organization-config-rules-response
+    note <Success>
+  loot 480
+    seed json, like no-such-organization-config-rule-exception
+    note <NoSuchOrganizationConfigRuleException>
+  loot 481
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 482
+    seed json, like invalid-limit-exception
+    note <InvalidLimitException>
+  loot 483
+    seed json, like organization-access-denied-exception
+    note <OrganizationAccessDeniedException>

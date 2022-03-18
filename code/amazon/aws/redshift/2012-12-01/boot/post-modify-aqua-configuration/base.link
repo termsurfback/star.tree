@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-state-fault
+  take form invalid-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/modify-aqua-output-message
+  take form modify-aqua-output-message
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unsupported-operation-fault
+  take form unsupported-operation-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-modify-aqua-configuration, name <POST_ModifyAquaConfiguration>
+  note <Modifies whether a cluster can use AQUA (Advanced Query Accelerator).>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take modify-aqua-input-message, like modify-aqua-input-message
+    void take
+
+  line </#Action=ModifyAquaConfiguration>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan modify-aqua-input-message
+
+  loot 200
+    seed xml, like modify-aqua-output-message
+    note <Success>
+  loot 480
+    seed xml, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 481
+    seed xml, like invalid-cluster-state-fault
+    note <InvalidClusterStateFault>
+  loot 482
+    seed xml, like unsupported-operation-fault
+    note <UnsupportedOperationFault>

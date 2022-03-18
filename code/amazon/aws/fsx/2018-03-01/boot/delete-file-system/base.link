@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/bad-request
+  take form bad-request
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/delete-file-system-response
+  take form delete-file-system-response
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/file-system-not-found
+  take form file-system-not-found
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/incompatible-parameter-error
+  take form incompatible-parameter-error
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/service-limit-exceeded
+  take form service-limit-exceeded
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-file-system, name <DeleteFileSystem>
+  note <Deletes a file system, deleting its contents. After deletion, the file system no longer exists, and its data is gone. Any existing automatic backups will also be deleted.
+
+To delete an Amazon FSx for NetApp ONTAP file system, first delete all the volumes and SVMs on the file system. Then provide a `FileSystemId` value to the `DeleFileSystem` operation.
+
+By default, when you delete an Amazon FSx for Windows File Server file system, a final backup is created upon deletion. This final backup is not subject to the file system's retention policy, and must be manually deleted.
+
+The `DeleteFileSystem` action returns while the file system has the `DELETING` status. You can check the file system deletion status by calling the DescribeFileSystems action, which returns a list of file systems in your account. If you pass the file system ID for a deleted file system, the DescribeFileSystems returns a `FileSystemNotFound` error.
+
+Deleting an Amazon FSx for Lustre file system will fail with a 400 BadRequest if a data repository task is in a `PENDING` or `EXECUTING` state.
+
+The data in a deleted file system is also deleted and can't be recovered by any means.>
+
+  take x-amz-target
+    like native-string
+  take delete-file-system-request, like delete-file-system-request
+
+  line </#X-Amz-Target=AWSSimbaAPIService_v20180301.DeleteFileSystem>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-file-system-request
+
+  loot 200
+    seed json, like delete-file-system-response
+    note <Success>
+  loot 480
+    seed json, like bad-request
+    note <BadRequest>
+  loot 481
+    seed json, like incompatible-parameter-error
+    note <IncompatibleParameterError>
+  loot 482
+    seed json, like file-system-not-found
+    note <FileSystemNotFound>
+  loot 483
+    seed json, like service-limit-exceeded
+    note <ServiceLimitExceeded>
+  loot 484
+    seed json, like internal-server-error
+    note <InternalServerError>

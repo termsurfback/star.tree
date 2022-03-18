@@ -1,0 +1,150 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/configuration-option-setting
+  take form configuration-option-setting
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/environment-description
+  take form environment-description
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/insufficient-privileges-exception
+  take form insufficient-privileges-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/option-specification
+  take form option-specification
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/too-many-buckets-exception
+  take form too-many-buckets-exception
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-update-environment, name <GET_UpdateEnvironment>
+  note <Updates the environment description, deploys a new application version, updates the configuration settings to an entirely new configuration template, or updates select configuration option values in the running environment.
+
+Attempting to update both the release and configuration is not allowed and AWS Elastic Beanstalk returns an `InvalidParameterCombination` error.
+
+When updating the configuration settings to a new template or individual settings, a draft configuration is created and DescribeConfigurationSettings for this environment returns two setting descriptions with different `DeploymentStatus` values.>
+
+  take application-name
+    like native-string
+    note <The name of the application with which the environment is associated.>
+    void take
+  take environment-id
+    like native-string
+    note <The ID of the environment to update.
+
+If no environment with this ID exists, AWS Elastic Beanstalk returns an `InvalidParameterValue` error.
+
+Condition: You must specify either this or an EnvironmentName, or both. If you do not specify either, AWS Elastic Beanstalk returns `MissingRequiredParameter` error.>
+    void take
+  take environment-name
+    like native-string
+    note <The name of the environment to update. If no environment with this name exists, AWS Elastic Beanstalk returns an `InvalidParameterValue` error.
+
+Condition: You must specify either this or an EnvironmentId, or both. If you do not specify either, AWS Elastic Beanstalk returns `MissingRequiredParameter` error.>
+    void take
+  take group-name
+    like native-string
+    note <The name of the group to which the target environment belongs. Specify a group name only if the environment's name is specified in an environment manifest and not with the environment name or environment ID parameters. See [Environment Manifest (env.yaml)](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/environment-cfg-manifest.html) for details.>
+    void take
+  take description
+    like native-string
+    note <If this parameter is specified, AWS Elastic Beanstalk updates the description of this environment.>
+    void take
+  take tier
+    like form
+      take name, name <Name>
+        like string
+        void take
+        note <The name of this environment tier.
+
+Valid values:
+
+- For _Web server tier_ - `WebServer`
+
+- For _Worker tier_ - `Worker`>
+      take type, name <Type>
+        like string
+        void take
+        note <The type of this environment tier.
+
+Valid values:
+
+- For _Web server tier_ - `Standard`
+
+- For _Worker tier_ - `SQS/HTTP`>
+      take version, name <Version>
+        like string
+        void take
+        note <The version of this environment tier. When you don't set a value to it, Elastic Beanstalk uses the latest compatible worker tier version.
+
+This member is deprecated. Any specific version that you set may become out of date. We recommend leaving it unspecified.>
+    note <This specifies the tier to use to update the environment.
+
+Condition: At this time, if you change the tier version, name, or type, AWS Elastic Beanstalk returns `InvalidParameterValue` error.>
+    void take
+  take version-label
+    like native-string
+    note <If this parameter is specified, AWS Elastic Beanstalk deploys the named application version to the environment. If no such application version is found, returns an `InvalidParameterValue` error.>
+    void take
+  take template-name
+    like native-string
+    note <If this parameter is specified, AWS Elastic Beanstalk deploys this configuration template to the environment. If no such configuration template is found, AWS Elastic Beanstalk returns an `InvalidParameterValue` error.>
+    void take
+  take solution-stack-name
+    like native-string
+    note <This specifies the platform version that the environment will run after the environment is updated.>
+    void take
+  take platform-arn
+    like native-string
+    note <The ARN of the platform, if used.>
+    void take
+  take option-settings
+    like list
+      like configuration-option-setting
+    note <If specified, AWS Elastic Beanstalk updates the configuration set associated with the running environment and sets the specified configuration options to the requested value.>
+    void take
+  take options-to-remove
+    like list
+      like option-specification
+    note <A list of custom user-defined configuration options to remove from the configuration set for this environment.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=UpdateEnvironment>
+
+  find <ApplicationName>, loan application-name
+  find <EnvironmentId>, loan environment-id
+  find <EnvironmentName>, loan environment-name
+  find <GroupName>, loan group-name
+  find <Description>, loan description
+  find <Tier>, loan tier
+  find <VersionLabel>, loan version-label
+  find <TemplateName>, loan template-name
+  find <SolutionStackName>, loan solution-stack-name
+  find <PlatformArn>, loan platform-arn
+  find <OptionSettings>, loan option-settings
+  find <OptionsToRemove>, loan options-to-remove
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like environment-description
+    note <Success>
+  loot 480
+    seed xml, like insufficient-privileges-exception
+    note <InsufficientPrivilegesException>
+  loot 481
+    seed xml, like too-many-buckets-exception
+    note <TooManyBucketsException>

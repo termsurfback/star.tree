@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/create-target-group-output
+  take form create-target-group-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/duplicate-target-group-name-exception
+  take form duplicate-target-group-name-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/invalid-configuration-request-exception
+  take form invalid-configuration-request-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/too-many-tags-exception
+  take form too-many-tags-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/too-many-target-groups-exception
+  take form too-many-target-groups-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-target-group, name <POST_CreateTargetGroup>
+  note <Creates a target group.
+
+For more information, see the following:
+
+- [Target groups for your Application Load Balancers](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-target-groups.html)
+
+- [Target groups for your Network Load Balancers](https://docs.aws.amazon.com/elasticloadbalancing/latest/network/load-balancer-target-groups.html)
+
+- [Target groups for your Gateway Load Balancers](https://docs.aws.amazon.com/elasticloadbalancing/latest/gateway/target-groups.html)
+
+This operation is idempotent, which means that it completes at most one time. If you attempt to create multiple target groups with the same settings, each call succeeds.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-target-group-input, like create-target-group-input
+    void take
+
+  line </#Action=CreateTargetGroup>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-target-group-input
+
+  loot 200
+    seed xml, like create-target-group-output
+    note <Success>
+  loot 480
+    seed xml, like duplicate-target-group-name-exception
+    note <DuplicateTargetGroupNameException>
+  loot 481
+    seed xml, like too-many-target-groups-exception
+    note <TooManyTargetGroupsException>
+  loot 482
+    seed xml, like invalid-configuration-request-exception
+    note <InvalidConfigurationRequestException>
+  loot 483
+    seed xml, like too-many-tags-exception
+    note <TooManyTagsException>

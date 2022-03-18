@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/complete-migration-response
+  take form complete-migration-response
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-replication-group-state-fault
+  take form invalid-replication-group-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/replication-group-not-found-fault
+  take form replication-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/replication-group-not-under-migration-fault
+  take form replication-group-not-under-migration-fault
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-complete-migration, name <GET_CompleteMigration>
+  note <Complete the migration of data.>
+
+  take replication-group-id
+    like native-string
+    note <The ID of the replication group to which data is being migrated.>
+  take force
+    like native-boolean
+    note <Forces the migration to stop without ensuring that data is in sync. It is recommended to use this option only to abort the migration and not recommended when application wants to continue migration to ElastiCache.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CompleteMigration>
+
+  find <ReplicationGroupId>, loan replication-group-id
+  find <Force>, loan force
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like complete-migration-response
+    note <Success>
+  loot 480
+    seed xml, like replication-group-not-found-fault
+    note <ReplicationGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-replication-group-state-fault
+    note <InvalidReplicationGroupStateFault>
+  loot 482
+    seed xml, like replication-group-not-under-migration-fault
+    note <ReplicationGroupNotUnderMigrationFault>

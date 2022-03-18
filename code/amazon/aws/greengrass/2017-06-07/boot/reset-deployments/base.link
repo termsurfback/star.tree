@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/reset-deployments-body
+  take form reset-deployments-body
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/reset-deployments-response
+  take form reset-deployments-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot reset-deployments, name <ResetDeployments>
+  note <Resets a group's deployments.>
+
+  take group-id
+    like native-string
+    note <The ID of the Greengrass group.>
+  take x-amzn-client-token
+    like native-string
+    note <A client token used to correlate requests and responses.>
+    void take
+  take reset-deployments-body, like reset-deployments-body
+
+  line </greengrass/groups/{group-id}/deployments/$reset>
+
+  hint <X-Amzn-Client-Token>, loan x-amzn-client-token
+
+  seed json, loan reset-deployments-body
+
+  loot 200
+    seed json, like reset-deployments-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>

@@ -1,0 +1,31 @@
+
+load @drumwork/snow/amazonaws.com/firehose/2015-08-04/base/describe-delivery-stream-output
+  take form describe-delivery-stream-output
+
+load @drumwork/snow/amazonaws.com/firehose/2015-08-04/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-delivery-stream, name <DescribeDeliveryStream>
+  note <Describes the specified delivery stream and its status. For example, after your delivery stream is created, call `DescribeDeliveryStream` to see whether the delivery stream is `ACTIVE` and therefore ready for data to be sent to it.
+
+If the status of a delivery stream is `CREATING_FAILED`, this status doesn't change, and you can't invoke CreateDeliveryStream again on it. However, you can invoke the DeleteDeliveryStream operation to delete it. If the status is `DELETING_FAILED`, you can force deletion by invoking DeleteDeliveryStream again but with DeleteDeliveryStreamInput$AllowForceDelete set to true.>
+
+  take x-amz-target
+    like native-string
+  take describe-delivery-stream-input, like describe-delivery-stream-input
+
+  line </#X-Amz-Target=Firehose_20150804.DescribeDeliveryStream>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-delivery-stream-input
+
+  loot 200
+    seed json, like describe-delivery-stream-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

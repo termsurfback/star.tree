@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/batch-get-resource-config-response
+  take form batch-get-resource-config-response
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/no-available-configuration-recorder-exception
+  take form no-available-configuration-recorder-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot batch-get-resource-config, name <BatchGetResourceConfig>
+  note <Returns the `BaseConfigurationItem` for one or more requested resources. The operation also returns a list of resources that are not processed in the current request. If there are no unprocessed resources, the operation returns an empty unprocessedResourceKeys list.
+
+- The API does not return results for deleted resources.
+
+- The API does not return any tags for the requested resources. This information is filtered out of the supplementaryConfiguration section of the API response.>
+
+  take x-amz-target
+    like native-string
+  take batch-get-resource-config-request, like batch-get-resource-config-request
+
+  line </#X-Amz-Target=StarlingDoveService.BatchGetResourceConfig>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan batch-get-resource-config-request
+
+  loot 200
+    seed json, like batch-get-resource-config-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like no-available-configuration-recorder-exception
+    note <NoAvailableConfigurationRecorderException>

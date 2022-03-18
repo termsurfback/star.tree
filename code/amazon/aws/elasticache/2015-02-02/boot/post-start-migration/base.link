@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-replication-group-state-fault
+  take form invalid-replication-group-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/replication-group-already-under-migration-fault
+  take form replication-group-already-under-migration-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/replication-group-not-found-fault
+  take form replication-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/start-migration-response
+  take form start-migration-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-start-migration, name <POST_StartMigration>
+  note <Start the migration of data.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take start-migration-message, like start-migration-message
+    void take
+
+  line </#Action=StartMigration>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan start-migration-message
+
+  loot 200
+    seed xml, like start-migration-response
+    note <Success>
+  loot 480
+    seed xml, like replication-group-not-found-fault
+    note <ReplicationGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-replication-group-state-fault
+    note <InvalidReplicationGroupStateFault>
+  loot 482
+    seed xml, like replication-group-already-under-migration-fault
+    note <ReplicationGroupAlreadyUnderMigrationFault>
+  loot 483
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>

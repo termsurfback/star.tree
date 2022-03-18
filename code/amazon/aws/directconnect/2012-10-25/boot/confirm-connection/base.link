@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/confirm-connection-response
+  take form confirm-connection-response
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/direct-connect-client-exception
+  take form direct-connect-client-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/direct-connect-server-exception
+  take form direct-connect-server-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot confirm-connection, name <ConfirmConnection>
+  note <Confirms the creation of the specified hosted connection on an interconnect.
+
+Upon creation, the hosted connection is initially in the `Ordering` state, and remains in this state until the owner confirms creation of the hosted connection.>
+
+  take x-amz-target
+    like native-string
+  take confirm-connection-request, like confirm-connection-request
+
+  line </#X-Amz-Target=OvertureService.ConfirmConnection>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan confirm-connection-request
+
+  loot 200
+    seed json, like confirm-connection-response
+    note <Success>
+  loot 480
+    seed json, like direct-connect-server-exception
+    note <DirectConnectServerException>
+  loot 481
+    seed json, like direct-connect-client-exception
+    note <DirectConnectClientException>

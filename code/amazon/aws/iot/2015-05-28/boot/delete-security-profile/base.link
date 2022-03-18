@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/delete-security-profile-response
+  take form delete-security-profile-response
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/version-conflict-exception
+  take form version-conflict-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-security-profile, name <DeleteSecurityProfile>
+  note <Deletes a Device Defender security profile.
+
+Requires permission to access the [DeleteSecurityProfile](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiot.html#awsiot-actions-as-permissions) action.>
+
+  take security-profile-name
+    like native-string
+    note <The name of the security profile to be deleted.>
+  take expected-version
+    like native-integer
+    note <The expected version of the security profile. A new version is generated whenever the security profile is updated. If you specify a value that is different from the actual version, a `VersionConflictException` is thrown.>
+    void take
+
+  line </security-profiles/{security-profile-name}>
+
+  find <expectedVersion>, loan expected-version
+
+  loot 200
+    seed json, like delete-security-profile-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 483
+    seed json, like version-conflict-exception
+    note <VersionConflictException>

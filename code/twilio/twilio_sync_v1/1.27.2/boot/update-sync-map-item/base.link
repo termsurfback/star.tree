@@ -1,0 +1,36 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_sync_v1/1.27.2/base/sync-v1-service-sync-map-sync-map-item
+  take form sync-v1-service-sync-map-sync-map-item
+
+load @drumwork/snow/twilio.com/twilio_sync_v1/1.27.2/base/update-sync-map-item-body
+  take form update-sync-map-item-body
+
+boot update-sync-map-item, name <UpdateSyncMapItem>
+  take service-sid
+    like native-string
+    note <The SID of the \[Sync Service\](https://www.twilio.com/docs/sync/api/service) with the Sync Map Item resource to update.>
+  take map-sid
+    like native-string
+    note <The SID of the Sync Map with the Sync Map Item resource to update. Can be the Sync Map resource&#39;s \`sid\` or its \`unique\_name\`.>
+  take key
+    like native-string
+    note <The \`key\` value of the Sync Map Item resource to update.>
+  take if-match
+    like native-string
+    note <If provided, applies this mutation if (and only if) the “revision” field of this \[map item\] matches the provided value. This matches the semantics of (and is implemented with) the HTTP \[If-Match header\](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-Match).>
+    void take
+  take update-sync-map-item-body, like update-sync-map-item-body
+    void take
+
+  line </v1/Services/{service-sid}/Maps/{map-sid}/Items/{key}>
+
+  hint <If-Match>, loan if-match
+
+  seed x-www-form-urlencoded, loan update-sync-map-item-body
+
+  loot 200
+    seed json, like sync-v1-service-sync-map-sync-map-item
+    note <OK>

@@ -1,0 +1,51 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/displayvideo/v1/base/list-sites-response
+  take form list-sites-response
+
+boot displayvideo-partners-channels-sites-list, name <displayvideo.partners.channels.sites.list>
+  note <Lists sites in a channel.>
+
+  take partner-id
+    like native-string
+    note <The ID of the partner that owns the parent channel.>
+  take channel-id
+    like native-string
+    note <Required. The ID of the parent channel to which the requested sites belong.>
+  take advertiser-id
+    like native-string
+    note <The ID of the advertiser that owns the parent channel.>
+    void take
+  take filter
+    like native-string
+    note <Allows filtering by site fields. Supported syntax: * Filter expressions for site currently can only contain at most one * restriction. * A restriction has the form of `{field} {operator} {value}`. * The operator must be `CONTAINS (:)`. * Supported fields: - `urlOrAppId` Examples: * All sites for which the URL or app ID contains "google": `urlOrAppId : "google"`>
+    void take
+  take order-by
+    like native-string
+    note <Field by which to sort the list. Acceptable values are: * `urlOrAppId` (default) The default sorting order is ascending. To specify descending order for a field, a suffix " desc" should be added to the field name. Example: `urlOrAppId desc`.>
+    void take
+  take page-size
+    like native-integer
+    note <Requested page size. Must be between `1` and `10000`. If unspecified will default to `100`. Returns error code `INVALID_ARGUMENT` if an invalid value is specified.>
+    void take
+  take page-token
+    like native-string
+    note <A token identifying a page of results the server should return. Typically, this is the value of next_page_token returned from the previous call to `ListSites` method. If not specified, the first page of results will be returned.>
+    void take
+
+  line </v1/partners/{partner-id}/channels/{channel-id}/sites>
+
+  find <advertiserId>, loan advertiser-id
+  find <filter>, loan filter
+  find <orderBy>, loan order-by
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-sites-response
+    note <Successful response>

@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/version-conflict-exception
+  take form version-conflict-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-fleet-metric, name <DeleteFleetMetric>
+  note <Deletes the specified fleet metric. Returns successfully with no error if the deletion is successful or you specify a fleet metric that doesn't exist.
+
+Requires permission to access the [DeleteFleetMetric](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiot.html#awsiot-actions-as-permissions) action.>
+
+  take metric-name
+    like native-string
+    note <The name of the fleet metric to delete.>
+  take expected-version
+    like native-integer
+    note <The expected version of the fleet metric to delete.>
+    void take
+
+  line </fleet-metric/{metric-name}>
+
+  find <expectedVersion>, loan expected-version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 484
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 485
+    seed json, like version-conflict-exception
+    note <VersionConflictException>

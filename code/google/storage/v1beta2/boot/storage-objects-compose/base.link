@@ -1,0 +1,37 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/storage/v1beta2/base/object
+  take form object
+
+boot storage-objects-compose, name <storage.objects.compose>
+  note <Concatenates a list of existing objects into a new object in the same bucket.>
+
+  take destination-bucket
+    like native-string
+    note <Name of the bucket containing the source objects. The destination object is stored in this bucket.>
+  take destination-object
+    like native-string
+    note <Name of the new object.>
+  take if-generation-match
+    like native-string
+    note <Makes the operation conditional on whether the object's current generation matches the given value.>
+    void take
+  take if-metageneration-match
+    like native-string
+    note <Makes the operation conditional on whether the object's current metageneration matches the given value.>
+    void take
+  take compose-request, like compose-request
+    void take
+
+  line </b/{destination-bucket}/o/{destination-object}/compose>
+
+  find <ifGenerationMatch>, loan if-generation-match
+  find <ifMetagenerationMatch>, loan if-metageneration-match
+
+  seed json, loan compose-request
+
+  loot 200
+    seed json, like object
+    note <Successful response>

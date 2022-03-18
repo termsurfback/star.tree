@@ -1,0 +1,67 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/authorization-already-exists-fault
+  take form authorization-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/authorize-cache-security-group-ingress-result
+  take form authorize-cache-security-group-ingress-result
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-security-group-not-found-fault
+  take form cache-security-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-cache-security-group-state-fault
+  take form invalid-cache-security-group-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-authorize-cache-security-group-ingress, name <GET_AuthorizeCacheSecurityGroupIngress>
+  note <Allows network ingress to a cache security group. Applications using ElastiCache must be running on Amazon EC2, and Amazon EC2 security groups are used as the authorization mechanism.
+
+You cannot authorize ingress from an Amazon EC2 security group in one region to an ElastiCache cluster in another region.>
+
+  take cache-security-group-name
+    like native-string
+    note <The cache security group that allows network ingress.>
+  take ec2-security-group-name
+    like native-string
+    note <The Amazon EC2 security group to be authorized for ingress to the cache security group.>
+  take ec2-security-group-owner-id
+    like native-string
+    note <The Amazon account number of the Amazon EC2 security group owner. Note that this is not the same thing as an Amazon access key ID - you must provide a valid Amazon account number for this parameter.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=AuthorizeCacheSecurityGroupIngress>
+
+  find <CacheSecurityGroupName>, loan cache-security-group-name
+  find <EC2SecurityGroupName>, loan ec2-security-group-name
+  find <EC2SecurityGroupOwnerId>, loan ec2-security-group-owner-id
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like authorize-cache-security-group-ingress-result
+    note <Success>
+  loot 480
+    seed xml, like cache-security-group-not-found-fault
+    note <CacheSecurityGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-cache-security-group-state-fault
+    note <InvalidCacheSecurityGroupStateFault>
+  loot 482
+    seed xml, like authorization-already-exists-fault
+    note <AuthorizationAlreadyExistsFault>
+  loot 483
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 484
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

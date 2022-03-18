@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/failed-dependency-exception
+  take form failed-dependency-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/unauthorized-operation-exception
+  take form unauthorized-operation-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/unauthorized-resource-access-exception
+  take form unauthorized-resource-access-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot remove-all-resource-permissions, name <RemoveAllResourcePermissions>
+  note <Removes all the permissions from the specified resource.>
+
+  take resource-id
+    like native-string
+    note <The ID of the resource.>
+  take authentication
+    like native-string
+    note <Amazon WorkDocs authentication token. Not required when using AWS administrator credentials to access the API.>
+    void take
+
+  line </api/v1/resources/{resource-id}/permissions>
+
+  hint <Authentication>, loan authentication
+
+  loot 204
+    note <Success>
+  loot 480
+    seed json, like unauthorized-operation-exception
+    note <UnauthorizedOperationException>
+  loot 481
+    seed json, like unauthorized-resource-access-exception
+    note <UnauthorizedResourceAccessException>
+  loot 482
+    seed json, like failed-dependency-exception
+    note <FailedDependencyException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

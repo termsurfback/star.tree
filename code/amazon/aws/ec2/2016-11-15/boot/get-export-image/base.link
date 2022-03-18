@@ -1,0 +1,83 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/export-image-result
+  take form export-image-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/tag-specification
+  take form tag-specification
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-export-image, name <GET_ExportImage>
+  note <Exports an Amazon Machine Image (AMI) to a VM file. For more information, see [Exporting a VM directly from an Amazon Machine Image (AMI)](https://docs.aws.amazon.com/vm-import/latest/userguide/vmexport_image.html) in the _VM Import/Export User Guide_.>
+
+  take client-token
+    like native-string
+    note <Token to enable idempotency for export image requests.>
+    void take
+  take description
+    like native-string
+    note <A description of the image being exported. The maximum length is 255 characters.>
+    void take
+  take disk-image-format
+    like native-string
+    note <The disk image format.>
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take image-id
+    like native-string
+    note <The ID of the image.>
+  take s3-export-location
+    like form
+      take s3-bucket, name <S3Bucket>
+        like string
+        note <The destination Amazon S3 bucket.>
+      take s3-prefix, name <S3Prefix>
+        like string
+        void take
+        note <The prefix (logical hierarchy) in the bucket.>
+    note <Information about the destination Amazon S3 bucket. The bucket must exist and grant WRITE and READ_ACP permissions to the Amazon Web Services account vm-import-export@amazon.com.>
+  take role-name
+    like native-string
+    note <The name of the role that grants VM Import/Export permission to export images to your Amazon S3 bucket. If this parameter is not specified, the default role is named 'vmimport'.>
+    void take
+  take tag-specification
+    like list
+      like tag-specification
+    note <The tags to apply to the export image task during creation.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ExportImage>
+
+  find <ClientToken>, loan client-token
+  find <Description>, loan description
+  find <DiskImageFormat>, loan disk-image-format
+  find <DryRun>, loan dry-run
+  find <ImageId>, loan image-id
+  find <S3ExportLocation>, loan s3-export-location
+  find <RoleName>, loan role-name
+  find <TagSpecification>, loan tag-specification
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like export-image-result
+    note <Success>

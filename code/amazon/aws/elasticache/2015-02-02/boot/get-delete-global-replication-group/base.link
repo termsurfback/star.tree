@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/delete-global-replication-group-result
+  take form delete-global-replication-group-result
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/global-replication-group-not-found-fault
+  take form global-replication-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-global-replication-group-state-fault
+  take form invalid-global-replication-group-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-global-replication-group, name <GET_DeleteGlobalReplicationGroup>
+  note <Deleting a Global datastore is a two-step process:
+
+- First, you must DisassociateGlobalReplicationGroup to remove the secondary clusters in the Global datastore.
+
+- Once the Global datastore contains only the primary cluster, you can use the `DeleteGlobalReplicationGroup` API to delete the Global datastore while retainining the primary cluster using `RetainPrimaryReplicationGroup=true`.
+
+Since the Global Datastore has only a primary cluster, you can delete the Global Datastore while retaining the primary by setting `RetainPrimaryReplicationGroup=true`. The primary cluster is never deleted when deleting a Global Datastore. It can only be deleted when it no longer is associated with any Global Datastore.
+
+When you receive a successful response from this operation, Amazon ElastiCache immediately begins deleting the selected resources; you cannot cancel or revert this operation.>
+
+  take global-replication-group-id
+    like native-string
+    note <The name of the Global datastore>
+  take retain-primary-replication-group
+    like native-boolean
+    note <The primary replication group is retained as a standalone replication group.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteGlobalReplicationGroup>
+
+  find <GlobalReplicationGroupId>, loan global-replication-group-id
+  find <RetainPrimaryReplicationGroup>, loan retain-primary-replication-group
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-global-replication-group-result
+    note <Success>
+  loot 480
+    seed xml, like global-replication-group-not-found-fault
+    note <GlobalReplicationGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-global-replication-group-state-fault
+    note <InvalidGlobalReplicationGroupStateFault>
+  loot 482
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>

@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/describe-bandwidth-rate-limit-schedule-output
+  take form describe-bandwidth-rate-limit-schedule-output
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-bandwidth-rate-limit-schedule, name <DescribeBandwidthRateLimitSchedule>
+  note <Returns information about the bandwidth rate limit schedule of a gateway. By default, gateways do not have bandwidth rate limit schedules, which means no bandwidth rate limiting is in effect. This operation is supported only in the volume and tape gateway types.
+
+This operation returns information about a gateway's bandwidth rate limit schedule. A bandwidth rate limit schedule consists of one or more bandwidth rate limit intervals. A bandwidth rate limit interval defines a period of time on one or more days of the week, during which bandwidth rate limits are specified for uploading, downloading, or both.
+
+A bandwidth rate limit interval consists of one or more days of the week, a start hour and minute, an ending hour and minute, and bandwidth rate limits for uploading and downloading
+
+If no bandwidth rate limit schedule intervals are set for the gateway, this operation returns an empty response. To specify which gateway to describe, use the Amazon Resource Name (ARN) of the gateway in your request.>
+
+  take x-amz-target
+    like native-string
+  take describe-bandwidth-rate-limit-schedule-input, like describe-bandwidth-rate-limit-schedule-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.DescribeBandwidthRateLimitSchedule>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-bandwidth-rate-limit-schedule-input
+
+  loot 200
+    seed json, like describe-bandwidth-rate-limit-schedule-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

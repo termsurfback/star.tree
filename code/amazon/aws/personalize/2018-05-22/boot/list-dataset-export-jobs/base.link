@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/list-dataset-export-jobs-response
+  take form list-dataset-export-jobs-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-dataset-export-jobs, name <ListDatasetExportJobs>
+  note <Returns a list of dataset export jobs that use the given dataset. When a dataset is not specified, all the dataset export jobs associated with the account are listed. The response provides the properties for each dataset export job, including the Amazon Resource Name (ARN). For more information on dataset export jobs, see CreateDatasetExportJob. For more information on datasets, see CreateDataset.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-dataset-export-jobs-request, like list-dataset-export-jobs-request
+
+  line </#X-Amz-Target=AmazonPersonalize.ListDatasetExportJobs>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-dataset-export-jobs-request
+
+  loot 200
+    seed json, like list-dataset-export-jobs-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>

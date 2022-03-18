@@ -1,0 +1,75 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/endpoint-access
+  take form endpoint-access
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/endpoint-not-found-fault
+  take form endpoint-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-security-group-state-fault
+  take form invalid-cluster-security-group-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-state-fault
+  take form invalid-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-endpoint-state-fault
+  take form invalid-endpoint-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unauthorized-operation
+  take form unauthorized-operation
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-modify-endpoint-access, name <GET_ModifyEndpointAccess>
+  note <Modifies a Redshift-managed VPC endpoint.>
+
+  take endpoint-name
+    like native-string
+    note <The endpoint to be modified.>
+  take vpc-security-group-ids
+    like list
+      like string
+    note <The complete list of VPC security groups associated with the endpoint after the endpoint is modified.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyEndpointAccess>
+
+  find <EndpointName>, loan endpoint-name
+  find <VpcSecurityGroupIds>, loan vpc-security-group-ids
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like endpoint-access
+    note <Success>
+  loot 480
+    seed xml, like invalid-cluster-security-group-state-fault
+    note <InvalidClusterSecurityGroupStateFault>
+  loot 481
+    seed xml, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 482
+    seed xml, like invalid-endpoint-state-fault
+    note <InvalidEndpointStateFault>
+  loot 483
+    seed xml, like endpoint-not-found-fault
+    note <EndpointNotFoundFault>
+  loot 484
+    seed xml, like invalid-cluster-state-fault
+    note <InvalidClusterStateFault>
+  loot 485
+    seed xml, like unauthorized-operation
+    note <UnauthorizedOperation>

@@ -1,0 +1,92 @@
+
+load @drumwork/snow/amazonaws.com/signer/2017-08-25/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/signer/2017-08-25/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/signer/2017-08-25/base/list-signing-jobs-response
+  take form list-signing-jobs-response
+
+load @drumwork/snow/amazonaws.com/signer/2017-08-25/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/amazonaws.com/signer/2017-08-25/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-signing-jobs, name <ListSigningJobs>
+  note <Lists all your signing jobs. You can use the `maxResults` parameter to limit the number of signing jobs that are returned in the response. If additional jobs remain to be listed, code signing returns a `nextToken` value. Use this value in subsequent calls to `ListSigningJobs` to fetch the remaining values. You can continue calling `ListSigningJobs` with your `maxResults` parameter and with new values that code signing returns in the `nextToken` parameter until all of your signing jobs have been returned.>
+
+  take status
+    like native-string
+    note <A status value with which to filter your results.>
+    void take
+  take platform-id
+    like native-string
+    note <The ID of microcontroller platform that you specified for the distribution of your code image.>
+    void take
+  take requested-by
+    like native-string
+    note <The IAM principal that requested the signing job.>
+    void take
+  take max-results
+    like native-integer
+    note <Specifies the maximum number of items to return in the response. Use this parameter when paginating results. If additional items exist beyond the number you specify, the `nextToken` element is set in the response. Use the `nextToken` value in a subsequent request to retrieve additional items.>
+    void take
+  take next-token
+    like native-string
+    note <String for specifying the next set of paginated results to return. After you receive a response with truncated results, use this parameter in a subsequent request. Set it to the value of `nextToken` from the response that you just received.>
+    void take
+  take is-revoked
+    like native-boolean
+    note <Filters results to return only signing jobs with revoked signatures.>
+    void take
+  take signature-expires-before
+    like native-string
+    note <Filters results to return only signing jobs with signatures expiring before a specified timestamp.>
+    void take
+  take signature-expires-after
+    like native-string
+    note <Filters results to return only signing jobs with signatures expiring after a specified timestamp.>
+    void take
+  take job-invoker
+    like native-string
+    note <Filters results to return only signing jobs initiated by a specified IAM entity.>
+    void take
+
+  line </signing-jobs>
+
+  find <status>, loan status
+  find <platformId>, loan platform-id
+  find <requestedBy>, loan requested-by
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+  find <isRevoked>, loan is-revoked
+  find <signatureExpiresBefore>, loan signature-expires-before
+  find <signatureExpiresAfter>, loan signature-expires-after
+  find <jobInvoker>, loan job-invoker
+
+  loot 200
+    seed json, like list-signing-jobs-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 483
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>

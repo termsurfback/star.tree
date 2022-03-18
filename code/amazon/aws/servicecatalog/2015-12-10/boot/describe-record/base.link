@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/describe-record-output
+  take form describe-record-output
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-record, name <DescribeRecord>
+  note <Gets information about the specified request operation.
+
+Use this operation after calling a request operation (for example, ProvisionProduct, TerminateProvisionedProduct, or UpdateProvisionedProduct).
+
+If a provisioned product was transferred to a new owner using UpdateProvisionedProductProperties, the new owner will be able to describe all past records for that product. The previous owner will no longer be able to describe the records, but will be able to use ListRecordHistory to see the product's history from when he was the owner.>
+
+  take x-amz-target
+    like native-string
+  take describe-record-input, like describe-record-input
+
+  line </#X-Amz-Target=AWS242ServiceCatalogService.DescribeRecord>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-record-input
+
+  loot 200
+    seed json, like describe-record-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

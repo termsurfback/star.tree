@@ -1,0 +1,90 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/container-format
+  take form container-format
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/create-instance-export-task-result
+  take form create-instance-export-task-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/disk-image-format
+  take form disk-image-format
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/tag-specification
+  take form tag-specification
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-create-instance-export-task, name <GET_CreateInstanceExportTask>
+  note <Exports a running or stopped instance to an Amazon S3 bucket.
+
+For information about the supported operating systems, image formats, and known limitations for the types of instances you can export, see [Exporting an instance as a VM Using VM Import/Export](https://docs.aws.amazon.com/vm-import/latest/userguide/vmexport.html) in the _VM Import/Export User Guide_.>
+
+  take description
+    like native-string
+    note <A description for the conversion task or the resource being exported. The maximum length is 255 characters.>
+    void take
+  take export-to-s3
+    like form
+      take container-format, name <ContainerFormat>
+        like container-format
+        void take
+        note <The container format used to combine disk images with metadata (such as OVF). If absent, only the disk image is exported.>
+        host xml
+          host name, text <containerFormat>
+      take disk-image-format, name <DiskImageFormat>
+        like disk-image-format
+        void take
+        note <The format for the exported image.>
+        host xml
+          host name, text <diskImageFormat>
+      take s3-bucket, name <S3Bucket>
+        like string
+        void take
+        note <The Amazon S3 bucket for the destination image. The destination bucket must exist and grant WRITE and READ_ACP permissions to the Amazon Web Services account `vm-import-export@amazon.com`.>
+        host xml
+          host name, text <s3Bucket>
+      take s3-prefix, name <S3Prefix>
+        like string
+        void take
+        note <The image is written to a single object in the Amazon S3 bucket at the S3 key s3prefix + exportTaskId + '.' + diskImageFormat.>
+        host xml
+          host name, text <s3Prefix>
+    note <The format and location for an export instance task.>
+  take instance-id
+    like native-string
+    note <The ID of the instance.>
+  take target-environment
+    like native-string
+    note <The target virtualization environment.>
+  take tag-specification
+    like list
+      like tag-specification
+    note <The tags to apply to the export instance task during creation.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateInstanceExportTask>
+
+  find <Description>, loan description
+  find <ExportToS3>, loan export-to-s3
+  find <InstanceId>, loan instance-id
+  find <TargetEnvironment>, loan target-environment
+  find <TagSpecification>, loan tag-specification
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-instance-export-task-result
+    note <Success>

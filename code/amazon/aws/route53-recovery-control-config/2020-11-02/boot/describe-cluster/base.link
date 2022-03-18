@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/describe-cluster-response
+  take form describe-cluster-response
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-cluster, name <DescribeCluster>
+  note <Display the details about a cluster. The response includes the cluster name, endpoints, status, and Amazon Resource Name (ARN).>
+
+  take cluster-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the cluster that you're getting details for.>
+
+  line </cluster/{cluster-arn}>
+
+  loot 200
+    seed json, like describe-cluster-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 484
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 485
+    seed json, like conflict-exception
+    note <ConflictException>

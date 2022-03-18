@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/delete-file-share-output
+  take form delete-file-share-output
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-file-share, name <DeleteFileShare>
+  note <Deletes a file share from an S3 File Gateway. This operation is only supported for S3 File Gateways.>
+
+  take x-amz-target
+    like native-string
+  take delete-file-share-input, like delete-file-share-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.DeleteFileShare>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-file-share-input
+
+  loot 200
+    seed json, like delete-file-share-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

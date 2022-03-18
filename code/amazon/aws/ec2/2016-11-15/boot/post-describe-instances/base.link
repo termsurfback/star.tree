@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-instances-result
+  take form describe-instances-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-instances, name <POST_DescribeInstances>
+  note <Describes the specified instances or all instances.
+
+If you specify instance IDs, the output includes information for only the specified instances. If you specify filters, the output includes information for only those instances that meet the filter criteria. If you do not specify instance IDs or filters, the output includes information for all instances, which can affect performance. We recommend that you use pagination to ensure that the operation returns quickly and successfully.
+
+If you specify an instance ID that is not valid, an error is returned. If you specify an instance that you do not own, it is not included in the output.
+
+Recently terminated instances might appear in the returned results. This interval is usually less than one hour.
+
+If you describe instances in the rare case where an Availability Zone is experiencing a service disruption and you specify instance IDs that are in the affected zone, or do not specify any instance IDs at all, the call fails. If you describe instances and specify only instance IDs that are in an unaffected zone, the call works normally.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-instances-request, like describe-instances-request
+    void take
+
+  line </#Action=DescribeInstances>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-instances-request
+
+  loot 200
+    seed xml, like describe-instances-result
+    note <Success>

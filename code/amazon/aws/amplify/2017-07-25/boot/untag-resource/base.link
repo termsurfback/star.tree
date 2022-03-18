@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/amplify/2017-07-25/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/amplify/2017-07-25/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/amplify/2017-07-25/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/amplify/2017-07-25/base/tag-key
+  take form tag-key
+
+load @drumwork/snow/amazonaws.com/amplify/2017-07-25/base/untag-resource-response
+  take form untag-resource-response
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot untag-resource, name <UntagResource>
+  note <Untags a resource with a specified Amazon Resource Name (ARN).>
+
+  take resource-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) to use to untag a resource.>
+  take tag-keys
+    like list
+      like tag-key
+    note <The tag keys to use to untag a resource.>
+
+  line </tags/{resource-arn}#tagKeys>
+
+  find <tagKeys>, loan tag-keys
+
+  loot 200
+    seed json, like untag-resource-response
+    note <Success>
+  loot 480
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 481
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

@@ -1,0 +1,31 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/payout
+  take form payout
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-payouts-payout-cancel-body
+  take form post-payouts-payout-cancel-body
+
+boot post-payouts-payout-cancel, name <PostPayoutsPayoutCancel>
+  note <A previously created payout can be canceled if it has not yet been paid out. Funds will be refunded to your available balance. You may not cancel automatic Stripe payouts.>
+
+  take payout
+    like native-string
+  take post-payouts-payout-cancel-body, like post-payouts-payout-cancel-body
+    void take
+
+  line </v1/payouts/{payout}/cancel>
+
+  seed x-www-form-urlencoded, loan post-payouts-payout-cancel-body
+
+  loot 200
+    seed json, like payout
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

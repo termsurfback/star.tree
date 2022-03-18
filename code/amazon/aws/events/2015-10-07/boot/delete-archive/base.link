@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/delete-archive-response
+  take form delete-archive-response
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-archive, name <DeleteArchive>
+  note <Deletes the specified archive.>
+
+  take x-amz-target
+    like native-string
+  take delete-archive-request, like delete-archive-request
+
+  line </#X-Amz-Target=AWSEvents.DeleteArchive>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-archive-request
+
+  loot 200
+    seed json, like delete-archive-response
+    note <Success>
+  loot 480
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-exception
+    note <InternalException>

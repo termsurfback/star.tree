@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-endpoint
+  take form db-cluster-endpoint
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-endpoint-not-found-fault
+  take form db-cluster-endpoint-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-cluster-endpoint-state-fault
+  take form invalid-db-cluster-endpoint-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-db-cluster-endpoint, name <POST_DeleteDBClusterEndpoint>
+  note <Deletes a custom endpoint and removes it from an Amazon Aurora DB cluster.
+
+This action only applies to Aurora DB clusters.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-db-cluster-endpoint-message, like delete-db-cluster-endpoint-message
+    void take
+
+  line </#Action=DeleteDBClusterEndpoint>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-db-cluster-endpoint-message
+
+  loot 200
+    seed xml, like db-cluster-endpoint
+    note <Success>
+  loot 480
+    seed xml, like invalid-db-cluster-endpoint-state-fault
+    note <InvalidDBClusterEndpointStateFault>
+  loot 481
+    seed xml, like db-cluster-endpoint-not-found-fault
+    note <DBClusterEndpointNotFoundFault>
+  loot 482
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>

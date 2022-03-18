@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/amplify/2017-07-25/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/amplify/2017-07-25/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/amplify/2017-07-25/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/amplify/2017-07-25/base/list-jobs-result
+  take form list-jobs-result
+
+load @drumwork/snow/amazonaws.com/amplify/2017-07-25/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-jobs, name <ListJobs>
+  note <Lists the jobs for a branch of an Amplify app.>
+
+  take app-id
+    like native-string
+    note <The unique ID for an Amplify app.>
+  take branch-name
+    like native-string
+    note <The name for a branch.>
+  take next-token
+    like native-string
+    note <A pagination token. Set to null to start listing steps from the start. If a non-null pagination token is returned in a result, pass its value in here to list more steps.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of records to list in a single response.>
+    void take
+
+  line </apps/{app-id}/branches/{branch-name}/jobs>
+
+  find <nextToken>, loan next-token
+  find <maxResults>, loan max-results
+
+  loot 200
+    seed json, like list-jobs-result
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 482
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 483
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>

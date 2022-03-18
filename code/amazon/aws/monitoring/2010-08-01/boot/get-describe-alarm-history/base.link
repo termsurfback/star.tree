@@ -1,0 +1,81 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/alarm-type
+  take form alarm-type
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/describe-alarm-history-output
+  take form describe-alarm-history-output
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-alarm-history, name <GET_DescribeAlarmHistory>
+  note <Retrieves the history for the specified alarm. You can filter the results by date range or item type. If an alarm name is not specified, the histories for either all metric alarms or all composite alarms are returned.
+
+CloudWatch retains the history of an alarm even if you delete the alarm.>
+
+  take alarm-name
+    like native-string
+    note <The name of the alarm.>
+    void take
+  take alarm-types
+    like list
+      like alarm-type
+    note <Use this parameter to specify whether you want the operation to return metric alarms or composite alarms. If you omit this parameter, only metric alarms are returned.>
+    void take
+  take history-item-type
+    like native-string
+    note <The type of alarm histories to retrieve.>
+    void take
+  take start-date
+    like native-string
+    note <The starting date to retrieve alarm history.>
+    void take
+  take end-date
+    like native-string
+    note <The ending date to retrieve alarm history.>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of alarm history records to retrieve.>
+    void take
+  take next-token
+    like native-string
+    note <The token returned by a previous call to indicate that there is more data available.>
+    void take
+  take scan-by
+    like native-string
+    note <Specified whether to return the newest or oldest alarm history first. Specify `TimestampDescending` to have the newest event history returned first, and specify `TimestampAscending` to have the oldest history returned first.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeAlarmHistory>
+
+  find <AlarmName>, loan alarm-name
+  find <AlarmTypes>, loan alarm-types
+  find <HistoryItemType>, loan history-item-type
+  find <StartDate>, loan start-date
+  find <EndDate>, loan end-date
+  find <MaxRecords>, loan max-records
+  find <NextToken>, loan next-token
+  find <ScanBy>, loan scan-by
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-alarm-history-output
+    note <Success>
+  loot 480
+    seed xml, like invalid-next-token
+    note <InvalidNextToken>

@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/describe-stream-output
+  take form describe-stream-output
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-stream, name <DescribeStream>
+  note <Describes the specified Kinesis data stream.
+
+The information returned includes the stream name, Amazon Resource Name (ARN), creation time, enhanced metric configuration, and shard map. The shard map is an array of shard objects. For each shard object, there is the hash key and sequence number ranges that the shard spans, and the IDs of any earlier shards that played in a role in creating the shard. Every record ingested in the stream is identified by a sequence number, which is assigned when the record is put into the stream.
+
+You can limit the number of shards returned by each call. For more information, see [Retrieving Shards from a Stream](https://docs.aws.amazon.com/kinesis/latest/dev/kinesis-using-sdk-java-retrieve-shards.html) in the _Amazon Kinesis Data Streams Developer Guide_.
+
+There are no guarantees about the chronological order shards returned. To process shards in chronological order, use the ID of the parent shard to track the lineage to the oldest shard.
+
+This operation has a limit of 10 transactions per second per account.>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take exclusive-start-shard-id
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-stream-input, like describe-stream-input
+
+  line </#X-Amz-Target=Kinesis_20131202.DescribeStream>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <Limit>, loan limit
+  find <ExclusiveStartShardId>, loan exclusive-start-shard-id
+
+  seed json, loan describe-stream-input
+
+  loot 200
+    seed json, like describe-stream-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>

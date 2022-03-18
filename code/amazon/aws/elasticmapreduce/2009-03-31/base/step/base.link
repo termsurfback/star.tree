@@ -1,0 +1,42 @@
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/action-on-failure
+  take form action-on-failure
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/hadoop-step-config
+  take form hadoop-step-config
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/step-id
+  take form step-id
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/step-status
+  take form step-status
+
+load @drumwork/snow/base/string
+  take form string
+
+form step, name <Step>
+  note <This represents a step in a cluster.>
+  take id, name <Id>
+    like step-id
+    void take
+    note <The identifier of the cluster step.>
+  take name, name <Name>
+    like string
+    void take
+    note <The name of the cluster step.>
+  take config, name <Config>
+    like hadoop-step-config
+    void take
+    note <The Hadoop job configuration of the cluster step.>
+  take action-on-failure, name <ActionOnFailure>
+    like action-on-failure
+    void take
+    note <The action to take when the cluster step fails. Possible values are `TERMINATE_CLUSTER`, `CANCEL_AND_WAIT`, and `CONTINUE`. `TERMINATE_JOB_FLOW` is provided for backward compatibility. We recommend using `TERMINATE_CLUSTER` instead.
+
+If a cluster's `StepConcurrencyLevel` is greater than `1`, do not use `AddJobFlowSteps` to submit a step with this parameter set to `CANCEL_AND_WAIT` or `TERMINATE_CLUSTER`. The step is not submitted and the action fails with a message that the `ActionOnFailure` setting is not valid.
+
+If you change a cluster's `StepConcurrencyLevel` to be greater than 1 while a step is running, the `ActionOnFailure` parameter may not behave as you expect. In this case, for a step that fails with this parameter set to `CANCEL_AND_WAIT`, pending steps and the running step are not canceled; for a step that fails with this parameter set to `TERMINATE_CLUSTER`, the cluster does not terminate.>
+  take status, name <Status>
+    like step-status
+    void take
+    note <The current execution status details of the cluster step.>

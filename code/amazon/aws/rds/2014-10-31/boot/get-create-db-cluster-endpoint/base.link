@@ -1,0 +1,100 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-endpoint
+  take form db-cluster-endpoint
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-endpoint-already-exists-fault
+  take form db-cluster-endpoint-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-endpoint-quota-exceeded-fault
+  take form db-cluster-endpoint-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-instance-state-fault
+  take form invalid-db-instance-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/tag
+  take form tag
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-create-db-cluster-endpoint, name <GET_CreateDBClusterEndpoint>
+  note <Creates a new custom endpoint and associates it with an Amazon Aurora DB cluster.
+
+This action only applies to Aurora DB clusters.>
+
+  take db-cluster-identifier
+    like native-string
+    note <The DB cluster identifier of the DB cluster associated with the endpoint. This parameter is stored as a lowercase string.>
+  take db-cluster-endpoint-identifier
+    like native-string
+    note <The identifier to use for the new endpoint. This parameter is stored as a lowercase string.>
+  take endpoint-type
+    like native-string
+    note <The type of the endpoint. One of: `READER`, `WRITER`, `ANY`.>
+  take static-members
+    like list
+      like string
+    note <List of DB instance identifiers that are part of the custom endpoint group.>
+    void take
+  take excluded-members
+    like list
+      like string
+    note <List of DB instance identifiers that aren't part of the custom endpoint group. All other eligible instances are reachable through the custom endpoint. Only relevant if the list of static members is empty.>
+    void take
+  take tags
+    like list
+      like tag
+    note <The tags to be assigned to the Amazon RDS resource.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateDBClusterEndpoint>
+
+  find <DBClusterIdentifier>, loan db-cluster-identifier
+  find <DBClusterEndpointIdentifier>, loan db-cluster-endpoint-identifier
+  find <EndpointType>, loan endpoint-type
+  find <StaticMembers>, loan static-members
+  find <ExcludedMembers>, loan excluded-members
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like db-cluster-endpoint
+    note <Success>
+  loot 480
+    seed xml, like db-cluster-endpoint-quota-exceeded-fault
+    note <DBClusterEndpointQuotaExceededFault>
+  loot 481
+    seed xml, like db-cluster-endpoint-already-exists-fault
+    note <DBClusterEndpointAlreadyExistsFault>
+  loot 482
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>
+  loot 483
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>
+  loot 484
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>
+  loot 485
+    seed xml, like invalid-db-instance-state-fault
+    note <InvalidDBInstanceStateFault>

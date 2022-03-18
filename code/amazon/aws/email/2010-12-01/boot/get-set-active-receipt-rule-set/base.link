@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/rule-set-does-not-exist-exception
+  take form rule-set-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/set-active-receipt-rule-set-response
+  take form set-active-receipt-rule-set-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-set-active-receipt-rule-set, name <GET_SetActiveReceiptRuleSet>
+  note <Sets the specified receipt rule set as the active receipt rule set.
+
+To disable your email-receiving through Amazon SES completely, you can call this API with RuleSetName set to null.
+
+For information about managing receipt rule sets, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-managing-receipt-rule-sets.html).
+
+You can execute this operation no more than once per second.>
+
+  take rule-set-name
+    like native-string
+    note <The name of the receipt rule set to make active. Setting this value to null disables all email receiving.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=SetActiveReceiptRuleSet>
+
+  find <RuleSetName>, loan rule-set-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like set-active-receipt-rule-set-response
+    note <Success>
+  loot 480
+    seed xml, like rule-set-does-not-exist-exception
+    note <RuleSetDoesNotExistException>

@@ -1,0 +1,79 @@
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/get-recommendations-response
+  take form get-recommendations-response
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-recommendations, name <GetRecommendations>
+  note <Returns a list of [`Recommendation`](https://docs.aws.amazon.com/codeguru/latest/profiler-api/API_Recommendation.html) objects that contain recommendations for a profiling group for a given time period. A list of [`Anomaly`](https://docs.aws.amazon.com/codeguru/latest/profiler-api/API_Anomaly.html) objects that contains details about anomalies detected in the profiling group for the same time period is also returned.>
+
+  take profiling-group-name
+    like native-string
+    note <The name of the profiling group to get analysis data about.>
+  take end-time
+    like native-string
+    note <The start time of the profile to get analysis data about. You must specify `startTime` and `endTime`. This is specified using the ISO 8601 format. For example, 2020-06-01T13:15:02.001Z represents 1 millisecond past June 1, 2020 1:15:02 PM UTC.>
+  take locale
+    like native-string
+    note <The language used to provide analysis. Specify using a string that is one of the following `BCP 47` language codes.
+
+- `de-DE` - German, Germany
+
+- `en-GB` - English, United Kingdom
+
+- `en-US` - English, United States
+
+- `es-ES` - Spanish, Spain
+
+- `fr-FR` - French, France
+
+- `it-IT` - Italian, Italy
+
+- `ja-JP` - Japanese, Japan
+
+- `ko-KR` - Korean, Republic of Korea
+
+- `pt-BR` - Portugese, Brazil
+
+- `zh-CN` - Chinese, China
+
+- `zh-TW` - Chinese, Taiwan>
+    void take
+  take start-time
+    like native-string
+    note <The end time of the profile to get analysis data about. You must specify `startTime` and `endTime`. This is specified using the ISO 8601 format. For example, 2020-06-01T13:15:02.001Z represents 1 millisecond past June 1, 2020 1:15:02 PM UTC.>
+
+  line </internal/profilingGroups/{profiling-group-name}/recommendations#endTime&startTime>
+
+  find <endTime>, loan end-time
+  find <locale>, loan locale
+  find <startTime>, loan start-time
+
+  loot 200
+    seed json, like get-recommendations-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

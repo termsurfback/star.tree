@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/list-domains-response
+  take form list-domains-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-domains, name <ListDomains>
+  note <This operation returns all the domain names registered with Amazon Route 53 for the current AWS account.>
+
+  take x-amz-target
+    like native-string
+  take max-items
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take list-domains-request, like list-domains-request
+
+  line </#X-Amz-Target=Route53Domains_v20140515.ListDomains>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxItems>, loan max-items
+  find <Marker>, loan marker
+
+  seed json, loan list-domains-request
+
+  loot 200
+    seed json, like list-domains-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input
+    note <InvalidInput>

@@ -1,0 +1,23 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/reseller/v1/base/customer
+  take form customer
+
+boot reseller-customers-patch, name <reseller.customers.patch>
+  note <Updates a customer account's settings. This method supports patch semantics. You cannot update `customerType` via the Reseller API, but a `"team"` customer can verify their domain and become `customerType = "domain"`. For more information, see [Verify your domain to unlock Essentials features](https://support.google.com/a/answer/9122284).>
+
+  take customer-id
+    like native-string
+    note <This can be either the customer's primary domain name or the customer's unique identifier. If the domain name for a customer changes, the old domain name cannot be used to access the customer, but the customer's unique identifier (as returned by the API) can always be used. We recommend storing the unique identifier in your systems where applicable.>
+  take customer, like customer
+    void take
+
+  line </apps/reseller/v1/customers/{customer-id}>
+
+  seed json, loan customer
+
+  loot 200
+    seed json, like customer
+    note <Successful response>

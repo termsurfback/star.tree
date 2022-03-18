@@ -1,0 +1,76 @@
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/create-template-alias-body
+  take form create-template-alias-body
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/create-template-alias-response
+  take form create-template-alias-response
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/resource-exists-exception
+  take form resource-exists-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/unsupported-user-edition-exception
+  take form unsupported-user-edition-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-template-alias, name <CreateTemplateAlias>
+  note <Creates a template alias for a template.>
+
+  take aws-account-id
+    like native-string
+    note <The ID of the Amazon Web Services account that contains the template that you creating an alias for.>
+  take template-id
+    like native-string
+    note <An ID for the template.>
+  take alias-name
+    like native-string
+    note <The name that you want to give to the template alias that you're creating. Don't start the alias name with the `$` character. Alias names that start with `$` are reserved by Amazon QuickSight.>
+  take create-template-alias-body, like create-template-alias-body
+
+  line </accounts/{aws-account-id}/templates/{template-id}/aliases/{alias-name}>
+
+  seed json, loan create-template-alias-body
+
+  loot 200
+    seed json, like create-template-alias-response
+    note <Success>
+  loot 480
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 483
+    seed json, like resource-exists-exception
+    note <ResourceExistsException>
+  loot 484
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 485
+    seed json, like unsupported-user-edition-exception
+    note <UnsupportedUserEditionException>
+  loot 486
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 487
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

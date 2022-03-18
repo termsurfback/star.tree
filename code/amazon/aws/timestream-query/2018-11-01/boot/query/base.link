@@ -1,0 +1,76 @@
+
+load @drumwork/snow/amazonaws.com/timestream-query/2018-11-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/timestream-query/2018-11-01/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/timestream-query/2018-11-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/timestream-query/2018-11-01/base/invalid-endpoint-exception
+  take form invalid-endpoint-exception
+
+load @drumwork/snow/amazonaws.com/timestream-query/2018-11-01/base/query-execution-exception
+  take form query-execution-exception
+
+load @drumwork/snow/amazonaws.com/timestream-query/2018-11-01/base/query-response
+  take form query-response
+
+load @drumwork/snow/amazonaws.com/timestream-query/2018-11-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/timestream-query/2018-11-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot query, name <Query>
+  note <Query is a synchronous operation that enables you to execute a query. Query will timeout after 60 seconds. You must update the default timeout in the SDK to support a timeout of 60 seconds. The result set will be truncated to 1MB. Service quotas apply. For more information, see Quotas in the Timestream Developer Guide.>
+
+  take x-amz-target
+    like native-string
+  take max-rows
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take query-request, like query-request
+
+  line </#X-Amz-Target=Timestream_20181101.Query>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxRows>, loan max-rows
+  find <NextToken>, loan next-token
+
+  seed json, loan query-request
+
+  loot 200
+    seed json, like query-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 483
+    seed json, like query-execution-exception
+    note <QueryExecutionException>
+  loot 484
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 485
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 486
+    seed json, like invalid-endpoint-exception
+    note <InvalidEndpointException>

@@ -1,0 +1,83 @@
+
+load @drumwork/snow/amazonaws.com/appmesh/2019-01-25/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/appmesh/2019-01-25/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/appmesh/2019-01-25/base/create-virtual-gateway-body
+  take form create-virtual-gateway-body
+
+load @drumwork/snow/amazonaws.com/appmesh/2019-01-25/base/create-virtual-gateway-output
+  take form create-virtual-gateway-output
+
+load @drumwork/snow/amazonaws.com/appmesh/2019-01-25/base/forbidden-exception
+  take form forbidden-exception
+
+load @drumwork/snow/amazonaws.com/appmesh/2019-01-25/base/internal-server-error-exception
+  take form internal-server-error-exception
+
+load @drumwork/snow/amazonaws.com/appmesh/2019-01-25/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/appmesh/2019-01-25/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/appmesh/2019-01-25/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/appmesh/2019-01-25/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-virtual-gateway, name <CreateVirtualGateway>
+  note <Creates a virtual gateway.
+
+A virtual gateway allows resources outside your mesh to communicate to resources that are inside your mesh. The virtual gateway represents an Envoy proxy running in an Amazon ECS task, in a Kubernetes service, or on an Amazon EC2 instance. Unlike a virtual node, which represents an Envoy running with an application, a virtual gateway represents Envoy deployed by itself.
+
+For more information about virtual gateways, see [Virtual gateways](https://docs.aws.amazon.com/app-mesh/latest/userguide/virtual_gateways.html).>
+
+  take mesh-name
+    like native-string
+    note <The name of the service mesh to create the virtual gateway in.>
+  take mesh-owner
+    like native-string
+    note <The AWS IAM account ID of the service mesh owner. If the account ID is not your own, then the account that you specify must share the mesh with your account before you can create the resource in the service mesh. For more information about mesh sharing, see [Working with shared meshes](https://docs.aws.amazon.com/app-mesh/latest/userguide/sharing.html).>
+    void take
+  take create-virtual-gateway-body, like create-virtual-gateway-body
+
+  line </v20190125/meshes/{mesh-name}/virtualGateways>
+
+  find <meshOwner>, loan mesh-owner
+
+  seed json, loan create-virtual-gateway-body
+
+  loot 200
+    seed json, like create-virtual-gateway-output
+    note <Success>
+  loot 480
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 481
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 482
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 483
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 484
+    seed json, like forbidden-exception
+    note <ForbiddenException>
+  loot 485
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 486
+    seed json, like internal-server-error-exception
+    note <InternalServerErrorException>
+  loot 487
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>

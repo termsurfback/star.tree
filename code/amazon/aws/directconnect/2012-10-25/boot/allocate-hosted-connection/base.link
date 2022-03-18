@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/connection
+  take form connection
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/direct-connect-client-exception
+  take form direct-connect-client-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/direct-connect-server-exception
+  take form direct-connect-server-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/duplicate-tag-keys-exception
+  take form duplicate-tag-keys-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/too-many-tags-exception
+  take form too-many-tags-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot allocate-hosted-connection, name <AllocateHostedConnection>
+  note <Creates a hosted connection on the specified interconnect or a link aggregation group (LAG) of interconnects.
+
+Allocates a VLAN number and a specified amount of capacity (bandwidth) for use by a hosted connection on the specified interconnect or LAG of interconnects. Amazon Web Services polices the hosted connection for the specified capacity and the Direct Connect Partner must also police the hosted connection for the specified capacity.
+
+Intended for use by Direct Connect Partners only.>
+
+  take x-amz-target
+    like native-string
+  take allocate-hosted-connection-request, like allocate-hosted-connection-request
+
+  line </#X-Amz-Target=OvertureService.AllocateHostedConnection>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan allocate-hosted-connection-request
+
+  loot 200
+    seed json, like connection
+    note <Success>
+  loot 480
+    seed json, like duplicate-tag-keys-exception
+    note <DuplicateTagKeysException>
+  loot 481
+    seed json, like too-many-tags-exception
+    note <TooManyTagsException>
+  loot 482
+    seed json, like direct-connect-server-exception
+    note <DirectConnectServerException>
+  loot 483
+    seed json, like direct-connect-client-exception
+    note <DirectConnectClientException>

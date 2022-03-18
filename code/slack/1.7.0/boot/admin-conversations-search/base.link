@@ -1,0 +1,70 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+boot admin-conversations-search, name <admin_conversations_search>
+  note <Search for public or private channels in an Enterprise organization.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `admin.conversations:read`>
+  take team-ids
+    like native-string
+    note <Comma separated string of team IDs, signifying the workspaces to search through.>
+    void take
+  take query
+    like native-string
+    note <Name of the the channel to query by.>
+    void take
+  take limit
+    like native-integer
+    note <Maximum number of items to be returned. Must be between 1 - 20 both inclusive. Default is 10.>
+    void take
+  take cursor
+    like native-string
+    note <Set `cursor` to `next_cursor` returned by the previous call to list items in the next page.>
+    void take
+  take search-channel-types
+    like native-string
+    note <The type of channel to include or exclude in the search. For example `private` will search private channels, while `private_exclude` will exclude them. For a full list of types, check the [Types section](#types).>
+    void take
+  take sort
+    like native-string
+    note <Possible values are `relevant` (search ranking based on what we think is closest), `name` (alphabetical), `member_count` (number of users in the channel), and `created` (date channel was created). You can optionally pair this with the `sort_dir` arg to change how it is sorted >
+    void take
+  take sort-dir
+    like native-string
+    note <Sort direction. Possible values are `asc` for ascending order like (1, 2, 3) or (a, b, c), and `desc` for descending order like (3, 2, 1) or (c, b, a)>
+    void take
+
+  line </admin.conversations.search>
+
+  hint <token>, loan token
+
+  find <team_ids>, loan team-ids
+  find <query>, loan query
+  find <limit>, loan limit
+  find <cursor>, loan cursor
+  find <search_channel_types>, loan search-channel-types
+  find <sort>, loan sort
+  find <sort_dir>, loan sort-dir
+
+  loot 200
+    seed json
+      like form
+        take channels, name <channels>
+        take next-cursor, name <next_cursor>
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take error, name <error>
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response>

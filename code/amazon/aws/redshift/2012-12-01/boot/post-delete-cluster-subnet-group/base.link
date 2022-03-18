@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-subnet-group-not-found-fault
+  take form cluster-subnet-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-subnet-group-state-fault
+  take form invalid-cluster-subnet-group-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-subnet-state-fault
+  take form invalid-cluster-subnet-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-cluster-subnet-group, name <POST_DeleteClusterSubnetGroup>
+  note <Deletes the specified cluster subnet group.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-cluster-subnet-group-message, like delete-cluster-subnet-group-message
+    void take
+
+  line </#Action=DeleteClusterSubnetGroup>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-cluster-subnet-group-message
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like invalid-cluster-subnet-group-state-fault
+    note <InvalidClusterSubnetGroupStateFault>
+  loot 481
+    seed xml, like invalid-cluster-subnet-state-fault
+    note <InvalidClusterSubnetStateFault>
+  loot 482
+    seed xml, like cluster-subnet-group-not-found-fault
+    note <ClusterSubnetGroupNotFoundFault>

@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/list-instance-profiles-for-role-response
+  take form list-instance-profiles-for-role-response
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-list-instance-profiles-for-role, name <POST_ListInstanceProfilesForRole>
+  note <Lists the instance profiles that have the specified associated IAM role. If there are none, the operation returns an empty list. For more information about instance profiles, go to [About instance profiles](https://docs.aws.amazon.com/IAM/latest/UserGuide/AboutInstanceProfiles.html).
+
+You can paginate the results using the `MaxItems` and `Marker` parameters.>
+
+  take max-items
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take list-instance-profiles-for-role-request, like list-instance-profiles-for-role-request
+    void take
+
+  line </#Action=ListInstanceProfilesForRole>
+
+  find <MaxItems>, loan max-items
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan list-instance-profiles-for-role-request
+
+  loot 200
+    seed xml, like list-instance-profiles-for-role-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

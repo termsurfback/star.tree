@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/appflow/2020-08-23/base/describe-connectors-body
+  take form describe-connectors-body
+
+load @drumwork/snow/amazonaws.com/appflow/2020-08-23/base/describe-connectors-response
+  take form describe-connectors-response
+
+load @drumwork/snow/amazonaws.com/appflow/2020-08-23/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/appflow/2020-08-23/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-connectors, name <DescribeConnectors>
+  note <Describes the connectors vended by Amazon AppFlow for specified connector types. If you don't specify a connector type, this operation describes all connectors vended by Amazon AppFlow. If there are more connectors than can be returned in one page, the response contains a `nextToken` object, which can be be passed in to the next call to the `DescribeConnectors` API operation to retrieve the next page.>
+
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-connectors-body, like describe-connectors-body
+
+  line </describe-connectors>
+
+  find <nextToken>, loan next-token
+
+  seed json, loan describe-connectors-body
+
+  loot 200
+    seed json, like describe-connectors-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>

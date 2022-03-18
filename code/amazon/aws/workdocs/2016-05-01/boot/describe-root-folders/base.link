@@ -1,0 +1,67 @@
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/describe-root-folders-response
+  take form describe-root-folders-response
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/failed-dependency-exception
+  take form failed-dependency-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/invalid-argument-exception
+  take form invalid-argument-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/unauthorized-operation-exception
+  take form unauthorized-operation-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/unauthorized-resource-access-exception
+  take form unauthorized-resource-access-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-root-folders, name <DescribeRootFolders>
+  note <Describes the current user's special folders; the `RootFolder` and the `RecycleBin`. `RootFolder` is the root of user's files and folders and `RecycleBin` is the root of recycled items. This is not a valid action for SigV4 (administrative API) clients.
+
+This action requires an authentication token. To get an authentication token, register an application with Amazon WorkDocs. For more information, see [Authentication and Access Control for User Applications](https://docs.aws.amazon.com/workdocs/latest/developerguide/wd-auth-user.html) in the _Amazon WorkDocs Developer Guide_.>
+
+  take authentication
+    like native-string
+    note <Amazon WorkDocs authentication token.>
+  take limit
+    like native-integer
+    note <The maximum number of items to return.>
+    void take
+  take marker
+    like native-string
+    note <The marker for the next set of results. (You received this marker from a previous call.)>
+    void take
+
+  line </api/v1/me/root#Authentication>
+
+  hint <Authentication>, loan authentication
+
+  find <limit>, loan limit
+  find <marker>, loan marker
+
+  loot 200
+    seed json, like describe-root-folders-response
+    note <Success>
+  loot 480
+    seed json, like unauthorized-operation-exception
+    note <UnauthorizedOperationException>
+  loot 481
+    seed json, like unauthorized-resource-access-exception
+    note <UnauthorizedResourceAccessException>
+  loot 482
+    seed json, like invalid-argument-exception
+    note <InvalidArgumentException>
+  loot 483
+    seed json, like failed-dependency-exception
+    note <FailedDependencyException>
+  loot 484
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

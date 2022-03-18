@@ -1,0 +1,80 @@
+
+load @drumwork/snow/amazonaws.com/organizations/2016-11-28/base/action-type
+  take form action-type
+
+load @drumwork/snow/amazonaws.com/organizations/2016-11-28/base/handshake-arn
+  take form handshake-arn
+
+load @drumwork/snow/amazonaws.com/organizations/2016-11-28/base/handshake-id
+  take form handshake-id
+
+load @drumwork/snow/amazonaws.com/organizations/2016-11-28/base/handshake-parties
+  take form handshake-parties
+
+load @drumwork/snow/amazonaws.com/organizations/2016-11-28/base/handshake-resources
+  take form handshake-resources
+
+load @drumwork/snow/amazonaws.com/organizations/2016-11-28/base/handshake-state
+  take form handshake-state
+
+load @drumwork/snow/amazonaws.com/organizations/2016-11-28/base/timestamp
+  take form timestamp
+
+form handshake, name <Handshake>
+  note <Contains information that must be exchanged to securely establish a relationship between two accounts (an _originator_ and a _recipient_). For example, when a management account (the originator) invites another account (the recipient) to join its organization, the two accounts exchange information as a series of handshake requests and responses.
+
+**Note:** Handshakes that are `CANCELED`, `ACCEPTED`, or `DECLINED` show up in lists for only 30 days after entering that state After that they are deleted.>
+  take id, name <Id>
+    like handshake-id
+    void take
+    note <The unique identifier (ID) of a handshake. The originating account creates the ID when it initiates the handshake.
+
+The [regex pattern](http://wikipedia.org/wiki/regex) for handshake ID string requires "h-" followed by from 8 to 32 lowercase letters or digits.>
+  take arn, name <Arn>
+    like handshake-arn
+    void take
+    note <The Amazon Resource Name (ARN) of a handshake.
+
+For more information about ARNs in Organizations, see [ARN Formats Supported by Organizations](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsorganizations.html#awsorganizations-resources-for-iam-policies) in the _AWS Service Authorization Reference_.>
+  take parties, name <Parties>
+    like handshake-parties
+    void take
+    note <Information about the two accounts that are participating in the handshake.>
+  take state, name <State>
+    like handshake-state
+    void take
+    note <The current state of the handshake. Use the state to trace the flow of the handshake through the process from its creation to its acceptance. The meaning of each of the valid values is as follows:
+
+- **REQUESTED**: This handshake was sent to multiple recipients (applicable to only some handshake types) and not all recipients have responded yet. The request stays in this state until all recipients respond.
+
+- **OPEN**: This handshake was sent to multiple recipients (applicable to only some policy types) and all recipients have responded, allowing the originator to complete the handshake action.
+
+- **CANCELED**: This handshake is no longer active because it was canceled by the originating account.
+
+- **ACCEPTED**: This handshake is complete because it has been accepted by the recipient.
+
+- **DECLINED**: This handshake is no longer active because it was declined by the recipient account.
+
+- **EXPIRED**: This handshake is no longer active because the originator did not receive a response of any kind from the recipient before the expiration time (15 days).>
+  take requested-timestamp, name <RequestedTimestamp>
+    like timestamp
+    void take
+    note <The date and time that the handshake request was made.>
+  take expiration-timestamp, name <ExpirationTimestamp>
+    like timestamp
+    void take
+    note <The date and time that the handshake expires. If the recipient of the handshake request fails to respond before the specified date and time, the handshake becomes inactive and is no longer valid.>
+  take action, name <Action>
+    like action-type
+    void take
+    note <The type of handshake, indicating what action occurs when the recipient accepts the handshake. The following handshake types are supported:
+
+- **INVITE**: This type of handshake represents a request to join an organization. It is always sent from the management account to only non-member accounts.
+
+- **ENABLE_ALL_FEATURES**: This type of handshake represents a request to enable all features in an organization. It is always sent from the management account to only _invited_ member accounts. Created accounts do not receive this because those accounts were created by the organization's management account and approval is inferred.
+
+- **APPROVE_ALL_FEATURES**: This type of handshake is sent from the Organizations service when all member accounts have approved the `ENABLE_ALL_FEATURES` invitation. It is sent only to the management account and signals the master that it can finalize the process to enable all features.>
+  take resources, name <Resources>
+    like handshake-resources
+    void take
+    note <Additional information that is needed to process the handshake.>

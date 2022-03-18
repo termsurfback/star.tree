@@ -1,0 +1,34 @@
+
+load @drumwork/snow/amazonaws.com/iotsecuretunneling/2018-10-05/base/list-tunnels-response
+  take form list-tunnels-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-tunnels, name <ListTunnels>
+  note <List all tunnels for an AWS account. Tunnels are listed by creation time in descending order, newer tunnels will be listed before older tunnels.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-tunnels-request, like list-tunnels-request
+
+  line </#X-Amz-Target=IoTSecuredTunneling.ListTunnels>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-tunnels-request
+
+  loot 200
+    seed json, like list-tunnels-response
+    note <Success>

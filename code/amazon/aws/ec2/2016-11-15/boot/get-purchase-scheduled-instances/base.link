@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/purchase-request
+  take form purchase-request
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/purchase-scheduled-instances-result
+  take form purchase-scheduled-instances-result
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-purchase-scheduled-instances, name <GET_PurchaseScheduledInstances>
+  note <Purchases the Scheduled Instances with the specified schedule.
+
+Scheduled Instances enable you to purchase Amazon EC2 compute capacity by the hour for a one-year term. Before you can purchase a Scheduled Instance, you must call DescribeScheduledInstanceAvailability to check for available schedules and obtain a purchase token. After you purchase a Scheduled Instance, you must call RunScheduledInstances during each scheduled time period.
+
+After you purchase a Scheduled Instance, you can't cancel, modify, or resell your purchase.>
+
+  take client-token
+    like native-string
+    note <Unique, case-sensitive identifier that ensures the idempotency of the request. For more information, see [Ensuring Idempotency](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/Run_Instance_Idempotency.html).>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take purchase-request
+    like list
+      like purchase-request
+    note <The purchase requests.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=PurchaseScheduledInstances>
+
+  find <ClientToken>, loan client-token
+  find <DryRun>, loan dry-run
+  find <PurchaseRequest>, loan purchase-request
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like purchase-scheduled-instances-result
+    note <Success>

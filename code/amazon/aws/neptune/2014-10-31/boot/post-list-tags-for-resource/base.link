@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-snapshot-not-found-fault
+  take form db-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/tag-list-message
+  take form tag-list-message
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-list-tags-for-resource, name <POST_ListTagsForResource>
+  note <Lists all tags on an Amazon Neptune resource.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take list-tags-for-resource-message, like list-tags-for-resource-message
+    void take
+
+  line </#Action=ListTagsForResource>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan list-tags-for-resource-message
+
+  loot 200
+    seed xml, like tag-list-message
+    note <Success>
+  loot 480
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>
+  loot 481
+    seed xml, like db-snapshot-not-found-fault
+    note <DBSnapshotNotFoundFault>
+  loot 482
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>

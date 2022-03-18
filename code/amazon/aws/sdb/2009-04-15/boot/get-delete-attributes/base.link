@@ -1,0 +1,83 @@
+
+load @drumwork/snow/amazonaws.com/sdb/2009-04-15/base/attribute-does-not-exist
+  take form attribute-does-not-exist
+
+load @drumwork/snow/amazonaws.com/sdb/2009-04-15/base/deletable-attribute
+  take form deletable-attribute
+
+load @drumwork/snow/amazonaws.com/sdb/2009-04-15/base/no-such-domain
+  take form no-such-domain
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-delete-attributes, name <GET_DeleteAttributes>
+  note <Deletes one or more attributes associated with an item. If all attributes of the item are deleted, the item is deleted.
+
+If `DeleteAttributes` is called without being passed any attributes or values specified, all the attributes for the item are deleted.
+
+`DeleteAttributes` is an idempotent operation; running it multiple times on the same item or attribute does not result in an error response.
+
+Because Amazon SimpleDB makes multiple copies of item data and uses an eventual consistency update model, performing a GetAttributes or Select operation (read) immediately after a `DeleteAttributes` or PutAttributes operation (write) might not return updated item data.>
+
+  take domain-name
+    like native-string
+    note <The name of the domain in which to perform the operation.>
+  take item-name
+    like native-string
+    note <The name of the item. Similar to rows on a spreadsheet, items represent individual objects that contain one or more value-attribute pairs.>
+  take attributes
+    like list
+      like deletable-attribute
+    note <A list of Attributes. Similar to columns on a spreadsheet, attributes represent categories of data that can be assigned to items.>
+    void take
+  take expected
+    like form
+      take name, name <Name>
+        like string
+        void take
+        note <The name of the attribute involved in the condition.>
+      take value, name <Value>
+        like string
+        void take
+        note <The value of an attribute. This value can only be specified when the `Exists` parameter is equal to `true`.>
+      take exists, name <Exists>
+        like boolean
+        void take
+        note <A value specifying whether or not the specified attribute must exist with the specified value in order for the update condition to be satisfied. Specify `true` if the attribute must exist for the update condition to be satisfied. Specify `false` if the attribute should not exist in order for the update condition to be satisfied.>
+    note <The update condition which, if specified, determines whether the specified attributes will be deleted or not. The update condition must be satisfied in order for this request to be processed and the attributes to be deleted.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteAttributes>
+
+  find <DomainName>, loan domain-name
+  find <ItemName>, loan item-name
+  find <Attributes>, loan attributes
+  find <Expected>, loan expected
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 400
+    seed xml, like no-such-domain
+    note <NoSuchDomain>
+  loot 404
+    seed xml, like attribute-does-not-exist
+    note <AttributeDoesNotExist>

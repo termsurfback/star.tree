@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/tag-resource-body
+  take form tag-resource-body
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/tag-resource-response
+  take form tag-resource-response
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot tag-resource, name <TagResource>
+  note <Use to assign one or more tags to a resource.>
+
+  take resource-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the resource that the tags are added to.>
+  take tag-resource-body, like tag-resource-body
+
+  line </tags/{resource-arn}>
+
+  seed json, loan tag-resource-body
+
+  loot 204
+    seed json, like tag-resource-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

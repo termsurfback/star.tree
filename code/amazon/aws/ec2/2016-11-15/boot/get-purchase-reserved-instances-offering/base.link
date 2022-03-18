@@ -1,0 +1,79 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/currency-code-values
+  take form currency-code-values
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/double
+  take form double
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/purchase-reserved-instances-offering-result
+  take form purchase-reserved-instances-offering-result
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-purchase-reserved-instances-offering, name <GET_PurchaseReservedInstancesOffering>
+  note <Purchases a Reserved Instance for use with your account. With Reserved Instances, you pay a lower hourly rate compared to On-Demand instance pricing.
+
+Use DescribeReservedInstancesOfferings to get a list of Reserved Instance offerings that match your specifications. After you've purchased a Reserved Instance, you can check for your new Reserved Instance with DescribeReservedInstances.
+
+To queue a purchase for a future date and time, specify a purchase time. If you do not specify a purchase time, the default is the current time.
+
+For more information, see [Reserved Instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts-on-demand-reserved-instances.html) and [Reserved Instance Marketplace](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ri-market-general.html) in the _Amazon EC2 User Guide_.>
+
+  take instance-count
+    like native-integer
+    note <The number of Reserved Instances to purchase.>
+  take reserved-instances-offering-id
+    like native-string
+    note <The ID of the Reserved Instance offering to purchase.>
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take limit-price
+    like form
+      take amount, name <Amount>
+        like double
+        void take
+        note <Used for Reserved Instance Marketplace offerings. Specifies the limit price on the total order (instanceCount * price).>
+        host xml
+          host name, text <amount>
+      take currency-code, name <CurrencyCode>
+        like currency-code-values
+        void take
+        note <The currency in which the `limitPrice` amount is specified. At this time, the only supported currency is `USD`.>
+        host xml
+          host name, text <currencyCode>
+    note <Specified for Reserved Instance Marketplace offerings to limit the total order and ensure that the Reserved Instances are not purchased at unexpected prices.>
+    void take
+  take purchase-time
+    like native-string
+    note <The time at which to purchase the Reserved Instance, in UTC format (for example, _YYYY_-_MM_-_DD_T_HH_:_MM_:_SS_Z).>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=PurchaseReservedInstancesOffering>
+
+  find <InstanceCount>, loan instance-count
+  find <ReservedInstancesOfferingId>, loan reserved-instances-offering-id
+  find <DryRun>, loan dry-run
+  find <LimitPrice>, loan limit-price
+  find <PurchaseTime>, loan purchase-time
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like purchase-reserved-instances-offering-result
+    note <Success>

@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/alias-configuration
+  take form alias-configuration
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/create-alias-body
+  take form create-alias-body
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/resource-conflict-exception
+  take form resource-conflict-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-alias, name <CreateAlias>
+  note <Creates an [alias](https://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html) for a Lambda function version. Use aliases to provide clients with a function identifier that you can update to invoke a different version.
+
+You can also map an alias to split invocation requests between two versions. Use the `RoutingConfig` parameter to specify a second version and the percentage of invocation requests that it receives.>
+
+  take function-name
+    like native-string
+    note <The name of the Lambda function.
+
+**Name formats** - **Function name** - `MyFunction`.
+
+- **Function ARN** - `arn:aws:lambda:us-west-2:123456789012:function:MyFunction`.
+
+- **Partial ARN** - `123456789012:function:MyFunction`.
+
+The length constraint applies only to the full ARN. If you specify only the function name, it is limited to 64 characters in length.>
+  take create-alias-body, like create-alias-body
+
+  line </2015-03-31/functions/{function-name}/aliases>
+
+  seed json, loan create-alias-body
+
+  loot 201
+    seed json, like alias-configuration
+    note <Success>
+  loot 480
+    seed json, like service-exception
+    note <ServiceException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like resource-conflict-exception
+    note <ResourceConflictException>
+  loot 483
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 484
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>

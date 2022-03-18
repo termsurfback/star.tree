@@ -1,0 +1,118 @@
+
+load @drumwork/land/code/javascript/base/native-string
+  take form native-string
+
+load @drumwork/land/code/javascript/base/promise
+  take form promise
+
+load @drumwork/land/code/javascript/stripejs/element/element-creator-options
+  take form element-creator-options
+
+load @drumwork/land/code/javascript/stripejs/element/element-factory
+  take form element-factory
+
+load @drumwork/land/code/javascript/stripejs/element/stripe-element
+  take form stripe-element
+
+load @drumwork/land/code/javascript/stripejs/payment/stripe-payment-options
+  take form stripe-payment-options
+
+load @drumwork/land/code/javascript/stripejs/payment/stripe-payment-request
+  take form stripe-payment-request
+
+load @drumwork/land/code/javascript/stripejs/source/source-data
+  take form source-data
+
+load @drumwork/land/code/javascript/stripejs/source/source-result
+  take form source-result
+
+load @drumwork/land/code/javascript/stripejs/token/bank-token-data
+  take form bank-token-data
+
+load @drumwork/land/code/javascript/stripejs/token/iban-token-data
+  take form iban-token-data
+
+load @drumwork/land/code/javascript/stripejs/token/pii-token-data
+  take form pii-token-data
+
+load @drumwork/land/code/javascript/stripejs/token/token-data
+  take form token-data
+
+load @drumwork/land/code/javascript/stripejs/token/token-result
+  take form token-result
+
+load @drumwork/seed/code/form/form
+  take form form
+    save form form-link-text
+
+load @drumwork/seed/code/form/sink
+  take form sink
+    save form sink-link-text
+
+form stripe-js, name <StripeJS>
+  take api-key, name <_apiKey>
+    like native-string
+    lock free
+  take key-mode, name <_keyMode>
+    like native-string
+    lock free
+
+  task elements, name <elements>
+    take options, like element-creator-options
+      void take
+    free seed, like element-factory
+
+  task payment-request, name <paymentRequest>
+    take options, like stripe-payment-options
+    free seed, like stripe-payment-request
+
+  task create-token, name <createToken>
+    take element, like stripe-element
+    take data
+      like sink-link-text
+        like token-data
+        like iban-token-data
+      void take
+    free seed
+      like promise
+        like token-result
+
+  task create-token, name <createToken>
+    take type, text <bank_account>
+    take data, like bank-token-data
+    free seed
+      like promise
+        like token-result
+
+  task create-token, name <createToken>
+    take type, text <pii>
+    take data, like pii-token-data
+    free seed
+      like promise
+        like token-result
+
+  task create-source, name <createSource>
+    take element, like stripe-element
+    take data, like source-data
+    free seed
+      like promise
+        like source-result
+
+  task create-source, name <createSource>
+    take data, like source-data
+    free seed
+      like promise
+        like source-result
+
+  task retrieve-source, name <retrieveSource>
+    take x1, like form-link-text
+      like form-link-text
+        take id, name <id>
+          like native-string
+          lock free
+        take client-secret, name <client_secret>
+          like native-string
+          lock free
+    free seed
+      like promise
+        like source-result

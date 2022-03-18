@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/promote-read-replica-db-cluster-result
+  take form promote-read-replica-db-cluster-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-promote-read-replica-db-cluster, name <POST_PromoteReadReplicaDBCluster>
+  note <Not supported.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take promote-read-replica-db-cluster-message, like promote-read-replica-db-cluster-message
+    void take
+
+  line </#Action=PromoteReadReplicaDBCluster>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan promote-read-replica-db-cluster-message
+
+  loot 200
+    seed xml, like promote-read-replica-db-cluster-result
+    note <Success>
+  loot 480
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>
+  loot 481
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>

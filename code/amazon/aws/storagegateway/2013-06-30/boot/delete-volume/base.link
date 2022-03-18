@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/delete-volume-output
+  take form delete-volume-output
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-volume, name <DeleteVolume>
+  note <Deletes the specified storage volume that you previously created using the CreateCachediSCSIVolume or CreateStorediSCSIVolume API. This operation is only supported in the cached volume and stored volume types. For stored volume gateways, the local disk that was configured as the storage volume is not deleted. You can reuse the local disk to create another storage volume.
+
+Before you delete a volume, make sure there are no iSCSI connections to the volume you are deleting. You should also make sure there is no snapshot in progress. You can use the Amazon Elastic Compute Cloud (Amazon EC2) API to query snapshots on the volume you are deleting and check the snapshot status. For more information, go to [DescribeSnapshots](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeSnapshots.html) in the _Amazon Elastic Compute Cloud API Reference_.
+
+In the request, you must provide the Amazon Resource Name (ARN) of the storage volume you want to delete.>
+
+  take x-amz-target
+    like native-string
+  take delete-volume-input, like delete-volume-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.DeleteVolume>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-volume-input
+
+  loot 200
+    seed json, like delete-volume-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

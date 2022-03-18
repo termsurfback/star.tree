@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/create-streaming-url-result
+  take form create-streaming-url-result
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/operation-not-permitted-exception
+  take form operation-not-permitted-exception
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/resource-not-available-exception
+  take form resource-not-available-exception
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-streaming-url, name <CreateStreamingURL>
+  note <Creates a temporary URL to start an AppStream 2.0 streaming session for the specified user. A streaming URL enables application streaming to be tested without user setup.>
+
+  take x-amz-target
+    like native-string
+  take create-streaming-url-request, like create-streaming-url-request
+
+  line </#X-Amz-Target=PhotonAdminProxyService.CreateStreamingURL>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-streaming-url-request
+
+  loot 200
+    seed json, like create-streaming-url-result
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like resource-not-available-exception
+    note <ResourceNotAvailableException>
+  loot 482
+    seed json, like operation-not-permitted-exception
+    note <OperationNotPermittedException>
+  loot 483
+    seed json, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

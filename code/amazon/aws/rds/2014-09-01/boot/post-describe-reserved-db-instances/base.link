@@ -1,0 +1,31 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/reserved-db-instance-message
+  take form reserved-db-instance-message
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/reserved-db-instance-not-found-fault
+  take form reserved-db-instance-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-reserved-db-instances, name <POST_DescribeReservedDBInstances>
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-reserved-db-instances-message, like describe-reserved-db-instances-message
+    void take
+
+  line </#Action=DescribeReservedDBInstances>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-reserved-db-instances-message
+
+  loot 200
+    seed xml, like reserved-db-instance-message
+    note <Success>
+  loot 480
+    seed xml, like reserved-db-instance-not-found-fault
+    note <ReservedDBInstanceNotFoundFault>

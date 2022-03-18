@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-payment-methods-payment-method-body
+  take form get-payment-methods-payment-method-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/payment-method
+  take form payment-method
+
+boot get-payment-methods-payment-method, name <GetPaymentMethodsPaymentMethod>
+  note <Retrieves a PaymentMethod object.>
+
+  take payment-method
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-payment-methods-payment-method-body, like get-payment-methods-payment-method-body
+    void take
+
+  line </v1/payment_methods/{payment-method}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-payment-methods-payment-method-body
+
+  loot 200
+    seed json, like payment-method
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

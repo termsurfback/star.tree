@@ -1,0 +1,37 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/books/v1/base/books-cloudloading-resource
+  take form books-cloudloading-resource
+
+boot books-cloudloading-add-book, name <books.cloudloading.addBook>
+  note <Add a user-upload volume and triggers processing.>
+
+  take drive-document-id
+    like native-string
+    note <A drive document id. The upload_client_token must not be set.>
+    void take
+  take mime-type
+    like native-string
+    note <The document MIME type. It can be set only if the drive_document_id is set.>
+    void take
+  take name
+    like native-string
+    note <The document name. It can be set only if the drive_document_id is set.>
+    void take
+  take upload-client-token
+    like native-string
+    note <Scotty upload token.>
+    void take
+
+  line </books/v1/cloudloading/addBook>
+
+  find <drive_document_id>, loan drive-document-id
+  find <mime_type>, loan mime-type
+  find <name>, loan name
+  find <upload_client_token>, loan upload-client-token
+
+  loot 200
+    seed json, like books-cloudloading-resource
+    note <Successful response>

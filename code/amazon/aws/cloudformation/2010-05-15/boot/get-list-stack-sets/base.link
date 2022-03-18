@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/list-stack-sets-output
+  take form list-stack-sets-output
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-list-stack-sets, name <GET_ListStackSets>
+  note <Returns summary information about stack sets that are associated with the user.
+
+- [Self-managed permissions] If you set the `CallAs` parameter to `SELF` while signed in to your Amazon Web Services account, `ListStackSets` returns all self-managed stack sets in your Amazon Web Services account.
+
+- [Service-managed permissions] If you set the `CallAs` parameter to `SELF` while signed in to the organization's management account, `ListStackSets` returns all stack sets in the management account.
+
+- [Service-managed permissions] If you set the `CallAs` parameter to `DELEGATED_ADMIN` while signed in to your member account, `ListStackSets` returns all stack sets with service-managed permissions in the management account.>
+
+  take next-token
+    like native-string
+    note <If the previous paginated request didn't return all of the remaining results, the response object's `NextToken` parameter value is set to a token. To retrieve the next set of results, call `ListStackSets` again and assign that token to the request object's `NextToken` parameter. If there are no remaining results, the previous response object's `NextToken` parameter is set to `null`.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to be returned with a single call. If the number of available results exceeds this maximum, the response includes a `NextToken` value that you can assign to the `NextToken` request parameter to get the next set of results.>
+    void take
+  take status
+    like native-string
+    note <The status of the stack sets that you want to get summary information about.>
+    void take
+  take call-as
+    like native-string
+    note <[Service-managed permissions] Specifies whether you are acting as an account administrator in the management account or as a delegated administrator in a member account.
+
+By default, `SELF` is specified. Use `SELF` for stack sets with self-managed permissions.
+
+- If you are signed in to the management account, specify `SELF`.
+
+- If you are signed in to a delegated administrator account, specify `DELEGATED_ADMIN`.
+
+  Your Amazon Web Services account must be registered as a delegated administrator in the management account. For more information, see [Register a delegated administrator](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-orgs-delegated-admin.html) in the _CloudFormation User Guide_.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ListStackSets>
+
+  find <NextToken>, loan next-token
+  find <MaxResults>, loan max-results
+  find <Status>, loan status
+  find <CallAs>, loan call-as
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like list-stack-sets-output
+    note <Success>

@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/instance-credit-specification-request
+  take form instance-credit-specification-request
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/modify-instance-credit-specification-result
+  take form modify-instance-credit-specification-result
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-modify-instance-credit-specification, name <GET_ModifyInstanceCreditSpecification>
+  note <Modifies the credit option for CPU usage on a running or stopped burstable performance instance. The credit options are `standard` and `unlimited`.
+
+For more information, see [Burstable performance instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-performance-instances.html) in the _Amazon EC2 User Guide_.>
+
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take client-token
+    like native-string
+    note <A unique, case-sensitive token that you provide to ensure idempotency of your modification request. For more information, see [Ensuring Idempotency](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/Run_Instance_Idempotency.html).>
+    void take
+  take instance-credit-specification
+    like list
+      like instance-credit-specification-request
+    note <Information about the credit option for CPU usage.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyInstanceCreditSpecification>
+
+  find <DryRun>, loan dry-run
+  find <ClientToken>, loan client-token
+  find <InstanceCreditSpecification>, loan instance-credit-specification
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-instance-credit-specification-result
+    note <Success>

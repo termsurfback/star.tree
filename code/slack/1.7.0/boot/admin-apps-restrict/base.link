@@ -1,0 +1,40 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/admin-apps-restrict-body
+  take form admin-apps-restrict-body
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+boot admin-apps-restrict, name <admin_apps_restrict>
+  note <Restrict an app for installation on a workspace.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `admin.apps:write`>
+  take admin-apps-restrict-body, like admin-apps-restrict-body
+    void take
+
+  line </admin.apps.restrict>
+
+  hint <token>, loan token
+
+  seed x-www-form-urlencoded, loan admin-apps-restrict-body
+
+  loot 200
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-true
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response>

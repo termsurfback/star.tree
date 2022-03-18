@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/list-service-specific-credentials-response
+  take form list-service-specific-credentials-response
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-not-supported-exception
+  take form service-not-supported-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-list-service-specific-credentials, name <GET_ListServiceSpecificCredentials>
+  note <Returns information about the service-specific credentials associated with the specified IAM user. If none exists, the operation returns an empty list. The service-specific credentials returned by this operation are used only for authenticating the IAM user to a specific service. For more information about using service-specific credentials to authenticate to an Amazon Web Services service, see [Set up service-specific credentials](https://docs.aws.amazon.com/codecommit/latest/userguide/setting-up-gc.html) in the CodeCommit User Guide.>
+
+  take user-name
+    like native-string
+    note <The name of the user whose service-specific credentials you want information about. If this value is not specified, then the operation assumes the user whose credentials are used to call the operation.
+
+This parameter allows (through its [regex pattern](http://wikipedia.org/wiki/regex)) a string of characters consisting of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: _+=,.@->
+    void take
+  take service-name
+    like native-string
+    note <Filters the returned results to only those for the specified Amazon Web Services service. If not specified, then Amazon Web Services returns service-specific credentials for all services.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ListServiceSpecificCredentials>
+
+  find <UserName>, loan user-name
+  find <ServiceName>, loan service-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like list-service-specific-credentials-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like service-not-supported-exception
+    note <ServiceNotSupportedException>

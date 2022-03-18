@@ -1,0 +1,34 @@
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/action-on-failure
+  take form action-on-failure
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/hadoop-jar-step-config
+  take form hadoop-jar-step-config
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/xml-string-max-len256
+  take form xml-string-max-len256
+
+form step-config, name <StepConfig>
+  note <Specification for a cluster (job flow) step.>
+  take name, name <Name>
+    like xml-string-max-len256
+    note <The name of the step.>
+  take action-on-failure, name <ActionOnFailure>
+    like action-on-failure
+    void take
+    note <The action to take when the step fails. Use one of the following values:
+
+- `TERMINATE_CLUSTER` - Shuts down the cluster.
+
+- `CANCEL_AND_WAIT` - Cancels any pending steps and returns the cluster to the `WAITING` state.
+
+- `CONTINUE` - Continues to the next step in the queue.
+
+- `TERMINATE_JOB_FLOW` - Shuts down the cluster. `TERMINATE_JOB_FLOW` is provided for backward compatibility. We recommend using `TERMINATE_CLUSTER` instead.
+
+If a cluster's `StepConcurrencyLevel` is greater than `1`, do not use `AddJobFlowSteps` to submit a step with this parameter set to `CANCEL_AND_WAIT` or `TERMINATE_CLUSTER`. The step is not submitted and the action fails with a message that the `ActionOnFailure` setting is not valid.
+
+If you change a cluster's `StepConcurrencyLevel` to be greater than 1 while a step is running, the `ActionOnFailure` parameter may not behave as you expect. In this case, for a step that fails with this parameter set to `CANCEL_AND_WAIT`, pending steps and the running step are not canceled; for a step that fails with this parameter set to `TERMINATE_CLUSTER`, the cluster does not terminate.>
+  take hadoop-jar-step, name <HadoopJarStep>
+    like hadoop-jar-step-config
+    note <The JAR file used for the step.>

@@ -1,0 +1,30 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/alertcenter/v1beta1/base/list-alert-feedback-response
+  take form list-alert-feedback-response
+
+boot alertcenter-alerts-feedback-list, name <alertcenter.alerts.feedback.list>
+  note <Lists all the feedback for an alert. Attempting to list feedbacks for a non-existent alert returns `NOT_FOUND` error.>
+
+  take alert-id
+    like native-string
+    note <Required. The alert identifier. The "-" wildcard could be used to represent all alerts.>
+  take customer-id
+    like native-string
+    note <Optional. The unique identifier of the Google Workspace organization account of the customer the alert feedback are associated with. Inferred from the caller identity if not provided.>
+    void take
+  take filter
+    like native-string
+    note <Optional. A query string for filtering alert feedback results. For more details, see [Query filters](https://developers.google.com/admin-sdk/alertcenter/guides/query-filters) and [Supported query filter fields](https://developers.google.com/admin-sdk/alertcenter/reference/filter-fields#alerts.feedback.list).>
+    void take
+
+  line </v1beta1/alerts/{alert-id}/feedback>
+
+  find <customerId>, loan customer-id
+  find <filter>, loan filter
+
+  loot 200
+    seed json, like list-alert-feedback-response
+    note <Successful response>

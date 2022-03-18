@@ -1,0 +1,50 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/cloudasset/v1/base/batch-get-assets-history-response
+  take form batch-get-assets-history-response
+
+boot cloudasset-batch-get-assets-history, name <cloudasset.batchGetAssetsHistory>
+  note <Batch gets the update history of assets that overlap a time window. For IAM_POLICY content, this API outputs history when the asset and its attached IAM POLICY both exist. This can create gaps in the output history. Otherwise, this API outputs history with asset in both non-delete or deleted status. If a specified asset does not exist, this API returns an INVALID_ARGUMENT error.>
+
+  take parent
+    like native-string
+    note <Required. The relative name of the root asset. It can only be an organization number (such as "organizations/123"), a project ID (such as "projects/my-project-id")", or a project number (such as "projects/12345").>
+  take asset-names
+    like list
+      like native-string
+    note <A list of the full names of the assets. See: https://cloud.google.com/asset-inventory/docs/resource-name-format Example: `//compute.googleapis.com/projects/my_project_123/zones/zone1/instances/instance1`. The request becomes a no-op if the asset name list is empty, and the max size of the asset name list is 100 in one request.>
+    void take
+  take content-type
+    like native-string
+    note <Optional. The content type.>
+    void take
+  take read-time-window-end-time
+    like native-string
+    note <End time of the time window (inclusive). If not specified, the current timestamp is used instead.>
+    void take
+  take read-time-window-start-time
+    like native-string
+    note <Start time of the time window (exclusive).>
+    void take
+  take relationship-types
+    like list
+      like native-string
+    note <Optional. A list of relationship types to output, for example: `INSTANCE_TO_INSTANCEGROUP`. This field should only be specified if content_type=RELATIONSHIP. * If specified: it outputs specified relationships' history on the [asset_names]. It returns an error if any of the [relationship_types] doesn't belong to the supported relationship types of the [asset_names] or if any of the [asset_names]'s types doesn't belong to the source types of the [relationship_types]. * Otherwise: it outputs the supported relationships' history on the [asset_names] or returns an error if any of the [asset_names]'s types has no relationship support. See [Introduction to Cloud Asset Inventory](https://cloud.google.com/asset-inventory/docs/overview) for all supported asset types and relationship types.>
+    void take
+
+  line </v1/{parent}:batchGetAssetsHistory>
+
+  find <assetNames>, loan asset-names
+  find <contentType>, loan content-type
+  find <readTimeWindow.endTime>, loan read-time-window-end-time
+  find <readTimeWindow.startTime>, loan read-time-window-start-time
+  find <relationshipTypes>, loan relationship-types
+
+  loot 200
+    seed json, like batch-get-assets-history-response
+    note <Successful response>

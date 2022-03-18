@@ -1,0 +1,50 @@
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/get-job-tagging-result
+  take form get-job-tagging-result
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-job-tagging, name <GetJobTagging>
+  note <Returns the tags on an S3 Batch Operations job. To use this operation, you must have permission to perform the `s3:GetJobTagging` action. For more information, see [Controlling access and labeling jobs using tags](https://docs.aws.amazon.com/AmazonS3/latest/dev/batch-ops-managing-jobs.html#batch-ops-job-tags) in the _Amazon S3 User Guide_.
+
+Related actions include:
+
+- [CreateJob](https://docs.aws.amazon.com/AmazonS3/latest/API/API_control_CreateJob.html)
+
+- [PutJobTagging](https://docs.aws.amazon.com/AmazonS3/latest/API/API_control_PutJobTagging.html)
+
+- [DeleteJobTagging](https://docs.aws.amazon.com/AmazonS3/latest/API/API_control_DeleteJobTagging.html)>
+
+  take id
+    like native-string
+    note <The ID for the S3 Batch Operations job whose tags you want to retrieve.>
+  take x-amz-account-id
+    like native-string
+    note <The Amazon Web Services account ID associated with the S3 Batch Operations job.>
+
+  line </v20180820/jobs/{id}/tagging#x-amz-account-id>
+
+  hint <x-amz-account-id>, loan x-amz-account-id
+
+  loot 200
+    seed xml, like get-job-tagging-result
+    note <Success>
+  loot 480
+    seed xml, like internal-service-exception
+    note <InternalServiceException>
+  loot 481
+    seed xml, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 482
+    seed xml, like not-found-exception
+    note <NotFoundException>

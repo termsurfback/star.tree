@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/list-builds-output
+  take form list-builds-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-builds, name <ListBuilds>
+  note <Gets a list of build IDs, with each build ID representing a single build.>
+
+  take x-amz-target
+    like native-string
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-builds-input, like list-builds-input
+
+  line </#X-Amz-Target=CodeBuild_20161006.ListBuilds>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <nextToken>, loan next-token
+
+  seed json, loan list-builds-input
+
+  loot 200
+    seed json, like list-builds-output
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>

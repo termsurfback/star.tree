@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/get-job-unlock-code-result
+  take form get-job-unlock-code-result
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/invalid-job-state-exception
+  take form invalid-job-state-exception
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/invalid-resource-exception
+  take form invalid-resource-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-job-unlock-code, name <GetJobUnlockCode>
+  note <Returns the `UnlockCode` code value for the specified job. A particular `UnlockCode` value can be accessed for up to 360 days after the associated job has been created.
+
+The `UnlockCode` value is a 29-character code with 25 alphanumeric characters and 4 hyphens. This code is used to decrypt the manifest file when it is passed along with the manifest to the Snow device through the Snowball client when the client is started for the first time.
+
+As a best practice, we recommend that you don't save a copy of the `UnlockCode` in the same location as the manifest file for that job. Saving these separately helps prevent unauthorized parties from gaining access to the Snow device associated with that job.>
+
+  take x-amz-target
+    like native-string
+  take get-job-unlock-code-request, like get-job-unlock-code-request
+
+  line </#X-Amz-Target=AWSIESnowballJobManagementService.GetJobUnlockCode>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-job-unlock-code-request
+
+  loot 200
+    seed json, like get-job-unlock-code-result
+    note <Success>
+  loot 480
+    seed json, like invalid-resource-exception
+    note <InvalidResourceException>
+  loot 481
+    seed json, like invalid-job-state-exception
+    note <InvalidJobStateException>

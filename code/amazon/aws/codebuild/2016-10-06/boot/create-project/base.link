@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/account-limit-exceeded-exception
+  take form account-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/create-project-output
+  take form create-project-output
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/resource-already-exists-exception
+  take form resource-already-exists-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-project, name <CreateProject>
+  note <Creates a build project.>
+
+  take x-amz-target
+    like native-string
+  take create-project-input, like create-project-input
+
+  line </#X-Amz-Target=CodeBuild_20161006.CreateProject>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-project-input
+
+  loot 200
+    seed json, like create-project-output
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like resource-already-exists-exception
+    note <ResourceAlreadyExistsException>
+  loot 482
+    seed json, like account-limit-exceeded-exception
+    note <AccountLimitExceededException>

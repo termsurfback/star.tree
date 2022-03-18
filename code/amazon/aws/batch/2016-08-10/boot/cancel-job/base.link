@@ -1,0 +1,31 @@
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/cancel-job-body
+  take form cancel-job-body
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/cancel-job-response
+  take form cancel-job-response
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/server-exception
+  take form server-exception
+
+boot cancel-job, name <CancelJob>
+  note <Cancels a job in an Batch job queue. Jobs that are in the `SUBMITTED`, `PENDING`, or `RUNNABLE` state are canceled. Jobs that have progressed to `STARTING` or `RUNNING` aren't canceled, but the API operation still succeeds, even if no job is canceled. These jobs must be terminated with the TerminateJob operation.>
+
+  take cancel-job-body, like cancel-job-body
+
+  line </v1/canceljob>
+
+  seed json, loan cancel-job-body
+
+  loot 200
+    seed json, like cancel-job-response
+    note <Success>
+  loot 480
+    seed json, like client-exception
+    note <ClientException>
+  loot 481
+    seed json, like server-exception
+    note <ServerException>

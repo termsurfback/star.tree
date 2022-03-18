@@ -1,0 +1,87 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-transit-gateways-result
+  take form describe-transit-gateways-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/transit-gateway-id
+  take form transit-gateway-id
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-transit-gateways, name <GET_DescribeTransitGateways>
+  note <Describes one or more transit gateways. By default, all transit gateways are described. Alternatively, you can filter the results.>
+
+  take transit-gateway-ids
+    like list
+      like transit-gateway-id
+    note <The IDs of the transit gateways.>
+    void take
+  take filter
+    like list
+      like filter
+    note <One or more filters. The possible values are:
+
+- `options.propagation-default-route-table-id` - The ID of the default propagation route table.
+
+- `options.amazon-side-asn` - The private ASN for the Amazon side of a BGP session.
+
+- `options.association-default-route-table-id` - The ID of the default association route table.
+
+- `options.auto-accept-shared-attachments` - Indicates whether there is automatic acceptance of attachment requests (`enable` | `disable`).
+
+- `options.default-route-table-association` - Indicates whether resource attachments are automatically associated with the default association route table (`enable` | `disable`).
+
+- `options.default-route-table-propagation` - Indicates whether resource attachments automatically propagate routes to the default propagation route table (`enable` | `disable`).
+
+- `options.dns-support` - Indicates whether DNS support is enabled (`enable` | `disable`).
+
+- `options.vpn-ecmp-support` - Indicates whether Equal Cost Multipath Protocol support is enabled (`enable` | `disable`).
+
+- `owner-id` - The ID of the Amazon Web Services account that owns the transit gateway.
+
+- `state` - The state of the transit gateway (`available` | `deleted` | `deleting` | `modifying` | `pending`).
+
+- `transit-gateway-id` - The ID of the transit gateway.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return with a single call. To retrieve the remaining results, make another call with the returned `nextToken` value.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next page of results.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeTransitGateways>
+
+  find <TransitGatewayIds>, loan transit-gateway-ids
+  find <Filter>, loan filter
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <DryRun>, loan dry-run
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-transit-gateways-result
+    note <Success>

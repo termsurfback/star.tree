@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/start-query-execution-output
+  take form start-query-execution-output
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-query-execution, name <StartQueryExecution>
+  note <Runs the SQL query statements contained in the `Query`. Requires you to have access to the workgroup in which the query ran. Running queries against an external catalog requires GetDataCatalog permission to the catalog. For code samples using the Amazon Web Services SDK for Java, see [Examples and Code Samples](http://docs.aws.amazon.com/athena/latest/ug/code-samples.html) in the _Amazon Athena User Guide_.>
+
+  take x-amz-target
+    like native-string
+  take start-query-execution-input, like start-query-execution-input
+
+  line </#X-Amz-Target=AmazonAthena.StartQueryExecution>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan start-query-execution-input
+
+  loot 200
+    seed json, like start-query-execution-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>

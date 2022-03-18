@@ -1,0 +1,31 @@
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/get-canary-response
+  take form get-canary-response
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-canary, name <GetCanary>
+  note <Retrieves complete information about one canary. You must specify the name of the canary that you want. To get a list of canaries and their names, use [DescribeCanaries](https://docs.aws.amazon.com/AmazonSynthetics/latest/APIReference/API_DescribeCanaries.html).>
+
+  take name
+    like native-string
+    note <The name of the canary that you want details for.>
+
+  line </canary/{name}>
+
+  loot 200
+    seed json, like get-canary-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>

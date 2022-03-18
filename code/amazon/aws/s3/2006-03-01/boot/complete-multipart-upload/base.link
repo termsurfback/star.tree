@@ -1,0 +1,95 @@
+
+load @drumwork/snow/amazonaws.com/s3/2006-03-01/base/complete-multipart-upload-body
+  take form complete-multipart-upload-body
+
+load @drumwork/snow/amazonaws.com/s3/2006-03-01/base/complete-multipart-upload-output
+  take form complete-multipart-upload-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot complete-multipart-upload, name <CompleteMultipartUpload>
+  note <Completes a multipart upload by assembling previously uploaded parts.
+
+You first initiate the multipart upload and then upload all parts using the [UploadPart](https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html) operation. After successfully uploading all relevant parts of an upload, you call this action to complete the upload. Upon receiving this request, Amazon S3 concatenates all the parts in ascending order by part number to create a new object. In the Complete Multipart Upload request, you must provide the parts list. You must ensure that the parts list is complete. This action concatenates the parts that you provide in the list. For each part in the list, you must provide the part number and the `ETag` value, returned after that part was uploaded.
+
+Processing of a Complete Multipart Upload request could take several minutes to complete. After Amazon S3 begins processing the request, it sends an HTTP response header that specifies a 200 OK response. While processing is in progress, Amazon S3 periodically sends white space characters to keep the connection from timing out. Because a request could fail after the initial 200 OK response has been sent, it is important that you check the response body to determine whether the request succeeded.
+
+Note that if `CompleteMultipartUpload` fails, applications should be prepared to retry the failed requests. For more information, see [Amazon S3 Error Best Practices](https://docs.aws.amazon.com/AmazonS3/latest/dev/ErrorBestPractices.html).
+
+For more information about multipart uploads, see [Uploading Objects Using Multipart Upload](https://docs.aws.amazon.com/AmazonS3/latest/dev/uploadobjusingmpu.html).
+
+For information about permissions required to use the multipart upload API, see [Multipart Upload and Permissions](https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuAndPermissions.html).
+
+`CompleteMultipartUpload` has the following special errors:
+
+- Error code: `EntityTooSmall`
+
+  - Description: Your proposed upload is smaller than the minimum allowed object size. Each part must be at least 5 MB in size, except the last part.
+
+  - 400 Bad Request
+
+- Error code: `InvalidPart`
+
+  - Description: One or more of the specified parts could not be found. The part might not have been uploaded, or the specified entity tag might not have matched the part's entity tag.
+
+  - 400 Bad Request
+
+- Error code: `InvalidPartOrder`
+
+  - Description: The list of parts was not in ascending order. The parts list must be specified in order by part number.
+
+  - 400 Bad Request
+
+- Error code: `NoSuchUpload`
+
+  - Description: The specified multipart upload does not exist. The upload ID might be invalid, or the multipart upload might have been aborted or completed.
+
+  - 404 Not Found
+
+The following operations are related to `CompleteMultipartUpload`:
+
+- [CreateMultipartUpload](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CreateMultipartUpload.html)
+
+- [UploadPart](https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html)
+
+- [AbortMultipartUpload](https://docs.aws.amazon.com/AmazonS3/latest/API/API_AbortMultipartUpload.html)
+
+- [ListParts](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListParts.html)
+
+- [ListMultipartUploads](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListMultipartUploads.html)>
+
+  take bucket
+    like native-string
+    note <Name of the bucket to which the multipart upload was initiated.
+
+When using this action with an access point, you must direct requests to the access point hostname. The access point hostname takes the form _AccessPointName_-_AccountId_.s3-accesspoint._Region_.amazonaws.com. When using this action with an access point through the Amazon Web Services SDKs, you provide the access point ARN in place of the bucket name. For more information about access point ARNs, see [Using access points](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-access-points.html) in the _Amazon S3 User Guide_.
+
+When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form _AccessPointName_-_AccountId_._outpostID_.s3-outposts._Region_.amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see [Using S3 on Outposts](https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html) in the _Amazon S3 User Guide_.>
+  take key
+    like native-string
+    note <Object key for which the multipart upload was initiated.>
+  take x-amz-request-payer
+    like native-string
+    void take
+  take x-amz-expected-bucket-owner
+    like native-string
+    note <The account ID of the expected bucket owner. If the bucket is owned by a different account, the request will fail with an HTTP `403 (Access Denied)` error.>
+    void take
+  take upload-id
+    like native-string
+    note <ID for the initiated multipart upload.>
+  take complete-multipart-upload-body, like complete-multipart-upload-body
+
+  line </{bucket}/{key}#uploadId>
+
+  hint <x-amz-request-payer>, loan x-amz-request-payer
+  hint <x-amz-expected-bucket-owner>, loan x-amz-expected-bucket-owner
+
+  find <uploadId>, loan upload-id
+
+  seed xml, loan complete-multipart-upload-body
+
+  loot 200
+    seed xml, like complete-multipart-upload-output
+    note <Success>

@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/resource-not-available-exception
+  take form resource-not-available-exception
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/update-image-permissions-result
+  take form update-image-permissions-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-image-permissions, name <UpdateImagePermissions>
+  note <Adds or updates permissions for the specified private image.>
+
+  take x-amz-target
+    like native-string
+  take update-image-permissions-request, like update-image-permissions-request
+
+  line </#X-Amz-Target=PhotonAdminProxyService.UpdateImagePermissions>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-image-permissions-request
+
+  loot 200
+    seed json, like update-image-permissions-result
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like resource-not-available-exception
+    note <ResourceNotAvailableException>
+  loot 482
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>

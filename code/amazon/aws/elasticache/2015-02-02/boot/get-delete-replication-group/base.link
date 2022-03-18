@@ -1,0 +1,86 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/delete-replication-group-result
+  take form delete-replication-group-result
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-replication-group-state-fault
+  take form invalid-replication-group-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/replication-group-not-found-fault
+  take form replication-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/snapshot-already-exists-fault
+  take form snapshot-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/snapshot-feature-not-supported-fault
+  take form snapshot-feature-not-supported-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/snapshot-quota-exceeded-fault
+  take form snapshot-quota-exceeded-fault
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-replication-group, name <GET_DeleteReplicationGroup>
+  note <Deletes an existing replication group. By default, this operation deletes the entire replication group, including the primary/primaries and all of the read replicas. If the replication group has only one primary, you can optionally delete only the read replicas, while retaining the primary by setting `RetainPrimaryCluster=true`.
+
+When you receive a successful response from this operation, Amazon ElastiCache immediately begins deleting the selected resources; you cannot cancel or revert this operation.
+
+This operation is valid for Redis only.>
+
+  take replication-group-id
+    like native-string
+    note <The identifier for the cluster to be deleted. This parameter is not case sensitive.>
+  take retain-primary-cluster
+    like native-boolean
+    note <If set to `true`, all of the read replicas are deleted, but the primary node is retained.>
+    void take
+  take final-snapshot-identifier
+    like native-string
+    note <The name of a final node group (shard) snapshot. ElastiCache creates the snapshot from the primary node in the cluster, rather than one of the replicas; this is to ensure that it captures the freshest data. After the final snapshot is taken, the replication group is immediately deleted.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteReplicationGroup>
+
+  find <ReplicationGroupId>, loan replication-group-id
+  find <RetainPrimaryCluster>, loan retain-primary-cluster
+  find <FinalSnapshotIdentifier>, loan final-snapshot-identifier
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-replication-group-result
+    note <Success>
+  loot 480
+    seed xml, like replication-group-not-found-fault
+    note <ReplicationGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-replication-group-state-fault
+    note <InvalidReplicationGroupStateFault>
+  loot 482
+    seed xml, like snapshot-already-exists-fault
+    note <SnapshotAlreadyExistsFault>
+  loot 483
+    seed xml, like snapshot-feature-not-supported-fault
+    note <SnapshotFeatureNotSupportedFault>
+  loot 484
+    seed xml, like snapshot-quota-exceeded-fault
+    note <SnapshotQuotaExceededFault>
+  loot 485
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 486
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

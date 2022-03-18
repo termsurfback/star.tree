@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/list-mailbox-export-jobs-response
+  take form list-mailbox-export-jobs-response
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/organization-not-found-exception
+  take form organization-not-found-exception
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/organization-state-exception
+  take form organization-state-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-mailbox-export-jobs, name <ListMailboxExportJobs>
+  note <Lists the mailbox export jobs started for the specified organization within the last seven days.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-mailbox-export-jobs-request, like list-mailbox-export-jobs-request
+
+  line </#X-Amz-Target=WorkMailService.ListMailboxExportJobs>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-mailbox-export-jobs-request
+
+  loot 200
+    seed json, like list-mailbox-export-jobs-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like organization-not-found-exception
+    note <OrganizationNotFoundException>
+  loot 482
+    seed json, like organization-state-exception
+    note <OrganizationStateException>

@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/xray/2016-04-12/base/create-sampling-rule-body
+  take form create-sampling-rule-body
+
+load @drumwork/snow/amazonaws.com/xray/2016-04-12/base/create-sampling-rule-result
+  take form create-sampling-rule-result
+
+load @drumwork/snow/amazonaws.com/xray/2016-04-12/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/xray/2016-04-12/base/rule-limit-exceeded-exception
+  take form rule-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/xray/2016-04-12/base/throttled-exception
+  take form throttled-exception
+
+boot create-sampling-rule, name <CreateSamplingRule>
+  note <Creates a rule to control sampling behavior for instrumented applications. Services retrieve rules with [GetSamplingRules](https://docs.aws.amazon.com/xray/latest/api/API_GetSamplingRules.html), and evaluate each rule in ascending order of _priority_ for each request. If a rule matches, the service records a trace, borrowing it from the reservoir size. After 10 seconds, the service reports back to X-Ray with [GetSamplingTargets](https://docs.aws.amazon.com/xray/latest/api/API_GetSamplingTargets.html) to get updated versions of each in-use rule. The updated rule contains a trace quota that the service can use instead of borrowing from the reservoir.>
+
+  take create-sampling-rule-body, like create-sampling-rule-body
+
+  line </CreateSamplingRule>
+
+  seed json, loan create-sampling-rule-body
+
+  loot 200
+    seed json, like create-sampling-rule-result
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like throttled-exception
+    note <ThrottledException>
+  loot 482
+    seed json, like rule-limit-exceeded-exception
+    note <RuleLimitExceededException>

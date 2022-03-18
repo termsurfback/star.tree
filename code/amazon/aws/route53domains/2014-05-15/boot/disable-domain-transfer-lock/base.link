@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/disable-domain-transfer-lock-response
+  take form disable-domain-transfer-lock-response
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/duplicate-request
+  take form duplicate-request
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/operation-limit-exceeded
+  take form operation-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/tld-rules-violation
+  take form tld-rules-violation
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/unsupported-tld
+  take form unsupported-tld
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot disable-domain-transfer-lock, name <DisableDomainTransferLock>
+  note <This operation removes the transfer lock on the domain (specifically the `clientTransferProhibited` status) to allow domain transfers. We recommend you refrain from performing this action unless you intend to transfer the domain to a different registrar. Successful submission returns an operation ID that you can use to track the progress and completion of the action. If the request is not completed successfully, the domain registrant will be notified by email.>
+
+  take x-amz-target
+    like native-string
+  take disable-domain-transfer-lock-request, like disable-domain-transfer-lock-request
+
+  line </#X-Amz-Target=Route53Domains_v20140515.DisableDomainTransferLock>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan disable-domain-transfer-lock-request
+
+  loot 200
+    seed json, like disable-domain-transfer-lock-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input
+    note <InvalidInput>
+  loot 481
+    seed json, like duplicate-request
+    note <DuplicateRequest>
+  loot 482
+    seed json, like tld-rules-violation
+    note <TLDRulesViolation>
+  loot 483
+    seed json, like operation-limit-exceeded
+    note <OperationLimitExceeded>
+  loot 484
+    seed json, like unsupported-tld
+    note <UnsupportedTLD>

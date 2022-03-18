@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/describe-parameter-groups-response
+  take form describe-parameter-groups-response
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/parameter-group-not-found-fault
+  take form parameter-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/service-linked-role-not-found-fault
+  take form service-linked-role-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-parameter-groups, name <DescribeParameterGroups>
+  note <Returns a list of parameter group descriptions. If a parameter group name is specified, the list contains only the descriptions for that group.>
+
+  take x-amz-target
+    like native-string
+  take describe-parameter-groups-request, like describe-parameter-groups-request
+
+  line </#X-Amz-Target=AmazonMemoryDB.DescribeParameterGroups>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-parameter-groups-request
+
+  loot 200
+    seed json, like describe-parameter-groups-response
+    note <Success>
+  loot 480
+    seed json, like parameter-group-not-found-fault
+    note <ParameterGroupNotFoundFault>
+  loot 481
+    seed json, like service-linked-role-not-found-fault
+    note <ServiceLinkedRoleNotFoundFault>
+  loot 482
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed json, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

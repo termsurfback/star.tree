@@ -1,0 +1,25 @@
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/invoice
+  take form invoice
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-invoices-body
+  take form post-invoices-body
+
+boot post-invoices, name <PostInvoices>
+  note <This endpoint creates a draft invoice for a given customer. The draft invoice created pulls in all pending invoice items on that customer, including prorations. The invoice remains a draft until you [finalize](#finalize_invoice) the invoice, which allows you to [pay](#pay_invoice) or [send](#send_invoice) the invoice to your customers.>
+
+  take post-invoices-body, like post-invoices-body
+
+  line </v1/invoices>
+
+  seed x-www-form-urlencoded, loan post-invoices-body
+
+  loot 200
+    seed json, like invoice
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

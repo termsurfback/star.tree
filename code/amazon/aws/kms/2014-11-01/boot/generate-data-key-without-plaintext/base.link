@@ -1,0 +1,99 @@
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/dependency-timeout-exception
+  take form dependency-timeout-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/disabled-exception
+  take form disabled-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/generate-data-key-without-plaintext-response
+  take form generate-data-key-without-plaintext-response
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-grant-token-exception
+  take form invalid-grant-token-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-key-usage-exception
+  take form invalid-key-usage-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/key-unavailable-exception
+  take form key-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-internal-exception
+  take form kms-internal-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-invalid-state-exception
+  take form kms-invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot generate-data-key-without-plaintext, name <GenerateDataKeyWithoutPlaintext>
+  note <Generates a unique symmetric data key. This operation returns a data key that is encrypted under a KMS key that you specify. To request an asymmetric data key pair, use the GenerateDataKeyPair or GenerateDataKeyPairWithoutPlaintext operations.
+
+`GenerateDataKeyWithoutPlaintext` is identical to the GenerateDataKey operation except that returns only the encrypted copy of the data key. This operation is useful for systems that need to encrypt data at some point, but not immediately. When you need to encrypt the data, you call the Decrypt operation on the encrypted copy of the key.
+
+It's also useful in distributed systems with different levels of trust. For example, you might store encrypted data in containers. One component of your system creates new containers and stores an encrypted data key with each container. Then, a different component puts the data into the containers. That component first decrypts the data key, uses the plaintext data key to encrypt data, puts the encrypted data into the container, and then destroys the plaintext data key. In this system, the component that creates the containers never sees the plaintext data key.
+
+`GenerateDataKeyWithoutPlaintext` returns a unique data key for each request. The bytes in the keys are not related to the caller or KMS key that is used to encrypt the private key.
+
+To generate a data key, you must specify the symmetric KMS key that is used to encrypt the data key. You cannot use an asymmetric KMS key to generate a data key. To get the type of your KMS key, use the DescribeKey operation.
+
+If the operation succeeds, you will find the encrypted copy of the data key in the `CiphertextBlob` field.
+
+You can use the optional encryption context to add additional security to the encryption operation. If you specify an `EncryptionContext`, you must specify the same encryption context (a case-sensitive exact match) when decrypting the encrypted data key. Otherwise, the request to decrypt fails with an `InvalidCiphertextException`. For more information, see [Encryption Context](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#encrypt_context) in the _Key Management Service Developer Guide_.
+
+The KMS key that you use for this operation must be in a compatible key state. For details, see [Key state: Effect on your KMS key](https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html) in the _Key Management Service Developer Guide_.
+
+**Cross-account use**: Yes. To perform this operation with a KMS key in a different Amazon Web Services account, specify the key ARN or alias ARN in the value of the `KeyId` parameter.
+
+**Required permissions**: [kms:GenerateDataKeyWithoutPlaintext](https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html) (key policy)
+
+**Related operations:** - Decrypt
+
+- Encrypt
+
+- GenerateDataKey
+
+- GenerateDataKeyPair
+
+- GenerateDataKeyPairWithoutPlaintext>
+
+  take x-amz-target
+    like native-string
+  take generate-data-key-without-plaintext-request, like generate-data-key-without-plaintext-request
+
+  line </#X-Amz-Target=TrentService.GenerateDataKeyWithoutPlaintext>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan generate-data-key-without-plaintext-request
+
+  loot 200
+    seed json, like generate-data-key-without-plaintext-response
+    note <Success>
+  loot 480
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 481
+    seed json, like disabled-exception
+    note <DisabledException>
+  loot 482
+    seed json, like key-unavailable-exception
+    note <KeyUnavailableException>
+  loot 483
+    seed json, like dependency-timeout-exception
+    note <DependencyTimeoutException>
+  loot 484
+    seed json, like invalid-key-usage-exception
+    note <InvalidKeyUsageException>
+  loot 485
+    seed json, like invalid-grant-token-exception
+    note <InvalidGrantTokenException>
+  loot 486
+    seed json, like kms-internal-exception
+    note <KMSInternalException>
+  loot 487
+    seed json, like kms-invalid-state-exception
+    note <KMSInvalidStateException>

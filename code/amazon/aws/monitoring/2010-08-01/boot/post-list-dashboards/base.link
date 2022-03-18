@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/internal-service-fault
+  take form internal-service-fault
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/list-dashboards-output
+  take form list-dashboards-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-list-dashboards, name <POST_ListDashboards>
+  note <Returns a list of the dashboards for your account. If you include `DashboardNamePrefix`, only those dashboards with names starting with the prefix are listed. Otherwise, all dashboards in your account are listed.
+
+`ListDashboards` returns up to 1000 results on one page. If there are more than 1000 dashboards, you can call `ListDashboards` again and include the value you received for `NextToken` in the first call, to receive the next 1000 results.>
+
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take list-dashboards-input, like list-dashboards-input
+    void take
+
+  line </#Action=ListDashboards>
+
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan list-dashboards-input
+
+  loot 200
+    seed xml, like list-dashboards-output
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 481
+    seed xml, like internal-service-fault
+    note <InternalServiceFault>

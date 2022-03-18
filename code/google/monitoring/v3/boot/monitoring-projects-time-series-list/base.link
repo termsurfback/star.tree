@@ -1,0 +1,103 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/monitoring/v3/base/list-time-series-response
+  take form list-time-series-response
+
+boot monitoring-projects-time-series-list, name <monitoring.projects.timeSeries.list>
+  note <Lists time series that match a filter.>
+
+  take name
+    like native-string
+    note <Required. The project (https://cloud.google.com/monitoring/api/v3#project_name), organization or folder on which to execute the request. The format is: projects/[PROJECT_ID_OR_NUMBER] organizations/[ORGANIZATION_ID] folders/[FOLDER_ID]>
+  take aggregation-alignment-period
+    like native-string
+    note <The alignment_period specifies a time interval, in seconds, that is used to divide the data in all the time series into consistent blocks of time. This will be done before the per-series aligner can be applied to the data.The value must be at least 60 seconds. If a per-series aligner other than ALIGN_NONE is specified, this field is required or an error is returned. If no per-series aligner is specified, or the aligner ALIGN_NONE is specified, then this field is ignored.The maximum value of the alignment_period is 104 weeks (2 years) for charts, and 90,000 seconds (25 hours) for alerting policies.>
+    void take
+  take aggregation-cross-series-reducer
+    like native-string
+    note <The reduction operation to be used to combine time series into a single time series, where the value of each data point in the resulting series is a function of all the already aligned values in the input time series.Not all reducer operations can be applied to all time series. The valid choices depend on the metric_kind and the value_type of the original time series. Reduction can yield a time series with a different metric_kind or value_type than the input time series.Time series data must first be aligned (see per_series_aligner) in order to perform cross-time series reduction. If cross_series_reducer is specified, then per_series_aligner must be specified, and must not be ALIGN_NONE. An alignment_period must also be specified; otherwise, an error is returned.>
+    void take
+  take aggregation-group-by-fields
+    like list
+      like native-string
+    note <The set of fields to preserve when cross_series_reducer is specified. The group_by_fields determine how the time series are partitioned into subsets prior to applying the aggregation operation. Each subset contains time series that have the same value for each of the grouping fields. Each individual time series is a member of exactly one subset. The cross_series_reducer is applied to each subset of time series. It is not possible to reduce across different resource types, so this field implicitly contains resource.type. Fields not specified in group_by_fields are aggregated away. If group_by_fields is not specified and all the time series have the same resource type, then the time series are aggregated into a single output time series. If cross_series_reducer is not defined, this field is ignored.>
+    void take
+  take aggregation-per-series-aligner
+    like native-string
+    note <An Aligner describes how to bring the data points in a single time series into temporal alignment. Except for ALIGN_NONE, all alignments cause all the data points in an alignment_period to be mathematically grouped together, resulting in a single data point for each alignment_period with end timestamp at the end of the period.Not all alignment operations may be applied to all time series. The valid choices depend on the metric_kind and value_type of the original time series. Alignment can change the metric_kind or the value_type of the time series.Time series data must be aligned in order to perform cross-time series reduction. If cross_series_reducer is specified, then per_series_aligner must be specified and not equal to ALIGN_NONE and alignment_period must be specified; otherwise, an error is returned.>
+    void take
+  take filter
+    like native-string
+    note <Required. A monitoring filter (https://cloud.google.com/monitoring/api/v3/filters) that specifies which time series should be returned. The filter must specify a single metric type, and can additionally specify metric labels and other information. For example: metric.type = "compute.googleapis.com/instance/cpu/usage_time" AND metric.labels.instance_name = "my-instance-name">
+    void take
+  take interval-end-time
+    like native-string
+    note <Required. The end of the time interval.>
+    void take
+  take interval-start-time
+    like native-string
+    note <Optional. The beginning of the time interval. The default value for the start time is the end time. The start time must not be later than the end time.>
+    void take
+  take order-by
+    like native-string
+    note <Unsupported: must be left blank. The points in each time series are currently returned in reverse time order (most recent to oldest).>
+    void take
+  take page-size
+    like native-integer
+    note <A positive number that is the maximum number of results to return. If page_size is empty or more than 100,000 results, the effective page_size is 100,000 results. If view is set to FULL, this is the maximum number of Points returned. If view is set to HEADERS, this is the maximum number of TimeSeries returned.>
+    void take
+  take page-token
+    like native-string
+    note <If this field is not empty then it must contain the nextPageToken value returned by a previous call to this method. Using this field causes the method to return additional results from the previous method call.>
+    void take
+  take secondary-aggregation-alignment-period
+    like native-string
+    note <The alignment_period specifies a time interval, in seconds, that is used to divide the data in all the time series into consistent blocks of time. This will be done before the per-series aligner can be applied to the data.The value must be at least 60 seconds. If a per-series aligner other than ALIGN_NONE is specified, this field is required or an error is returned. If no per-series aligner is specified, or the aligner ALIGN_NONE is specified, then this field is ignored.The maximum value of the alignment_period is 104 weeks (2 years) for charts, and 90,000 seconds (25 hours) for alerting policies.>
+    void take
+  take secondary-aggregation-cross-series-reducer
+    like native-string
+    note <The reduction operation to be used to combine time series into a single time series, where the value of each data point in the resulting series is a function of all the already aligned values in the input time series.Not all reducer operations can be applied to all time series. The valid choices depend on the metric_kind and the value_type of the original time series. Reduction can yield a time series with a different metric_kind or value_type than the input time series.Time series data must first be aligned (see per_series_aligner) in order to perform cross-time series reduction. If cross_series_reducer is specified, then per_series_aligner must be specified, and must not be ALIGN_NONE. An alignment_period must also be specified; otherwise, an error is returned.>
+    void take
+  take secondary-aggregation-group-by-fields
+    like list
+      like native-string
+    note <The set of fields to preserve when cross_series_reducer is specified. The group_by_fields determine how the time series are partitioned into subsets prior to applying the aggregation operation. Each subset contains time series that have the same value for each of the grouping fields. Each individual time series is a member of exactly one subset. The cross_series_reducer is applied to each subset of time series. It is not possible to reduce across different resource types, so this field implicitly contains resource.type. Fields not specified in group_by_fields are aggregated away. If group_by_fields is not specified and all the time series have the same resource type, then the time series are aggregated into a single output time series. If cross_series_reducer is not defined, this field is ignored.>
+    void take
+  take secondary-aggregation-per-series-aligner
+    like native-string
+    note <An Aligner describes how to bring the data points in a single time series into temporal alignment. Except for ALIGN_NONE, all alignments cause all the data points in an alignment_period to be mathematically grouped together, resulting in a single data point for each alignment_period with end timestamp at the end of the period.Not all alignment operations may be applied to all time series. The valid choices depend on the metric_kind and value_type of the original time series. Alignment can change the metric_kind or the value_type of the time series.Time series data must be aligned in order to perform cross-time series reduction. If cross_series_reducer is specified, then per_series_aligner must be specified and not equal to ALIGN_NONE and alignment_period must be specified; otherwise, an error is returned.>
+    void take
+  take view
+    like native-string
+    note <Required. Specifies which information is returned about the time series.>
+    void take
+
+  line </v3/{name}/timeSeries>
+
+  find <aggregation.alignmentPeriod>, loan aggregation-alignment-period
+  find <aggregation.crossSeriesReducer>, loan aggregation-cross-series-reducer
+  find <aggregation.groupByFields>, loan aggregation-group-by-fields
+  find <aggregation.perSeriesAligner>, loan aggregation-per-series-aligner
+  find <filter>, loan filter
+  find <interval.endTime>, loan interval-end-time
+  find <interval.startTime>, loan interval-start-time
+  find <orderBy>, loan order-by
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+  find <secondaryAggregation.alignmentPeriod>, loan secondary-aggregation-alignment-period
+  find <secondaryAggregation.crossSeriesReducer>, loan secondary-aggregation-cross-series-reducer
+  find <secondaryAggregation.groupByFields>, loan secondary-aggregation-group-by-fields
+  find <secondaryAggregation.perSeriesAligner>, loan secondary-aggregation-per-series-aligner
+  find <view>, loan view
+
+  loot 200
+    seed json, like list-time-series-response
+    note <Successful response>

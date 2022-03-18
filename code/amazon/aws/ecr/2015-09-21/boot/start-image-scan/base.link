@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/image-not-found-exception
+  take form image-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/repository-not-found-exception
+  take form repository-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/start-image-scan-response
+  take form start-image-scan-response
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/unsupported-image-type-exception
+  take form unsupported-image-type-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-image-scan, name <StartImageScan>
+  note <Starts an image vulnerability scan. An image scan can only be started once per 24 hours on an individual image. This limit includes if an image was scanned on initial push. For more information, see [Image scanning](https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-scanning.html) in the _Amazon Elastic Container Registry User Guide_.>
+
+  take x-amz-target
+    like native-string
+  take start-image-scan-request, like start-image-scan-request
+
+  line </#X-Amz-Target=AmazonEC2ContainerRegistry_V20150921.StartImageScan>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan start-image-scan-request
+
+  loot 200
+    seed json, like start-image-scan-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like unsupported-image-type-exception
+    note <UnsupportedImageTypeException>
+  loot 483
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 484
+    seed json, like repository-not-found-exception
+    note <RepositoryNotFoundException>
+  loot 485
+    seed json, like image-not-found-exception
+    note <ImageNotFoundException>

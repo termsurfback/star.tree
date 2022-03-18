@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/create-policy-version-response
+  take form create-policy-version-response
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/malformed-policy-document-exception
+  take form malformed-policy-document-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-policy-version, name <POST_CreatePolicyVersion>
+  note <Creates a new version of the specified managed policy. To update a managed policy, you create a new policy version. A managed policy can have up to five versions. If the policy has five versions, you must delete an existing version using DeletePolicyVersion before you create a new version.
+
+Optionally, you can set the new version as the policy's default version. The default version is the version that is in effect for the IAM users, groups, and roles to which the policy is attached.
+
+For more information about managed policy versions, see [Versioning for managed policies](https://docs.aws.amazon.com/IAM/latest/UserGuide/policies-managed-versions.html) in the _IAM User Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-policy-version-request, like create-policy-version-request
+    void take
+
+  line </#Action=CreatePolicyVersion>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-policy-version-request
+
+  loot 200
+    seed xml, like create-policy-version-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like malformed-policy-document-exception
+    note <MalformedPolicyDocumentException>
+  loot 482
+    seed xml, like invalid-input-exception
+    note <InvalidInputException>
+  loot 483
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 484
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

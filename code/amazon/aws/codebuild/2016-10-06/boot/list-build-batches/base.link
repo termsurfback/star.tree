@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/list-build-batches-output
+  take form list-build-batches-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-build-batches, name <ListBuildBatches>
+  note <Retrieves the identifiers of your build batches in the current region.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-build-batches-input, like list-build-batches-input
+
+  line </#X-Amz-Target=CodeBuild_20161006.ListBuildBatches>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-build-batches-input
+
+  loot 200
+    seed json, like list-build-batches-output
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>

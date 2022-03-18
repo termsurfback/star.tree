@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/search-flow-executions-response
+  take form search-flow-executions-response
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot search-flow-executions, name <SearchFlowExecutions>
+  note <Searches for AWS IoT Things Graph workflow execution instances.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take search-flow-executions-request, like search-flow-executions-request
+
+  line </#X-Amz-Target=IotThingsGraphFrontEndService.SearchFlowExecutions>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan search-flow-executions-request
+
+  loot 200
+    seed json, like search-flow-executions-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

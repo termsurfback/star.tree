@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/update-gateway-information-output
+  take form update-gateway-information-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-gateway-information, name <UpdateGatewayInformation>
+  note <Updates a gateway's metadata, which includes the gateway's name and time zone. To specify which gateway to update, use the Amazon Resource Name (ARN) of the gateway in your request.
+
+For gateways activated after September 2, 2015, the gateway's ARN contains the gateway ID rather than the gateway name. However, changing the name of the gateway has no effect on the gateway's ARN.>
+
+  take x-amz-target
+    like native-string
+  take update-gateway-information-input, like update-gateway-information-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.UpdateGatewayInformation>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-gateway-information-input
+
+  loot 200
+    seed json, like update-gateway-information-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

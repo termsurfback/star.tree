@@ -1,0 +1,76 @@
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/batch-get-frame-metric-data-body
+  take form batch-get-frame-metric-data-body
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/batch-get-frame-metric-data-response
+  take form batch-get-frame-metric-data-response
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot batch-get-frame-metric-data, name <BatchGetFrameMetricData>
+  note <Returns the time series of values for a requested list of frame metrics from a time period.>
+
+  take profiling-group-name
+    like native-string
+    note <The name of the profiling group associated with the the frame metrics used to return the time series values.>
+  take end-time
+    like native-string
+    note <The end time of the time period for the returned time series values. This is specified using the ISO 8601 format. For example, 2020-06-01T13:15:02.001Z represents 1 millisecond past June 1, 2020 1:15:02 PM UTC.>
+    void take
+  take period
+    like native-string
+    note <The duration of the frame metrics used to return the time series values. Specify using the ISO 8601 format. The maximum period duration is one day (`PT24H` or `P1D`).>
+    void take
+  take start-time
+    like native-string
+    note <The start time of the time period for the frame metrics used to return the time series values. This is specified using the ISO 8601 format. For example, 2020-06-01T13:15:02.001Z represents 1 millisecond past June 1, 2020 1:15:02 PM UTC.>
+    void take
+  take target-resolution
+    like native-string
+    note <The requested resolution of time steps for the returned time series of values. If the requested target resolution is not available due to data not being retained we provide a best effort result by falling back to the most granular available resolution after the target resolution. There are 3 valid values.
+
+- `P1D` — 1 day
+
+- `PT1H` — 1 hour
+
+- `PT5M` — 5 minutes>
+    void take
+  take batch-get-frame-metric-data-body, like batch-get-frame-metric-data-body
+
+  line </profilingGroups/{profiling-group-name}/frames/-/metrics>
+
+  find <endTime>, loan end-time
+  find <period>, loan period
+  find <startTime>, loan start-time
+  find <targetResolution>, loan target-resolution
+
+  seed json, loan batch-get-frame-metric-data-body
+
+  loot 200
+    seed json, like batch-get-frame-metric-data-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

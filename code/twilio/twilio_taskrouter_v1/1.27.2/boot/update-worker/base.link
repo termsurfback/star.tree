@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_taskrouter_v1/1.27.2/base/taskrouter-v1-workspace-worker
+  take form taskrouter-v1-workspace-worker
+
+load @drumwork/snow/twilio.com/twilio_taskrouter_v1/1.27.2/base/update-worker-body
+  take form update-worker-body
+
+boot update-worker, name <UpdateWorker>
+  take workspace-sid
+    like native-string
+    note <The SID of the Workspace with the Worker to update.>
+  take sid
+    like native-string
+    note <The SID of the Worker resource to update.>
+  take if-match
+    like native-string
+    note <The If-Match HTTP request header>
+    void take
+  take update-worker-body, like update-worker-body
+    void take
+
+  line </v1/Workspaces/{workspace-sid}/Workers/{sid}>
+
+  hint <If-Match>, loan if-match
+
+  seed x-www-form-urlencoded, loan update-worker-body
+
+  loot 200
+    seed json, like taskrouter-v1-workspace-worker
+    note <OK>

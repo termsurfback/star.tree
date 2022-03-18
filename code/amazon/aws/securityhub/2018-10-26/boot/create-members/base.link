@@ -1,0 +1,67 @@
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/create-members-body
+  take form create-members-body
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/create-members-response
+  take form create-members-response
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/invalid-access-exception
+  take form invalid-access-exception
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/resource-conflict-exception
+  take form resource-conflict-exception
+
+boot create-members, name <CreateMembers>
+  note <Creates a member association in Security Hub between the specified accounts and the account used to make the request, which is the administrator account. If you are integrated with Organizations, then the administrator account is designated by the organization management account.
+
+`CreateMembers` is always used to add accounts that are not organization members.
+
+For accounts that are managed using Organizations, `CreateMembers` is only used in the following cases:
+
+- Security Hub is not configured to automatically add new organization accounts.
+
+- The account was disassociated or deleted in Security Hub.
+
+This action can only be used by an account that has Security Hub enabled. To enable Security Hub, you can use the `EnableSecurityHub` operation.
+
+For accounts that are not organization members, you create the account association and then send an invitation to the member account. To send the invitation, you use the `InviteMembers` operation. If the account owner accepts the invitation, the account becomes a member account in Security Hub.
+
+Accounts that are managed using Organizations do not receive an invitation. They automatically become a member account in Security Hub, and Security Hub is automatically enabled for those accounts. Note that Security Hub cannot be enabled automatically for the organization management account. The organization management account must enable Security Hub before the administrator account enables it as a member account.
+
+A permissions policy is added that permits the administrator account to view the findings generated in the member account. When Security Hub is enabled in a member account, the member account findings are also visible to the administrator account.
+
+To remove the association between the administrator and member accounts, use the `DisassociateFromMasterAccount` or `DisassociateMembers` operation.>
+
+  take create-members-body, like create-members-body
+
+  line </members>
+
+  seed json, loan create-members-body
+
+  loot 200
+    seed json, like create-members-response
+    note <Success>
+  loot 480
+    seed json, like internal-exception
+    note <InternalException>
+  loot 481
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 482
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 483
+    seed json, like invalid-access-exception
+    note <InvalidAccessException>
+  loot 484
+    seed json, like resource-conflict-exception
+    note <ResourceConflictException>

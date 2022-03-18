@@ -1,0 +1,27 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_chat_v1/1.27.2/base/chat-v1-service-channel-message
+  take form chat-v1-service-channel-message
+
+load @drumwork/snow/twilio.com/twilio_chat_v1/1.27.2/base/create-message-body
+  take form create-message-body
+
+boot create-message, name <CreateMessage>
+  take service-sid
+    like native-string
+    note <The SID of the \[Service\](https://www.twilio.com/docs/api/chat/rest/services) to create the resource under.>
+  take channel-sid
+    like native-string
+    note <The unique ID of the \[Channel\](https://www.twilio.com/docs/api/chat/rest/channels) the new resource belongs to. Can be the Channel resource&#39;s \`sid\` or \`unique\_name\`.>
+  take create-message-body, like create-message-body
+    void take
+
+  line </v1/Services/{service-sid}/Channels/{channel-sid}/Messages>
+
+  seed x-www-form-urlencoded, loan create-message-body
+
+  loot 201
+    seed json, like chat-v1-service-channel-message
+    note <Created>

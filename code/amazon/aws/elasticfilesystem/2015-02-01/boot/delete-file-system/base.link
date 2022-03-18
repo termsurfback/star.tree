@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/bad-request
+  take form bad-request
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/file-system-in-use
+  take form file-system-in-use
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/file-system-not-found
+  take form file-system-not-found
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-file-system, name <DeleteFileSystem>
+  note <Deletes a file system, permanently severing access to its contents. Upon return, the file system no longer exists and you can't access any contents of the deleted file system.
+
+You can't delete a file system that is in use. That is, if the file system has any mount targets, you must first delete them. For more information, see DescribeMountTargets and DeleteMountTarget.
+
+The `DeleteFileSystem` call returns while the file system state is still `deleting`. You can check the file system deletion status by calling the DescribeFileSystems operation, which returns a list of file systems in your account. If you pass file system ID or creation token for the deleted file system, the DescribeFileSystems returns a `404 FileSystemNotFound` error.
+
+This operation requires permissions for the `elasticfilesystem:DeleteFileSystem` action.>
+
+  take file-system-id
+    like native-string
+    note <The ID of the file system you want to delete.>
+
+  line </2015-02-01/file-systems/{file-system-id}>
+
+  loot 204
+    note <Success>
+  loot 480
+    seed json, like bad-request
+    note <BadRequest>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 482
+    seed json, like file-system-not-found
+    note <FileSystemNotFound>
+  loot 483
+    seed json, like file-system-in-use
+    note <FileSystemInUse>

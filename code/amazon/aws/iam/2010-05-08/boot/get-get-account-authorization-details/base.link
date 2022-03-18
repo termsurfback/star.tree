@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/entity-type
+  take form entity-type
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/get-account-authorization-details-response
+  take form get-account-authorization-details-response
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-get-account-authorization-details, name <GET_GetAccountAuthorizationDetails>
+  note <Retrieves information about all IAM users, groups, roles, and policies in your Amazon Web Services account, including their relationships to one another. Use this operation to obtain a snapshot of the configuration of IAM permissions (users, groups, roles, and policies) in your account.
+
+Policies returned by this operation are URL-encoded compliant with [RFC 3986](https://tools.ietf.org/html/rfc3986). You can use a URL decoding method to convert the policy back to plain JSON text. For example, if you use Java, you can use the `decode` method of the `java.net.URLDecoder` utility class in the Java SDK. Other languages and SDKs provide similar functionality.
+
+You can optionally filter the results using the `Filter` parameter. You can paginate the results using the `MaxItems` and `Marker` parameters.>
+
+  take filter
+    like list
+      like entity-type
+    note <A list of entity types used to filter the results. Only the entities that match the types you specify are included in the output. Use the value `LocalManagedPolicy` to include customer managed policies.
+
+The format for this parameter is a comma-separated (if more than one) list of strings. Each string value in the list must be one of the valid values listed below.>
+    void take
+  take max-items
+    like native-integer
+    note <Use this only when paginating results to indicate the maximum number of items you want in the response. If additional items exist beyond the maximum you specify, the `IsTruncated` response element is `true`.
+
+If you do not include this parameter, the number of items defaults to 100. Note that IAM might return fewer results, even when there are more results available. In that case, the `IsTruncated` response element returns `true`, and `Marker` contains a value to include in the subsequent call that tells the service where to continue from.>
+    void take
+  take marker
+    like native-string
+    note <Use this parameter only when paginating results and only after you receive a response indicating that the results are truncated. Set it to the value of the `Marker` element in the response that you received to indicate where the next call should start.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=GetAccountAuthorizationDetails>
+
+  find <Filter>, loan filter
+  find <MaxItems>, loan max-items
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like get-account-authorization-details-response
+    note <Success>
+  loot 480
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

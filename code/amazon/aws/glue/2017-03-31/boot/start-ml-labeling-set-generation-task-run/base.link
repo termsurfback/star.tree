@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/concurrent-runs-exceeded-exception
+  take form concurrent-runs-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/entity-not-found-exception
+  take form entity-not-found-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/operation-timeout-exception
+  take form operation-timeout-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/start-ml-labeling-set-generation-task-run-response
+  take form start-ml-labeling-set-generation-task-run-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-ml-labeling-set-generation-task-run, name <StartMLLabelingSetGenerationTaskRun>
+  note <Starts the active learning workflow for your machine learning transform to improve the transform's quality by generating label sets and adding labels.
+
+When the `StartMLLabelingSetGenerationTaskRun` finishes, Glue will have generated a "labeling set" or a set of questions for humans to answer.
+
+In the case of the `FindMatches` transform, these questions are of the form, “What is the correct way to group these rows together into groups composed entirely of matching records?”
+
+After the labeling process is finished, you can upload your labels with a call to `StartImportLabelsTaskRun`. After `StartImportLabelsTaskRun` finishes, all future runs of the machine learning transform will use the new and improved labels and perform a higher-quality transformation.>
+
+  take x-amz-target
+    like native-string
+  take start-ml-labeling-set-generation-task-run-request, like start-ml-labeling-set-generation-task-run-request
+
+  line </#X-Amz-Target=AWSGlue.StartMLLabelingSetGenerationTaskRun>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan start-ml-labeling-set-generation-task-run-request
+
+  loot 200
+    seed json, like start-ml-labeling-set-generation-task-run-response
+    note <Success>
+  loot 480
+    seed json, like entity-not-found-exception
+    note <EntityNotFoundException>
+  loot 481
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 482
+    seed json, like operation-timeout-exception
+    note <OperationTimeoutException>
+  loot 483
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 484
+    seed json, like concurrent-runs-exceeded-exception
+    note <ConcurrentRunsExceededException>

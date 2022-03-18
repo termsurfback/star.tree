@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/access-point-not-found-exception
+  take form access-point-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/describe-load-balancer-attributes-output
+  take form describe-load-balancer-attributes-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/load-balancer-attribute-not-found-exception
+  take form load-balancer-attribute-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-load-balancer-attributes, name <POST_DescribeLoadBalancerAttributes>
+  note <Describes the attributes for the specified load balancer.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-load-balancer-attributes-input, like describe-load-balancer-attributes-input
+    void take
+
+  line </#Action=DescribeLoadBalancerAttributes>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-load-balancer-attributes-input
+
+  loot 200
+    seed xml, like describe-load-balancer-attributes-output
+    note <Success>
+  loot 480
+    seed xml, like access-point-not-found-exception
+    note <AccessPointNotFoundException>
+  loot 481
+    seed xml, like load-balancer-attribute-not-found-exception
+    note <LoadBalancerAttributeNotFoundException>

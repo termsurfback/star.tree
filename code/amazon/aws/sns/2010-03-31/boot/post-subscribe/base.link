@@ -1,0 +1,73 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/filter-policy-limit-exceeded-exception
+  take form filter-policy-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-security-exception
+  take form invalid-security-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/subscribe-response
+  take form subscribe-response
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/subscription-limit-exceeded-exception
+  take form subscription-limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-subscribe, name <POST_Subscribe>
+  note <Subscribes an endpoint to an Amazon SNS topic. If the endpoint type is HTTP/S or email, or if the endpoint and the topic are not in the same account, the endpoint owner must run the `ConfirmSubscription` action to confirm the subscription.
+
+You call the `ConfirmSubscription` action with the token from the subscription response. Confirmation tokens are valid for three days.
+
+This action is throttled at 100 transactions per second (TPS).>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take subscribe-input, like subscribe-input
+    void take
+
+  line </#Action=Subscribe>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan subscribe-input
+
+  loot 200
+    seed xml, like subscribe-response
+    note <Success>
+  loot 480
+    seed xml, like subscription-limit-exceeded-exception
+    note <SubscriptionLimitExceededException>
+  loot 481
+    seed xml, like filter-policy-limit-exceeded-exception
+    note <FilterPolicyLimitExceededException>
+  loot 482
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 483
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 484
+    seed xml, like not-found-exception
+    note <NotFoundException>
+  loot 485
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>
+  loot 486
+    seed xml, like invalid-security-exception
+    note <InvalidSecurityException>

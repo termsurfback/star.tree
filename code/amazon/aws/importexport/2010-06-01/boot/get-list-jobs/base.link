@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/importexport/2010-06-01/base/invalid-access-key-id-exception
+  take form invalid-access-key-id-exception
+
+load @drumwork/snow/amazonaws.com/importexport/2010-06-01/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/importexport/2010-06-01/base/invalid-version-exception
+  take form invalid-version-exception
+
+load @drumwork/snow/amazonaws.com/importexport/2010-06-01/base/list-jobs-output
+  take form list-jobs-output
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-list-jobs, name <GET_ListJobs>
+  note <This operation returns the jobs associated with the requester. AWS Import/Export lists the jobs in reverse chronological order based on the date of creation. For example if Job Test1 was created 2009Dec30 and Test2 was created 2010Feb05, the ListJobs operation would return Test2 followed by Test1.>
+
+  take max-jobs
+    like native-integer
+    void take
+  take marker
+    like native-string
+    void take
+  take api-version
+    like native-string
+    void take
+  take operation
+    like native-string
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Operation=ListJobs&Action=ListJobs>
+
+  find <MaxJobs>, loan max-jobs
+  find <Marker>, loan marker
+  find <APIVersion>, loan api-version
+  find <Operation>, loan operation
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like list-jobs-output
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed xml, like invalid-access-key-id-exception
+    note <InvalidAccessKeyIdException>
+  loot 482
+    seed xml, like invalid-version-exception
+    note <InvalidVersionException>

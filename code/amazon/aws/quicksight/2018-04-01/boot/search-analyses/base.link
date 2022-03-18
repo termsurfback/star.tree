@@ -1,0 +1,74 @@
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/search-analyses-body
+  take form search-analyses-body
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/search-analyses-response
+  take form search-analyses-response
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/unsupported-user-edition-exception
+  take form unsupported-user-edition-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot search-analyses, name <SearchAnalyses>
+  note <Searches for analyses that belong to the user specified in the filter.
+
+This operation is eventually consistent. The results are best effort and may not reflect very recent updates and changes.>
+
+  take aws-account-id
+    like native-string
+    note <The ID of the Amazon Web Services account that contains the analyses that you're searching for.>
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take search-analyses-body, like search-analyses-body
+
+  line </accounts/{aws-account-id}/search/analyses>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan search-analyses-body
+
+  loot 200
+    seed json, like search-analyses-response
+    note <Success>
+  loot 480
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed json, like unsupported-user-edition-exception
+    note <UnsupportedUserEditionException>
+  loot 484
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 485
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

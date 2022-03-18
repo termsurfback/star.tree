@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/list-instance-groups-output
+  take form list-instance-groups-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-instance-groups, name <ListInstanceGroups>
+  note <Provides all available details about the instance groups in a cluster.>
+
+  take x-amz-target
+    like native-string
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take list-instance-groups-input, like list-instance-groups-input
+
+  line </#X-Amz-Target=ElasticMapReduce.ListInstanceGroups>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <Marker>, loan marker
+
+  seed json, loan list-instance-groups-input
+
+  loot 200
+    seed json, like list-instance-groups-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

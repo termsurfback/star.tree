@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/list-ops-item-events-response
+  take form list-ops-item-events-response
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/ops-item-invalid-parameter-exception
+  take form ops-item-invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/ops-item-limit-exceeded-exception
+  take form ops-item-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/ops-item-not-found-exception
+  take form ops-item-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-ops-item-events, name <ListOpsItemEvents>
+  note <Returns a list of all OpsItem events in the current Amazon Web Services Region and Amazon Web Services account. You can limit the results to events associated with specific OpsItems by specifying a filter.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-ops-item-events-request, like list-ops-item-events-request
+
+  line </#X-Amz-Target=AmazonSSM.ListOpsItemEvents>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-ops-item-events-request
+
+  loot 200
+    seed json, like list-ops-item-events-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like ops-item-not-found-exception
+    note <OpsItemNotFoundException>
+  loot 482
+    seed json, like ops-item-limit-exceeded-exception
+    note <OpsItemLimitExceededException>
+  loot 483
+    seed json, like ops-item-invalid-parameter-exception
+    note <OpsItemInvalidParameterException>

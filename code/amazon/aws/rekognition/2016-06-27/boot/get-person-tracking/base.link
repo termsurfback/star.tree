@@ -1,0 +1,90 @@
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/get-person-tracking-response
+  take form get-person-tracking-response
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/invalid-pagination-token-exception
+  take form invalid-pagination-token-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/provisioned-throughput-exceeded-exception
+  take form provisioned-throughput-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-person-tracking, name <GetPersonTracking>
+  note <Gets the path tracking results of a Amazon Rekognition Video analysis started by StartPersonTracking.
+
+The person path tracking operation is started by a call to `StartPersonTracking` which returns a job identifier (`JobId`). When the operation finishes, Amazon Rekognition Video publishes a completion status to the Amazon Simple Notification Service topic registered in the initial call to `StartPersonTracking`.
+
+To get the results of the person path tracking operation, first check that the status value published to the Amazon SNS topic is `SUCCEEDED`. If so, call GetPersonTracking and pass the job identifier (`JobId`) from the initial call to `StartPersonTracking`.
+
+`GetPersonTracking` returns an array, `Persons`, of tracked persons and the time(s) their paths were tracked in the video.
+
+`GetPersonTracking` only returns the default facial attributes (`BoundingBox`, `Confidence`, `Landmarks`, `Pose`, and `Quality`). The other facial attributes listed in the `Face` object of the following response syntax are not returned.
+
+For more information, see FaceDetail in the Amazon Rekognition Developer Guide.
+
+By default, the array is sorted by the time(s) a person's path is tracked in the video. You can sort by tracked persons by specifying `INDEX` for the `SortBy` input parameter.
+
+Use the `MaxResults` parameter to limit the number of items returned. If there are more results than specified in `MaxResults`, the value of `NextToken` in the operation response contains a pagination token for getting the next set of results. To get the next page of results, call `GetPersonTracking` and populate the `NextToken` request parameter with the token value returned from the previous call to `GetPersonTracking`.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-person-tracking-request, like get-person-tracking-request
+
+  line </#X-Amz-Target=RekognitionService.GetPersonTracking>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan get-person-tracking-request
+
+  loot 200
+    seed json, like get-person-tracking-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 483
+    seed json, like invalid-pagination-token-exception
+    note <InvalidPaginationTokenException>
+  loot 484
+    seed json, like provisioned-throughput-exceeded-exception
+    note <ProvisionedThroughputExceededException>
+  loot 485
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 486
+    seed json, like throttling-exception
+    note <ThrottlingException>

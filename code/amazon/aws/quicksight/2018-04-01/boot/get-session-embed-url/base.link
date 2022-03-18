@@ -1,0 +1,116 @@
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/get-session-embed-url-response
+  take form get-session-embed-url-response
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/quick-sight-user-not-found-exception
+  take form quick-sight-user-not-found-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/resource-exists-exception
+  take form resource-exists-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/session-lifetime-in-minutes-invalid-exception
+  take form session-lifetime-in-minutes-invalid-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/unsupported-user-edition-exception
+  take form unsupported-user-edition-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-session-embed-url, name <GetSessionEmbedUrl>
+  note <Generates a session URL and authorization code that you can use to embed the Amazon Amazon QuickSight console in your web server code. Use `GetSessionEmbedUrl` where you want to provide an authoring portal that allows users to create data sources, datasets, analyses, and dashboards. The users who access an embedded Amazon QuickSight console need belong to the author or admin security cohort. If you want to restrict permissions to some of these features, add a custom permissions profile to the user with the `UpdateUser` API operation. Use `RegisterUser` API operation to add a new user with a custom permission profile attached. For more information, see the following sections in the _Amazon QuickSight User Guide_:
+
+- [Embedding Analytics](https://docs.aws.amazon.com/quicksight/latest/user/embedded-analytics.html)
+
+- [Customizing Access to the Amazon QuickSight Console](https://docs.aws.amazon.com/quicksight/latest/user/customizing-permissions-to-the-quicksight-console.html)>
+
+  take aws-account-id
+    like native-string
+    note <The ID for the Amazon Web Services account associated with your Amazon QuickSight subscription.>
+  take entry-point
+    like native-string
+    note <The URL you use to access the embedded session. The entry point URL is constrained to the following paths:
+
+- `/start`
+
+- `/start/analyses`
+
+- `/start/dashboards`
+
+- `/start/favorites`
+
+- `/dashboards/_DashboardId_` - where `DashboardId` is the actual ID key from the Amazon QuickSight console URL of the dashboard
+
+- `/analyses/_AnalysisId_` - where `AnalysisId` is the actual ID key from the Amazon QuickSight console URL of the analysis>
+    void take
+  take session-lifetime
+    like native-integer
+    note <How many minutes the session is valid. The session lifetime must be 15-600 minutes.>
+    void take
+  take user-arn
+    like native-string
+    note <The Amazon QuickSight user's Amazon Resource Name (ARN), for use with `QUICKSIGHT` identity type. You can use this for any type of Amazon QuickSight users in your account (readers, authors, or admins). They need to be authenticated as one of the following:
+
+1. Active Directory (AD) users or group members
+
+2. Invited nonfederated users
+
+3. Identity and Access Management (IAM) users and IAM role-based sessions authenticated through Federated Single Sign-On using SAML, OpenID Connect, or IAM federation
+
+Omit this parameter for users in the third group, IAM users and IAM role-based sessions.>
+    void take
+
+  line </accounts/{aws-account-id}/session-embed-url>
+
+  find <entry-point>, loan entry-point
+  find <session-lifetime>, loan session-lifetime
+  find <user-arn>, loan user-arn
+
+  loot 200
+    seed json, like get-session-embed-url-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed json, like resource-exists-exception
+    note <ResourceExistsException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 484
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 485
+    seed json, like quick-sight-user-not-found-exception
+    note <QuickSightUserNotFoundException>
+  loot 486
+    seed json, like session-lifetime-in-minutes-invalid-exception
+    note <SessionLifetimeInMinutesInvalidException>
+  loot 487
+    seed json, like unsupported-user-edition-exception
+    note <UnsupportedUserEditionException>
+  loot 488
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

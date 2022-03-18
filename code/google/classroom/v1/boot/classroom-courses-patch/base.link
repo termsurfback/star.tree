@@ -1,0 +1,29 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/classroom/v1/base/course
+  take form course
+
+boot classroom-courses-patch, name <classroom.courses.patch>
+  note <Updates one or more fields in a course. This method returns the following error codes: * `PERMISSION_DENIED` if the requesting user is not permitted to modify the requested course or for access errors. * `NOT_FOUND` if no course exists with the requested ID. * `INVALID_ARGUMENT` if invalid fields are specified in the update mask or if no update mask is supplied. * `FAILED_PRECONDITION` for the following request errors: * CourseNotModifiable>
+
+  take id
+    like native-string
+    note <Identifier of the course to update. This identifier can be either the Classroom-assigned identifier or an alias.>
+  take update-mask
+    like native-string
+    note <Mask that identifies which fields on the course to update. This field is required to do an update. The update will fail if invalid fields are specified. The following fields are valid: * `name` * `section` * `descriptionHeading` * `description` * `room` * `courseState` * `ownerId` Note: patches to ownerId are treated as being effective immediately, but in practice it may take some time for the ownership transfer of all affected resources to complete. When set in a query parameter, this field should be specified as `updateMask=,,...`>
+    void take
+  take course, like course
+    void take
+
+  line </v1/courses/{id}>
+
+  find <updateMask>, loan update-mask
+
+  seed json, loan course
+
+  loot 200
+    seed json, like course
+    note <Successful response>

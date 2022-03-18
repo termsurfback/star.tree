@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/get-provisioned-product-outputs-output
+  take form get-provisioned-product-outputs-output
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/invalid-parameters-exception
+  take form invalid-parameters-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-provisioned-product-outputs, name <GetProvisionedProductOutputs>
+  note <This API takes either a `ProvisonedProductId` or a `ProvisionedProductName`, along with a list of one or more output keys, and responds with the key/value pairs of those outputs.>
+
+  take x-amz-target
+    like native-string
+  take page-size
+    like native-string
+    note <Pagination limit>
+    void take
+  take page-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-provisioned-product-outputs-input, like get-provisioned-product-outputs-input
+
+  line </#X-Amz-Target=AWS242ServiceCatalogService.GetProvisionedProductOutputs>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <PageSize>, loan page-size
+  find <PageToken>, loan page-token
+
+  seed json, loan get-provisioned-product-outputs-input
+
+  loot 200
+    seed json, like get-provisioned-product-outputs-output
+    note <Success>
+  loot 480
+    seed json, like invalid-parameters-exception
+    note <InvalidParametersException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

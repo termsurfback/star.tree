@@ -1,0 +1,81 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-snapshot-not-found-fault
+  take form db-cluster-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-snapshot-not-found-fault
+  take form db-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/export-task
+  take form export-task
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/export-task-already-exists-fault
+  take form export-task-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/iam-role-missing-permissions-fault
+  take form iam-role-missing-permissions-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/iam-role-not-found-fault
+  take form iam-role-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-export-only-fault
+  take form invalid-export-only-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-export-source-state-fault
+  take form invalid-export-source-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-s3-bucket-fault
+  take form invalid-s3-bucket-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/kms-key-not-accessible-fault
+  take form kms-key-not-accessible-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-start-export-task, name <POST_StartExportTask>
+  note <Starts an export of a snapshot to Amazon S3. The provided IAM role must have access to the S3 bucket.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take start-export-task-message, like start-export-task-message
+    void take
+
+  line </#Action=StartExportTask>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan start-export-task-message
+
+  loot 200
+    seed xml, like export-task
+    note <Success>
+  loot 480
+    seed xml, like db-snapshot-not-found-fault
+    note <DBSnapshotNotFoundFault>
+  loot 481
+    seed xml, like db-cluster-snapshot-not-found-fault
+    note <DBClusterSnapshotNotFoundFault>
+  loot 482
+    seed xml, like export-task-already-exists-fault
+    note <ExportTaskAlreadyExistsFault>
+  loot 483
+    seed xml, like invalid-s3-bucket-fault
+    note <InvalidS3BucketFault>
+  loot 484
+    seed xml, like iam-role-not-found-fault
+    note <IamRoleNotFoundFault>
+  loot 485
+    seed xml, like iam-role-missing-permissions-fault
+    note <IamRoleMissingPermissionsFault>
+  loot 486
+    seed xml, like invalid-export-only-fault
+    note <InvalidExportOnlyFault>
+  loot 487
+    seed xml, like kms-key-not-accessible-fault
+    note <KMSKeyNotAccessibleFault>
+  loot 488
+    seed xml, like invalid-export-source-state-fault
+    note <InvalidExportSourceStateFault>

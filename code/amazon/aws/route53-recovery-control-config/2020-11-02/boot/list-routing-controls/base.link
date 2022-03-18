@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/list-routing-controls-response
+  take form list-routing-controls-response
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-routing-controls, name <ListRoutingControls>
+  note <Returns an array of routing controls for a control panel. A routing control is an Amazon Route 53 Application Recovery Controller construct that has one of two states: ON and OFF. You can map the routing control state to the state of an Amazon Route 53 health check, which can be used to control routing.>
+
+  take control-panel-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the control panel that you're getting routing control details for.>
+  take max-results
+    like native-integer
+    note <The number of objects that you want to return with this call.>
+    void take
+  take next-token
+    like native-string
+    note <The token that identifies which batch of results you want to see.>
+    void take
+
+  line </controlpanel/{control-panel-arn}/routingcontrols>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like list-routing-controls-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 484
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

@@ -1,0 +1,25 @@
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot modify-instance-groups, name <ModifyInstanceGroups>
+  note <ModifyInstanceGroups modifies the number of nodes and configuration settings of an instance group. The input parameters include the new target instance count for the group and the instance group ID. The call will either succeed or fail atomically.>
+
+  take x-amz-target
+    like native-string
+  take modify-instance-groups-input, like modify-instance-groups-input
+
+  line </#X-Amz-Target=ElasticMapReduce.ModifyInstanceGroups>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan modify-instance-groups-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>

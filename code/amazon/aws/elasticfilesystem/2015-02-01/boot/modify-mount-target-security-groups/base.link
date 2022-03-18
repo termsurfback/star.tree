@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/bad-request
+  take form bad-request
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/incorrect-mount-target-state
+  take form incorrect-mount-target-state
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/modify-mount-target-security-groups-body
+  take form modify-mount-target-security-groups-body
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/mount-target-not-found
+  take form mount-target-not-found
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/security-group-limit-exceeded
+  take form security-group-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/security-group-not-found
+  take form security-group-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot modify-mount-target-security-groups, name <ModifyMountTargetSecurityGroups>
+  note <Modifies the set of security groups in effect for a mount target.
+
+When you create a mount target, Amazon EFS also creates a new network interface. For more information, see CreateMountTarget. This operation replaces the security groups in effect for the network interface associated with a mount target, with the `SecurityGroups` provided in the request. This operation requires that the network interface of the mount target has been created and the lifecycle state of the mount target is not `deleted`.
+
+The operation requires permissions for the following actions:
+
+- `elasticfilesystem:ModifyMountTargetSecurityGroups` action on the mount target's file system.
+
+- `ec2:ModifyNetworkInterfaceAttribute` action on the mount target's network interface.>
+
+  take mount-target-id
+    like native-string
+    note <The ID of the mount target whose security groups you want to modify.>
+  take modify-mount-target-security-groups-body, like modify-mount-target-security-groups-body
+
+  line </2015-02-01/mount-targets/{mount-target-id}/security-groups>
+
+  seed json, loan modify-mount-target-security-groups-body
+
+  loot 204
+    note <Success>
+  loot 480
+    seed json, like bad-request
+    note <BadRequest>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 482
+    seed json, like mount-target-not-found
+    note <MountTargetNotFound>
+  loot 483
+    seed json, like incorrect-mount-target-state
+    note <IncorrectMountTargetState>
+  loot 484
+    seed json, like security-group-limit-exceeded
+    note <SecurityGroupLimitExceeded>
+  loot 485
+    seed json, like security-group-not-found
+    note <SecurityGroupNotFound>

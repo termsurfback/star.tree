@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/mediaconnect/2018-11-14/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/mediaconnect/2018-11-14/base/internal-server-error-exception
+  take form internal-server-error-exception
+
+load @drumwork/snow/amazonaws.com/mediaconnect/2018-11-14/base/list-flows-response
+  take form list-flows-response
+
+load @drumwork/snow/amazonaws.com/mediaconnect/2018-11-14/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/mediaconnect/2018-11-14/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-flows, name <ListFlows>
+  note <Displays a list of flows that are associated with this account. This request returns a paginated result.>
+
+  take max-results
+    like native-integer
+    note <The maximum number of results to return per API request. For example, you submit a ListFlows request with MaxResults set at 5. Although 20 items match your request, the service returns no more than the first 5 items. (The service also returns a NextToken value that you can use to fetch the next batch of results.) The service might return fewer results than the MaxResults value. If MaxResults is not included in the request, the service defaults to pagination with a maximum of 10 results per page.>
+    void take
+  take next-token
+    like native-string
+    note <The token that identifies which batch of results that you want to see. For example, you submit a ListFlows request with MaxResults set at 5. The service returns the first batch of results (up to 5) and a NextToken value. To see the next batch of results, you can submit the ListFlows request a second time and specify the NextToken value.>
+    void take
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+
+  line </v1/flows>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like list-flows-response
+    note <Success>
+  loot 480
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 481
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 482
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 483
+    seed json, like internal-server-error-exception
+    note <InternalServerErrorException>

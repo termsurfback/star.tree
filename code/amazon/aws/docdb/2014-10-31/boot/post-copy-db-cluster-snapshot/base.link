@@ -1,0 +1,67 @@
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/copy-db-cluster-snapshot-result
+  take form copy-db-cluster-snapshot-result
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-cluster-snapshot-already-exists-fault
+  take form db-cluster-snapshot-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-cluster-snapshot-not-found-fault
+  take form db-cluster-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/invalid-db-cluster-snapshot-state-fault
+  take form invalid-db-cluster-snapshot-state-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/kms-key-not-accessible-fault
+  take form kms-key-not-accessible-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/snapshot-quota-exceeded-fault
+  take form snapshot-quota-exceeded-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-copy-db-cluster-snapshot, name <POST_CopyDBClusterSnapshot>
+  note <Copies a snapshot of a cluster.
+
+To copy a cluster snapshot from a shared manual cluster snapshot, `SourceDBClusterSnapshotIdentifier` must be the Amazon Resource Name (ARN) of the shared cluster snapshot. You can only copy a shared DB cluster snapshot, whether encrypted or not, in the same Region.
+
+To cancel the copy operation after it is in progress, delete the target cluster snapshot identified by `TargetDBClusterSnapshotIdentifier` while that cluster snapshot is in the _copying_ status.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take copy-db-cluster-snapshot-message, like copy-db-cluster-snapshot-message
+    void take
+
+  line </#Action=CopyDBClusterSnapshot>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan copy-db-cluster-snapshot-message
+
+  loot 200
+    seed xml, like copy-db-cluster-snapshot-result
+    note <Success>
+  loot 480
+    seed xml, like db-cluster-snapshot-already-exists-fault
+    note <DBClusterSnapshotAlreadyExistsFault>
+  loot 481
+    seed xml, like db-cluster-snapshot-not-found-fault
+    note <DBClusterSnapshotNotFoundFault>
+  loot 482
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>
+  loot 483
+    seed xml, like invalid-db-cluster-snapshot-state-fault
+    note <InvalidDBClusterSnapshotStateFault>
+  loot 484
+    seed xml, like snapshot-quota-exceeded-fault
+    note <SnapshotQuotaExceededFault>
+  loot 485
+    seed xml, like kms-key-not-accessible-fault
+    note <KMSKeyNotAccessibleFault>

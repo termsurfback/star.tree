@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/check-schema-version-validity-response
+  take form check-schema-version-validity-response
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot check-schema-version-validity, name <CheckSchemaVersionValidity>
+  note <Validates the supplied schema. This call has no side effects, it simply validates using the supplied schema using `DataFormat` as the format. Since it does not take a schema set name, no compatibility checks are performed.>
+
+  take x-amz-target
+    like native-string
+  take check-schema-version-validity-input, like check-schema-version-validity-input
+
+  line </#X-Amz-Target=AWSGlue.CheckSchemaVersionValidity>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan check-schema-version-validity-input
+
+  loot 200
+    seed json, like check-schema-version-validity-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like internal-service-exception
+    note <InternalServiceException>

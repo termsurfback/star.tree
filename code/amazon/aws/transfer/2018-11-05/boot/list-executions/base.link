@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/list-executions-response
+  take form list-executions-response
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-executions, name <ListExecutions>
+  note <Lists all executions for the specified workflow.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-executions-request, like list-executions-request
+
+  line </#X-Amz-Target=TransferService.ListExecutions>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-executions-request
+
+  loot 200
+    seed json, like list-executions-response
+    note <Success>
+  loot 480
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 481
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 482
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 483
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 484
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/message-rejected
+  take form message-rejected
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/send-bounce-response
+  take form send-bounce-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-send-bounce, name <POST_SendBounce>
+  note <Generates and sends a bounce message to the sender of an email you received through Amazon SES. You can only use this API on an email up to 24 hours after you receive it.
+
+You cannot use this API to send generic bounces for mail that was not received by Amazon SES.
+
+For information about receiving email through Amazon SES, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email.html).
+
+You can execute this operation no more than once per second.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take send-bounce-request, like send-bounce-request
+    void take
+
+  line </#Action=SendBounce>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan send-bounce-request
+
+  loot 200
+    seed xml, like send-bounce-response
+    note <Success>
+  loot 480
+    seed xml, like message-rejected
+    note <MessageRejected>

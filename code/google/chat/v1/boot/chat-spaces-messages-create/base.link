@@ -1,0 +1,34 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/chat/v1/base/message
+  take form message
+
+boot chat-spaces-messages-create, name <chat.spaces.messages.create>
+  note <Creates a message.>
+
+  take parent
+    like native-string
+    note <Required. Space resource name, in the form "spaces/*". Example: spaces/AAAAAAAAAAA>
+  take request-id
+    like native-string
+    note <Optional. A unique request ID for this message. Specifying an existing request ID returns the message created with that ID instead of creating a new message.>
+    void take
+  take thread-key
+    like native-string
+    note <Optional. Opaque thread identifier string that can be specified to group messages into a single thread. If this is the first message with a given thread identifier, a new thread is created. Subsequent messages with the same thread identifier will be posted into the same thread. This relieves bots and webhooks from having to store the Google Chat thread ID of a thread (created earlier by them) to post further updates to it. Has no effect if thread field, corresponding to an existing thread, is set in message.>
+    void take
+  take message, like message
+    void take
+
+  line </v1/{parent}/messages>
+
+  find <requestId>, loan request-id
+  find <threadKey>, loan thread-key
+
+  seed json, loan message
+
+  loot 200
+    seed json, like message
+    note <Successful response>

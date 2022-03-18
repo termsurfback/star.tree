@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/policy-evaluation-exception
+  take form policy-evaluation-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/simulate-policy-response
+  take form simulate-policy-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-simulate-principal-policy, name <POST_SimulatePrincipalPolicy>
+  note <Simulate how a set of IAM policies attached to an IAM entity works with a list of API operations and Amazon Web Services resources to determine the policies' effective permissions. The entity can be an IAM user, group, or role. If you specify a user, then the simulation also includes all of the policies that are attached to groups that the user belongs to. You can simulate resources that don't exist in your account.
+
+You can optionally include a list of one or more additional policies specified as strings to include in the simulation. If you want to simulate only policies specified as strings, use SimulateCustomPolicy instead.
+
+You can also optionally include one resource-based policy to be evaluated with each of the resources included in the simulation.
+
+The simulation does not perform the API operations; it only checks the authorization to determine if the simulated policies allow or deny the operations.
+
+**Note:** This operation discloses information about the permissions granted to other users. If you do not want users to see other user's permissions, then consider allowing them to use SimulateCustomPolicy instead.
+
+Context keys are variables maintained by Amazon Web Services and its services that provide details about the context of an API query request. You can use the `Condition` element of an IAM policy to evaluate context keys. To get the list of context keys that the policies require for correct simulation, use GetContextKeysForPrincipalPolicy.
+
+If the output is long, you can use the `MaxItems` and `Marker` parameters to paginate the results.
+
+For more information about using the policy simulator, see [Testing IAM policies with the IAM policy simulator](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_testing-policies.html) in the _IAM User Guide_.>
+
+  take max-items
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take simulate-principal-policy-request, like simulate-principal-policy-request
+    void take
+
+  line </#Action=SimulatePrincipalPolicy>
+
+  find <MaxItems>, loan max-items
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan simulate-principal-policy-request
+
+  loot 200
+    seed xml, like simulate-policy-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like invalid-input-exception
+    note <InvalidInputException>
+  loot 482
+    seed xml, like policy-evaluation-exception
+    note <PolicyEvaluationException>

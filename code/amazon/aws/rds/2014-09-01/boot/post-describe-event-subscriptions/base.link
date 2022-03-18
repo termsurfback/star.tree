@@ -1,0 +1,31 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/event-subscriptions-message
+  take form event-subscriptions-message
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/subscription-not-found-fault
+  take form subscription-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-event-subscriptions, name <POST_DescribeEventSubscriptions>
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-event-subscriptions-message, like describe-event-subscriptions-message
+    void take
+
+  line </#Action=DescribeEventSubscriptions>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-event-subscriptions-message
+
+  loot 200
+    seed xml, like event-subscriptions-message
+    note <Success>
+  loot 480
+    seed xml, like subscription-not-found-fault
+    note <SubscriptionNotFoundFault>

@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/access-point-not-found-exception
+  take form access-point-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/describe-tags-output
+  take form describe-tags-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-tags, name <POST_DescribeTags>
+  note <Describes the tags associated with the specified load balancers.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-tags-input, like describe-tags-input
+    void take
+
+  line </#Action=DescribeTags>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-tags-input
+
+  loot 200
+    seed xml, like describe-tags-output
+    note <Success>
+  loot 480
+    seed xml, like access-point-not-found-exception
+    note <AccessPointNotFoundException>

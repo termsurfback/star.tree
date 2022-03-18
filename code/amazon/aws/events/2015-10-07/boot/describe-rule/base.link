@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/describe-rule-response
+  take form describe-rule-response
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-rule, name <DescribeRule>
+  note <Describes the specified rule.
+
+DescribeRule does not list the targets of a rule. To see the targets associated with a rule, use [ListTargetsByRule](https://docs.aws.amazon.com/eventbridge/latest/APIReference/API_ListTargetsByRule.html).>
+
+  take x-amz-target
+    like native-string
+  take describe-rule-request, like describe-rule-request
+
+  line </#X-Amz-Target=AWSEvents.DescribeRule>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-rule-request
+
+  loot 200
+    seed json, like describe-rule-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like internal-exception
+    note <InternalException>

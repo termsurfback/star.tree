@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/sso/2019-06-10/base/get-role-credentials-response
+  take form get-role-credentials-response
+
+load @drumwork/snow/amazonaws.com/sso/2019-06-10/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/sso/2019-06-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/sso/2019-06-10/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/amazonaws.com/sso/2019-06-10/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-role-credentials, name <GetRoleCredentials>
+  note <Returns the STS short-term credentials for a given role name that is assigned to the user.>
+
+  take x-amz-sso-bearer-token
+    like native-string
+    note <The token issued by the `CreateToken` API call. For more information, see [CreateToken](https://docs.aws.amazon.com/singlesignon/latest/OIDCAPIReference/API_CreateToken.html) in the _AWS SSO OIDC API Reference Guide_.>
+  take role-name
+    like native-string
+    note <The friendly name of the role that is assigned to the user.>
+  take account-id
+    like native-string
+    note <The identifier for the AWS account that is assigned to the user.>
+
+  line </federation/credentials#role_name&account_id&x-amz-sso_bearer_token>
+
+  hint <x-amz-sso_bearer_token>, loan x-amz-sso-bearer-token
+
+  find <role_name>, loan role-name
+  find <account_id>, loan account-id
+
+  loot 200
+    seed json, like get-role-credentials-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 482
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

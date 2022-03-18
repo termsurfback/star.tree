@@ -1,0 +1,48 @@
+
+load @drumwork/snow/amazonaws.com/auditmanager/2017-07-25/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/auditmanager/2017-07-25/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/auditmanager/2017-07-25/base/list-assessment-reports-response
+  take form list-assessment-reports-response
+
+load @drumwork/snow/amazonaws.com/auditmanager/2017-07-25/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-assessment-reports, name <ListAssessmentReports>
+  note <Returns a list of assessment reports created in Audit Manager.>
+
+  take next-token
+    like native-string
+    note <The pagination token used to fetch the next set of results.>
+    void take
+  take max-results
+    like native-integer
+    note <Represents the maximum number of results per page, or per API request call.>
+    void take
+
+  line </assessmentReports>
+
+  find <nextToken>, loan next-token
+  find <maxResults>, loan max-results
+
+  loot 200
+    seed json, like list-assessment-reports-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

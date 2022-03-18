@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/describe-gateway-capability-configuration-response
+  take form describe-gateway-capability-configuration-response
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-gateway-capability-configuration, name <DescribeGatewayCapabilityConfiguration>
+  note <Retrieves information about a gateway capability configuration. Each gateway capability defines data sources for a gateway. A capability configuration can contain multiple data source configurations. If you define OPC-UA sources for a gateway in the IoT SiteWise console, all of your OPC-UA sources are stored in one capability configuration. To list all capability configurations for a gateway, use [DescribeGateway](https://docs.aws.amazon.com/iot-sitewise/latest/APIReference/API_DescribeGateway.html).>
+
+  take gateway-id
+    like native-string
+    note <The ID of the gateway that defines the capability configuration.>
+  take capability-namespace
+    like native-string
+    note <The namespace of the capability configuration. For example, if you configure OPC-UA sources from the IoT SiteWise console, your OPC-UA capability configuration has the namespace `iotsitewise:opcuacollector:version`, where `version` is a number such as `1`.>
+
+  line </20200301/gateways/{gateway-id}/capability/{capability-namespace}>
+
+  loot 200
+    seed json, like describe-gateway-capability-configuration-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>

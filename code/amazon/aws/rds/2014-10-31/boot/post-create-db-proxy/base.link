@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/create-db-proxy-response
+  take form create-db-proxy-response
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-already-exists-fault
+  take form db-proxy-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-quota-exceeded-fault
+  take form db-proxy-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-subnet
+  take form invalid-subnet
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-db-proxy, name <POST_CreateDBProxy>
+  note <Creates a new DB proxy.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-db-proxy-request, like create-db-proxy-request
+    void take
+
+  line </#Action=CreateDBProxy>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-db-proxy-request
+
+  loot 200
+    seed xml, like create-db-proxy-response
+    note <Success>
+  loot 480
+    seed xml, like invalid-subnet
+    note <InvalidSubnet>
+  loot 481
+    seed xml, like db-proxy-already-exists-fault
+    note <DBProxyAlreadyExistsFault>
+  loot 482
+    seed xml, like db-proxy-quota-exceeded-fault
+    note <DBProxyQuotaExceededFault>

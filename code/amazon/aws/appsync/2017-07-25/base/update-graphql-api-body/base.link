@@ -1,0 +1,115 @@
+
+load @drumwork/snow/amazonaws.com/appsync/2017-07-25/base/default-action
+  take form default-action
+
+load @drumwork/snow/amazonaws.com/appsync/2017-07-25/base/field-log-level
+  take form field-log-level
+
+load @drumwork/snow/amazonaws.com/appsync/2017-07-25/base/long
+  take form long
+
+load @drumwork/snow/amazonaws.com/appsync/2017-07-25/base/ttl
+  take form ttl
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+load @drumwork/snow/base/string
+  take form string
+
+form update-graphql-api-body
+  take name, name <name>
+  take log-config, name <logConfig>
+    like form
+      take field-log-level, name <fieldLogLevel>
+        like field-log-level
+        void take
+        note <The field logging level. Values can be NONE, ERROR, or ALL.
+
+- **NONE**: No field-level logs are captured.
+
+- **ERROR**: Logs the following information only for the fields that are in error:
+
+  - The error section in the server response.
+
+  - Field-level errors.
+
+  - The generated request/response functions that got resolved for error fields.
+
+- **ALL**: The following information is logged for all fields in the query:
+
+  - Field-level tracing information.
+
+  - The generated request/response functions that got resolved for each field.>
+      take cloud-watch-logs-role-arn, name <cloudWatchLogsRoleArn>
+        like string
+        void take
+        note <The service role that AppSync will assume to publish to Amazon CloudWatch logs in your account.>
+      take exclude-verbose-content, name <excludeVerboseContent>
+        like boolean
+        void take
+        note <Set to TRUE to exclude sections that contain information such as headers, context, and evaluated mapping templates, regardless of logging level.>
+    void take
+  take authentication-type, name <authenticationType>
+    void take
+  take user-pool-config, name <userPoolConfig>
+    like form
+      take user-pool-id, name <userPoolId>
+        like string
+        void take
+        note <The user pool ID.>
+      take aws-region, name <awsRegion>
+        like string
+        void take
+        note <The Amazon Web Services Region in which the user pool was created.>
+      take default-action, name <defaultAction>
+        like default-action
+        void take
+        note <The action that you want your GraphQL API to take when a request that uses Amazon Cognito user pool authentication doesn't match the Amazon Cognito user pool configuration.>
+      take app-id-client-regex, name <appIdClientRegex>
+        like string
+        void take
+        note <A regular expression for validating the incoming Amazon Cognito user pool app client ID.>
+    void take
+  take open-id-connect-config, name <openIDConnectConfig>
+    like form
+      take issuer, name <issuer>
+        like string
+        void take
+        note <The issuer for the OpenID Connect configuration. The issuer returned by discovery must exactly match the value of `iss` in the ID token.>
+      take client-id, name <clientId>
+        like string
+        void take
+        note <The client identifier of the Relying party at the OpenID identity provider. This identifier is typically obtained when the Relying party is registered with the OpenID identity provider. You can specify a regular expression so the AppSync can validate against multiple client identifiers at a time.>
+      take iat-ttl, name <iatTTL>
+        like long
+        void take
+        note <The number of milliseconds a token is valid after being issued to a user.>
+      take auth-ttl, name <authTTL>
+        like long
+        void take
+        note <The number of milliseconds a token is valid after being authenticated.>
+    void take
+  take additional-authentication-providers, name <additionalAuthenticationProviders>
+    void take
+  take xray-enabled, name <xrayEnabled>
+    void take
+  take lambda-authorizer-config, name <lambdaAuthorizerConfig>
+    like form
+      take authorizer-result-ttl-in-seconds, name <authorizerResultTtlInSeconds>
+        like ttl
+        void take
+        note <The number of seconds a response should be cached for. The default is 5 minutes (300 seconds). The Lambda function can override this by returning a `ttlOverride` key in its response. A value of 0 disables caching of responses.>
+      take authorizer-uri, name <authorizerUri>
+        like string
+        void take
+        note <The ARN of the lambda function to be called for authorization. This may be a standard Lambda ARN, a version ARN (`.../v3`) or alias ARN.
+
+_Note_: This Lambda function must have the following resource-based policy assigned to it. When configuring Lambda authorizers in the Console, this is done for you. To do so with the AWS CLI, run the following:
+
+`aws lambda add-permission --function-name "arn:aws:lambda:us-east-2:111122223333:function:my-function" --statement-id "appsync" --principal appsync.amazonaws.com --action lambda:InvokeFunction`>
+      take identity-validation-expression, name <identityValidationExpression>
+        like string
+        void take
+        note <A regular expression for validation of tokens before the Lambda Function is called.>
+    void take

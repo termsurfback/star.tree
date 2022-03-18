@@ -1,0 +1,104 @@
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/describe-activities-response
+  take form describe-activities-response
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/failed-dependency-exception
+  take form failed-dependency-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/invalid-argument-exception
+  take form invalid-argument-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/unauthorized-operation-exception
+  take form unauthorized-operation-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/unauthorized-resource-access-exception
+  take form unauthorized-resource-access-exception
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-activities, name <DescribeActivities>
+  note <Describes the user activities in a specified time period.>
+
+  take authentication
+    like native-string
+    note <Amazon WorkDocs authentication token. Not required when using AWS administrator credentials to access the API.>
+    void take
+  take start-time
+    like native-string
+    note <The timestamp that determines the starting time of the activities. The response includes the activities performed after the specified timestamp.>
+    void take
+  take end-time
+    like native-string
+    note <The timestamp that determines the end time of the activities. The response includes the activities performed before the specified timestamp.>
+    void take
+  take organization-id
+    like native-string
+    note <The ID of the organization. This is a mandatory parameter when using administrative API (SigV4) requests.>
+    void take
+  take activity-types
+    like native-string
+    note <Specifies which activity types to include in the response. If this field is left empty, all activity types are returned.>
+    void take
+  take resource-id
+    like native-string
+    note <The document or folder ID for which to describe activity types.>
+    void take
+  take user-id
+    like native-string
+    note <The ID of the user who performed the action. The response includes activities pertaining to this user. This is an optional parameter and is only applicable for administrative API (SigV4) requests.>
+    void take
+  take include-indirect-activities
+    like native-boolean
+    note <Includes indirect activities. An indirect activity results from a direct activity performed on a parent resource. For example, sharing a parent folder (the direct activity) shares all of the subfolders and documents within the parent folder (the indirect activity).>
+    void take
+  take limit
+    like native-integer
+    note <The maximum number of items to return.>
+    void take
+  take marker
+    like native-string
+    note <The marker for the next set of results.>
+    void take
+
+  line </api/v1/activities>
+
+  hint <Authentication>, loan authentication
+
+  find <startTime>, loan start-time
+  find <endTime>, loan end-time
+  find <organizationId>, loan organization-id
+  find <activityTypes>, loan activity-types
+  find <resourceId>, loan resource-id
+  find <userId>, loan user-id
+  find <includeIndirectActivities>, loan include-indirect-activities
+  find <limit>, loan limit
+  find <marker>, loan marker
+
+  loot 200
+    seed json, like describe-activities-response
+    note <Success>
+  loot 480
+    seed json, like unauthorized-operation-exception
+    note <UnauthorizedOperationException>
+  loot 481
+    seed json, like unauthorized-resource-access-exception
+    note <UnauthorizedResourceAccessException>
+  loot 482
+    seed json, like invalid-argument-exception
+    note <InvalidArgumentException>
+  loot 483
+    seed json, like failed-dependency-exception
+    note <FailedDependencyException>
+  loot 484
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

@@ -1,0 +1,75 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-transit-gateway-route-tables-result
+  take form describe-transit-gateway-route-tables-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/transit-gateway-route-table-id
+  take form transit-gateway-route-table-id
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-transit-gateway-route-tables, name <GET_DescribeTransitGatewayRouteTables>
+  note <Describes one or more transit gateway route tables. By default, all transit gateway route tables are described. Alternatively, you can filter the results.>
+
+  take transit-gateway-route-table-ids
+    like list
+      like transit-gateway-route-table-id
+    note <The IDs of the transit gateway route tables.>
+    void take
+  take filter
+    like list
+      like filter
+    note <One or more filters. The possible values are:
+
+- `default-association-route-table` - Indicates whether this is the default association route table for the transit gateway (`true` | `false`).
+
+- `default-propagation-route-table` - Indicates whether this is the default propagation route table for the transit gateway (`true` | `false`).
+
+- `state` - The state of the route table (`available` | `deleting` | `deleted` | `pending`).
+
+- `transit-gateway-id` - The ID of the transit gateway.
+
+- `transit-gateway-route-table-id` - The ID of the transit gateway route table.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return with a single call. To retrieve the remaining results, make another call with the returned `nextToken` value.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next page of results.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeTransitGatewayRouteTables>
+
+  find <TransitGatewayRouteTableIds>, loan transit-gateway-route-table-ids
+  find <Filter>, loan filter
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <DryRun>, loan dry-run
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-transit-gateway-route-tables-result
+    note <Success>

@@ -1,0 +1,107 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-not-found-fault
+  take form db-proxy-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-target-group-not-found-fault
+  take form db-proxy-target-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/integer-optional
+  take form integer-optional
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-proxy-state-fault
+  take form invalid-db-proxy-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/modify-db-proxy-target-group-response
+  take form modify-db-proxy-target-group-response
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/string-list
+  take form string-list
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-modify-db-proxy-target-group, name <GET_ModifyDBProxyTargetGroup>
+  note <Modifies the properties of a `DBProxyTargetGroup`.>
+
+  take target-group-name
+    like native-string
+    note <The name of the new target group to assign to the proxy.>
+  take db-proxy-name
+    like native-string
+    note <The name of the new proxy to which to assign the target group.>
+  take connection-pool-config
+    like form
+      take max-connections-percent, name <MaxConnectionsPercent>
+        like integer-optional
+        void take
+        note <The maximum size of the connection pool for each target in a target group. For Aurora MySQL, it is expressed as a percentage of the `max_connections` setting for the RDS DB instance or Aurora DB cluster used by the target group.
+
+Default: 100
+
+Constraints: between 1 and 100>
+      take max-idle-connections-percent, name <MaxIdleConnectionsPercent>
+        like integer-optional
+        void take
+        note <Controls how actively the proxy closes idle database connections in the connection pool. A high value enables the proxy to leave a high percentage of idle connections open. A low value causes the proxy to close idle client connections and return the underlying database connections to the connection pool. For Aurora MySQL, it is expressed as a percentage of the `max_connections` setting for the RDS DB instance or Aurora DB cluster used by the target group.
+
+Default: 50
+
+Constraints: between 0 and `MaxConnectionsPercent`>
+      take connection-borrow-timeout, name <ConnectionBorrowTimeout>
+        like integer-optional
+        void take
+        note <The number of seconds for a proxy to wait for a connection to become available in the connection pool. Only applies when the proxy has opened its maximum number of connections and all connections are busy with client sessions.
+
+Default: 120
+
+Constraints: between 1 and 3600, or 0 representing unlimited>
+      take session-pinning-filters, name <SessionPinningFilters>
+        like string-list
+        void take
+        note <Each item in the list represents a class of SQL operations that normally cause all later statements in a session using a proxy to be pinned to the same underlying database connection. Including an item in the list exempts that class of SQL operations from the pinning behavior.
+
+Default: no session pinning filters>
+      take init-query, name <InitQuery>
+        like string
+        void take
+        note <One or more SQL statements for the proxy to run when opening each new database connection. Typically used with `SET` statements to make sure that each connection has identical settings such as time zone and character set. For multiple statements, use semicolons as the separator. You can also include multiple variables in a single `SET` statement, such as `SET x=1, y=2`.
+
+Default: no initialization query>
+    note <The settings that determine the size and behavior of the connection pool for the target group.>
+    void take
+  take new-name
+    like native-string
+    note <The new name for the modified `DBProxyTarget`. An identifier must begin with a letter and must contain only ASCII letters, digits, and hyphens; it can't end with a hyphen or contain two consecutive hyphens.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyDBProxyTargetGroup>
+
+  find <TargetGroupName>, loan target-group-name
+  find <DBProxyName>, loan db-proxy-name
+  find <ConnectionPoolConfig>, loan connection-pool-config
+  find <NewName>, loan new-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-db-proxy-target-group-response
+    note <Success>
+  loot 480
+    seed xml, like db-proxy-not-found-fault
+    note <DBProxyNotFoundFault>
+  loot 481
+    seed xml, like db-proxy-target-group-not-found-fault
+    note <DBProxyTargetGroupNotFoundFault>
+  loot 482
+    seed xml, like invalid-db-proxy-state-fault
+    note <InvalidDBProxyStateFault>

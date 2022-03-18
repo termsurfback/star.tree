@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/cur/2017-01-06/base/describe-report-definitions-response
+  take form describe-report-definitions-response
+
+load @drumwork/snow/amazonaws.com/cur/2017-01-06/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-report-definitions, name <DescribeReportDefinitions>
+  note <Lists the AWS Cost and Usage reports available to this account.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-report-definitions-request, like describe-report-definitions-request
+
+  line </#X-Amz-Target=AWSOrigamiServiceGatewayService.DescribeReportDefinitions>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-report-definitions-request
+
+  loot 200
+    seed json, like describe-report-definitions-response
+    note <Success>
+  loot 480
+    seed json, like internal-error-exception
+    note <InternalErrorException>

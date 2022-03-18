@@ -1,0 +1,135 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/apply-only-at-cron-interval
+  take form apply-only-at-cron-interval
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/association-compliance-severity
+  take form association-compliance-severity
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/association-name
+  take form association-name
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/association-sync-compliance
+  take form association-sync-compliance
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/automation-target-parameter-name
+  take form automation-target-parameter-name
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/calendar-name-or-arn-list
+  take form calendar-name-or-arn-list
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/document-arn
+  take form document-arn
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/document-version
+  take form document-version
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/instance-association-output-location
+  take form instance-association-output-location
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/instance-id
+  take form instance-id
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/max-concurrency
+  take form max-concurrency
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/max-errors
+  take form max-errors
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/parameters
+  take form parameters
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/schedule-expression
+  take form schedule-expression
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/target-locations
+  take form target-locations
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/targets
+  take form targets
+
+form create-association-request, name <CreateAssociationRequest>
+  take name, name <Name>
+    like document-arn
+    note <The name of the SSM Command document or Automation runbook that contains the configuration information for the instance.
+
+You can specify Amazon Web Services-predefined documents, documents you created, or a document that is shared with you from another account.
+
+For Systems Manager documents (SSM documents) that are shared with you from other Amazon Web Services accounts, you must specify the complete SSM document ARN, in the following format:
+
+`arn:_partition_:ssm:_region_:_account-id_:document/_document-name_`
+
+For example:
+
+`arn:aws:ssm:us-east-2:12345678912:document/My-Shared-Document`
+
+For Amazon Web Services-predefined documents and SSM documents you created in your account, you only need to specify the document name. For example, `AWS-ApplyPatchBaseline` or `My-Document`.>
+  take document-version, name <DocumentVersion>
+    like document-version
+    void take
+    note <The document version you want to associate with the target(s). Can be a specific version or the default version.>
+  take instance-id, name <InstanceId>
+    like instance-id
+    void take
+    note <The instance ID.
+
+`InstanceId` has been deprecated. To specify an instance ID for an association, use the `Targets` parameter. Requests that include the parameter `InstanceID` with Systems Manager documents (SSM documents) that use schema version 2.0 or later will fail. In addition, if you use the parameter `InstanceId`, you can't use the parameters `AssociationName`, `DocumentVersion`, `MaxErrors`, `MaxConcurrency`, `OutputLocation`, or `ScheduleExpression`. To use these parameters, you must use the `Targets` parameter.>
+  take parameters, name <Parameters>
+    like parameters
+    void take
+    note <The parameters for the runtime configuration of the document.>
+  take targets, name <Targets>
+    like targets
+    void take
+    note <The targets for the association. You can target instances by using tags, Amazon Web Services resource groups, all instances in an Amazon Web Services account, or individual instance IDs. For more information about choosing targets for an association, see [Using targets and rate controls with State Manager associations](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-state-manager-targets-and-rate-controls.html) in the _Amazon Web Services Systems Manager User Guide_.>
+  take schedule-expression, name <ScheduleExpression>
+    like schedule-expression
+    void take
+    note <A cron expression when the association will be applied to the target(s).>
+  take output-location, name <OutputLocation>
+    like instance-association-output-location
+    void take
+    note <An Amazon Simple Storage Service (Amazon S3) bucket where you want to store the output details of the request.>
+  take association-name, name <AssociationName>
+    like association-name
+    void take
+    note <Specify a descriptive name for the association.>
+  take automation-target-parameter-name, name <AutomationTargetParameterName>
+    like automation-target-parameter-name
+    void take
+    note <Specify the target for the association. This target is required for associations that use an Automation runbook and target resources by using rate controls. Automation is a capability of Amazon Web Services Systems Manager.>
+  take max-errors, name <MaxErrors>
+    like max-errors
+    void take
+    note <The number of errors that are allowed before the system stops sending requests to run the association on additional targets. You can specify either an absolute number of errors, for example 10, or a percentage of the target set, for example 10%. If you specify 3, for example, the system stops sending requests when the fourth error is received. If you specify 0, then the system stops sending requests after the first error is returned. If you run an association on 50 instances and set `MaxError` to 10%, then the system stops sending the request when the sixth error is received.
+
+Executions that are already running an association when `MaxErrors` is reached are allowed to complete, but some of these executions may fail as well. If you need to ensure that there won't be more than max-errors failed executions, set `MaxConcurrency` to 1 so that executions proceed one at a time.>
+  take max-concurrency, name <MaxConcurrency>
+    like max-concurrency
+    void take
+    note <The maximum number of targets allowed to run the association at the same time. You can specify a number, for example 10, or a percentage of the target set, for example 10%. The default value is 100%, which means all targets run the association at the same time.
+
+If a new instance starts and attempts to run an association while Systems Manager is running `MaxConcurrency` associations, the association is allowed to run. During the next association interval, the new instance will process its association within the limit specified for `MaxConcurrency`.>
+  take compliance-severity, name <ComplianceSeverity>
+    like association-compliance-severity
+    void take
+    note <The severity level to assign to the association.>
+  take sync-compliance, name <SyncCompliance>
+    like association-sync-compliance
+    void take
+    note <The mode for generating association compliance. You can specify `AUTO` or `MANUAL`. In `AUTO` mode, the system uses the status of the association execution to determine the compliance status. If the association execution runs successfully, then the association is `COMPLIANT`. If the association execution doesn't run successfully, the association is `NON-COMPLIANT`.
+
+In `MANUAL` mode, you must specify the `AssociationId` as a parameter for the PutComplianceItems API operation. In this case, compliance data isn't managed by State Manager. It is managed by your direct call to the PutComplianceItems API operation.
+
+By default, all associations use `AUTO` mode.>
+  take apply-only-at-cron-interval, name <ApplyOnlyAtCronInterval>
+    like apply-only-at-cron-interval
+    void take
+    note <By default, when you create a new association, the system runs it immediately after it is created and then according to the schedule you specified. Specify this option if you don't want an association to run immediately after you create it. This parameter isn't supported for rate expressions.>
+  take calendar-names, name <CalendarNames>
+    like calendar-name-or-arn-list
+    void take
+    note <The names or Amazon Resource Names (ARNs) of the Change Calendar type documents you want to gate your associations under. The associations only run when that change calendar is open. For more information, see [Amazon Web Services Systems Manager Change Calendar](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-change-calendar).>
+  take target-locations, name <TargetLocations>
+    like target-locations
+    void take
+    note <A location is a combination of Amazon Web Services Regions and Amazon Web Services accounts where you want to run the association. Use this action to create an association in multiple Regions and multiple accounts.>

@@ -1,0 +1,85 @@
+
+load @drumwork/snow/amazonaws.com/lex-models/2017-04-19/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/lex-models/2017-04-19/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/lex-models/2017-04-19/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/lex-models/2017-04-19/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/lex-models/2017-04-19/base/precondition-failed-exception
+  take form precondition-failed-exception
+
+load @drumwork/snow/amazonaws.com/lex-models/2017-04-19/base/put-intent-body
+  take form put-intent-body
+
+load @drumwork/snow/amazonaws.com/lex-models/2017-04-19/base/put-intent-response
+  take form put-intent-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-intent, name <PutIntent>
+  note <Creates an intent or replaces an existing intent.
+
+To define the interaction between the user and your bot, you use one or more intents. For a pizza ordering bot, for example, you would create an `OrderPizza` intent.
+
+To create an intent or replace an existing intent, you must provide the following:
+
+- Intent name. For example, `OrderPizza`.
+
+- Sample utterances. For example, "Can I order a pizza, please." and "I want to order a pizza."
+
+- Information to be gathered. You specify slot types for the information that your bot will request from the user. You can specify standard slot types, such as a date or a time, or custom slot types such as the size and crust of a pizza.
+
+- How the intent will be fulfilled. You can provide a Lambda function or configure the intent to return the intent information to the client application. If you use a Lambda function, when all of the intent information is available, Amazon Lex invokes your Lambda function. If you configure your intent to return the intent information to the client application.
+
+You can specify other optional information in the request, such as:
+
+- A confirmation prompt to ask the user to confirm an intent. For example, "Shall I order your pizza?"
+
+- A conclusion statement to send to the user after the intent has been fulfilled. For example, "I placed your pizza order."
+
+- A follow-up prompt that asks the user for additional activity. For example, asking "Do you want to order a drink with your pizza?"
+
+If you specify an existing intent name to update the intent, Amazon Lex replaces the values in the `$LATEST` version of the intent with the values in the request. Amazon Lex removes fields that you don't provide in the request. If you don't specify the required fields, Amazon Lex throws an exception. When you update the `$LATEST` version of an intent, the `status` field of any bot that uses the `$LATEST` version of the intent is set to `NOT_BUILT`.
+
+For more information, see how-it-works.
+
+This operation requires permissions for the `lex:PutIntent` action.>
+
+  take name
+    like native-string
+    note <The name of the intent. The name is _not_ case sensitive.
+
+The name can't match a built-in intent name, or a built-in intent name with "AMAZON." removed. For example, because there is a built-in intent called `AMAZON.HelpIntent`, you can't create a custom intent called `HelpIntent`.
+
+For a list of built-in intents, see [Standard Built-in Intents](https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/built-in-intent-ref/standard-intents) in the _Alexa Skills Kit_.>
+  take put-intent-body, like put-intent-body
+
+  line </intents/{name}/versions/$LATEST>
+
+  seed json, loan put-intent-body
+
+  loot 200
+    seed json, like put-intent-response
+    note <Success>
+  loot 480
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 483
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 484
+    seed json, like precondition-failed-exception
+    note <PreconditionFailedException>

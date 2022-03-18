@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/list-route-calculators-body
+  take form list-route-calculators-body
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/list-route-calculators-response
+  take form list-route-calculators-response
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-route-calculators, name <ListRouteCalculators>
+  note <Lists route calculator resources in your AWS account.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-route-calculators-body, like list-route-calculators-body
+
+  line </routes/v0/list-calculators>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-route-calculators-body
+
+  loot 200
+    seed json, like list-route-calculators-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>

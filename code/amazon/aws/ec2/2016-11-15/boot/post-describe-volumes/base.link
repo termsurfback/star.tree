@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-volumes-result
+  take form describe-volumes-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-volumes, name <POST_DescribeVolumes>
+  note <Describes the specified EBS volumes or all of your EBS volumes.
+
+If you are describing a long list of volumes, we recommend that you paginate the output to make the list more manageable. The `MaxResults` parameter sets the maximum number of results returned in a single page. If the list of results exceeds your `MaxResults` value, then that number of results is returned along with a `NextToken` value that can be passed to a subsequent `DescribeVolumes` request to retrieve the remaining results.
+
+For more information about EBS volumes, see [Amazon EBS volumes](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSVolumes.html) in the _Amazon Elastic Compute Cloud User Guide_.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-volumes-request, like describe-volumes-request
+    void take
+
+  line </#Action=DescribeVolumes>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-volumes-request
+
+  loot 200
+    seed xml, like describe-volumes-result
+    note <Success>

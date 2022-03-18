@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/delete-connection-response
+  take form delete-connection-response
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-connection, name <DeleteConnection>
+  note <Deletes a connection.>
+
+  take x-amz-target
+    like native-string
+  take delete-connection-request, like delete-connection-request
+
+  line </#X-Amz-Target=AWSEvents.DeleteConnection>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-connection-request
+
+  loot 200
+    seed json, like delete-connection-response
+    note <Success>
+  loot 480
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-exception
+    note <InternalException>

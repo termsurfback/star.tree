@@ -1,0 +1,29 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/iam/v1/base/service-account
+  take form service-account
+
+boot iam-projects-service-accounts-patch, name <iam.projects.serviceAccounts.patch>
+  note <Patches a ServiceAccount.>
+
+  take name
+    like native-string
+    note <The resource name of the service account. Use one of the following formats: * `projects/{PROJECT_ID}/serviceAccounts/{EMAIL_ADDRESS}` * `projects/{PROJECT_ID}/serviceAccounts/{UNIQUE_ID}` As an alternative, you can use the `-` wildcard character instead of the project ID: * `projects/-/serviceAccounts/{EMAIL_ADDRESS}` * `projects/-/serviceAccounts/{UNIQUE_ID}` When possible, avoid using the `-` wildcard character, because it can cause response messages to contain misleading error codes. For example, if you try to get the service account `projects/-/serviceAccounts/fake@example.com`, which does not exist, the response contains an HTTP `403 Forbidden` error instead of a `404 Not Found` error.>
+  take update-mask
+    like native-string
+    note <A mask describing which fields in the Role have changed.>
+    void take
+  take patch-service-account-request, like patch-service-account-request
+    void take
+
+  line </v1/{name}>
+
+  find <updateMask>, loan update-mask
+
+  seed json, loan patch-service-account-request
+
+  loot 200
+    seed json, like service-account
+    note <Successful response>

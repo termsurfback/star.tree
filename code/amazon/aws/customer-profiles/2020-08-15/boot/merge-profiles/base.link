@@ -1,0 +1,71 @@
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/merge-profiles-body
+  take form merge-profiles-body
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/merge-profiles-response
+  take form merge-profiles-response
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot merge-profiles, name <MergeProfiles>
+  note <This API is in preview release for Amazon Connect and subject to change.
+
+Runs an AWS Lambda job that does the following:
+
+1. All the profileKeys in the `ProfileToBeMerged` will be moved to the main profile.
+
+2. All the objects in the `ProfileToBeMerged` will be moved to the main profile.
+
+3. All the `ProfileToBeMerged` will be deleted at the end.
+
+4. All the profileKeys in the `ProfileIdsToBeMerged` will be moved to the main profile.
+
+5. Standard fields are merged as follows:
+
+  1. Fields are always "union"-ed if there are no conflicts in standard fields or attributeKeys.
+
+  2. When there are conflicting fields:
+
+    1. If no `SourceProfileIds` entry is specified, the main Profile value is always taken.
+
+    2. If a `SourceProfileIds` entry is specified, the specified profileId is always taken, even if it is a NULL value.
+
+You can use MergeProfiles together with [GetMatches](https://docs.aws.amazon.com/customerprofiles/latest/APIReference/API_GetMatches.html), which returns potentially matching profiles, or use it with the results of another matching system. After profiles have been merged, they cannot be separated (unmerged).>
+
+  take domain-name
+    like native-string
+    note <The unique name of the domain.>
+  take merge-profiles-body, like merge-profiles-body
+
+  line </domains/{domain-name}/profiles/objects/merge>
+
+  seed json, loan merge-profiles-body
+
+  loot 200
+    seed json, like merge-profiles-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like internal-server-exception
+    note <InternalServerException>

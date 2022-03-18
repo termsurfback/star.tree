@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/create-job-body
+  take form create-job-body
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/create-job-result
+  take form create-job-result
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/idempotency-exception
+  take form idempotency-exception
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-job, name <CreateJob>
+  note <You can use S3 Batch Operations to perform large-scale batch actions on Amazon S3 objects. Batch Operations can run a single action on lists of Amazon S3 objects that you specify. For more information, see [S3 Batch Operations](https://docs.aws.amazon.com/AmazonS3/latest/dev/batch-ops-basics.html) in the _Amazon S3 User Guide_.
+
+This action creates a S3 Batch Operations job.
+
+Related actions include:
+
+- [DescribeJob](https://docs.aws.amazon.com/AmazonS3/latest/API/API_control_DescribeJob.html)
+
+- [ListJobs](https://docs.aws.amazon.com/AmazonS3/latest/API/API_control_ListJobs.html)
+
+- [UpdateJobPriority](https://docs.aws.amazon.com/AmazonS3/latest/API/API_control_UpdateJobPriority.html)
+
+- [UpdateJobStatus](https://docs.aws.amazon.com/AmazonS3/latest/API/API_control_UpdateJobStatus.html)
+
+- [JobOperation](https://docs.aws.amazon.com/AmazonS3/latest/API/API_control_JobOperation.html)>
+
+  take x-amz-account-id
+    like native-string
+    note <The Amazon Web Services account ID that creates the job.>
+  take create-job-body, like create-job-body
+
+  line </v20180820/jobs#x-amz-account-id>
+
+  hint <x-amz-account-id>, loan x-amz-account-id
+
+  seed xml, loan create-job-body
+
+  loot 200
+    seed xml, like create-job-result
+    note <Success>
+  loot 480
+    seed xml, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 481
+    seed xml, like bad-request-exception
+    note <BadRequestException>
+  loot 482
+    seed xml, like idempotency-exception
+    note <IdempotencyException>
+  loot 483
+    seed xml, like internal-service-exception
+    note <InternalServiceException>

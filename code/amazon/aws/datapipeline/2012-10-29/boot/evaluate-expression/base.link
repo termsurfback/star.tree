@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/evaluate-expression-output
+  take form evaluate-expression-output
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/pipeline-deleted-exception
+  take form pipeline-deleted-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/pipeline-not-found-exception
+  take form pipeline-not-found-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/task-not-found-exception
+  take form task-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot evaluate-expression, name <EvaluateExpression>
+  note <Task runners call `EvaluateExpression` to evaluate a string in the context of the specified object. For example, a task runner can evaluate SQL queries stored in Amazon S3.>
+
+  take x-amz-target
+    like native-string
+  take evaluate-expression-input, like evaluate-expression-input
+
+  line </#X-Amz-Target=DataPipeline.EvaluateExpression>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan evaluate-expression-input
+
+  loot 200
+    seed json, like evaluate-expression-output
+    note <Success>
+  loot 480
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 481
+    seed json, like task-not-found-exception
+    note <TaskNotFoundException>
+  loot 482
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 483
+    seed json, like pipeline-not-found-exception
+    note <PipelineNotFoundException>
+  loot 484
+    seed json, like pipeline-deleted-exception
+    note <PipelineDeletedException>

@@ -1,0 +1,29 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/delete-maintenance-window-result
+  take form delete-maintenance-window-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-maintenance-window, name <DeleteMaintenanceWindow>
+  note <Deletes a maintenance window.>
+
+  take x-amz-target
+    like native-string
+  take delete-maintenance-window-request, like delete-maintenance-window-request
+
+  line </#X-Amz-Target=AmazonSSM.DeleteMaintenanceWindow>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-maintenance-window-request
+
+  loot 200
+    seed json, like delete-maintenance-window-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>

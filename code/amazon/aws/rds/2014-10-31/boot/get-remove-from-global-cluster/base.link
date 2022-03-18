@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/global-cluster-not-found-fault
+  take form global-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-global-cluster-state-fault
+  take form invalid-global-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/remove-from-global-cluster-result
+  take form remove-from-global-cluster-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-remove-from-global-cluster, name <GET_RemoveFromGlobalCluster>
+  note <Detaches an Aurora secondary cluster from an Aurora global database cluster. The cluster becomes a standalone cluster with read-write capability instead of being read-only and receiving data from a primary cluster in a different region.
+
+This action only applies to Aurora DB clusters.>
+
+  take global-cluster-identifier
+    like native-string
+    note <The cluster identifier to detach from the Aurora global database cluster.>
+    void take
+  take db-cluster-identifier
+    like native-string
+    note <The Amazon Resource Name (ARN) identifying the cluster that was detached from the Aurora global database cluster.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=RemoveFromGlobalCluster>
+
+  find <GlobalClusterIdentifier>, loan global-cluster-identifier
+  find <DbClusterIdentifier>, loan db-cluster-identifier
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like remove-from-global-cluster-result
+    note <Success>
+  loot 480
+    seed xml, like global-cluster-not-found-fault
+    note <GlobalClusterNotFoundFault>
+  loot 481
+    seed xml, like invalid-global-cluster-state-fault
+    note <InvalidGlobalClusterStateFault>
+  loot 482
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>

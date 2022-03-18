@@ -1,0 +1,80 @@
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/boolean-optional
+  take form boolean-optional
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/integer-optional
+  take form integer-optional
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/safeguard-policy
+  take form safeguard-policy
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/secret-string
+  take form secret-string
+
+load @drumwork/snow/base/string
+  take form string
+
+form microsoft-sql-server-settings, name <MicrosoftSQLServerSettings>
+  note <Provides information that defines a Microsoft SQL Server endpoint.>
+  take port, name <Port>
+    like integer-optional
+    void take
+    note <Endpoint TCP port.>
+  take bcp-packet-size, name <BcpPacketSize>
+    like integer-optional
+    void take
+    note <The maximum size of the packets (in bytes) used to transfer data using BCP.>
+  take database-name, name <DatabaseName>
+    like string
+    void take
+    note <Database name for the endpoint.>
+  take control-tables-file-group, name <ControlTablesFileGroup>
+    like string
+    void take
+    note <Specifies a file group for the DMS internal tables. When the replication task starts, all the internal DMS control tables (awsdms_ apply_exception, awsdms_apply, awsdms_changes) are created for the specified file group.>
+  take password, name <Password>
+    like secret-string
+    void take
+    note <Endpoint connection password.>
+  take query-single-always-on-node, name <QuerySingleAlwaysOnNode>
+    like boolean-optional
+    void take
+    note <Cleans and recreates table metadata information on the replication instance when a mismatch occurs. An example is a situation where running an alter DDL statement on a table might result in different information about the table cached in the replication instance.>
+  take read-backup-only, name <ReadBackupOnly>
+    like boolean-optional
+    void take
+    note <When this attribute is set to `Y`, DMS only reads changes from transaction log backups and doesn't read from the active transaction log file during ongoing replication. Setting this parameter to `Y` enables you to control active transaction log file growth during full load and ongoing replication tasks. However, it can add some source latency to ongoing replication.>
+  take safeguard-policy, name <SafeguardPolicy>
+    like safeguard-policy
+    void take
+    note <Use this attribute to minimize the need to access the backup log and enable DMS to prevent truncation using one of the following two methods.
+
+_Start transactions in the database:_ This is the default method. When this method is used, DMS prevents TLOG truncation by mimicking a transaction in the database. As long as such a transaction is open, changes that appear after the transaction started aren't truncated. If you need Microsoft Replication to be enabled in your database, then you must choose this method.
+
+_Exclusively use sp_repldone within a single task_: When this method is used, DMS reads the changes and then uses sp_repldone to mark the TLOG transactions as ready for truncation. Although this method doesn't involve any transactional activities, it can only be used when Microsoft Replication isn't running. Also, when using this method, only one DMS task can access the database at any given time. Therefore, if you need to run parallel DMS tasks against the same database, use the default method.>
+  take server-name, name <ServerName>
+    like string
+    void take
+    note <Fully qualified domain name of the endpoint.>
+  take username, name <Username>
+    like string
+    void take
+    note <Endpoint connection user name.>
+  take use-bcp-full-load, name <UseBcpFullLoad>
+    like boolean-optional
+    void take
+    note <Use this to attribute to transfer data for full-load operations using BCP. When the target table contains an identity column that does not exist in the source table, you must disable the use BCP for loading table option.>
+  take use-third-party-backup-device, name <UseThirdPartyBackupDevice>
+    like boolean-optional
+    void take
+    note <When this attribute is set to `Y`, DMS processes third-party transaction log backups if they are created in native format.>
+  take secrets-manager-access-role-arn, name <SecretsManagerAccessRoleArn>
+    like string
+    void take
+    note <The full Amazon Resource Name (ARN) of the IAM role that specifies DMS as the trusted entity and grants the required permissions to access the value in `SecretsManagerSecret`. The role must allow the `iam:PassRole` action. `SecretsManagerSecret` has the value of the Amazon Web Services Secrets Manager secret that allows access to the SQL Server endpoint.
+
+You can specify one of two sets of values for these permissions. You can specify the values for this setting and `SecretsManagerSecretId`. Or you can specify clear-text values for `UserName`, `Password`, `ServerName`, and `Port`. You can't specify both. For more information on creating this `SecretsManagerSecret` and the `SecretsManagerAccessRoleArn` and `SecretsManagerSecretId` required to access it, see [Using secrets to access Database Migration Service resources](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Security.html#security-iam-secretsmanager) in the _Database Migration Service User Guide_.>
+  take secrets-manager-secret-id, name <SecretsManagerSecretId>
+    like string
+    void take
+    note <The full ARN, partial ARN, or friendly name of the `SecretsManagerSecret` that contains the SQL Server endpoint connection details.>

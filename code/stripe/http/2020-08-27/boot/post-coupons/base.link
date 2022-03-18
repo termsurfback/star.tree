@@ -1,0 +1,28 @@
+
+load @drumwork/snow/stripe.com/2020-08-27/base/coupon
+  take form coupon
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-coupons-body
+  take form post-coupons-body
+
+boot post-coupons, name <PostCoupons>
+  note <You can create coupons easily via the [coupon management](https://dashboard.stripe.com/coupons) page of the Stripe dashboard. Coupon creation is also accessible via the API if you need to create coupons on the fly.
+
+A coupon has either a `percent_off` or an `amount_off` and `currency`. If you set an `amount_off`, that amount will be subtracted from any invoice’s subtotal. For example, an invoice with a subtotal of 100 will have a final total of 0 if a coupon with an `amount_off` of 200 is applied to it and an invoice with a subtotal of 300 will have a final total of 100 if a coupon with an `amount_off` of 200 is applied to it.>
+
+  take post-coupons-body, like post-coupons-body
+    void take
+
+  line </v1/coupons>
+
+  seed x-www-form-urlencoded, loan post-coupons-body
+
+  loot 200
+    seed json, like coupon
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

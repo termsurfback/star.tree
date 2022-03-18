@@ -1,0 +1,73 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker-a2i-runtime/2019-11-07/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/sagemaker-a2i-runtime/2019-11-07/base/list-human-loops-response
+  take form list-human-loops-response
+
+load @drumwork/snow/amazonaws.com/sagemaker-a2i-runtime/2019-11-07/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/sagemaker-a2i-runtime/2019-11-07/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/sagemaker-a2i-runtime/2019-11-07/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-human-loops, name <ListHumanLoops>
+  note <Returns information about human loops, given the specified parameters. If a human loop was deleted, it will not be included.>
+
+  take creation-time-after
+    like native-string
+    note <(Optional) The timestamp of the date when you want the human loops to begin in ISO 8601 format. For example, `2020-02-24`.>
+    void take
+  take creation-time-before
+    like native-string
+    note <(Optional) The timestamp of the date before which you want the human loops to begin in ISO 8601 format. For example, `2020-02-24`.>
+    void take
+  take flow-definition-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of a flow definition.>
+  take sort-order
+    like native-string
+    note <Optional. The order for displaying results. Valid values: `Ascending` and `Descending`.>
+    void take
+  take next-token
+    like native-string
+    note <A token to display the next page of results.>
+    void take
+  take max-results
+    like native-integer
+    note <The total number of items to return. If the total number of available items is more than the value specified in `MaxResults`, then a `NextToken` is returned in the output. You can use this token to display the next page of results.>
+    void take
+
+  line </human-loops#FlowDefinitionArn>
+
+  find <CreationTimeAfter>, loan creation-time-after
+  find <CreationTimeBefore>, loan creation-time-before
+  find <FlowDefinitionArn>, loan flow-definition-arn
+  find <SortOrder>, loan sort-order
+  find <NextToken>, loan next-token
+  find <MaxResults>, loan max-results
+
+  loot 200
+    seed json, like list-human-loops-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like internal-server-exception
+    note <InternalServerException>

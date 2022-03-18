@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/get-service-setting-result
+  take form get-service-setting-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/service-setting-not-found
+  take form service-setting-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-service-setting, name <GetServiceSetting>
+  note <`ServiceSetting` is an account-level setting for an Amazon Web Services service. This setting defines how a user interacts with or uses a service or a feature of a service. For example, if an Amazon Web Services service charges money to the account based on feature or service usage, then the Amazon Web Services service team might create a default setting of `false`. This means the user can't use this feature unless they change the setting to `true` and intentionally opt in for a paid feature.
+
+Services map a `SettingId` object to a setting value. Amazon Web Services services teams define the default value for a `SettingId`. You can't create a new `SettingId`, but you can overwrite the default value if you have the `ssm:UpdateServiceSetting` permission for the setting. Use the UpdateServiceSetting API operation to change the default setting. Or use the ResetServiceSetting to change the value back to the original value defined by the Amazon Web Services service team.
+
+Query the current service setting for the Amazon Web Services account.>
+
+  take x-amz-target
+    like native-string
+  take get-service-setting-request, like get-service-setting-request
+
+  line </#X-Amz-Target=AmazonSSM.GetServiceSetting>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-service-setting-request
+
+  loot 200
+    seed json, like get-service-setting-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like service-setting-not-found
+    note <ServiceSettingNotFound>

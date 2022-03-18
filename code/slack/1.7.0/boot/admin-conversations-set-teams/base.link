@@ -1,0 +1,39 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/admin-conversations-set-teams-body
+  take form admin-conversations-set-teams-body
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+boot admin-conversations-set-teams, name <admin_conversations_setTeams>
+  note <Set the workspaces in an Enterprise grid org that connect to a public or private channel.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `admin.conversations:write`>
+  take admin-conversations-set-teams-body, like admin-conversations-set-teams-body
+
+  line </admin.conversations.setTeams>
+
+  hint <token>, loan token
+
+  seed x-www-form-urlencoded, loan admin-conversations-set-teams-body
+
+  loot 200
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-true
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response>

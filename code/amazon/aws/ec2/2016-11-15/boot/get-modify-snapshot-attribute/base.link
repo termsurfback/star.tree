@@ -1,0 +1,85 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/create-volume-permission-list
+  take form create-volume-permission-list
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/security-group-name
+  take form security-group-name
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-modify-snapshot-attribute, name <GET_ModifySnapshotAttribute>
+  note <Adds or removes permission settings for the specified snapshot. You may add or remove specified Amazon Web Services account IDs from a snapshot's list of create volume permissions, but you cannot do both in a single operation. If you need to both add and remove account IDs for a snapshot, you must use multiple operations. You can make up to 500 modifications to a snapshot in a single operation.
+
+Encrypted snapshots and snapshots with Amazon Web Services Marketplace product codes cannot be made public. Snapshots encrypted with your default KMS key cannot be shared with other accounts.
+
+For more information about modifying snapshot permissions, see [Share a snapshot](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-modifying-snapshot-permissions.html) in the _Amazon Elastic Compute Cloud User Guide_.>
+
+  take attribute
+    like native-string
+    note <The snapshot attribute to modify. Only volume creation permissions can be modified.>
+    void take
+  take create-volume-permission
+    like form
+      take add, name <Add>
+        like create-volume-permission-list
+        void take
+        note <Adds the specified Amazon Web Services account ID or group to the list.>
+      take remove, name <Remove>
+        like create-volume-permission-list
+        void take
+        note <Removes the specified Amazon Web Services account ID or group from the list.>
+    note <A JSON representation of the snapshot attribute modification.>
+    void take
+  take user-group
+    like list
+      like security-group-name
+    note <The group to modify for the snapshot.>
+    void take
+  take operation-type
+    like native-string
+    note <The type of operation to perform to the attribute.>
+    void take
+  take snapshot-id
+    like native-string
+    note <The ID of the snapshot.>
+  take user-id
+    like list
+      like string
+    note <The account ID to modify for the snapshot.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifySnapshotAttribute>
+
+  find <Attribute>, loan attribute
+  find <CreateVolumePermission>, loan create-volume-permission
+  find <UserGroup>, loan user-group
+  find <OperationType>, loan operation-type
+  find <SnapshotId>, loan snapshot-id
+  find <UserId>, loan user-id
+  find <DryRun>, loan dry-run
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>

@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/create-software-update-job-body
+  take form create-software-update-job-body
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/create-software-update-job-response
+  take form create-software-update-job-response
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/internal-server-error-exception
+  take form internal-server-error-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-software-update-job, name <CreateSoftwareUpdateJob>
+  note <Creates a software update for a core or group of cores (specified as an IoT thing group.) Use this to update the OTA Agent as well as the Greengrass core software. It makes use of the IoT Jobs feature which provides additional commands to manage a Greengrass core software update job.>
+
+  take x-amzn-client-token
+    like native-string
+    note <A client token used to correlate requests and responses.>
+    void take
+  take create-software-update-job-body, like create-software-update-job-body
+
+  line </greengrass/updates>
+
+  hint <X-Amzn-Client-Token>, loan x-amzn-client-token
+
+  seed json, loan create-software-update-job-body
+
+  loot 200
+    seed json, like create-software-update-job-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like internal-server-error-exception
+    note <InternalServerErrorException>

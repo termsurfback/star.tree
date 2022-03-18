@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-security-group-not-found-fault
+  take form cache-security-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-cache-security-group-state-fault
+  take form invalid-cache-security-group-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-cache-security-group, name <POST_DeleteCacheSecurityGroup>
+  note <Deletes a cache security group.
+
+You cannot delete a cache security group if it is associated with any clusters.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-cache-security-group-message, like delete-cache-security-group-message
+    void take
+
+  line </#Action=DeleteCacheSecurityGroup>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-cache-security-group-message
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like invalid-cache-security-group-state-fault
+    note <InvalidCacheSecurityGroupStateFault>
+  loot 481
+    seed xml, like cache-security-group-not-found-fault
+    note <CacheSecurityGroupNotFoundFault>
+  loot 482
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

@@ -1,0 +1,29 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/androidenterprise/v1/base/device-state
+  take form device-state
+
+boot androidenterprise-devices-set-state, name <androidenterprise.devices.setState>
+  note <Sets whether a device's access to Google services is enabled or disabled. The device state takes effect only if enforcing EMM policies on Android devices is enabled in the Google Admin Console. Otherwise, the device state is ignored and all devices are allowed access to Google services. This is only supported for Google-managed users.>
+
+  take enterprise-id
+    like native-string
+    note <The ID of the enterprise.>
+  take user-id
+    like native-string
+    note <The ID of the user.>
+  take device-id
+    like native-string
+    note <The ID of the device.>
+  take device-state, like device-state
+    void take
+
+  line </androidenterprise/v1/enterprises/{enterprise-id}/users/{user-id}/devices/{device-id}/state>
+
+  seed json, loan device-state
+
+  loot 200
+    seed json, like device-state
+    note <Successful response>

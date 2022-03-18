@@ -1,0 +1,31 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-in-use
+  take form resource-in-use
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-not-found
+  take form resource-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-studio-lifecycle-config, name <DeleteStudioLifecycleConfig>
+  note <Deletes the Studio Lifecycle Configuration. In order to delete the Lifecycle Configuration, there must be no running apps using the Lifecycle Configuration. You must also remove the Lifecycle Configuration from UserSettings in all Domains and UserProfiles.>
+
+  take x-amz-target
+    like native-string
+  take delete-studio-lifecycle-config-request, like delete-studio-lifecycle-config-request
+
+  line </#X-Amz-Target=SageMaker.DeleteStudioLifecycleConfig>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-studio-lifecycle-config-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like resource-not-found
+    note <ResourceNotFound>
+  loot 481
+    seed json, like resource-in-use
+    note <ResourceInUse>

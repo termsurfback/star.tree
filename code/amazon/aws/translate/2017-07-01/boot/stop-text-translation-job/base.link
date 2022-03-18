@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/translate/2017-07-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/translate/2017-07-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/translate/2017-07-01/base/stop-text-translation-job-response
+  take form stop-text-translation-job-response
+
+load @drumwork/snow/amazonaws.com/translate/2017-07-01/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot stop-text-translation-job, name <StopTextTranslationJob>
+  note <Stops an asynchronous batch translation job that is in progress.
+
+If the job's state is `IN_PROGRESS`, the job will be marked for termination and put into the `STOP_REQUESTED` state. If the job completes before it can be stopped, it is put into the `COMPLETED` state. Otherwise, the job is put into the `STOPPED` state.
+
+Asynchronous batch translation jobs are started with the StartTextTranslationJob operation. You can use the DescribeTextTranslationJob or ListTextTranslationJobs operations to get a batch translation job's `JobId`.>
+
+  take x-amz-target
+    like native-string
+  take stop-text-translation-job-request, like stop-text-translation-job-request
+
+  line </#X-Amz-Target=AWSShineFrontendService_20170701.StopTextTranslationJob>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan stop-text-translation-job-request
+
+  loot 200
+    seed json, like stop-text-translation-job-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

@@ -1,0 +1,42 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/describe-platform-version-result
+  take form describe-platform-version-result
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/elastic-beanstalk-service-exception
+  take form elastic-beanstalk-service-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/insufficient-privileges-exception
+  take form insufficient-privileges-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-platform-version, name <GET_DescribePlatformVersion>
+  note <Describes a platform version. Provides full details. Compare to ListPlatformVersions, which provides summary information about a list of platform versions.
+
+For definitions of platform version and other platform-related terms, see [AWS Elastic Beanstalk Platforms Glossary](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/platforms-glossary.html).>
+
+  take platform-arn
+    like native-string
+    note <The ARN of the platform version.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribePlatformVersion>
+
+  find <PlatformArn>, loan platform-arn
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-platform-version-result
+    note <Success>
+  loot 480
+    seed xml, like insufficient-privileges-exception
+    note <InsufficientPrivilegesException>
+  loot 481
+    seed xml, like elastic-beanstalk-service-exception
+    note <ElasticBeanstalkServiceException>

@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-issuing-cards-card-body
+  take form get-issuing-cards-card-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/issuing-card
+  take form issuing-card
+
+boot get-issuing-cards-card, name <GetIssuingCardsCard>
+  note <Retrieves an Issuing `Card` object.>
+
+  take card
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-issuing-cards-card-body, like get-issuing-cards-card-body
+    void take
+
+  line </v1/issuing/cards/{card}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-issuing-cards-card-body
+
+  loot 200
+    seed json, like issuing-card
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

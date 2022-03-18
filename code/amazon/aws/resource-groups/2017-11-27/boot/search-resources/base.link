@@ -1,0 +1,79 @@
+
+load @drumwork/snow/amazonaws.com/resource-groups/2017-11-27/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/resource-groups/2017-11-27/base/forbidden-exception
+  take form forbidden-exception
+
+load @drumwork/snow/amazonaws.com/resource-groups/2017-11-27/base/internal-server-error-exception
+  take form internal-server-error-exception
+
+load @drumwork/snow/amazonaws.com/resource-groups/2017-11-27/base/method-not-allowed-exception
+  take form method-not-allowed-exception
+
+load @drumwork/snow/amazonaws.com/resource-groups/2017-11-27/base/search-resources-body
+  take form search-resources-body
+
+load @drumwork/snow/amazonaws.com/resource-groups/2017-11-27/base/search-resources-output
+  take form search-resources-output
+
+load @drumwork/snow/amazonaws.com/resource-groups/2017-11-27/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/amazonaws.com/resource-groups/2017-11-27/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot search-resources, name <SearchResources>
+  note <Returns a list of AWS resource identifiers that matches the specified query. The query uses the same format as a resource query in a CreateGroup or UpdateGroupQuery operation.
+
+**Minimum permissions** To run this command, you must have the following permissions:
+
+- `resource-groups:SearchResources`
+
+- `cloudformation:DescribeStacks`
+
+- `cloudformation:ListStackResources`
+
+- `tag:GetResources`>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take search-resources-body, like search-resources-body
+
+  line </resources/search>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan search-resources-body
+
+  loot 200
+    seed json, like search-resources-output
+    note <Success>
+  loot 480
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 481
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 482
+    seed json, like forbidden-exception
+    note <ForbiddenException>
+  loot 483
+    seed json, like method-not-allowed-exception
+    note <MethodNotAllowedException>
+  loot 484
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 485
+    seed json, like internal-server-error-exception
+    note <InternalServerErrorException>

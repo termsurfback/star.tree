@@ -1,0 +1,82 @@
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/list-profile-times-response
+  take form list-profile-times-response
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-profile-times, name <ListProfileTimes>
+  note <Lists the start times of the available aggregated profiles of a profiling group for an aggregation period within the specified time range.>
+
+  take profiling-group-name
+    like native-string
+    note <The name of the profiling group.>
+  take end-time
+    like native-string
+    note <The end time of the time range from which to list the profiles.>
+  take max-results
+    like native-integer
+    note <The maximum number of profile time results returned by `ListProfileTimes` in paginated output. When this parameter is used, `ListProfileTimes` only returns `maxResults` results in a single page with a `nextToken` response element. The remaining results of the initial request can be seen by sending another `ListProfileTimes` request with the returned `nextToken` value.>
+    void take
+  take next-token
+    like native-string
+    note <The `nextToken` value returned from a previous paginated `ListProfileTimes` request where `maxResults` was used and the results exceeded the value of that parameter. Pagination continues from the end of the previous results that returned the `nextToken` value.
+
+This token should be treated as an opaque identifier that is only used to retrieve the next items in a list and not for other programmatic purposes.>
+    void take
+  take order-by
+    like native-string
+    note <The order (ascending or descending by start time of the profile) to use when listing profiles. Defaults to `TIMESTAMP_DESCENDING`.>
+    void take
+  take period
+    like native-string
+    note <The aggregation period. This specifies the period during which an aggregation profile collects posted agent profiles for a profiling group. There are 3 valid values.
+
+- `P1D` — 1 day
+
+- `PT1H` — 1 hour
+
+- `PT5M` — 5 minutes>
+  take start-time
+    like native-string
+    note <The start time of the time range from which to list the profiles.>
+
+  line </profilingGroups/{profiling-group-name}/profileTimes#endTime&period&startTime>
+
+  find <endTime>, loan end-time
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+  find <orderBy>, loan order-by
+  find <period>, loan period
+  find <startTime>, loan start-time
+
+  loot 200
+    seed json, like list-profile-times-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

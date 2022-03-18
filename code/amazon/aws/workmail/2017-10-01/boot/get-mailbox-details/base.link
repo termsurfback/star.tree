@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/entity-not-found-exception
+  take form entity-not-found-exception
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/get-mailbox-details-response
+  take form get-mailbox-details-response
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/organization-not-found-exception
+  take form organization-not-found-exception
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/organization-state-exception
+  take form organization-state-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-mailbox-details, name <GetMailboxDetails>
+  note <Requests a user's mailbox details for a specified organization and user.>
+
+  take x-amz-target
+    like native-string
+  take get-mailbox-details-request, like get-mailbox-details-request
+
+  line </#X-Amz-Target=WorkMailService.GetMailboxDetails>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-mailbox-details-request
+
+  loot 200
+    seed json, like get-mailbox-details-response
+    note <Success>
+  loot 480
+    seed json, like organization-not-found-exception
+    note <OrganizationNotFoundException>
+  loot 481
+    seed json, like organization-state-exception
+    note <OrganizationStateException>
+  loot 482
+    seed json, like entity-not-found-exception
+    note <EntityNotFoundException>

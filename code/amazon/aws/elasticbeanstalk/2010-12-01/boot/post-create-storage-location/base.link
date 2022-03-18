@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/create-storage-location-result-message
+  take form create-storage-location-result-message
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/insufficient-privileges-exception
+  take form insufficient-privileges-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/s3-subscription-required-exception
+  take form s3-subscription-required-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/too-many-buckets-exception
+  take form too-many-buckets-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-storage-location, name <POST_CreateStorageLocation>
+  note <Creates a bucket in Amazon S3 to store application versions, logs, and other files used by Elastic Beanstalk environments. The Elastic Beanstalk console and EB CLI call this API the first time you create an environment in a region. If the storage location already exists, `CreateStorageLocation` still returns the bucket name but does not create a new bucket.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateStorageLocation>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-storage-location-result-message
+    note <Success>
+  loot 480
+    seed xml, like too-many-buckets-exception
+    note <TooManyBucketsException>
+  loot 481
+    seed xml, like s3-subscription-required-exception
+    note <S3SubscriptionRequiredException>
+  loot 482
+    seed xml, like insufficient-privileges-exception
+    note <InsufficientPrivilegesException>

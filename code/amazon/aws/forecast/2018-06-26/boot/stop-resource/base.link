@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/forecast/2018-06-26/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/forecast/2018-06-26/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/forecast/2018-06-26/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot stop-resource, name <StopResource>
+  note <Stops a resource.
+
+The resource undergoes the following states: `CREATE_STOPPING` and `CREATE_STOPPED`. You cannot resume a resource once it has been stopped.
+
+This operation can be applied to the following resources (and their corresponding child resources):
+
+- Dataset Import Job
+
+- Predictor Job
+
+- Forecast Job
+
+- Forecast Export Job
+
+- Predictor Backtest Export Job>
+
+  take x-amz-target
+    like native-string
+  take stop-resource-request, like stop-resource-request
+
+  line </#X-Amz-Target=AmazonForecast.StopResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan stop-resource-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/create-user-response
+  take form create-user-response
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/duplicate-user-name-fault
+  take form duplicate-user-name-fault
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/tag-quota-per-resource-exceeded
+  take form tag-quota-per-resource-exceeded
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/user-already-exists-fault
+  take form user-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/user-quota-exceeded-fault
+  take form user-quota-exceeded-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-user, name <CreateUser>
+  note <Creates a MemoryDB user. For more information, see [Authenticating users with Access Contol Lists (ACLs)](https://docs.aws.amazon.com/MemoryDB/latest/devguide/clusters.acls.html).>
+
+  take x-amz-target
+    like native-string
+  take create-user-request, like create-user-request
+
+  line </#X-Amz-Target=AmazonMemoryDB.CreateUser>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-user-request
+
+  loot 200
+    seed json, like create-user-response
+    note <Success>
+  loot 480
+    seed json, like user-already-exists-fault
+    note <UserAlreadyExistsFault>
+  loot 481
+    seed json, like user-quota-exceeded-fault
+    note <UserQuotaExceededFault>
+  loot 482
+    seed json, like duplicate-user-name-fault
+    note <DuplicateUserNameFault>
+  loot 483
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 484
+    seed json, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>
+  loot 485
+    seed json, like tag-quota-per-resource-exceeded
+    note <TagQuotaPerResourceExceeded>

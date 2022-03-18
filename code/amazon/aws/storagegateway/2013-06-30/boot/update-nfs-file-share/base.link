@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/update-nfs-file-share-output
+  take form update-nfs-file-share-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-nfs-file-share, name <UpdateNFSFileShare>
+  note <Updates a Network File System (NFS) file share. This operation is only supported in S3 File Gateways.
+
+To leave a file share field unchanged, set the corresponding input field to null.
+
+Updates the following file share settings:
+
+- Default storage class for your S3 bucket
+
+- Metadata defaults for your S3 bucket
+
+- Allowed NFS clients for your file share
+
+- Squash settings
+
+- Write status of your file share>
+
+  take x-amz-target
+    like native-string
+  take update-nfs-file-share-input, like update-nfs-file-share-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.UpdateNFSFileShare>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-nfs-file-share-input
+
+  loot 200
+    seed json, like update-nfs-file-share-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

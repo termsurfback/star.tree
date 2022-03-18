@@ -1,0 +1,31 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-webhook-endpoints-webhook-endpoint-body
+  take form post-webhook-endpoints-webhook-endpoint-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/webhook-endpoint
+  take form webhook-endpoint
+
+boot post-webhook-endpoints-webhook-endpoint, name <PostWebhookEndpointsWebhookEndpoint>
+  note <Updates the webhook endpoint. You may edit the `url`, the list of `enabled_events`, and the status of your endpoint.>
+
+  take webhook-endpoint
+    like native-string
+  take post-webhook-endpoints-webhook-endpoint-body, like post-webhook-endpoints-webhook-endpoint-body
+    void take
+
+  line </v1/webhook_endpoints/{webhook-endpoint}>
+
+  seed x-www-form-urlencoded, loan post-webhook-endpoints-webhook-endpoint-body
+
+  loot 200
+    seed json, like webhook-endpoint
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

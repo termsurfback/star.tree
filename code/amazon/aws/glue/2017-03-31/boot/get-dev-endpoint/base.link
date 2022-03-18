@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/entity-not-found-exception
+  take form entity-not-found-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/get-dev-endpoint-response
+  take form get-dev-endpoint-response
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/operation-timeout-exception
+  take form operation-timeout-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-dev-endpoint, name <GetDevEndpoint>
+  note <Retrieves information about a specified development endpoint.
+
+When you create a development endpoint in a virtual private cloud (VPC), Glue returns only a private IP address, and the public IP address field is not populated. When you create a non-VPC development endpoint, Glue returns only a public IP address.>
+
+  take x-amz-target
+    like native-string
+  take get-dev-endpoint-request, like get-dev-endpoint-request
+
+  line </#X-Amz-Target=AWSGlue.GetDevEndpoint>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-dev-endpoint-request
+
+  loot 200
+    seed json, like get-dev-endpoint-response
+    note <Success>
+  loot 480
+    seed json, like entity-not-found-exception
+    note <EntityNotFoundException>
+  loot 481
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 482
+    seed json, like operation-timeout-exception
+    note <OperationTimeoutException>
+  loot 483
+    seed json, like invalid-input-exception
+    note <InvalidInputException>

@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/signer/2017-08-25/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/signer/2017-08-25/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/signer/2017-08-25/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/signer/2017-08-25/base/remove-profile-permission-response
+  take form remove-profile-permission-response
+
+load @drumwork/snow/amazonaws.com/signer/2017-08-25/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/signer/2017-08-25/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/amazonaws.com/signer/2017-08-25/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot remove-profile-permission, name <RemoveProfilePermission>
+  note <Removes cross-account permissions from a signing profile.>
+
+  take profile-name
+    like native-string
+    note <A human-readable name for the signing profile with permissions to be removed.>
+  take statement-id
+    like native-string
+    note <A unique identifier for the cross-account permissions statement.>
+  take revision-id
+    like native-string
+    note <An identifier for the current revision of the signing profile permissions.>
+
+  line </signing-profiles/{profile-name}/permissions/{statement-id}#revisionId>
+
+  find <revisionId>, loan revision-id
+
+  loot 200
+    seed json, like remove-profile-permission-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 483
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 484
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 485
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>

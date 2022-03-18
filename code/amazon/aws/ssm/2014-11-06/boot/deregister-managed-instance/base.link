@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/deregister-managed-instance-result
+  take form deregister-managed-instance-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-instance-id
+  take form invalid-instance-id
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot deregister-managed-instance, name <DeregisterManagedInstance>
+  note <Removes the server or virtual machine from the list of registered servers. You can reregister the instance again at any time. If you don't plan to use Run Command on the server, we suggest uninstalling SSM Agent first.>
+
+  take x-amz-target
+    like native-string
+  take deregister-managed-instance-request, like deregister-managed-instance-request
+
+  line </#X-Amz-Target=AmazonSSM.DeregisterManagedInstance>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan deregister-managed-instance-request
+
+  loot 200
+    seed json, like deregister-managed-instance-result
+    note <Success>
+  loot 480
+    seed json, like invalid-instance-id
+    note <InvalidInstanceId>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

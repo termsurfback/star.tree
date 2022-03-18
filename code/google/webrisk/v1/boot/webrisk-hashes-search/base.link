@@ -1,0 +1,31 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/webrisk/v1/base/google-cloud-webrisk-v1-search-hashes-response
+  take form google-cloud-webrisk-v1-search-hashes-response
+
+boot webrisk-hashes-search, name <webrisk.hashes.search>
+  note <Gets the full hashes that match the requested hash prefix. This is used after a hash prefix is looked up in a threatList and there is a match. The client side threatList only holds partial hashes so the client must query this method to determine if there is a full hash match of a threat.>
+
+  take hash-prefix
+    like native-string
+    note <A hash prefix, consisting of the most significant 4-32 bytes of a SHA256 hash. For JSON requests, this field is base64-encoded. Note that if this parameter is provided by a URI, it must be encoded using the web safe base64 variant (RFC 4648).>
+    void take
+  take threat-types
+    like list
+      like native-string
+    note <Required. The ThreatLists to search in. Multiple ThreatLists may be specified.>
+    void take
+
+  line </v1/hashes:search>
+
+  find <hashPrefix>, loan hash-prefix
+  find <threatTypes>, loan threat-types
+
+  loot 200
+    seed json, like google-cloud-webrisk-v1-search-hashes-response
+    note <Successful response>

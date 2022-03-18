@@ -1,0 +1,79 @@
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/create-fleet-output
+  take form create-fleet-output
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/tagging-failed-exception
+  take form tagging-failed-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-fleet, name <CreateFleet>
+  note <Creates a fleet of Amazon Elastic Compute Cloud (Amazon EC2) instances to host your custom game server or Realtime Servers. Use this operation to configure the computing resources for your fleet and provide instructions for running game servers on each instance.
+
+Most GameLift fleets can deploy instances to multiple locations, including the home Region (where the fleet is created) and an optional set of remote locations. Fleets that are created in the following AWS Regions support multiple locations: us-east-1 (N. Virginia), us-west-2 (Oregon), eu-central-1 (Frankfurt), eu-west-1 (Ireland), ap-southeast-2 (Sydney), ap-northeast-1 (Tokyo), and ap-northeast-2 (Seoul). Fleets that are created in other GameLift Regions can deploy instances in the fleet's home Region only. All fleet instances use the same configuration regardless of location; however, you can adjust capacity settings and turn auto-scaling on/off for each location.
+
+To create a fleet, choose the hardware for your instances, specify a game server build or Realtime script to deploy, and provide a runtime configuration to direct GameLift how to start and run game servers on each instance in the fleet. Set permissions for inbound traffic to your game servers, and enable optional features as needed. When creating a multi-location fleet, provide a list of additional remote locations.
+
+If successful, this operation creates a new Fleet resource and places it in `NEW` status, which prompts GameLift to initiate the [fleet creation workflow](https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-creation-workflow.html). You can track fleet creation by checking fleet status using DescribeFleetAttributes and DescribeFleetLocationAttributes/, or by monitoring fleet creation events using DescribeFleetEvents. As soon as the fleet status changes to `ACTIVE`, you can enable automatic scaling for the fleet with PutScalingPolicy and set capacity for the home Region with UpdateFleetCapacity. When the status of each remote location reaches `ACTIVE`, you can set capacity by location using UpdateFleetCapacity.
+
+**Learn more** [Setting up fleets](https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-intro.html)
+
+[Debug fleet creation issues](https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-creating-debug.html#fleets-creating-debug-creation)
+
+[Multi-location fleets](https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-intro.html)
+
+**Related actions** CreateFleet | UpdateFleetCapacity | PutScalingPolicy | DescribeEC2InstanceLimits | DescribeFleetAttributes | DescribeFleetLocationAttributes | UpdateFleetAttributes | StopFleetActions | DeleteFleet | [All APIs by task](https://docs.aws.amazon.com/gamelift/latest/developerguide/reference-awssdk.html#reference-awssdk-resources-fleets)>
+
+  take x-amz-target
+    like native-string
+  take create-fleet-input, like create-fleet-input
+
+  line </#X-Amz-Target=GameLift.CreateFleet>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-fleet-input
+
+  loot 200
+    seed json, like create-fleet-output
+    note <Success>
+  loot 480
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 481
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 482
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 483
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 484
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 485
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 486
+    seed json, like tagging-failed-exception
+    note <TaggingFailedException>

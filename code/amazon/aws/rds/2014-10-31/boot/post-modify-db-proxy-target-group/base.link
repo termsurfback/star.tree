@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-not-found-fault
+  take form db-proxy-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-target-group-not-found-fault
+  take form db-proxy-target-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-proxy-state-fault
+  take form invalid-db-proxy-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/modify-db-proxy-target-group-response
+  take form modify-db-proxy-target-group-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-modify-db-proxy-target-group, name <POST_ModifyDBProxyTargetGroup>
+  note <Modifies the properties of a `DBProxyTargetGroup`.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take modify-db-proxy-target-group-request, like modify-db-proxy-target-group-request
+    void take
+
+  line </#Action=ModifyDBProxyTargetGroup>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan modify-db-proxy-target-group-request
+
+  loot 200
+    seed xml, like modify-db-proxy-target-group-response
+    note <Success>
+  loot 480
+    seed xml, like db-proxy-not-found-fault
+    note <DBProxyNotFoundFault>
+  loot 481
+    seed xml, like db-proxy-target-group-not-found-fault
+    note <DBProxyTargetGroupNotFoundFault>
+  loot 482
+    seed xml, like invalid-db-proxy-state-fault
+    note <InvalidDBProxyStateFault>

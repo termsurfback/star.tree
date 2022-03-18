@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/auto-scaling-instances-type
+  take form auto-scaling-instances-type
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/xml-string-max-len19
+  take form xml-string-max-len19
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-auto-scaling-instances, name <GET_DescribeAutoScalingInstances>
+  note <Gets information about the Auto Scaling instances in the account and Region.>
+
+  take instance-ids
+    like list
+      like xml-string-max-len19
+    note <The IDs of the instances. If you omit this parameter, all Auto Scaling instances are described. If you specify an ID that does not exist, it is ignored with no error.
+
+Array Members: Maximum number of 50 items.>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of items to return with this call. The default value is `50` and the maximum value is `50`.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next set of items to return. (You received this token from a previous call.)>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeAutoScalingInstances>
+
+  find <InstanceIds>, loan instance-ids
+  find <MaxRecords>, loan max-records
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like auto-scaling-instances-type
+    note <Success>
+  loot 480
+    seed xml, like invalid-next-token
+    note <InvalidNextToken>
+  loot 481
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

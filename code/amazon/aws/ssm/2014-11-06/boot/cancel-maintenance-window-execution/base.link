@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/cancel-maintenance-window-execution-result
+  take form cancel-maintenance-window-execution-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/does-not-exist-exception
+  take form does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot cancel-maintenance-window-execution, name <CancelMaintenanceWindowExecution>
+  note <Stops a maintenance window execution that is already in progress and cancels any tasks in the window that haven't already starting running. Tasks already in progress will continue to completion.>
+
+  take x-amz-target
+    like native-string
+  take cancel-maintenance-window-execution-request, like cancel-maintenance-window-execution-request
+
+  line </#X-Amz-Target=AmazonSSM.CancelMaintenanceWindowExecution>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan cancel-maintenance-window-execution-request
+
+  loot 200
+    seed json, like cancel-maintenance-window-execution-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like does-not-exist-exception
+    note <DoesNotExistException>

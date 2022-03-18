@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/describe-instance-response
+  take form describe-instance-response
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-instance, name <DescribeInstance>
+  note <This API is in preview release for Amazon Connect and is subject to change.
+
+Returns the current state of the specified instance identifier. It tracks the instance while it is being created and returns an error status, if applicable.
+
+If an instance is not created successfully, the instance status reason field returns details relevant to the reason. The instance in a failed state is returned only for 24 hours after the CreateInstance API was invoked.>
+
+  take instance-id
+    like native-string
+    note <The identifier of the Amazon Connect instance. You can find the instanceId in the ARN of the instance.>
+
+  line </instance/{instance-id}>
+
+  loot 200
+    seed json, like describe-instance-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-service-exception
+    note <InternalServiceException>

@@ -1,0 +1,45 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/storage/v1/base/bucket
+  take form bucket
+
+boot storage-buckets-get, name <storage.buckets.get>
+  note <Returns metadata for the specified bucket.>
+
+  take bucket
+    like native-string
+    note <Name of a bucket.>
+  take if-metageneration-match
+    like native-string
+    note <Makes the return of the bucket metadata conditional on whether the bucket's current metageneration matches the given value.>
+    void take
+  take if-metageneration-not-match
+    like native-string
+    note <Makes the return of the bucket metadata conditional on whether the bucket's current metageneration does not match the given value.>
+    void take
+  take projection
+    like native-string
+    note <Set of properties to return. Defaults to noAcl.>
+    void take
+  take provisional-user-project
+    like native-string
+    note <The project to be billed for this request if the target bucket is requester-pays bucket.>
+    void take
+  take user-project
+    like native-string
+    note <The project to be billed for this request. Required for Requester Pays buckets.>
+    void take
+
+  line </b/{bucket}>
+
+  find <ifMetagenerationMatch>, loan if-metageneration-match
+  find <ifMetagenerationNotMatch>, loan if-metageneration-not-match
+  find <projection>, loan projection
+  find <provisionalUserProject>, loan provisional-user-project
+  find <userProject>, loan user-project
+
+  loot 200
+    seed json, like bucket
+    note <Successful response>

@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/elastic-beanstalk-service-exception
+  take form elastic-beanstalk-service-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/insufficient-privileges-exception
+  take form insufficient-privileges-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/list-platform-versions-result
+  take form list-platform-versions-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-list-platform-versions, name <POST_ListPlatformVersions>
+  note <Lists the platform versions available for your account in an AWS Region. Provides summary information about each platform version. Compare to DescribePlatformVersion, which provides full details about a single platform version.
+
+For definitions of platform version and other platform-related terms, see [AWS Elastic Beanstalk Platforms Glossary](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/platforms-glossary.html).>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take list-platform-versions-request, like list-platform-versions-request
+    void take
+
+  line </#Action=ListPlatformVersions>
+
+  find <MaxRecords>, loan max-records
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan list-platform-versions-request
+
+  loot 200
+    seed xml, like list-platform-versions-result
+    note <Success>
+  loot 480
+    seed xml, like insufficient-privileges-exception
+    note <InsufficientPrivilegesException>
+  loot 481
+    seed xml, like elastic-beanstalk-service-exception
+    note <ElasticBeanstalkServiceException>

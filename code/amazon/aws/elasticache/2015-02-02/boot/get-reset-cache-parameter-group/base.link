@@ -1,0 +1,79 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-parameter-group-name-message
+  take form cache-parameter-group-name-message
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-parameter-group-not-found-fault
+  take form cache-parameter-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-cache-parameter-group-state-fault
+  take form invalid-cache-parameter-group-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-global-replication-group-state-fault
+  take form invalid-global-replication-group-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/parameter-name-value
+  take form parameter-name-value
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-reset-cache-parameter-group, name <GET_ResetCacheParameterGroup>
+  note <Modifies the parameters of a cache parameter group to the engine or system default value. You can reset specific parameters by submitting a list of parameter names. To reset the entire cache parameter group, specify the `ResetAllParameters` and `CacheParameterGroupName` parameters.>
+
+  take cache-parameter-group-name
+    like native-string
+    note <The name of the cache parameter group to reset.>
+  take reset-all-parameters
+    like native-boolean
+    note <If `true`, all parameters in the cache parameter group are reset to their default values. If `false`, only the parameters listed by `ParameterNameValues` are reset to their default values.
+
+Valid values: `true` | `false`>
+    void take
+  take parameter-name-values
+    like list
+      like parameter-name-value
+    note <An array of parameter names to reset to their default values. If `ResetAllParameters` is `true`, do not use `ParameterNameValues`. If `ResetAllParameters` is `false`, you must specify the name of at least one parameter to reset.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ResetCacheParameterGroup>
+
+  find <CacheParameterGroupName>, loan cache-parameter-group-name
+  find <ResetAllParameters>, loan reset-all-parameters
+  find <ParameterNameValues>, loan parameter-name-values
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like cache-parameter-group-name-message
+    note <Success>
+  loot 480
+    seed xml, like invalid-cache-parameter-group-state-fault
+    note <InvalidCacheParameterGroupStateFault>
+  loot 481
+    seed xml, like cache-parameter-group-not-found-fault
+    note <CacheParameterGroupNotFoundFault>
+  loot 482
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>
+  loot 484
+    seed xml, like invalid-global-replication-group-state-fault
+    note <InvalidGlobalReplicationGroupStateFault>

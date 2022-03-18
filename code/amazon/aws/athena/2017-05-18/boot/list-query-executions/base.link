@@ -1,0 +1,48 @@
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/list-query-executions-output
+  take form list-query-executions-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-query-executions, name <ListQueryExecutions>
+  note <Provides a list of available query execution IDs for the queries in the specified workgroup. If a workgroup is not specified, returns a list of query execution IDs for the primary workgroup. Requires you to have access to the workgroup in which the queries ran.
+
+For code samples using the Amazon Web Services SDK for Java, see [Examples and Code Samples](http://docs.aws.amazon.com/athena/latest/ug/code-samples.html) in the _Amazon Athena User Guide_.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-query-executions-input, like list-query-executions-input
+
+  line </#X-Amz-Target=AmazonAthena.ListQueryExecutions>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-query-executions-input
+
+  loot 200
+    seed json, like list-query-executions-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

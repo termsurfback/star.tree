@@ -1,0 +1,48 @@
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/base-exception
+  take form base-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/update-default-search-field-response
+  take form update-default-search-field-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-update-default-search-field, name <GET_UpdateDefaultSearchField>
+  note <Configures the default search field for the search domain. The default search field is the text field that is searched when a search request does not specify which fields to search. By default, it is configured to include the contents of all of the domain's text fields.>
+
+  take domain-name
+    like native-string
+  take default-search-field
+    like native-string
+    note <The text field to search if the search request does not specify which field to search. The default search field is used when search terms are specified with the `q` parameter, or if a match expression specified with the `bq` parameter does not constrain the search to a particular field. The default is an empty string, which automatically searches all text fields.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=UpdateDefaultSearchField>
+
+  find <DomainName>, loan domain-name
+  find <DefaultSearchField>, loan default-search-field
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like update-default-search-field-response
+    note <Success>
+  loot 409
+    seed xml, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 480
+    seed xml, like base-exception
+    note <BaseException>
+  loot 500
+    seed xml, like internal-exception
+    note <InternalException>

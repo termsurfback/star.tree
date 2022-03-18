@@ -1,0 +1,50 @@
+
+load @drumwork/snow/amazonaws.com/datasync/2018-11-09/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/datasync/2018-11-09/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/datasync/2018-11-09/base/list-agents-response
+  take form list-agents-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-agents, name <ListAgents>
+  note <Returns a list of agents owned by an Amazon Web Services account in the Amazon Web Services Region specified in the request. The returned list is ordered by agent Amazon Resource Name (ARN).
+
+By default, this operation returns a maximum of 100 agents. This operation supports pagination that enables you to optionally reduce the number of agents returned in a response.
+
+If you have more agents than are returned in a response (that is, the response returns only a truncated list of your agents), the response contains a marker that you can specify in your next request to fetch the next page of agents.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-agents-request, like list-agents-request
+
+  line </#X-Amz-Target=FmrsService.ListAgents>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-agents-request
+
+  loot 200
+    seed json, like list-agents-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like internal-exception
+    note <InternalException>

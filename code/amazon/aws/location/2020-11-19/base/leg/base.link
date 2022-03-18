@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/leg-distance-double
+  take form leg-distance-double
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/leg-duration-seconds-double
+  take form leg-duration-seconds-double
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/leg-geometry
+  take form leg-geometry
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/position
+  take form position
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/step-list
+  take form step-list
+
+form leg, name <Leg>
+  note <Contains the calculated route's details for each path between a pair of positions. The number of legs returned corresponds to one fewer than the total number of positions in the request.
+
+For example, a route with a departure position and destination position returns one leg with the positions [snapped to a nearby road](https://docs.aws.amazon.com/location/latest/developerguide/calculate-route.html#snap-to-nearby-road):
+
+- The `StartPosition` is the departure position.
+
+- The `EndPosition` is the destination position.
+
+A route with a waypoint between the departure and destination position returns two legs with the positions snapped to a nearby road:
+
+- Leg 1: The `StartPosition` is the departure position . The `EndPosition` is the waypoint positon.
+
+- Leg 2: The `StartPosition` is the waypoint position. The `EndPosition` is the destination position.>
+  take distance, name <Distance>
+    like leg-distance-double
+    note <The distance between the leg's `StartPosition` and `EndPosition` along a calculated route.
+
+- The default measurement is `Kilometers` unless the request specifies a `DistanceUnit` of `Miles`.>
+  take duration-seconds, name <DurationSeconds>
+    like leg-duration-seconds-double
+    note <The estimated travel time between the leg's `StartPosition` and `EndPosition`. The travel mode and departure time that you specify in the request determines the calculated time.>
+  take end-position, name <EndPosition>
+    like position
+    note <The terminating position of the leg. Follows the format `[longitude,latitude]`.
+
+If the `EndPosition` isn't located on a road, it's [snapped to a nearby road](https://docs.aws.amazon.com/location/latest/developerguide/calculate-route.html#snap-to-nearby-road).>
+  take geometry, name <Geometry>
+    like leg-geometry
+    void take
+    note <Contains the calculated route's path as a linestring geometry.>
+  take start-position, name <StartPosition>
+    like position
+    note <The starting position of the leg. Follows the format `[longitude,latitude]`.
+
+If the `StartPosition` isn't located on a road, it's [snapped to a nearby road](https://docs.aws.amazon.com/location/latest/developerguide/calculate-route.html#snap-to-nearby-road).>
+  take steps, name <Steps>
+    like step-list
+    note <Contains a list of steps, which represent subsections of a leg. Each step provides instructions for how to move to the next step in the leg such as the step's start position, end position, travel distance, travel duration, and geometry offset.>

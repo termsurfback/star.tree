@@ -1,0 +1,163 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/configuration-option-setting
+  take form configuration-option-setting
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/environment-description
+  take form environment-description
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/insufficient-privileges-exception
+  take form insufficient-privileges-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/option-specification
+  take form option-specification
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/tag
+  take form tag
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/too-many-environments-exception
+  take form too-many-environments-exception
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-create-environment, name <GET_CreateEnvironment>
+  note <Launches an AWS Elastic Beanstalk environment for the specified application using the specified configuration.>
+
+  take application-name
+    like native-string
+    note <The name of the application that is associated with this environment.>
+  take environment-name
+    like native-string
+    note <A unique name for the environment.
+
+Constraint: Must be from 4 to 40 characters in length. The name can contain only letters, numbers, and hyphens. It can't start or end with a hyphen. This name must be unique within a region in your account. If the specified name already exists in the region, Elastic Beanstalk returns an `InvalidParameterValue` error.
+
+If you don't specify the `CNAMEPrefix` parameter, the environment name becomes part of the CNAME, and therefore part of the visible URL for your application.>
+    void take
+  take group-name
+    like native-string
+    note <The name of the group to which the target environment belongs. Specify a group name only if the environment's name is specified in an environment manifest and not with the environment name parameter. See [Environment Manifest (env.yaml)](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/environment-cfg-manifest.html) for details.>
+    void take
+  take description
+    like native-string
+    note <Your description for this environment.>
+    void take
+  take cname-prefix
+    like native-string
+    note <If specified, the environment attempts to use this value as the prefix for the CNAME in your Elastic Beanstalk environment URL. If not specified, the CNAME is generated automatically by appending a random alphanumeric string to the environment name.>
+    void take
+  take tier
+    like form
+      take name, name <Name>
+        like string
+        void take
+        note <The name of this environment tier.
+
+Valid values:
+
+- For _Web server tier_ - `WebServer`
+
+- For _Worker tier_ - `Worker`>
+      take type, name <Type>
+        like string
+        void take
+        note <The type of this environment tier.
+
+Valid values:
+
+- For _Web server tier_ - `Standard`
+
+- For _Worker tier_ - `SQS/HTTP`>
+      take version, name <Version>
+        like string
+        void take
+        note <The version of this environment tier. When you don't set a value to it, Elastic Beanstalk uses the latest compatible worker tier version.
+
+This member is deprecated. Any specific version that you set may become out of date. We recommend leaving it unspecified.>
+    note <Specifies the tier to use in creating this environment. The environment tier that you choose determines whether Elastic Beanstalk provisions resources to support a web application that handles HTTP(S) requests or a web application that handles background-processing tasks.>
+    void take
+  take tags
+    like list
+      like tag
+    note <Specifies the tags applied to resources in the environment.>
+    void take
+  take version-label
+    like native-string
+    note <The name of the application version to deploy.
+
+Default: If not specified, Elastic Beanstalk attempts to deploy the sample application.>
+    void take
+  take template-name
+    like native-string
+    note <The name of the Elastic Beanstalk configuration template to use with the environment.
+
+If you specify `TemplateName`, then don't specify `SolutionStackName`.>
+    void take
+  take solution-stack-name
+    like native-string
+    note <The name of an Elastic Beanstalk solution stack (platform version) to use with the environment. If specified, Elastic Beanstalk sets the configuration values to the default values associated with the specified solution stack. For a list of current solution stacks, see [Elastic Beanstalk Supported Platforms](https://docs.aws.amazon.com/elasticbeanstalk/latest/platforms/platforms-supported.html) in the _AWS Elastic Beanstalk Platforms_ guide.
+
+If you specify `SolutionStackName`, don't specify `PlatformArn` or `TemplateName`.>
+    void take
+  take platform-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the custom platform to use with the environment. For more information, see [Custom Platforms](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/custom-platforms.html) in the _AWS Elastic Beanstalk Developer Guide_.
+
+If you specify `PlatformArn`, don't specify `SolutionStackName`.>
+    void take
+  take option-settings
+    like list
+      like configuration-option-setting
+    note <If specified, AWS Elastic Beanstalk sets the specified configuration options to the requested value in the configuration set for the new environment. These override the values obtained from the solution stack or the configuration template.>
+    void take
+  take options-to-remove
+    like list
+      like option-specification
+    note <A list of custom user-defined configuration options to remove from the configuration set for this new environment.>
+    void take
+  take operations-role
+    like native-string
+    note <The Amazon Resource Name (ARN) of an existing IAM role to be used as the environment's operations role. If specified, Elastic Beanstalk uses the operations role for permissions to downstream services during this call and during subsequent calls acting on this environment. To specify an operations role, you must have the `iam:PassRole` permission for the role. For more information, see [Operations roles](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/iam-operationsrole.html) in the _AWS Elastic Beanstalk Developer Guide_.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateEnvironment>
+
+  find <ApplicationName>, loan application-name
+  find <EnvironmentName>, loan environment-name
+  find <GroupName>, loan group-name
+  find <Description>, loan description
+  find <CNAMEPrefix>, loan cname-prefix
+  find <Tier>, loan tier
+  find <Tags>, loan tags
+  find <VersionLabel>, loan version-label
+  find <TemplateName>, loan template-name
+  find <SolutionStackName>, loan solution-stack-name
+  find <PlatformArn>, loan platform-arn
+  find <OptionSettings>, loan option-settings
+  find <OptionsToRemove>, loan options-to-remove
+  find <OperationsRole>, loan operations-role
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like environment-description
+    note <Success>
+  loot 480
+    seed xml, like too-many-environments-exception
+    note <TooManyEnvironmentsException>
+  loot 481
+    seed xml, like insufficient-privileges-exception
+    note <InsufficientPrivilegesException>

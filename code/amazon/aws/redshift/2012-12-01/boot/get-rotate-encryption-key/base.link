@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/dependent-service-request-throttling-fault
+  take form dependent-service-request-throttling-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-state-fault
+  take form invalid-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/rotate-encryption-key-result
+  take form rotate-encryption-key-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-rotate-encryption-key, name <GET_RotateEncryptionKey>
+  note <Rotates the encryption keys for a cluster.>
+
+  take cluster-identifier
+    like native-string
+    note <The unique identifier of the cluster that you want to rotate the encryption keys for.
+
+Constraints: Must be the name of valid cluster that has encryption enabled.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=RotateEncryptionKey>
+
+  find <ClusterIdentifier>, loan cluster-identifier
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like rotate-encryption-key-result
+    note <Success>
+  loot 480
+    seed xml, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 481
+    seed xml, like invalid-cluster-state-fault
+    note <InvalidClusterStateFault>
+  loot 482
+    seed xml, like dependent-service-request-throttling-fault
+    note <DependentServiceRequestThrottlingFault>

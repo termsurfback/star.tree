@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/pipeline-deleted-exception
+  take form pipeline-deleted-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/pipeline-not-found-exception
+  take form pipeline-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot set-status, name <SetStatus>
+  note <Requests that the status of the specified physical or logical pipeline objects be updated in the specified pipeline. This update might not occur immediately, but is eventually consistent. The status that can be set depends on the type of object (for example, DataNode or Activity). You cannot perform this operation on `FINISHED` pipelines and attempting to do so returns `InvalidRequestException`.>
+
+  take x-amz-target
+    like native-string
+  take set-status-input, like set-status-input
+
+  line </#X-Amz-Target=DataPipeline.SetStatus>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan set-status-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like pipeline-not-found-exception
+    note <PipelineNotFoundException>
+  loot 481
+    seed json, like pipeline-deleted-exception
+    note <PipelineDeletedException>
+  loot 482
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 483
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

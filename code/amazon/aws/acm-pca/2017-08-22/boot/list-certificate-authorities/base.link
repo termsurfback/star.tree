@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/list-certificate-authorities-response
+  take form list-certificate-authorities-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-certificate-authorities, name <ListCertificateAuthorities>
+  note <Lists the private certificate authorities that you created by using the [CreateCertificateAuthority](https://docs.aws.amazon.com/acm-pca/latest/APIReference/API_CreateCertificateAuthority.html) action.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-certificate-authorities-request, like list-certificate-authorities-request
+
+  line </#X-Amz-Target=ACMPrivateCA.ListCertificateAuthorities>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-certificate-authorities-request
+
+  loot 200
+    seed json, like list-certificate-authorities-response
+    note <Success>
+  loot 480
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>

@@ -1,0 +1,66 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/tags-type
+  take form tags-type
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-tags, name <GET_DescribeTags>
+  note <Describes the specified tags.
+
+You can use filters to limit the results. For example, you can query for the tags for a specific Auto Scaling group. You can specify multiple values for a filter. A tag must match at least one of the specified values for it to be included in the results.
+
+You can also specify multiple filters. The result includes information for a particular tag only if it matches all the filters. If there's no match, no special message is returned.
+
+For more information, see [Tagging Auto Scaling groups and instances](https://docs.aws.amazon.com/autoscaling/ec2/userguide/autoscaling-tagging.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+
+  take filters
+    like list
+      like filter
+    note <One or more filters to scope the tags to return. The maximum number of filters per filter type (for example, `auto-scaling-group`) is 1000.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next set of items to return. (You received this token from a previous call.)>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of items to return with this call. The default value is `50` and the maximum value is `100`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeTags>
+
+  find <Filters>, loan filters
+  find <NextToken>, loan next-token
+  find <MaxRecords>, loan max-records
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like tags-type
+    note <Success>
+  loot 480
+    seed xml, like invalid-next-token
+    note <InvalidNextToken>
+  loot 481
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

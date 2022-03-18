@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/put-resource-policy-response
+  take form put-resource-policy-response
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-resource-policy, name <PutResourcePolicy>
+  note <Creates or updates a resource policy allowing other Amazon Web Services services to put log events to this account, such as Amazon Route 53. An account can have up to 10 resource policies per Amazon Web Services Region.>
+
+  take x-amz-target
+    like native-string
+  take put-resource-policy-request, like put-resource-policy-request
+
+  line </#X-Amz-Target=Logs_20140328.PutResourcePolicy>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan put-resource-policy-request
+
+  loot 200
+    seed json, like put-resource-policy-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/batch-update-cluster-response
+  take form batch-update-cluster-response
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/service-update-not-found-fault
+  take form service-update-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot batch-update-cluster, name <BatchUpdateCluster>
+  note <Apply the service update to a list of clusters supplied. For more information on service updates and applying them, see [Applying the service updates](https://docs.aws.amazon.com/MemoryDB/latest/devguide/managing-updates.html#applying-updates).>
+
+  take x-amz-target
+    like native-string
+  take batch-update-cluster-request, like batch-update-cluster-request
+
+  line </#X-Amz-Target=AmazonMemoryDB.BatchUpdateCluster>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan batch-update-cluster-request
+
+  loot 200
+    seed json, like batch-update-cluster-response
+    note <Success>
+  loot 480
+    seed json, like service-update-not-found-fault
+    note <ServiceUpdateNotFoundFault>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>

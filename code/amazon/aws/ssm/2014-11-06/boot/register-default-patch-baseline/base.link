@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/does-not-exist-exception
+  take form does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-resource-id
+  take form invalid-resource-id
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/register-default-patch-baseline-result
+  take form register-default-patch-baseline-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot register-default-patch-baseline, name <RegisterDefaultPatchBaseline>
+  note <Defines the default patch baseline for the relevant operating system.
+
+To reset the Amazon Web Services-predefined patch baseline as the default, specify the full patch baseline Amazon Resource Name (ARN) as the baseline ID value. For example, for CentOS, specify `arn:aws:ssm:us-east-2:733109147000:patchbaseline/pb-0574b43a65ea646ed` instead of `pb-0574b43a65ea646ed`.>
+
+  take x-amz-target
+    like native-string
+  take register-default-patch-baseline-request, like register-default-patch-baseline-request
+
+  line </#X-Amz-Target=AmazonSSM.RegisterDefaultPatchBaseline>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan register-default-patch-baseline-request
+
+  loot 200
+    seed json, like register-default-patch-baseline-result
+    note <Success>
+  loot 480
+    seed json, like invalid-resource-id
+    note <InvalidResourceId>
+  loot 481
+    seed json, like does-not-exist-exception
+    note <DoesNotExistException>
+  loot 482
+    seed json, like internal-server-error
+    note <InternalServerError>

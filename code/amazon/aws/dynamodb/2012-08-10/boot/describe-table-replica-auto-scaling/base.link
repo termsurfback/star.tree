@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/describe-table-replica-auto-scaling-output
+  take form describe-table-replica-auto-scaling-output
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-table-replica-auto-scaling, name <DescribeTableReplicaAutoScaling>
+  note <Describes auto scaling settings across replicas of the global table at once.
+
+This operation only applies to [Version 2019.11.21](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/globaltables.V2.html) of global tables.>
+
+  take x-amz-target
+    like native-string
+  take describe-table-replica-auto-scaling-input, like describe-table-replica-auto-scaling-input
+
+  line </#X-Amz-Target=DynamoDB_20120810.DescribeTableReplicaAutoScaling>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-table-replica-auto-scaling-input
+
+  loot 200
+    seed json, like describe-table-replica-auto-scaling-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

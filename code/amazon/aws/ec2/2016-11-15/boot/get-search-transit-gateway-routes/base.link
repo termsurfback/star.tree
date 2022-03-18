@@ -1,0 +1,74 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/search-transit-gateway-routes-result
+  take form search-transit-gateway-routes-result
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-search-transit-gateway-routes, name <GET_SearchTransitGatewayRoutes>
+  note <Searches for routes in the specified transit gateway route table.>
+
+  take transit-gateway-route-table-id
+    like native-string
+    note <The ID of the transit gateway route table.>
+  take filter
+    like list
+      like filter
+    note <One or more filters. The possible values are:
+
+- `attachment.transit-gateway-attachment-id`- The id of the transit gateway attachment.
+
+- `attachment.resource-id` - The resource id of the transit gateway attachment.
+
+- `attachment.resource-type` - The attachment resource type. Valid values are `vpc` | `vpn` | `direct-connect-gateway` | `peering` | `connect`.
+
+- `prefix-list-id` - The ID of the prefix list.
+
+- `route-search.exact-match` - The exact match of the specified filter.
+
+- `route-search.longest-prefix-match` - The longest prefix that matches the route.
+
+- `route-search.subnet-of-match` - The routes with a subnet that match the specified CIDR filter.
+
+- `route-search.supernet-of-match` - The routes with a CIDR that encompass the CIDR filter. For example, if you have 10.0.1.0/29 and 10.0.1.0/31 routes in your route table and you specify supernet-of-match as 10.0.1.0/30, then the result returns 10.0.1.0/29.
+
+- `state` - The state of the route (`active` | `blackhole`).
+
+- `type` - The type of route (`propagated` | `static`).>
+  take max-results
+    like native-integer
+    note <The maximum number of routes to return.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=SearchTransitGatewayRoutes>
+
+  find <TransitGatewayRouteTableId>, loan transit-gateway-route-table-id
+  find <Filter>, loan filter
+  find <MaxResults>, loan max-results
+  find <DryRun>, loan dry-run
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like search-transit-gateway-routes-result
+    note <Success>

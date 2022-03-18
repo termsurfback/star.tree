@@ -1,0 +1,67 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/delete-conflict-exception
+  take form delete-conflict-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-policy-version, name <GET_DeletePolicyVersion>
+  note <Deletes the specified version from the specified managed policy.
+
+You cannot delete the default version from a policy using this operation. To delete the default version from a policy, use DeletePolicy. To find out which version of a policy is marked as the default version, use ListPolicyVersions.
+
+For information about versions for managed policies, see [Versioning for managed policies](https://docs.aws.amazon.com/IAM/latest/UserGuide/policies-managed-versions.html) in the _IAM User Guide_.>
+
+  take policy-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the IAM policy from which you want to delete a version.
+
+For more information about ARNs, see [Amazon Resource Names (ARNs)](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html) in the _Amazon Web Services General Reference_.>
+  take version-id
+    like native-string
+    note <The policy version to delete.
+
+This parameter allows (through its [regex pattern](http://wikipedia.org/wiki/regex)) a string of characters that consists of the lowercase letter 'v' followed by one or two digits, and optionally followed by a period '.' and a string of letters and digits.
+
+For more information about managed policy versions, see [Versioning for managed policies](https://docs.aws.amazon.com/IAM/latest/UserGuide/policies-managed-versions.html) in the _IAM User Guide_.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeletePolicyVersion>
+
+  find <PolicyArn>, loan policy-arn
+  find <VersionId>, loan version-id
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed xml, like invalid-input-exception
+    note <InvalidInputException>
+  loot 483
+    seed xml, like delete-conflict-exception
+    note <DeleteConflictException>
+  loot 484
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

@@ -1,0 +1,53 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/youtubereporting/v1/base/list-reports-response
+  take form list-reports-response
+
+boot youtubereporting-jobs-reports-list, name <youtubereporting.jobs.reports.list>
+  note <Lists reports created by a specific job. Returns NOT_FOUND if the job does not exist.>
+
+  take job-id
+    like native-string
+    note <The ID of the job.>
+  take created-after
+    like native-string
+    note <If set, only reports created after the specified date/time are returned.>
+    void take
+  take on-behalf-of-content-owner
+    like native-string
+    note <The content owner's external ID on which behalf the user is acting on. If not set, the user is acting for himself (his own channel).>
+    void take
+  take page-size
+    like native-integer
+    note <Requested page size. Server may return fewer report types than requested. If unspecified, server will pick an appropriate default.>
+    void take
+  take page-token
+    like native-string
+    note <A token identifying a page of results the server should return. Typically, this is the value of ListReportsResponse.next_page_token returned in response to the previous call to the `ListReports` method.>
+    void take
+  take start-time-at-or-after
+    like native-string
+    note <If set, only reports whose start time is greater than or equal the specified date/time are returned.>
+    void take
+  take start-time-before
+    like native-string
+    note <If set, only reports whose start time is smaller than the specified date/time are returned.>
+    void take
+
+  line </v1/jobs/{job-id}/reports>
+
+  find <createdAfter>, loan created-after
+  find <onBehalfOfContentOwner>, loan on-behalf-of-content-owner
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+  find <startTimeAtOrAfter>, loan start-time-at-or-after
+  find <startTimeBefore>, loan start-time-before
+
+  loot 200
+    seed json, like list-reports-response
+    note <Successful response>

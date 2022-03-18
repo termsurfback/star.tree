@@ -1,0 +1,44 @@
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/describe-replication-task-assessment-runs-response
+  take form describe-replication-task-assessment-runs-response
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/resource-not-found-fault
+  take form resource-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-replication-task-assessment-runs, name <DescribeReplicationTaskAssessmentRuns>
+  note <Returns a paginated list of premigration assessment runs based on filter settings.
+
+These filter settings can specify a combination of premigration assessment runs, migration tasks, replication instances, and assessment run status values.
+
+This operation doesn't return information about individual assessments. For this information, see the `DescribeReplicationTaskIndividualAssessments` operation.>
+
+  take x-amz-target
+    like native-string
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-replication-task-assessment-runs-message, like describe-replication-task-assessment-runs-message
+
+  line </#X-Amz-Target=AmazonDMSv20160101.DescribeReplicationTaskAssessmentRuns>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+
+  seed json, loan describe-replication-task-assessment-runs-message
+
+  loot 200
+    seed json, like describe-replication-task-assessment-runs-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-fault
+    note <ResourceNotFoundFault>

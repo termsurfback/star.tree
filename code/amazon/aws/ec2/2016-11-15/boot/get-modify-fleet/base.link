@@ -1,0 +1,96 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/default-target-capacity-type
+  take form default-target-capacity-type
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/fleet-launch-template-config-request
+  take form fleet-launch-template-config-request
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/modify-fleet-result
+  take form modify-fleet-result
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/integer
+  take form integer
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-modify-fleet, name <GET_ModifyFleet>
+  note <Modifies the specified EC2 Fleet.
+
+You can only modify an EC2 Fleet request of type `maintain`.
+
+While the EC2 Fleet is being modified, it is in the `modifying` state.
+
+To scale up your EC2 Fleet, increase its target capacity. The EC2 Fleet launches the additional Spot Instances according to the allocation strategy for the EC2 Fleet request. If the allocation strategy is `lowest-price`, the EC2 Fleet launches instances using the Spot Instance pool with the lowest price. If the allocation strategy is `diversified`, the EC2 Fleet distributes the instances across the Spot Instance pools. If the allocation strategy is `capacity-optimized`, EC2 Fleet launches instances from Spot Instance pools with optimal capacity for the number of instances that are launching.
+
+To scale down your EC2 Fleet, decrease its target capacity. First, the EC2 Fleet cancels any open requests that exceed the new target capacity. You can request that the EC2 Fleet terminate Spot Instances until the size of the fleet no longer exceeds the new target capacity. If the allocation strategy is `lowest-price`, the EC2 Fleet terminates the instances with the highest price per unit. If the allocation strategy is `capacity-optimized`, the EC2 Fleet terminates the instances in the Spot Instance pools that have the least available Spot Instance capacity. If the allocation strategy is `diversified`, the EC2 Fleet terminates instances across the Spot Instance pools. Alternatively, you can request that the EC2 Fleet keep the fleet at its current size, but not replace any Spot Instances that are interrupted or that you terminate manually.
+
+If you are finished with your EC2 Fleet for now, but will use it again later, you can set the target capacity to 0.>
+
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take excess-capacity-termination-policy
+    like native-string
+    note <Indicates whether running instances should be terminated if the total target capacity of the EC2 Fleet is decreased below the current size of the EC2 Fleet.>
+    void take
+  take launch-template-config
+    like list
+      like fleet-launch-template-config-request
+    note <The launch template and overrides.>
+    void take
+  take fleet-id
+    like native-string
+    note <The ID of the EC2 Fleet.>
+  take target-capacity-specification
+    like form
+      take total-target-capacity, name <TotalTargetCapacity>
+        like integer
+        note <The number of units to request, filled using `DefaultTargetCapacityType`.>
+      take on-demand-target-capacity, name <OnDemandTargetCapacity>
+        like integer
+        void take
+        note <The number of On-Demand units to request.>
+      take spot-target-capacity, name <SpotTargetCapacity>
+        like integer
+        void take
+        note <The number of Spot units to request.>
+      take default-target-capacity-type, name <DefaultTargetCapacityType>
+        like default-target-capacity-type
+        void take
+        note <The default `TotalTargetCapacity`, which is either `Spot` or `On-Demand`.>
+    note <The size of the EC2 Fleet.>
+    void take
+  take context
+    like native-string
+    note <Reserved.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyFleet>
+
+  find <DryRun>, loan dry-run
+  find <ExcessCapacityTerminationPolicy>, loan excess-capacity-termination-policy
+  find <LaunchTemplateConfig>, loan launch-template-config
+  find <FleetId>, loan fleet-id
+  find <TargetCapacitySpecification>, loan target-capacity-specification
+  find <Context>, loan context
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-fleet-result
+    note <Success>

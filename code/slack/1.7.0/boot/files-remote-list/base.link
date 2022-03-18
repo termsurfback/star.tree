@@ -1,0 +1,65 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-number
+  take form native-number
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+boot files-remote-list, name <files_remote_list>
+  note <Retrieve information about a remote file added to Slack>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `remote_files:read`>
+    void take
+  take channel
+    like native-string
+    note <Filter files appearing in a specific channel, indicated by its ID.>
+    void take
+  take ts-from
+    like native-number
+    note <Filter files created after this timestamp (inclusive).>
+    void take
+  take ts-to
+    like native-number
+    note <Filter files created before this timestamp (inclusive).>
+    void take
+  take limit
+    like native-integer
+    note <The maximum number of items to return.>
+    void take
+  take cursor
+    like native-string
+    note <Paginate through collections of data by setting the `cursor` parameter to a `next_cursor` attribute returned by a previous request&#39;s `response_metadata`. Default value fetches the first &quot;page&quot; of the collection. See [pagination](/docs/pagination) for more detail.>
+    void take
+
+  line </files.remote.list>
+
+  find <token>, loan token
+  find <channel>, loan channel
+  find <ts_from>, loan ts-from
+  find <ts_to>, loan ts-to
+  find <limit>, loan limit
+  find <cursor>, loan cursor
+
+  loot 200
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-true
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response>

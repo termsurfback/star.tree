@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-already-exists-fault
+  take form db-proxy-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-not-found-fault
+  take form db-proxy-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-proxy-state-fault
+  take form invalid-db-proxy-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/modify-db-proxy-response
+  take form modify-db-proxy-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-modify-db-proxy, name <POST_ModifyDBProxy>
+  note <Changes the settings for an existing DB proxy.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take modify-db-proxy-request, like modify-db-proxy-request
+    void take
+
+  line </#Action=ModifyDBProxy>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan modify-db-proxy-request
+
+  loot 200
+    seed xml, like modify-db-proxy-response
+    note <Success>
+  loot 480
+    seed xml, like db-proxy-not-found-fault
+    note <DBProxyNotFoundFault>
+  loot 481
+    seed xml, like db-proxy-already-exists-fault
+    note <DBProxyAlreadyExistsFault>
+  loot 482
+    seed xml, like invalid-db-proxy-state-fault
+    note <InvalidDBProxyStateFault>

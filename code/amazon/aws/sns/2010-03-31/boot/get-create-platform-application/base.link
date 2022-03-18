@@ -1,0 +1,72 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/create-platform-application-response
+  take form create-platform-application-response
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-platform-application, name <GET_CreatePlatformApplication>
+  note <Creates a platform application object for one of the supported push notification services, such as APNS and GCM (Firebase Cloud Messaging), to which devices and mobile apps may register. You must specify `PlatformPrincipal` and `PlatformCredential` attributes when using the `CreatePlatformApplication` action.
+
+`PlatformPrincipal` and `PlatformCredential` are received from the notification service.
+
+- For `ADM`, `PlatformPrincipal` is `client id` and `PlatformCredential` is `client secret`.
+
+- For `Baidu`, `PlatformPrincipal` is `API key` and `PlatformCredential` is `secret key`.
+
+- For `APNS` and `APNS_SANDBOX`, `PlatformPrincipal` is `SSL certificate` and `PlatformCredential` is `private key`.
+
+- For `GCM` (Firebase Cloud Messaging), there is no `PlatformPrincipal` and the `PlatformCredential` is `API key`.
+
+- For `MPNS`, `PlatformPrincipal` is `TLS certificate` and `PlatformCredential` is `private key`.
+
+- For `WNS`, `PlatformPrincipal` is `Package Security Identifier` and `PlatformCredential` is `secret key`.
+
+You can use the returned `PlatformApplicationArn` as an attribute for the `CreatePlatformEndpoint` action.>
+
+  take name
+    like native-string
+    note <Application names must be made up of only uppercase and lowercase ASCII letters, numbers, underscores, hyphens, and periods, and must be between 1 and 256 characters long.>
+  take platform
+    like native-string
+    note <The following platforms are supported: ADM (Amazon Device Messaging), APNS (Apple Push Notification Service), APNS_SANDBOX, and GCM (Firebase Cloud Messaging).>
+  take attributes
+    like form
+    note <For a list of attributes, see [SetPlatformApplicationAttributes](https://docs.aws.amazon.com/sns/latest/api/API_SetPlatformApplicationAttributes.html).>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreatePlatformApplication>
+
+  find <Name>, loan name
+  find <Platform>, loan platform
+  find <Attributes>, loan attributes
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-platform-application-response
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 482
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>

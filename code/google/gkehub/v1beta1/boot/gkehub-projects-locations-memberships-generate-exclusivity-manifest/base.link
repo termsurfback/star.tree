@@ -1,0 +1,30 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/gkehub/v1beta1/base/generate-exclusivity-manifest-response
+  take form generate-exclusivity-manifest-response
+
+boot gkehub-projects-locations-memberships-generate-exclusivity-manifest, name <gkehub.projects.locations.memberships.generateExclusivityManifest>
+  note <GenerateExclusivityManifest generates the manifests to update the exclusivity artifacts in the cluster if needed. Exclusivity artifacts include the Membership custom resource definition (CRD) and the singleton Membership custom resource (CR). Combined with ValidateExclusivity, exclusivity artifacts guarantee that a Kubernetes cluster is only registered to a single GKE Hub. The Membership CRD is versioned, and may require conversion when the GKE Hub API server begins serving a newer version of the CRD and corresponding CR. The response will be the converted CRD and CR if there are any differences between the versions.>
+
+  take name
+    like native-string
+    note <Required. The Membership resource name in the format `projects/*/locations/*/memberships/*`.>
+  take cr-manifest
+    like native-string
+    note <Optional. The YAML manifest of the membership CR retrieved by `kubectl get memberships membership`. Leave empty if the resource does not exist.>
+    void take
+  take crd-manifest
+    like native-string
+    note <Optional. The YAML manifest of the membership CRD retrieved by `kubectl get customresourcedefinitions membership`. Leave empty if the resource does not exist.>
+    void take
+
+  line </v1beta1/{name}:generateExclusivityManifest>
+
+  find <crManifest>, loan cr-manifest
+  find <crdManifest>, loan crd-manifest
+
+  loot 200
+    seed json, like generate-exclusivity-manifest-response
+    note <Successful response>

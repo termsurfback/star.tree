@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/describe-valid-db-instance-modifications-result
+  take form describe-valid-db-instance-modifications-result
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-instance-state-fault
+  take form invalid-db-instance-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-valid-db-instance-modifications, name <POST_DescribeValidDBInstanceModifications>
+  note <You can call DescribeValidDBInstanceModifications to learn what modifications you can make to your DB instance. You can use this information when you call ModifyDBInstance.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-valid-db-instance-modifications-message, like describe-valid-db-instance-modifications-message
+    void take
+
+  line </#Action=DescribeValidDBInstanceModifications>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-valid-db-instance-modifications-message
+
+  loot 200
+    seed xml, like describe-valid-db-instance-modifications-result
+    note <Success>
+  loot 480
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>
+  loot 481
+    seed xml, like invalid-db-instance-state-fault
+    note <InvalidDBInstanceStateFault>

@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/list-slots-body
+  take form list-slots-body
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/list-slots-response
+  take form list-slots-response
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/service-quota-exceeded-exception
+  take form service-quota-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-slots, name <ListSlots>
+  note <Gets a list of slots that match the specified criteria.>
+
+  take bot-id
+    like native-string
+    note <The identifier of the bot that contains the slot.>
+  take bot-version
+    like native-string
+    note <The version of the bot that contains the slot.>
+  take locale-id
+    like native-string
+    note <The identifier of the language and locale of the slots to list. The string must match one of the supported locales. For more information, see [Supported languages](https://docs.aws.amazon.com/lexv2/latest/dg/how-languages.html).>
+  take intent-id
+    like native-string
+    note <The unique identifier of the intent that contains the slot.>
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-slots-body, like list-slots-body
+
+  line </bots/{bot-id}/botversions/{bot-version}/botlocales/{locale-id}/intents/{intent-id}/slots/>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-slots-body
+
+  loot 200
+    seed json, like list-slots-response
+    note <Success>
+  loot 480
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 481
+    seed json, like service-quota-exceeded-exception
+    note <ServiceQuotaExceededException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like internal-server-exception
+    note <InternalServerException>

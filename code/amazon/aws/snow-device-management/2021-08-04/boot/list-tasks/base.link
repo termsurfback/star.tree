@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/snow-device-management/2021-08-04/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/snow-device-management/2021-08-04/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/snow-device-management/2021-08-04/base/list-tasks-output
+  take form list-tasks-output
+
+load @drumwork/snow/amazonaws.com/snow-device-management/2021-08-04/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/snow-device-management/2021-08-04/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-tasks, name <ListTasks>
+  note <Returns a list of tasks that can be filtered by state.>
+
+  take max-results
+    like native-integer
+    note <The maximum number of tasks per page.>
+    void take
+  take next-token
+    like native-string
+    note <A pagination token to continue to the next page of tasks.>
+    void take
+  take state
+    like native-string
+    note <A structure used to filter the list of tasks.>
+    void take
+
+  line </tasks>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+  find <state>, loan state
+
+  loot 200
+    seed json, like list-tasks-output
+    note <Success>
+  loot 480
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

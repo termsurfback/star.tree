@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/delete-conflict-exception
+  take form delete-conflict-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-policy, name <POST_DeletePolicy>
+  note <Deletes the specified managed policy.
+
+Before you can delete a managed policy, you must first detach the policy from all users, groups, and roles that it is attached to. In addition, you must delete all the policy's versions. The following steps describe the process for deleting a managed policy:
+
+- Detach the policy from all users, groups, and roles that the policy is attached to, using DetachUserPolicy, DetachGroupPolicy, or DetachRolePolicy. To list all the users, groups, and roles that a policy is attached to, use ListEntitiesForPolicy.
+
+- Delete all versions of the policy using DeletePolicyVersion. To list the policy's versions, use ListPolicyVersions. You cannot use DeletePolicyVersion to delete the version that is marked as the default version. You delete the policy's default version in the next step of the process.
+
+- Delete the policy (this automatically deletes the policy's default version) using this operation.
+
+For information about managed policies, see [Managed policies and inline policies](https://docs.aws.amazon.com/IAM/latest/UserGuide/policies-managed-vs-inline.html) in the _IAM User Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-policy-request, like delete-policy-request
+    void take
+
+  line </#Action=DeletePolicy>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-policy-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed xml, like invalid-input-exception
+    note <InvalidInputException>
+  loot 483
+    seed xml, like delete-conflict-exception
+    note <DeleteConflictException>
+  loot 484
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

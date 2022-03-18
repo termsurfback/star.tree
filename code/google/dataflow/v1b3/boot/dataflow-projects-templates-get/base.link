@@ -1,0 +1,35 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/dataflow/v1b3/base/get-template-response
+  take form get-template-response
+
+boot dataflow-projects-templates-get, name <dataflow.projects.templates.get>
+  note <Get the template associated with a template.>
+
+  take project-id
+    like native-string
+    note <Required. The ID of the Cloud Platform project that the job belongs to.>
+  take gcs-path
+    like native-string
+    note <Required. A Cloud Storage path to the template from which to create the job. Must be valid Cloud Storage URL, beginning with 'gs://'.>
+    void take
+  take location
+    like native-string
+    note <The [regional endpoint] (https://cloud.google.com/dataflow/docs/concepts/regional-endpoints) to which to direct the request.>
+    void take
+  take view
+    like native-string
+    note <The view to retrieve. Defaults to METADATA_ONLY.>
+    void take
+
+  line </v1b3/projects/{project-id}/templates:get>
+
+  find <gcsPath>, loan gcs-path
+  find <location>, loan location
+  find <view>, loan view
+
+  loot 200
+    seed json, like get-template-response
+    note <Successful response>

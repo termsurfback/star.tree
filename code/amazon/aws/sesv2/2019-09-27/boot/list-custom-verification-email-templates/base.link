@@ -1,0 +1,48 @@
+
+load @drumwork/snow/amazonaws.com/sesv2/2019-09-27/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/sesv2/2019-09-27/base/list-custom-verification-email-templates-response
+  take form list-custom-verification-email-templates-response
+
+load @drumwork/snow/amazonaws.com/sesv2/2019-09-27/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-custom-verification-email-templates, name <ListCustomVerificationEmailTemplates>
+  note <Lists the existing custom verification email templates for your account in the current AWS Region.
+
+For more information about custom verification email templates, see [Using Custom Verification Email Templates](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/send-email-verify-address-custom.html) in the _Amazon SES Developer Guide_.
+
+You can execute this operation no more than once per second.>
+
+  take next-token
+    like native-string
+    note <A token returned from a previous call to `ListCustomVerificationEmailTemplates` to indicate the position in the list of custom verification email templates.>
+    void take
+  take page-size
+    like native-integer
+    note <The number of results to show in a single call to `ListCustomVerificationEmailTemplates`. If the number of results is larger than the number you specified in this parameter, then the response includes a `NextToken` element, which you can use to obtain additional results.
+
+The value you specify has to be at least 1, and can be no more than 50.>
+    void take
+
+  line </v2/email/custom-verification-email-templates>
+
+  find <NextToken>, loan next-token
+  find <PageSize>, loan page-size
+
+  loot 200
+    seed json, like list-custom-verification-email-templates-response
+    note <Success>
+  loot 480
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 481
+    seed json, like bad-request-exception
+    note <BadRequestException>

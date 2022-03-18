@@ -1,0 +1,80 @@
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/put-repository-permissions-policy-body
+  take form put-repository-permissions-policy-body
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/put-repository-permissions-policy-result
+  take form put-repository-permissions-policy-result
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/service-quota-exceeded-exception
+  take form service-quota-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-repository-permissions-policy, name <PutRepositoryPermissionsPolicy>
+  note <Sets the resource policy on a repository that specifies permissions to access it.
+
+When you call `PutRepositoryPermissionsPolicy`, the resource policy on the repository is ignored when evaluting permissions. This ensures that the owner of a repository cannot lock themselves out of the repository, which would prevent them from being able to update the resource policy.>
+
+  take domain
+    like native-string
+    note <The name of the domain containing the repository to set the resource policy on.>
+  take domain-owner
+    like native-string
+    note <The 12-digit account number of the AWS account that owns the domain. It does not include dashes or spaces.>
+    void take
+  take repository
+    like native-string
+    note <The name of the repository to set the resource policy on.>
+  take put-repository-permissions-policy-body, like put-repository-permissions-policy-body
+
+  line </v1/repository/permissions/policy#domain&repository>
+
+  find <domain>, loan domain
+  find <domain-owner>, loan domain-owner
+  find <repository>, loan repository
+
+  seed json, loan put-repository-permissions-policy-body
+
+  loot 200
+    seed json, like put-repository-permissions-policy-result
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 484
+    seed json, like service-quota-exceeded-exception
+    note <ServiceQuotaExceededException>
+  loot 485
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 486
+    seed json, like validation-exception
+    note <ValidationException>

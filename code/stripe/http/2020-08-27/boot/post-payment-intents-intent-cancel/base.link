@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/payment-intent
+  take form payment-intent
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-payment-intents-intent-cancel-body
+  take form post-payment-intents-intent-cancel-body
+
+boot post-payment-intents-intent-cancel, name <PostPaymentIntentsIntentCancel>
+  note <A PaymentIntent object can be canceled when it is in one of these statuses: `requires_payment_method`, `requires_capture`, `requires_confirmation`, or `requires_action`.
+
+Once canceled, no additional charges will be made by the PaymentIntent and any operations on the PaymentIntent will fail with an error. For PaymentIntents with `status=’requires_capture’`, the remaining `amount_capturable` will automatically be refunded.>
+
+  take intent
+    like native-string
+  take post-payment-intents-intent-cancel-body, like post-payment-intents-intent-cancel-body
+    void take
+
+  line </v1/payment_intents/{intent}/cancel>
+
+  seed x-www-form-urlencoded, loan post-payment-intents-intent-cancel-body
+
+  loot 200
+    seed json, like payment-intent
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

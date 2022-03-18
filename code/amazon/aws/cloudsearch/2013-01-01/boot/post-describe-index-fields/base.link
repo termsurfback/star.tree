@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2013-01-01/base/base-exception
+  take form base-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2013-01-01/base/describe-index-fields-response
+  take form describe-index-fields-response
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2013-01-01/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2013-01-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-index-fields, name <POST_DescribeIndexFields>
+  note <Gets information about the index fields configured for the search domain. Can be limited to specific fields by name. By default, shows all fields and includes any pending changes to the configuration. Set the `Deployed` option to `true` to show the active configuration and exclude pending changes. For more information, see [Getting Domain Information](http://docs.aws.amazon.com/cloudsearch/latest/developerguide/getting-domain-info.html) in the _Amazon CloudSearch Developer Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-index-fields-request, like describe-index-fields-request
+    void take
+
+  line </#Action=DescribeIndexFields>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-index-fields-request
+
+  loot 200
+    seed xml, like describe-index-fields-response
+    note <Success>
+  loot 480
+    seed xml, like base-exception
+    note <BaseException>
+  loot 481
+    seed xml, like internal-exception
+    note <InternalException>
+  loot 482
+    seed xml, like resource-not-found-exception
+    note <ResourceNotFoundException>

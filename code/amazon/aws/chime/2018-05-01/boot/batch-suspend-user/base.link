@@ -1,0 +1,77 @@
+
+load @drumwork/snow/amazonaws.com/chime/2018-05-01/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/chime/2018-05-01/base/batch-suspend-user-body
+  take form batch-suspend-user-body
+
+load @drumwork/snow/amazonaws.com/chime/2018-05-01/base/batch-suspend-user-response
+  take form batch-suspend-user-response
+
+load @drumwork/snow/amazonaws.com/chime/2018-05-01/base/forbidden-exception
+  take form forbidden-exception
+
+load @drumwork/snow/amazonaws.com/chime/2018-05-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/chime/2018-05-01/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/amazonaws.com/chime/2018-05-01/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/chime/2018-05-01/base/throttled-client-exception
+  take form throttled-client-exception
+
+load @drumwork/snow/amazonaws.com/chime/2018-05-01/base/unauthorized-client-exception
+  take form unauthorized-client-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot batch-suspend-user, name <BatchSuspendUser>
+  note <Suspends up to 50 users from a `Team` or `EnterpriseLWA` Amazon Chime account. For more information about different account types, see [Managing Your Amazon Chime Accounts](https://docs.aws.amazon.com/chime/latest/ag/manage-chime-account.html) in the _Amazon Chime Administration Guide_.
+
+Users suspended from a `Team` account are disassociated from the account,but they can continue to use Amazon Chime as free users. To remove the suspension from suspended `Team` account users, invite them to the `Team` account again. You can use the InviteUsers action to do so.
+
+Users suspended from an `EnterpriseLWA` account are immediately signed out of Amazon Chime and can no longer sign in. To remove the suspension from suspended `EnterpriseLWA` account users, use the BatchUnsuspendUser action.
+
+To sign out users without suspending them, use the LogoutUser action.>
+
+  take account-id
+    like native-string
+    note <The Amazon Chime account ID.>
+  take operation
+    like native-string
+  take batch-suspend-user-body, like batch-suspend-user-body
+
+  line </accounts/{account-id}/users#operation=suspend>
+
+  find <operation>, loan operation
+
+  seed json, loan batch-suspend-user-body
+
+  loot 200
+    seed json, like batch-suspend-user-response
+    note <Success>
+  loot 480
+    seed json, like unauthorized-client-exception
+    note <UnauthorizedClientException>
+  loot 481
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 482
+    seed json, like forbidden-exception
+    note <ForbiddenException>
+  loot 483
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 484
+    seed json, like throttled-client-exception
+    note <ThrottledClientException>
+  loot 485
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 486
+    seed json, like service-failure-exception
+    note <ServiceFailureException>

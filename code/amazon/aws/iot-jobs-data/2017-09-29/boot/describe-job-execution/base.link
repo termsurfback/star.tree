@@ -1,0 +1,75 @@
+
+load @drumwork/snow/amazonaws.com/iot-jobs-data/2017-09-29/base/certificate-validation-exception
+  take form certificate-validation-exception
+
+load @drumwork/snow/amazonaws.com/iot-jobs-data/2017-09-29/base/describe-job-execution-response
+  take form describe-job-execution-response
+
+load @drumwork/snow/amazonaws.com/iot-jobs-data/2017-09-29/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot-jobs-data/2017-09-29/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iot-jobs-data/2017-09-29/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/iot-jobs-data/2017-09-29/base/terminal-state-exception
+  take form terminal-state-exception
+
+load @drumwork/snow/amazonaws.com/iot-jobs-data/2017-09-29/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-job-execution, name <DescribeJobExecution>
+  note <Gets details of a job execution.>
+
+  take job-id
+    like native-string
+    note <The unique identifier assigned to this job when it was created.>
+  take thing-name
+    like native-string
+    note <The thing name associated with the device the job execution is running on.>
+  take include-job-document
+    like native-boolean
+    note <Optional. When set to true, the response contains the job document. The default is false.>
+    void take
+  take execution-number
+    like native-integer
+    note <Optional. A number that identifies a particular job execution on a particular device. If not specified, the latest job execution is returned.>
+    void take
+
+  line </things/{thing-name}/jobs/{job-id}>
+
+  find <includeJobDocument>, loan include-job-document
+  find <executionNumber>, loan execution-number
+
+  loot 200
+    seed json, like describe-job-execution-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 484
+    seed json, like certificate-validation-exception
+    note <CertificateValidationException>
+  loot 485
+    seed json, like terminal-state-exception
+    note <TerminalStateException>

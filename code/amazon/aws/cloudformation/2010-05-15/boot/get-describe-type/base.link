@@ -1,0 +1,77 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/cfn-registry-exception
+  take form cfn-registry-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/describe-type-output
+  take form describe-type-output
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/type-not-found-exception
+  take form type-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-type, name <GET_DescribeType>
+  note <Returns detailed information about an extension that has been registered.
+
+If you specify a `VersionId`, `DescribeType` returns information about that specific extension version. Otherwise, it returns information about the default extension version.>
+
+  take type
+    like native-string
+    note <The kind of extension.
+
+Conditional: You must specify either `TypeName` and `Type`, or `Arn`.>
+    void take
+  take type-name
+    like native-string
+    note <The name of the extension.
+
+Conditional: You must specify either `TypeName` and `Type`, or `Arn`.>
+    void take
+  take arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the extension.
+
+Conditional: You must specify either `TypeName` and `Type`, or `Arn`.>
+    void take
+  take version-id
+    like native-string
+    note <The ID of a specific version of the extension. The version ID is the value at the end of the Amazon Resource Name (ARN) assigned to the extension version when it is registered.
+
+If you specify a `VersionId`, `DescribeType` returns information about that specific extension version. Otherwise, it returns information about the default extension version.>
+    void take
+  take publisher-id
+    like native-string
+    note <The publisher ID of the extension publisher.
+
+Extensions provided by Amazon are not assigned a publisher ID.>
+    void take
+  take public-version-number
+    like native-string
+    note <The version number of a public third-party extension.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeType>
+
+  find <Type>, loan type
+  find <TypeName>, loan type-name
+  find <Arn>, loan arn
+  find <VersionId>, loan version-id
+  find <PublisherId>, loan publisher-id
+  find <PublicVersionNumber>, loan public-version-number
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-type-output
+    note <Success>
+  loot 480
+    seed xml, like cfn-registry-exception
+    note <CFNRegistryException>
+  loot 481
+    seed xml, like type-not-found-exception
+    note <TypeNotFoundException>

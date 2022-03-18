@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/policies-type
+  take form policies-type
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/service-linked-role-failure
+  take form service-linked-role-failure
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-policies, name <POST_DescribePolicies>
+  note <Gets information about the scaling policies in the account and Region.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-policies-type, like describe-policies-type
+    void take
+
+  line </#Action=DescribePolicies>
+
+  find <MaxRecords>, loan max-records
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-policies-type
+
+  loot 200
+    seed xml, like policies-type
+    note <Success>
+  loot 480
+    seed xml, like invalid-next-token
+    note <InvalidNextToken>
+  loot 481
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>
+  loot 482
+    seed xml, like service-linked-role-failure
+    note <ServiceLinkedRoleFailure>

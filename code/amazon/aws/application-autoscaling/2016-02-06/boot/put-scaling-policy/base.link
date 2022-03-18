@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/concurrent-update-exception
+  take form concurrent-update-exception
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/failed-resource-access-exception
+  take form failed-resource-access-exception
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/object-not-found-exception
+  take form object-not-found-exception
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/put-scaling-policy-response
+  take form put-scaling-policy-response
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-scaling-policy, name <PutScalingPolicy>
+  note <Creates or updates a scaling policy for an Application Auto Scaling scalable target.
+
+Each scalable target is identified by a service namespace, resource ID, and scalable dimension. A scaling policy applies to the scalable target identified by those three attributes. You cannot create a scaling policy until you have registered the resource as a scalable target.
+
+Multiple scaling policies can be in force at the same time for the same scalable target. You can have one or more target tracking scaling policies, one or more step scaling policies, or both. However, there is a chance that multiple policies could conflict, instructing the scalable target to scale out or in at the same time. Application Auto Scaling gives precedence to the policy that provides the largest capacity for both scale out and scale in. For example, if one policy increases capacity by 3, another policy increases capacity by 200 percent, and the current capacity is 10, Application Auto Scaling uses the policy with the highest calculated capacity (200% of 10 = 20) and scales out to 30.
+
+We recommend caution, however, when using target tracking scaling policies with step scaling policies because conflicts between these policies can cause undesirable behavior. For example, if the step scaling policy initiates a scale-in activity before the target tracking policy is ready to scale in, the scale-in activity will not be blocked. After the scale-in activity completes, the target tracking policy could instruct the scalable target to scale out again.
+
+For more information, see [Target tracking scaling policies](https://docs.aws.amazon.com/autoscaling/application/userguide/application-auto-scaling-target-tracking.html) and [Step scaling policies](https://docs.aws.amazon.com/autoscaling/application/userguide/application-auto-scaling-step-scaling-policies.html) in the _Application Auto Scaling User Guide_.
+
+If a scalable target is deregistered, the scalable target is no longer available to execute scaling policies. Any scaling policies that were specified for the scalable target are deleted.>
+
+  take x-amz-target
+    like native-string
+  take put-scaling-policy-request, like put-scaling-policy-request
+
+  line </#X-Amz-Target=AnyScaleFrontendService.PutScalingPolicy>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan put-scaling-policy-request
+
+  loot 200
+    seed json, like put-scaling-policy-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like object-not-found-exception
+    note <ObjectNotFoundException>
+  loot 483
+    seed json, like concurrent-update-exception
+    note <ConcurrentUpdateException>
+  loot 484
+    seed json, like failed-resource-access-exception
+    note <FailedResourceAccessException>
+  loot 485
+    seed json, like internal-service-exception
+    note <InternalServiceException>

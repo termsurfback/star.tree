@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/estimate-template-cost-output
+  take form estimate-template-cost-output
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/parameter
+  take form parameter
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-estimate-template-cost, name <GET_EstimateTemplateCost>
+  note <Returns the estimated monthly cost of a template. The return value is an Amazon Web Services Simple Monthly Calculator URL with a query string that describes the resources required to run the template.>
+
+  take template-body
+    like native-string
+    note <Structure containing the template body with a minimum length of 1 byte and a maximum length of 51,200 bytes. (For more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the CloudFormation User Guide.)
+
+Conditional: You must pass `TemplateBody` or `TemplateURL`. If both are passed, only `TemplateBody` is used.>
+    void take
+  take template-url
+    like native-string
+    note <Location of file containing the template body. The URL must point to a template that is located in an Amazon S3 bucket or a Systems Manager document. For more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the CloudFormation User Guide.
+
+Conditional: You must pass `TemplateURL` or `TemplateBody`. If both are passed, only `TemplateBody` is used.>
+    void take
+  take parameters
+    like list
+      like parameter
+    note <A list of `Parameter` structures that specify input parameters.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=EstimateTemplateCost>
+
+  find <TemplateBody>, loan template-body
+  find <TemplateURL>, loan template-url
+  find <Parameters>, loan parameters
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like estimate-template-cost-output
+    note <Success>

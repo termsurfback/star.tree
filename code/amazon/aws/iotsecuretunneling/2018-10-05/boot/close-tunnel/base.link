@@ -1,0 +1,29 @@
+
+load @drumwork/snow/amazonaws.com/iotsecuretunneling/2018-10-05/base/close-tunnel-response
+  take form close-tunnel-response
+
+load @drumwork/snow/amazonaws.com/iotsecuretunneling/2018-10-05/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot close-tunnel, name <CloseTunnel>
+  note <Closes a tunnel identified by the unique tunnel id. When a `CloseTunnel` request is received, we close the WebSocket connections between the client and proxy server so no data can be transmitted.>
+
+  take x-amz-target
+    like native-string
+  take close-tunnel-request, like close-tunnel-request
+
+  line </#X-Amz-Target=IoTSecuredTunneling.CloseTunnel>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan close-tunnel-request
+
+  loot 200
+    seed json, like close-tunnel-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

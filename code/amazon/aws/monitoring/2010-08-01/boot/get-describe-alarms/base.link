@@ -1,0 +1,98 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/alarm-name
+  take form alarm-name
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/alarm-type
+  take form alarm-type
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/describe-alarms-output
+  take form describe-alarms-output
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-alarms, name <GET_DescribeAlarms>
+  note <Retrieves the specified alarms. You can filter the results by specifying a prefix for the alarm name, the alarm state, or a prefix for any action.>
+
+  take alarm-names
+    like list
+      like alarm-name
+    note <The names of the alarms to retrieve information about.>
+    void take
+  take alarm-name-prefix
+    like native-string
+    note <An alarm name prefix. If you specify this parameter, you receive information about all alarms that have names that start with this prefix.
+
+If this parameter is specified, you cannot specify `AlarmNames`.>
+    void take
+  take alarm-types
+    like list
+      like alarm-type
+    note <Use this parameter to specify whether you want the operation to return metric alarms or composite alarms. If you omit this parameter, only metric alarms are returned.>
+    void take
+  take children-of-alarm-name
+    like native-string
+    note <If you use this parameter and specify the name of a composite alarm, the operation returns information about the "children" alarms of the alarm you specify. These are the metric alarms and composite alarms referenced in the `AlarmRule` field of the composite alarm that you specify in `ChildrenOfAlarmName`. Information about the composite alarm that you name in `ChildrenOfAlarmName` is not returned.
+
+If you specify `ChildrenOfAlarmName`, you cannot specify any other parameters in the request except for `MaxRecords` and `NextToken`. If you do so, you receive a validation error.
+
+Only the `Alarm Name`, `ARN`, `StateValue` (OK/ALARM/INSUFFICIENT_DATA), and `StateUpdatedTimestamp` information are returned by this operation when you use this parameter. To get complete information about these alarms, perform another `DescribeAlarms` operation and specify the parent alarm names in the `AlarmNames` parameter.>
+    void take
+  take parents-of-alarm-name
+    like native-string
+    note <If you use this parameter and specify the name of a metric or composite alarm, the operation returns information about the "parent" alarms of the alarm you specify. These are the composite alarms that have `AlarmRule` parameters that reference the alarm named in `ParentsOfAlarmName`. Information about the alarm that you specify in `ParentsOfAlarmName` is not returned.
+
+If you specify `ParentsOfAlarmName`, you cannot specify any other parameters in the request except for `MaxRecords` and `NextToken`. If you do so, you receive a validation error.
+
+Only the Alarm Name and ARN are returned by this operation when you use this parameter. To get complete information about these alarms, perform another `DescribeAlarms` operation and specify the parent alarm names in the `AlarmNames` parameter.>
+    void take
+  take state-value
+    like native-string
+    note <Specify this parameter to receive information only about alarms that are currently in the state that you specify.>
+    void take
+  take action-prefix
+    like native-string
+    note <Use this parameter to filter the results of the operation to only those alarms that use a certain alarm action. For example, you could specify the ARN of an SNS topic to find all alarms that send notifications to that topic.>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of alarm descriptions to retrieve.>
+    void take
+  take next-token
+    like native-string
+    note <The token returned by a previous call to indicate that there is more data available.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeAlarms>
+
+  find <AlarmNames>, loan alarm-names
+  find <AlarmNamePrefix>, loan alarm-name-prefix
+  find <AlarmTypes>, loan alarm-types
+  find <ChildrenOfAlarmName>, loan children-of-alarm-name
+  find <ParentsOfAlarmName>, loan parents-of-alarm-name
+  find <StateValue>, loan state-value
+  find <ActionPrefix>, loan action-prefix
+  find <MaxRecords>, loan max-records
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-alarms-output
+    note <Success>
+  loot 480
+    seed xml, like invalid-next-token
+    note <InvalidNextToken>

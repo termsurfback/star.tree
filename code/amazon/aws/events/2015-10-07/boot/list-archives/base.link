@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/list-archives-response
+  take form list-archives-response
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-archives, name <ListArchives>
+  note <Lists your archives. You can either list all the archives or you can provide a prefix to match to the archive names. Filter parameters are exclusive.>
+
+  take x-amz-target
+    like native-string
+  take list-archives-request, like list-archives-request
+
+  line </#X-Amz-Target=AWSEvents.ListArchives>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-archives-request
+
+  loot 200
+    seed json, like list-archives-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like internal-exception
+    note <InternalException>

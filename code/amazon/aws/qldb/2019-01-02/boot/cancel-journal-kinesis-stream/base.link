@@ -1,0 +1,42 @@
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/cancel-journal-kinesis-stream-response
+  take form cancel-journal-kinesis-stream-response
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/resource-precondition-not-met-exception
+  take form resource-precondition-not-met-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot cancel-journal-kinesis-stream, name <CancelJournalKinesisStream>
+  note <Ends a given Amazon QLDB journal stream. Before a stream can be canceled, its current status must be `ACTIVE`.
+
+You can't restart a stream after you cancel it. Canceled QLDB stream resources are subject to a 7-day retention period, so they are automatically deleted after this limit expires.>
+
+  take name
+    like native-string
+    note <The name of the ledger.>
+  take stream-id
+    like native-string
+    note <The UUID (represented in Base62-encoded text) of the QLDB journal stream to be canceled.>
+
+  line </ledgers/{name}/journal-kinesis-streams/{stream-id}>
+
+  loot 200
+    seed json, like cancel-journal-kinesis-stream-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like resource-precondition-not-met-exception
+    note <ResourcePreconditionNotMetException>

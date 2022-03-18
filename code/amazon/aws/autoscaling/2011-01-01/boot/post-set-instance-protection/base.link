@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/limit-exceeded-fault
+  take form limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/set-instance-protection-answer
+  take form set-instance-protection-answer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-set-instance-protection, name <POST_SetInstanceProtection>
+  note <Updates the instance protection settings of the specified instances. This operation cannot be called on instances in a warm pool.
+
+For more information about preventing instances that are part of an Auto Scaling group from terminating on scale in, see [Instance scale-in protection](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-instance-termination.html#instance-protection) in the _Amazon EC2 Auto Scaling User Guide_.
+
+If you exceed your maximum limit of instance IDs, which is 50 per Auto Scaling group, the call fails.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take set-instance-protection-query, like set-instance-protection-query
+    void take
+
+  line </#Action=SetInstanceProtection>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan set-instance-protection-query
+
+  loot 200
+    seed xml, like set-instance-protection-answer
+    note <Success>
+  loot 480
+    seed xml, like limit-exceeded-fault
+    note <LimitExceededFault>
+  loot 481
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

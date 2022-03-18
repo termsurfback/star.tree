@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-subnet-group-message
+  take form cache-subnet-group-message
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-subnet-group-not-found-fault
+  take form cache-subnet-group-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-cache-subnet-groups, name <POST_DescribeCacheSubnetGroups>
+  note <Returns a list of cache subnet group descriptions. If a subnet group name is specified, the list contains only the description of that group. This is applicable only when you have ElastiCache in VPC setup. All ElastiCache clusters now launch in VPC by default.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-cache-subnet-groups-message, like describe-cache-subnet-groups-message
+    void take
+
+  line </#Action=DescribeCacheSubnetGroups>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-cache-subnet-groups-message
+
+  loot 200
+    seed xml, like cache-subnet-group-message
+    note <Success>
+  loot 480
+    seed xml, like cache-subnet-group-not-found-fault
+    note <CacheSubnetGroupNotFoundFault>

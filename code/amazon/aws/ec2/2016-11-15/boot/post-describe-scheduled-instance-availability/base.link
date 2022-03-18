@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-scheduled-instance-availability-result
+  take form describe-scheduled-instance-availability-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-scheduled-instance-availability, name <POST_DescribeScheduledInstanceAvailability>
+  note <Finds available schedules that meet the specified criteria.
+
+You can search for an available schedule no more than 3 months in advance. You must meet the minimum required duration of 1,200 hours per year. For example, the minimum daily schedule is 4 hours, the minimum weekly schedule is 24 hours, and the minimum monthly schedule is 100 hours.
+
+After you find a schedule that meets your needs, call PurchaseScheduledInstances to purchase Scheduled Instances with that schedule.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-scheduled-instance-availability-request, like describe-scheduled-instance-availability-request
+    void take
+
+  line </#Action=DescribeScheduledInstanceAvailability>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-scheduled-instance-availability-request
+
+  loot 200
+    seed xml, like describe-scheduled-instance-availability-result
+    note <Success>

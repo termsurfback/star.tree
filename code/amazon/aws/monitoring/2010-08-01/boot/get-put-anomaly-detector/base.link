@@ -1,0 +1,99 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/anomaly-detector-excluded-time-ranges
+  take form anomaly-detector-excluded-time-ranges
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/anomaly-detector-metric-timezone
+  take form anomaly-detector-metric-timezone
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/dimension
+  take form dimension
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/internal-service-fault
+  take form internal-service-fault
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/missing-required-parameter-exception
+  take form missing-required-parameter-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/put-anomaly-detector-output
+  take form put-anomaly-detector-output
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-put-anomaly-detector, name <GET_PutAnomalyDetector>
+  note <Creates an anomaly detection model for a CloudWatch metric. You can use the model to display a band of expected normal values when the metric is graphed.
+
+For more information, see [CloudWatch Anomaly Detection](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Anomaly_Detection.html).>
+
+  take namespace
+    like native-string
+    note <The namespace of the metric to create the anomaly detection model for.>
+  take metric-name
+    like native-string
+    note <The name of the metric to create the anomaly detection model for.>
+  take dimensions
+    like list
+      like dimension
+    note <The metric dimensions to create the anomaly detection model for.>
+    void take
+  take stat
+    like native-string
+    note <The statistic to use for the metric and the anomaly detection model.>
+  take configuration
+    like form
+      take excluded-time-ranges, name <ExcludedTimeRanges>
+        like anomaly-detector-excluded-time-ranges
+        void take
+        note <An array of time ranges to exclude from use when the anomaly detection model is trained. Use this to make sure that events that could cause unusual values for the metric, such as deployments, aren't used when CloudWatch creates the model.>
+      take metric-timezone, name <MetricTimezone>
+        like anomaly-detector-metric-timezone
+        void take
+        note <The time zone to use for the metric. This is useful to enable the model to automatically account for daylight savings time changes if the metric is sensitive to such time changes.
+
+To specify a time zone, use the name of the time zone as specified in the standard tz database. For more information, see [tz database](https://en.wikipedia.org/wiki/Tz_database).>
+    note <The configuration specifies details about how the anomaly detection model is to be trained, including time ranges to exclude when training and updating the model. You can specify as many as 10 time ranges.
+
+The configuration can also include the time zone to use for the metric.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=PutAnomalyDetector>
+
+  find <Namespace>, loan namespace
+  find <MetricName>, loan metric-name
+  find <Dimensions>, loan dimensions
+  find <Stat>, loan stat
+  find <Configuration>, loan configuration
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like put-anomaly-detector-output
+    note <Success>
+  loot 480
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed xml, like internal-service-fault
+    note <InternalServiceFault>
+  loot 482
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed xml, like missing-required-parameter-exception
+    note <MissingRequiredParameterException>

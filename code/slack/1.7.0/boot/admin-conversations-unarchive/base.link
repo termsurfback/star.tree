@@ -1,0 +1,40 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/admin-conversations-unarchive-body
+  take form admin-conversations-unarchive-body
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+boot admin-conversations-unarchive, name <admin_conversations_unarchive>
+  note <Unarchive a public or private channel.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `admin.conversations:write`>
+  take admin-conversations-unarchive-body, like admin-conversations-unarchive-body
+
+  line </admin.conversations.unarchive>
+
+  hint <token>, loan token
+
+  seed x-www-form-urlencoded, loan admin-conversations-unarchive-body
+
+  loot 200
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-true
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take error, name <error>
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response>

@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/get-authorization-token-response
+  take form get-authorization-token-response
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-authorization-token, name <GetAuthorizationToken>
+  note <Retrieves an authorization token. An authorization token represents your IAM authentication credentials and can be used to access any Amazon ECR registry that your IAM principal has access to. The authorization token is valid for 12 hours. This API requires the `ecr-public:GetAuthorizationToken` and `sts:GetServiceBearerToken` permissions.>
+
+  take x-amz-target
+    like native-string
+  take get-authorization-token-request, like get-authorization-token-request
+
+  line </#X-Amz-Target=SpencerFrontendService.GetAuthorizationToken>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-authorization-token-request
+
+  loot 200
+    seed json, like get-authorization-token-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>

@@ -1,0 +1,84 @@
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/list-restore-jobs-output
+  take form list-restore-jobs-output
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/missing-parameter-value-exception
+  take form missing-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-restore-jobs, name <ListRestoreJobs>
+  note <Returns a list of jobs that Backup initiated to restore a saved resource, including details about the recovery process.>
+
+  take next-token
+    like native-string
+    note <The next item following a partial list of returned items. For example, if a request is made to return `maxResults` number of items, `NextToken` allows you to return more items in your list starting at the location pointed to by the next token.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of items to be returned.>
+    void take
+  take account-id
+    like native-string
+    note <The account ID to list the jobs from. Returns only restore jobs associated with the specified account ID.>
+    void take
+  take created-before
+    like native-string
+    note <Returns only restore jobs that were created before the specified date.>
+    void take
+  take created-after
+    like native-string
+    note <Returns only restore jobs that were created after the specified date.>
+    void take
+  take status
+    like native-string
+    note <Returns only restore jobs associated with the specified job status.>
+    void take
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+
+  line </restore-jobs/>
+
+  find <nextToken>, loan next-token
+  find <maxResults>, loan max-results
+  find <accountId>, loan account-id
+  find <createdBefore>, loan created-before
+  find <createdAfter>, loan created-after
+  find <status>, loan status
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like list-restore-jobs-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed json, like missing-parameter-value-exception
+    note <MissingParameterValueException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

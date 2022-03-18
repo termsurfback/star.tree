@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/tag-resource-response
+  take form tag-resource-response
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/too-many-tags-exception
+  take form too-many-tags-exception
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot tag-resource, name <TagResource>
+  note <Add one or more tags (keys and values) to a specified application. A _tag_ is a label that you optionally define and associate with an application. Tags can help you categorize and manage application in different ways, such as by purpose, owner, environment, or other criteria.
+
+Each tag consists of a required _tag key_ and an associated _tag value_, both of which you define. A tag key is a general label that acts as a category for more specific tag values. A tag value acts as a descriptor within a tag key.>
+
+  take x-amz-target
+    like native-string
+  take tag-resource-request, like tag-resource-request
+
+  line </#X-Amz-Target=EC2WindowsBarleyService.TagResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan tag-resource-request
+
+  loot 200
+    seed json, like tag-resource-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like too-many-tags-exception
+    note <TooManyTagsException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>

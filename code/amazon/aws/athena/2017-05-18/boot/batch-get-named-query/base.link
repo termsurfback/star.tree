@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/batch-get-named-query-output
+  take form batch-get-named-query-output
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot batch-get-named-query, name <BatchGetNamedQuery>
+  note <Returns the details of a single named query or a list of up to 50 queries, which you provide as an array of query ID strings. Requires you to have access to the workgroup in which the queries were saved. Use ListNamedQueriesInput to get the list of named query IDs in the specified workgroup. If information could not be retrieved for a submitted query ID, information about the query ID submitted is listed under UnprocessedNamedQueryId. Named queries differ from executed queries. Use BatchGetQueryExecutionInput to get details about each unique query execution, and ListQueryExecutionsInput to get a list of query execution IDs.>
+
+  take x-amz-target
+    like native-string
+  take batch-get-named-query-input, like batch-get-named-query-input
+
+  line </#X-Amz-Target=AmazonAthena.BatchGetNamedQuery>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan batch-get-named-query-input
+
+  loot 200
+    seed json, like batch-get-named-query-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

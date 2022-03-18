@@ -1,0 +1,93 @@
+
+load @drumwork/snow/amazonaws.com/macie2/2020-01-01/base/job-schedule-frequency
+  take form job-schedule-frequency
+
+load @drumwork/snow/amazonaws.com/macie2/2020-01-01/base/job-type
+  take form job-type
+
+load @drumwork/snow/amazonaws.com/macie2/2020-01-01/base/list-of-string
+  take form list-of-string
+
+load @drumwork/snow/amazonaws.com/macie2/2020-01-01/base/managed-data-identifier-selector
+  take form managed-data-identifier-selector
+
+load @drumwork/snow/amazonaws.com/macie2/2020-01-01/base/s3-job-definition
+  take form s3-job-definition
+
+load @drumwork/snow/amazonaws.com/macie2/2020-01-01/base/tag-map
+  take form tag-map
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+load @drumwork/snow/base/integer
+  take form integer
+
+load @drumwork/snow/base/string
+  take form string
+
+form create-classification-job-request, name <CreateClassificationJobRequest>
+  take client-token, name <clientToken>
+    like string
+    note <A unique, case-sensitive token that you provide to ensure the idempotency of the request.>
+  take custom-data-identifier-ids, name <customDataIdentifierIds>
+    like list-of-string
+    void take
+    note <An array of unique identifiers, one for each custom data identifier for the job to use when it analyzes data. To use only managed data identifiers, don't specify a value for this property and specify a value other than NONE for the managedDataIdentifierSelector property.>
+  take description, name <description>
+    like string
+    void take
+    note <A custom description of the job. The description can contain as many as 200 characters.>
+  take initial-run, name <initialRun>
+    like boolean
+    void take
+    note <For a recurring job, specifies whether to analyze all existing, eligible objects immediately after the job is created (true). To analyze only those objects that are created or changed after you create the job and before the job's first scheduled run, set this value to false.
+
+If you configure the job to run only once, don't specify a value for this property.>
+  take job-type, name <jobType>
+    like job-type
+    note <The schedule for running the job. Valid values are:
+
+- ONE_TIME - Run the job only once. If you specify this value, don't specify a value for the scheduleFrequency property.
+
+- SCHEDULED - Run the job on a daily, weekly, or monthly basis. If you specify this value, use the scheduleFrequency property to define the recurrence pattern for the job.>
+  take managed-data-identifier-ids, name <managedDataIdentifierIds>
+    like list-of-string
+    void take
+    note <An array of unique identifiers, one for each managed data identifier for the job to include (use) or exclude (not use) when it analyzes data. Inclusion or exclusion depends on the managed data identifier selection type that you specify for the job (managedDataIdentifierSelector).
+
+To retrieve a list of valid values for this property, use the ListManagedDataIdentifiers operation.>
+  take managed-data-identifier-selector, name <managedDataIdentifierSelector>
+    like managed-data-identifier-selector
+    void take
+    note <The selection type to apply when determining which managed data identifiers the job uses to analyze data. Valid values are:
+
+- ALL - Use all the managed data identifiers that Amazon Macie provides. If you specify this value, don't specify any values for the managedDataIdentifierIds property.
+
+- EXCLUDE - Use all the managed data identifiers that Macie provides except the managed data identifiers specified by the managedDataIdentifierIds property.
+
+- INCLUDE - Use only the managed data identifiers specified by the managedDataIdentifierIds property.
+
+- NONE - Don't use any managed data identifiers. If you specify this value, specify at least one custom data identifier for the job (customDataIdentifierIds) and don't specify any values for the managedDataIdentifierIds property.
+
+If you don't specify a value for this property, the job uses all managed data identifiers. If you don't specify a value for this property or you specify ALL or EXCLUDE for a recurring job, the job also uses new managed data identifiers as they are released.>
+  take name, name <name>
+    like string
+    note <A custom name for the job. The name can contain as many as 500 characters.>
+  take s3-job-definition, name <s3JobDefinition>
+    like s3-job-definition
+    note <The S3 buckets that contain the objects to analyze, and the scope of that analysis.>
+  take sampling-percentage, name <samplingPercentage>
+    like integer
+    void take
+    note <The sampling depth, as a percentage, for the job to apply when processing objects. This value determines the percentage of eligible objects that the job analyzes. If this value is less than 100, Amazon Macie selects the objects to analyze at random, up to the specified percentage, and analyzes all the data in those objects.>
+  take schedule-frequency, name <scheduleFrequency>
+    like job-schedule-frequency
+    void take
+    note <The recurrence pattern for running the job. To run the job only once, don't specify a value for this property and set the value for the jobType property to ONE_TIME.>
+  take tags, name <tags>
+    like tag-map
+    void take
+    note <A map of key-value pairs that specifies the tags to associate with the job.
+
+A job can have a maximum of 50 tags. Each tag consists of a tag key and an associated tag value. The maximum length of a tag key is 128 characters. The maximum length of a tag value is 256 characters.>

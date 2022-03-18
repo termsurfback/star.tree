@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot deregister-game-server, name <DeregisterGameServer>
+  note <**This operation is used with the GameLift FleetIQ solution and game server groups.** Removes the game server from a game server group. As a result of this operation, the deregistered game server can no longer be claimed and will not be returned in a list of active game servers.
+
+To deregister a game server, specify the game server group and game server ID. If successful, this operation emits a CloudWatch event with termination timestamp and reason.
+
+**Learn more** [GameLift FleetIQ Guide](https://docs.aws.amazon.com/gamelift/latest/fleetiqguide/gsg-intro.html)
+
+**Related actions** RegisterGameServer | ListGameServers | ClaimGameServer | DescribeGameServer | UpdateGameServer | DeregisterGameServer | [All APIs by task](https://docs.aws.amazon.com/gamelift/latest/fleetiqguide/reference-awssdk-fleetiq.html)>
+
+  take x-amz-target
+    like native-string
+  take deregister-game-server-input, like deregister-game-server-input
+
+  line </#X-Amz-Target=GameLift.DeregisterGameServer>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan deregister-game-server-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 482
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 483
+    seed json, like internal-service-exception
+    note <InternalServiceException>

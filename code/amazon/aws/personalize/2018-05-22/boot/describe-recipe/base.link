@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/describe-recipe-response
+  take form describe-recipe-response
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-recipe, name <DescribeRecipe>
+  note <Describes a recipe.
+
+A recipe contains three items:
+
+- An algorithm that trains a model.
+
+- Hyperparameters that govern the training.
+
+- Feature transformation information for modifying the input data before training.
+
+Amazon Personalize provides a set of predefined recipes. You specify a recipe when you create a solution with the CreateSolution API. `CreateSolution` trains a model by using the algorithm in the specified recipe and a training dataset. The solution, when deployed as a campaign, can provide recommendations using the [GetRecommendations](https://docs.aws.amazon.com/personalize/latest/dg/API_RS_GetRecommendations.html) API.>
+
+  take x-amz-target
+    like native-string
+  take describe-recipe-request, like describe-recipe-request
+
+  line </#X-Amz-Target=AmazonPersonalize.DescribeRecipe>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-recipe-request
+
+  loot 200
+    seed json, like describe-recipe-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/list-device-events-response
+  take form list-device-events-response
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-device-events, name <ListDeviceEvents>
+  note <Lists the device event history, including device connection status, for up to 30 days.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-device-events-request, like list-device-events-request
+
+  line </#X-Amz-Target=AlexaForBusiness.ListDeviceEvents>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-device-events-request
+
+  loot 200
+    seed json, like list-device-events-response
+    note <Success>
+  loot 480
+    seed json, like not-found-exception
+    note <NotFoundException>

@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/entity-not-found-exception
+  take form entity-not-found-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/get-job-runs-response
+  take form get-job-runs-response
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/operation-timeout-exception
+  take form operation-timeout-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-job-runs, name <GetJobRuns>
+  note <Retrieves metadata for all runs of a given job definition.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-job-runs-request, like get-job-runs-request
+
+  line </#X-Amz-Target=AWSGlue.GetJobRuns>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan get-job-runs-request
+
+  loot 200
+    seed json, like get-job-runs-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like entity-not-found-exception
+    note <EntityNotFoundException>
+  loot 482
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 483
+    seed json, like operation-timeout-exception
+    note <OperationTimeoutException>

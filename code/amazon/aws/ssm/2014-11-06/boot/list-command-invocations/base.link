@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-command-id
+  take form invalid-command-id
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-filter-key
+  take form invalid-filter-key
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-instance-id
+  take form invalid-instance-id
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/list-command-invocations-result
+  take form list-command-invocations-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-command-invocations, name <ListCommandInvocations>
+  note <An invocation is copy of a command sent to a specific instance. A command can apply to one or more instances. A command invocation applies to one instance. For example, if a user runs `SendCommand` against three instances, then a command invocation is created for each requested instance ID. `ListCommandInvocations` provide status about command execution.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-command-invocations-request, like list-command-invocations-request
+
+  line </#X-Amz-Target=AmazonSSM.ListCommandInvocations>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-command-invocations-request
+
+  loot 200
+    seed json, like list-command-invocations-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like invalid-command-id
+    note <InvalidCommandId>
+  loot 482
+    seed json, like invalid-instance-id
+    note <InvalidInstanceId>
+  loot 483
+    seed json, like invalid-filter-key
+    note <InvalidFilterKey>
+  loot 484
+    seed json, like invalid-next-token
+    note <InvalidNextToken>

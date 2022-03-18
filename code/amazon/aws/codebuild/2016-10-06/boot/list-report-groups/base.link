@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/list-report-groups-output
+  take form list-report-groups-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-report-groups, name <ListReportGroups>
+  note <Gets a list ARNs for the report groups in the current Amazon Web Services account.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-report-groups-input, like list-report-groups-input
+
+  line </#X-Amz-Target=CodeBuild_20161006.ListReportGroups>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-report-groups-input
+
+  loot 200
+    seed json, like list-report-groups-output
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>

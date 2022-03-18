@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/custom-verification-email-invalid-content-exception
+  take form custom-verification-email-invalid-content-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/custom-verification-email-template-does-not-exist-exception
+  take form custom-verification-email-template-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/from-email-address-not-verified-exception
+  take form from-email-address-not-verified-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-update-custom-verification-email-template, name <POST_UpdateCustomVerificationEmailTemplate>
+  note <Updates an existing custom verification email template.
+
+For more information about custom verification email templates, see [Using Custom Verification Email Templates](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/custom-verification-emails.html) in the _Amazon SES Developer Guide_.
+
+You can execute this operation no more than once per second.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take update-custom-verification-email-template-request, like update-custom-verification-email-template-request
+    void take
+
+  line </#Action=UpdateCustomVerificationEmailTemplate>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan update-custom-verification-email-template-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like custom-verification-email-template-does-not-exist-exception
+    note <CustomVerificationEmailTemplateDoesNotExistException>
+  loot 481
+    seed xml, like from-email-address-not-verified-exception
+    note <FromEmailAddressNotVerifiedException>
+  loot 482
+    seed xml, like custom-verification-email-invalid-content-exception
+    note <CustomVerificationEmailInvalidContentException>

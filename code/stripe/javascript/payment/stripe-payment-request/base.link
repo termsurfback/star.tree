@@ -1,0 +1,77 @@
+
+load @drumwork/land/code/javascript/base/native-null
+  take form native-null
+
+load @drumwork/land/code/javascript/base/native-void
+  take form native-void
+
+load @drumwork/land/code/javascript/base/promise
+  take form promise
+
+load @drumwork/land/code/javascript/stripejs/payment/can-make-payment-result
+  take form can-make-payment-result
+
+load @drumwork/land/code/javascript/stripejs/payment/new-shipping-address
+  take form new-shipping-address
+
+load @drumwork/land/code/javascript/stripejs/payment/new-shipping-options
+  take form new-shipping-options
+
+load @drumwork/land/code/javascript/stripejs/payment/stripe-payment-response
+  take form stripe-payment-response
+
+load @drumwork/land/code/javascript/stripejs/payment/update-options
+  take form update-options
+
+load @drumwork/seed/code/form/sink
+  take form sink
+    save form sink-link-text
+
+form stripe-payment-request, name <StripePaymentRequest>
+  task can-make-payment, name <canMakePayment>
+    free seed
+      like promise
+        like sink-link-text
+          like can-make-payment-result
+          like native-null
+
+  task show, name <show>
+    free seed, like native-void
+
+  task update, name <update>
+    take options, like update-options
+    free seed, like native-void
+
+  task on, name <on>
+    take event, text <cancel>
+    take handler
+      like task
+        free seed, like native-void
+    free seed, like native-void
+
+  task on, name <on>
+    take event
+      like sink-link-text
+        text <token>
+        text <source>
+    take handler
+      like task
+        take event, like stripe-payment-response
+        free seed, like native-void
+    free seed, like native-void
+
+  task on, name <on>
+    take event, text <shippingaddresschange>
+    take handler
+      like task
+        take event, like new-shipping-address
+        free seed, like native-void
+    free seed, like native-void
+
+  task on, name <on>
+    take event, text <shippingoptionchange>
+    take handler
+      like task
+        take event, like new-shipping-options
+        free seed, like native-void
+    free seed, like native-void

@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/workspaces/2015-04-08/base/invalid-parameter-values-exception
+  take form invalid-parameter-values-exception
+
+load @drumwork/snow/amazonaws.com/workspaces/2015-04-08/base/invalid-resource-state-exception
+  take form invalid-resource-state-exception
+
+load @drumwork/snow/amazonaws.com/workspaces/2015-04-08/base/modify-workspace-state-result
+  take form modify-workspace-state-result
+
+load @drumwork/snow/amazonaws.com/workspaces/2015-04-08/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot modify-workspace-state, name <ModifyWorkspaceState>
+  note <Sets the state of the specified WorkSpace.
+
+To maintain a WorkSpace without being interrupted, set the WorkSpace state to `ADMIN_MAINTENANCE`. WorkSpaces in this state do not respond to requests to reboot, stop, start, rebuild, or restore. An AutoStop WorkSpace in this state is not stopped. Users cannot log into a WorkSpace in the `ADMIN_MAINTENANCE` state.>
+
+  take x-amz-target
+    like native-string
+  take modify-workspace-state-request, like modify-workspace-state-request
+
+  line </#X-Amz-Target=WorkspacesService.ModifyWorkspaceState>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan modify-workspace-state-request
+
+  loot 200
+    seed json, like modify-workspace-state-result
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-values-exception
+    note <InvalidParameterValuesException>
+  loot 481
+    seed json, like invalid-resource-state-exception
+    note <InvalidResourceStateException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

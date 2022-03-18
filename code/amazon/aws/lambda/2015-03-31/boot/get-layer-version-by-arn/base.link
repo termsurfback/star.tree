@@ -1,0 +1,48 @@
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/get-layer-version-response
+  take form get-layer-version-response
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-layer-version-by-arn, name <GetLayerVersionByArn>
+  note <Returns information about a version of an [Lambda layer](https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html), with a link to download the layer archive that's valid for 10 minutes.>
+
+  take arn
+    like native-string
+    note <The ARN of the layer version.>
+  take find
+    like native-string
+
+  line </2018-10-31/layers#find=LayerVersion&Arn>
+
+  find <Arn>, loan arn
+  find <find>, loan find
+
+  loot 200
+    seed json, like get-layer-version-response
+    note <Success>
+  loot 480
+    seed json, like service-exception
+    note <ServiceException>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

@@ -1,0 +1,56 @@
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/execution-does-not-exist
+  take form execution-does-not-exist
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/get-execution-history-output
+  take form get-execution-history-output
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/invalid-arn
+  take form invalid-arn
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/invalid-token
+  take form invalid-token
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-execution-history, name <GetExecutionHistory>
+  note <Returns the history of the specified execution as a list of events. By default, the results are returned in ascending order of the `timeStamp` of the events. Use the `reverseOrder` parameter to get the latest events first.
+
+If `nextToken` is returned, there are more results available. The value of `nextToken` is a unique pagination token for each page. Make the call again using the returned token to retrieve the next page. Keep all other arguments unchanged. Each pagination token expires after 24 hours. Using an expired pagination token will return an _HTTP 400 InvalidToken_ error.
+
+This API action is not supported by `EXPRESS` state machines.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-execution-history-input, like get-execution-history-input
+
+  line </#X-Amz-Target=AWSStepFunctions.GetExecutionHistory>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan get-execution-history-input
+
+  loot 200
+    seed json, like get-execution-history-output
+    note <Success>
+  loot 480
+    seed json, like execution-does-not-exist
+    note <ExecutionDoesNotExist>
+  loot 481
+    seed json, like invalid-arn
+    note <InvalidArn>
+  loot 482
+    seed json, like invalid-token
+    note <InvalidToken>

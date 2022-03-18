@@ -1,0 +1,67 @@
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/delete-project-response
+  take form delete-project-response
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-project, name <DeleteProject>
+  note <Deletes an Amazon Lookout for Vision project.
+
+To delete a project, you must first delete each version of the model associated with the project. To delete a model use the DeleteModel operation.
+
+You also have to delete the dataset(s) associated with the model. For more information, see DeleteDataset. The images referenced by the training and test datasets aren't deleted.
+
+This operation requires permissions to perform the `lookoutvision:DeleteProject` operation.>
+
+  take project-name
+    like native-string
+    note <The name of the project to delete.>
+  take x-amzn-client-token
+    like native-string
+    note <ClientToken is an idempotency token that ensures a call to `DeleteProject` completes only once. You choose the value to pass. For example, An issue, such as an network outage, might prevent you from getting a response from `DeleteProject`. In this case, safely retry your call to `DeleteProject` by using the same `ClientToken` parameter value. An error occurs if the other input parameters are not the same as in the first request. Using a different value for `ClientToken` is considered a new call to `DeleteProject`. An idempotency token is active for 8 hours.>
+    void take
+
+  line </2020-11-20/projects/{project-name}>
+
+  hint <X-Amzn-Client-Token>, loan x-amzn-client-token
+
+  loot 200
+    seed json, like delete-project-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 484
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 485
+    seed json, like throttling-exception
+    note <ThrottlingException>

@@ -1,0 +1,97 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/authorize-security-group-egress-result
+  take form authorize-security-group-egress-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/ip-permission
+  take form ip-permission
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/tag-specification
+  take form tag-specification
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-authorize-security-group-egress, name <GET_AuthorizeSecurityGroupEgress>
+  note <[VPC only] Adds the specified outbound (egress) rules to a security group for use with a VPC.
+
+An outbound rule permits instances to send traffic to the specified IPv4 or IPv6 CIDR address ranges, or to the instances that are associated with the specified destination security groups.
+
+You specify a protocol for each rule (for example, TCP). For the TCP and UDP protocols, you must also specify the destination port or port range. For the ICMP protocol, you must also specify the ICMP type and code. You can use -1 for the type or code to mean all types or all codes.
+
+Rule changes are propagated to affected instances as quickly as possible. However, a small delay might occur.
+
+For information about VPC security group quotas, see [Amazon VPC quotas](https://docs.aws.amazon.com/vpc/latest/userguide/amazon-vpc-limits.html).>
+
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take group-id
+    like native-string
+    note <The ID of the security group.>
+  take ip-permissions
+    like list
+      like ip-permission
+    note <The sets of IP permissions. You can't specify a destination security group and a CIDR IP address range in the same set of permissions.>
+    void take
+  take tag-specification
+    like list
+      like tag-specification
+    note <The tags applied to the security group rule.>
+    void take
+  take cidr-ip
+    like native-string
+    note <Not supported. Use a set of IP permissions to specify the CIDR.>
+    void take
+  take from-port
+    like native-integer
+    note <Not supported. Use a set of IP permissions to specify the port.>
+    void take
+  take ip-protocol
+    like native-string
+    note <Not supported. Use a set of IP permissions to specify the protocol name or number.>
+    void take
+  take to-port
+    like native-integer
+    note <Not supported. Use a set of IP permissions to specify the port.>
+    void take
+  take source-security-group-name
+    like native-string
+    note <Not supported. Use a set of IP permissions to specify a destination security group.>
+    void take
+  take source-security-group-owner-id
+    like native-string
+    note <Not supported. Use a set of IP permissions to specify a destination security group.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=AuthorizeSecurityGroupEgress>
+
+  find <DryRun>, loan dry-run
+  find <GroupId>, loan group-id
+  find <IpPermissions>, loan ip-permissions
+  find <TagSpecification>, loan tag-specification
+  find <CidrIp>, loan cidr-ip
+  find <FromPort>, loan from-port
+  find <IpProtocol>, loan ip-protocol
+  find <ToPort>, loan to-port
+  find <SourceSecurityGroupName>, loan source-security-group-name
+  find <SourceSecurityGroupOwnerId>, loan source-security-group-owner-id
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like authorize-security-group-egress-result
+    note <Success>

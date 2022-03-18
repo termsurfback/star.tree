@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/ascii-string-max-len255
+  take form ascii-string-max-len255
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/describe-lifecycle-hooks-answer
+  take form describe-lifecycle-hooks-answer
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-lifecycle-hooks, name <GET_DescribeLifecycleHooks>
+  note <Gets information about the lifecycle hooks for the specified Auto Scaling group.>
+
+  take auto-scaling-group-name
+    like native-string
+    note <The name of the Auto Scaling group.>
+  take lifecycle-hook-names
+    like list
+      like ascii-string-max-len255
+    note <The names of one or more lifecycle hooks. If you omit this parameter, all lifecycle hooks are described.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeLifecycleHooks>
+
+  find <AutoScalingGroupName>, loan auto-scaling-group-name
+  find <LifecycleHookNames>, loan lifecycle-hook-names
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-lifecycle-hooks-answer
+    note <Success>
+  loot 480
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

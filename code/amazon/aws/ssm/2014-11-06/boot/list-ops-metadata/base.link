@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/list-ops-metadata-result
+  take form list-ops-metadata-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/ops-metadata-invalid-argument-exception
+  take form ops-metadata-invalid-argument-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-ops-metadata, name <ListOpsMetadata>
+  note <Amazon Web Services Systems Manager calls this API operation when displaying all Application Manager OpsMetadata objects or blobs.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-ops-metadata-request, like list-ops-metadata-request
+
+  line </#X-Amz-Target=AmazonSSM.ListOpsMetadata>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-ops-metadata-request
+
+  loot 200
+    seed json, like list-ops-metadata-result
+    note <Success>
+  loot 480
+    seed json, like ops-metadata-invalid-argument-exception
+    note <OpsMetadataInvalidArgumentException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

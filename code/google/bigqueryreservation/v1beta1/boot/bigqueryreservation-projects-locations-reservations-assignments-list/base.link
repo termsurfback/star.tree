@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/bigqueryreservation/v1beta1/base/list-assignments-response
+  take form list-assignments-response
+
+boot bigqueryreservation-projects-locations-reservations-assignments-list, name <bigqueryreservation.projects.locations.reservations.assignments.list>
+  note <Lists assignments. Only explicitly created assignments will be returned. Example: * Organization `organizationA` contains two projects, `project1` and `project2`. * Reservation `res1` exists and was created previously. * CreateAssignment was used previously to define the following associations between entities and reservations: `` and `` In this example, ListAssignments will just return the above two assignments for reservation `res1`, and no expansion/merge will happen. The wildcard "-" can be used for reservations in the request. In that case all assignments belongs to the specified project and location will be listed. **Note** "-" cannot be used for projects nor locations.>
+
+  take parent
+    like native-string
+    note <Required. The parent resource name e.g.: `projects/myproject/locations/US/reservations/team1-prod` Or: `projects/myproject/locations/US/reservations/-`>
+  take page-size
+    like native-integer
+    note <The maximum number of items to return.>
+    void take
+  take page-token
+    like native-string
+    note <The next_page_token value returned from a previous List request, if any.>
+    void take
+
+  line </v1beta1/{parent}/assignments>
+
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-assignments-response
+    note <Successful response>

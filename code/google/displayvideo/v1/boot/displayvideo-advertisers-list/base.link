@@ -1,0 +1,45 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/displayvideo/v1/base/list-advertisers-response
+  take form list-advertisers-response
+
+boot displayvideo-advertisers-list, name <displayvideo.advertisers.list>
+  note <Lists advertisers that are accessible to the current user. The order is defined by the order_by parameter. A single partner_id is required. Cross-partner listing is not supported.>
+
+  take filter
+    like native-string
+    note <Allows filtering by advertiser properties. Supported syntax: * Filter expressions are made up of one or more restrictions. * Restrictions can be combined by `AND` or `OR` logical operators. A sequence of restrictions implicitly uses `AND`. * A restriction has the form of `{field} {operator} {value}`. * The operator used on `updateTime` must be `GREATER THAN OR EQUAL TO (&gt;=)` or `LESS THAN OR EQUAL TO (&lt;=)`. * The operator must be `EQUALS (=)`. * Supported fields: - `advertiserId` - `displayName` - `entityStatus` - `updateTime` (input in ISO 8601 format, or YYYY-MM-DDTHH:MM:SSZ) Examples: * All active advertisers under a partner: `entityStatus="ENTITY_STATUS_ACTIVE"` * All advertisers with an update time less than or equal to `2020-11-04T18:54:47Z (format of ISO 8601)`: `updateTime&lt;="2020-11-04T18:54:47Z"` * All advertisers with an update time greater than or equal to `2020-11-04T18:54:47Z (format of ISO 8601)`: `updateTime&gt;="2020-11-04T18:54:47Z"` The length of this field should be no more than 500 characters.>
+    void take
+  take order-by
+    like native-string
+    note <Field by which to sort the list. Acceptable values are: * `displayName` (default) * `entityStatus` * `updateTime` The default sorting order is ascending. To specify descending order for a field, a suffix "desc" should be added to the field name. For example, `displayName desc`.>
+    void take
+  take page-size
+    like native-integer
+    note <Requested page size. Must be between `1` and `100`. If unspecified will default to `100`.>
+    void take
+  take page-token
+    like native-string
+    note <A token identifying a page of results the server should return. Typically, this is the value of next_page_token returned from the previous call to `ListAdvertisers` method. If not specified, the first page of results will be returned.>
+    void take
+  take partner-id
+    like native-string
+    note <Required. The ID of the partner that the fetched advertisers should all belong to. The system only supports listing advertisers for one partner at a time.>
+    void take
+
+  line </v1/advertisers>
+
+  find <filter>, loan filter
+  find <orderBy>, loan order-by
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+  find <partnerId>, loan partner-id
+
+  loot 200
+    seed json, like list-advertisers-response
+    note <Successful response>

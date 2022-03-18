@@ -1,0 +1,29 @@
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/provide-anomaly-feedback-response
+  take form provide-anomaly-feedback-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot provide-anomaly-feedback, name <ProvideAnomalyFeedback>
+  note <Modifies the feedback property of a given cost anomaly.>
+
+  take x-amz-target
+    like native-string
+  take provide-anomaly-feedback-request, like provide-anomaly-feedback-request
+
+  line </#X-Amz-Target=AWSInsightsIndexService.ProvideAnomalyFeedback>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan provide-anomaly-feedback-request
+
+  loot 200
+    seed json, like provide-anomaly-feedback-response
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>

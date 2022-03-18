@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/dispute
+  take form dispute
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-disputes-dispute-body
+  take form get-disputes-dispute-body
+
+boot get-disputes-dispute, name <GetDisputesDispute>
+  note <Retrieves the dispute with the given ID.>
+
+  take dispute
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-disputes-dispute-body, like get-disputes-dispute-body
+    void take
+
+  line </v1/disputes/{dispute}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-disputes-dispute-body
+
+  loot 200
+    seed json, like dispute
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

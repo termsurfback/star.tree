@@ -1,0 +1,98 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/configuration-option-setting
+  take form configuration-option-setting
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/create-platform-version-result
+  take form create-platform-version-result
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/elastic-beanstalk-service-exception
+  take form elastic-beanstalk-service-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/insufficient-privileges-exception
+  take form insufficient-privileges-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/s3-bucket
+  take form s3-bucket
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/s3-key
+  take form s3-key
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/tag
+  take form tag
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/too-many-platforms-exception
+  take form too-many-platforms-exception
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-platform-version, name <GET_CreatePlatformVersion>
+  note <Create a new version of your custom platform.>
+
+  take platform-name
+    like native-string
+    note <The name of your custom platform.>
+  take platform-version
+    like native-string
+    note <The number, such as 1.0.2, for the new platform version.>
+  take platform-definition-bundle
+    like form
+      take s3-bucket, name <S3Bucket>
+        like s3-bucket
+        void take
+        note <The Amazon S3 bucket where the data is located.>
+      take s3-key, name <S3Key>
+        like s3-key
+        void take
+        note <The Amazon S3 key where the data is located.>
+    note <The location of the platform definition archive in Amazon S3.>
+  take environment-name
+    like native-string
+    note <The name of the builder environment.>
+    void take
+  take option-settings
+    like list
+      like configuration-option-setting
+    note <The configuration option settings to apply to the builder environment.>
+    void take
+  take tags
+    like list
+      like tag
+    note <Specifies the tags applied to the new platform version.
+
+Elastic Beanstalk applies these tags only to the platform version. Environments that you create using the platform version don't inherit the tags.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreatePlatformVersion>
+
+  find <PlatformName>, loan platform-name
+  find <PlatformVersion>, loan platform-version
+  find <PlatformDefinitionBundle>, loan platform-definition-bundle
+  find <EnvironmentName>, loan environment-name
+  find <OptionSettings>, loan option-settings
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-platform-version-result
+    note <Success>
+  loot 480
+    seed xml, like insufficient-privileges-exception
+    note <InsufficientPrivilegesException>
+  loot 481
+    seed xml, like elastic-beanstalk-service-exception
+    note <ElasticBeanstalkServiceException>
+  loot 482
+    seed xml, like too-many-platforms-exception
+    note <TooManyPlatformsException>

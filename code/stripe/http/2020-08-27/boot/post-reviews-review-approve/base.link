@@ -1,0 +1,31 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-reviews-review-approve-body
+  take form post-reviews-review-approve-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/review
+  take form review
+
+boot post-reviews-review-approve, name <PostReviewsReviewApprove>
+  note <Approves a `Review` object, closing it and removing it from the list of reviews.>
+
+  take review
+    like native-string
+  take post-reviews-review-approve-body, like post-reviews-review-approve-body
+    void take
+
+  line </v1/reviews/{review}/approve>
+
+  seed x-www-form-urlencoded, loan post-reviews-review-approve-body
+
+  loot 200
+    seed json, like review
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

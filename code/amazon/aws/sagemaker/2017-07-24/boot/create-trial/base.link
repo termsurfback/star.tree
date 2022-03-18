@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/create-trial-response
+  take form create-trial-response
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-limit-exceeded
+  take form resource-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-not-found
+  take form resource-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-trial, name <CreateTrial>
+  note <Creates an SageMaker _trial_. A trial is a set of steps called _trial components_ that produce a machine learning model. A trial is part of a single SageMaker _experiment_.
+
+When you use SageMaker Studio or the SageMaker Python SDK, all experiments, trials, and trial components are automatically tracked, logged, and indexed. When you use the Amazon Web Services SDK for Python (Boto), you must use the logging APIs provided by the SDK.
+
+You can add tags to a trial and then use the Search API to search for the tags.
+
+To get a list of all your trials, call the ListTrials API. To view a trial's properties, call the DescribeTrial API. To create a trial component, call the CreateTrialComponent API.>
+
+  take x-amz-target
+    like native-string
+  take create-trial-request, like create-trial-request
+
+  line </#X-Amz-Target=SageMaker.CreateTrial>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-trial-request
+
+  loot 200
+    seed json, like create-trial-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found
+    note <ResourceNotFound>
+  loot 481
+    seed json, like resource-limit-exceeded
+    note <ResourceLimitExceeded>

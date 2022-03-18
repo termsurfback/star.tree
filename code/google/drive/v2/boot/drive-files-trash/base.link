@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/drive/v2/base/file
+  take form file
+
+boot drive-files-trash, name <drive.files.trash>
+  note <Moves a file to the trash. The currently authenticated user must own the file or be at least a fileOrganizer on the parent for shared drive files. Only the owner may trash a file. The trashed item is excluded from all files.list responses returned for any user who does not own the file. However, all users with access to the file can see the trashed item metadata in an API response. All users with access can copy, download, export, and share the file.>
+
+  take file-id
+    like native-string
+    note <The ID of the file to trash.>
+  take include-permissions-for-view
+    like native-string
+    note <Specifies which additional view's permissions to include in the response. Only 'published' is supported.>
+    void take
+  take supports-all-drives
+    like native-boolean
+    note <Whether the requesting application supports both My Drives and shared drives.>
+    void take
+  take supports-team-drives
+    like native-boolean
+    note <Deprecated use supportsAllDrives instead.>
+    void take
+
+  line </files/{file-id}/trash>
+
+  find <includePermissionsForView>, loan include-permissions-for-view
+  find <supportsAllDrives>, loan supports-all-drives
+  find <supportsTeamDrives>, loan supports-team-drives
+
+  loot 200
+    seed json, like file
+    note <Successful response>

@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/list-sms-sandbox-phone-numbers-result
+  take form list-sms-sandbox-phone-numbers-result
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/throttled-exception
+  take form throttled-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-list-sms-sandbox-phone-numbers, name <POST_ListSMSSandboxPhoneNumbers>
+  note <Lists the calling account's current verified and pending destination phone numbers in the SMS sandbox.
+
+When you start using Amazon SNS to send SMS messages, your account is in the _SMS sandbox_. The SMS sandbox provides a safe environment for you to try Amazon SNS features without risking your reputation as an SMS sender. While your account is in the SMS sandbox, you can use all of the features of Amazon SNS. However, you can send SMS messages only to verified destination phone numbers. For more information, including how to move out of the sandbox to send messages without restrictions, see [SMS sandbox](https://docs.aws.amazon.com/sns/latest/dg/sns-sms-sandbox.html) in the _Amazon SNS Developer Guide_.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take list-sms-sandbox-phone-numbers-input, like list-sms-sandbox-phone-numbers-input
+    void take
+
+  line </#Action=ListSMSSandboxPhoneNumbers>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan list-sms-sandbox-phone-numbers-input
+
+  loot 200
+    seed xml, like list-sms-sandbox-phone-numbers-result
+    note <Success>
+  loot 480
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>
+  loot 481
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 482
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 483
+    seed xml, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 484
+    seed xml, like throttled-exception
+    note <ThrottledException>

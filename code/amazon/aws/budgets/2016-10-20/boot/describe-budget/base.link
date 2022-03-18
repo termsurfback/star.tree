@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/budgets/2016-10-20/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/budgets/2016-10-20/base/describe-budget-response
+  take form describe-budget-response
+
+load @drumwork/snow/amazonaws.com/budgets/2016-10-20/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/budgets/2016-10-20/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/budgets/2016-10-20/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-budget, name <DescribeBudget>
+  note <Describes a budget.
+
+The Request Syntax section shows the `BudgetLimit` syntax. For `PlannedBudgetLimits`, see the [Examples](https://docs.aws.amazon.com/aws-cost-management/latest/APIReference/API_budgets_DescribeBudget.html#API_DescribeBudget_Examples) section.>
+
+  take x-amz-target
+    like native-string
+  take describe-budget-request, like describe-budget-request
+
+  line </#X-Amz-Target=AWSBudgetServiceGateway.DescribeBudget>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-budget-request
+
+  loot 200
+    seed json, like describe-budget-response
+    note <Success>
+  loot 480
+    seed json, like internal-error-exception
+    note <InternalErrorException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 483
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

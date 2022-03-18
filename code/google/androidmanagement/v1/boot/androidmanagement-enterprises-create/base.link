@@ -1,0 +1,44 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/androidmanagement/v1/base/enterprise
+  take form enterprise
+
+boot androidmanagement-enterprises-create, name <androidmanagement.enterprises.create>
+  note <Creates an enterprise. This is the last step in the enterprise signup flow.>
+
+  take agreement-accepted
+    like native-boolean
+    note <Whether the enterprise admin has seen and agreed to the managed Google Play Agreement (https://www.android.com/enterprise/terms/). Always set this to true when creating an EMM-managed enterprise. Do not create the enterprise until the admin has viewed and accepted the agreement.>
+    void take
+  take enterprise-token
+    like native-string
+    note <The enterprise token appended to the callback URL. Only set this when creating a customer-managed enterprise.>
+    void take
+  take project-id
+    like native-string
+    note <The ID of the Google Cloud Platform project which will own the enterprise.>
+    void take
+  take signup-url-name
+    like native-string
+    note <The name of the SignupUrl used to sign up for the enterprise. Only set this when creating a customer-managed enterprise.>
+    void take
+  take enterprise, like enterprise
+    void take
+
+  line </v1/enterprises>
+
+  find <agreementAccepted>, loan agreement-accepted
+  find <enterpriseToken>, loan enterprise-token
+  find <projectId>, loan project-id
+  find <signupUrlName>, loan signup-url-name
+
+  seed json, loan enterprise
+
+  loot 200
+    seed json, like enterprise
+    note <Successful response>

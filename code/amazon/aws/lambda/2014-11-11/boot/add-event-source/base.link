@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/lambda/2014-11-11/base/add-event-source-body
+  take form add-event-source-body
+
+load @drumwork/snow/amazonaws.com/lambda/2014-11-11/base/event-source-configuration
+  take form event-source-configuration
+
+load @drumwork/snow/amazonaws.com/lambda/2014-11-11/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2014-11-11/base/service-exception
+  take form service-exception
+
+boot add-event-source, name <AddEventSource>
+  note <Identifies a stream as an event source for an AWS Lambda function. It can be either an Amazon Kinesis stream or a Amazon DynamoDB stream. AWS Lambda invokes the specified function when records are posted to the stream.
+
+This is the pull model, where AWS Lambda invokes the function. For more information, go to [AWS Lambda: How it Works](http://docs.aws.amazon.com/lambda/latest/dg/lambda-introduction.html) in the AWS Lambda Developer Guide.
+
+This association between an Amazon Kinesis stream and an AWS Lambda function is called the event source mapping. You provide the configuration information (for example, which stream to read from and which AWS Lambda function to invoke) for the event source mapping in the request body.
+
+Each event source, such as a Kinesis stream, can only be associated with one AWS Lambda function. If you call AddEventSource for an event source that is already mapped to another AWS Lambda function, the existing mapping is updated to call the new function instead of the old one.
+
+This operation requires permission for the `iam:PassRole` action for the IAM role. It also requires permission for the `lambda:AddEventSource` action.>
+
+  take add-event-source-body, like add-event-source-body
+
+  line </2014-11-13/event-source-mappings/>
+
+  seed json, loan add-event-source-body
+
+  loot 200
+    seed json, like event-source-configuration
+    note <Success>
+  loot 400
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 500
+    seed json, like service-exception
+    note <ServiceException>

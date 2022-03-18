@@ -1,0 +1,70 @@
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/invalid-endpoint-exception
+  take form invalid-endpoint-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/list-tables-response
+  take form list-tables-response
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-tables, name <ListTables>
+  note <A list of tables, along with the name, status and retention properties of each table.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-tables-request, like list-tables-request
+
+  line </#X-Amz-Target=Timestream_20181101.ListTables>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-tables-request
+
+  loot 200
+    seed json, like list-tables-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 484
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 485
+    seed json, like invalid-endpoint-exception
+    note <InvalidEndpointException>

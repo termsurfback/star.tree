@@ -1,0 +1,66 @@
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/list-secret-version-ids-response
+  take form list-secret-version-ids-response
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-secret-version-ids, name <ListSecretVersionIds>
+  note <Lists all of the versions attached to the specified secret. The output does not include the `SecretString` or `SecretBinary` fields. By default, the list includes only versions that have at least one staging label in `VersionStage` attached.
+
+Always check the `NextToken` response parameter when calling any of the `List*` operations. These operations can occasionally return an empty or shorter than expected list of results even when there more results become available. When this happens, the `NextToken` response parameter contains a value to pass to the next call to the same API to request the next part of the list.
+
+**Minimum permissions** To run this command, you must have the following permissions:
+
+- secretsmanager:ListSecretVersionIds
+
+**Related operations** - To list the secrets in an account, use ListSecrets.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-secret-version-ids-request, like list-secret-version-ids-request
+
+  line </#X-Amz-Target=secretsmanager.ListSecretVersionIds>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-secret-version-ids-request
+
+  loot 200
+    seed json, like list-secret-version-ids-response
+    note <Success>
+  loot 480
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 483
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>

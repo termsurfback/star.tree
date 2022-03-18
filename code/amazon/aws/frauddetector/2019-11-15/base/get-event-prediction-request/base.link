@@ -1,0 +1,56 @@
+
+load @drumwork/snow/amazonaws.com/frauddetector/2019-11-15/base/event-variable-map
+  take form event-variable-map
+
+load @drumwork/snow/amazonaws.com/frauddetector/2019-11-15/base/external-model-endpoint-data-blob-map
+  take form external-model-endpoint-data-blob-map
+
+load @drumwork/snow/amazonaws.com/frauddetector/2019-11-15/base/list-of-entities
+  take form list-of-entities
+
+load @drumwork/snow/amazonaws.com/frauddetector/2019-11-15/base/utc-timestamp-iso8601
+  take form utc-timestamp-iso8601
+
+load @drumwork/snow/amazonaws.com/frauddetector/2019-11-15/base/whole-number-version-string
+  take form whole-number-version-string
+
+load @drumwork/snow/base/string
+  take form string
+
+form get-event-prediction-request, name <GetEventPredictionRequest>
+  take detector-id, name <detectorId>
+    like string
+    note <The detector ID.>
+  take detector-version-id, name <detectorVersionId>
+    like whole-number-version-string
+    void take
+    note <The detector version ID.>
+  take event-id, name <eventId>
+    like string
+    note <The unique ID used to identify the event.>
+  take event-type-name, name <eventTypeName>
+    like string
+    note <The event type associated with the detector specified for the prediction.>
+  take entities, name <entities>
+    like list-of-entities
+    note <The entity type (associated with the detector's event type) and specific entity ID representing who performed the event. If an entity id is not available, use "UNKNOWN.">
+  take event-timestamp, name <eventTimestamp>
+    like utc-timestamp-iso8601
+    note <Timestamp that defines when the event under evaluation occurred.>
+  take event-variables, name <eventVariables>
+    like event-variable-map
+    note <Names of the event type's variables you defined in Amazon Fraud Detector to represent data elements and their corresponding values for the event you are sending for evaluation.
+
+- You must provide at least one eventVariable
+
+- If detectorVersion is associated with a modelVersion, you must provide at least one associated eventVariable
+
+To ensure highest possible fraud prediction and to simplify your data preparation, Amazon Fraud Detector will replace all missing variables or values as follows:
+
+**For Amazon Fraud Detector trained models:** If a null value is provided explicitly for a variable or if a variable is missing, model will replace the null value or the missing variable (no variable name in the eventVariables map) with calculated default mean/medians for numeric variables and with special values for categorical variables.
+
+**For External models ( for example, imported SageMaker):** If a null value is provided explicitly for a variable, the model and rules will use “null” as the value. If a variable is not provided (no variable name in the eventVariables map), model and rules will use the default value that is provided for the variable.>
+  take external-model-endpoint-data-blobs, name <externalModelEndpointDataBlobs>
+    like external-model-endpoint-data-blob-map
+    void take
+    note <The Amazon SageMaker model endpoint input data blobs.>

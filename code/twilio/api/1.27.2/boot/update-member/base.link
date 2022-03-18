@@ -1,0 +1,32 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/api/1.27.2/base/api-v2010-account-queue-member
+  take form api-v2010-account-queue-member
+
+load @drumwork/snow/twilio.com/api/1.27.2/base/update-member-body
+  take form update-member-body
+
+boot update-member, name <UpdateMember>
+  note <Dequeue a member from a queue and have the member&#39;s call begin executing the TwiML document at that URL>
+
+  take account-sid
+    like native-string
+    note <The SID of the \[Account\](https://www.twilio.com/docs/iam/api/account) that created the Member resource(s) to update.>
+  take queue-sid
+    like native-string
+    note <The SID of the Queue in which to find the members to update.>
+  take call-sid
+    like native-string
+    note <The \[Call\](https://www.twilio.com/docs/voice/api/call-resource) SID of the resource(s) to update.>
+  take update-member-body, like update-member-body
+    void take
+
+  line </2010-04-01/Accounts/{account-sid}/Queues/{queue-sid}/Members/{call-sid}.json>
+
+  seed x-www-form-urlencoded, loan update-member-body
+
+  loot 200
+    seed json, like api-v2010-account-queue-member
+    note <OK>

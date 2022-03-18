@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/describe-insight-rules-output
+  take form describe-insight-rules-output
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-insight-rules, name <POST_DescribeInsightRules>
+  note <Returns a list of all the Contributor Insights rules in your account.
+
+For more information about Contributor Insights, see [Using Contributor Insights to Analyze High-Cardinality Data](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContributorInsights.html).>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-insight-rules-input, like describe-insight-rules-input
+    void take
+
+  line </#Action=DescribeInsightRules>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-insight-rules-input
+
+  loot 200
+    seed xml, like describe-insight-rules-output
+    note <Success>
+  loot 480
+    seed xml, like invalid-next-token
+    note <InvalidNextToken>

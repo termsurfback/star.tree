@@ -1,0 +1,26 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/gmail/v1/base/smime-info
+  take form smime-info
+
+boot gmail-users-settings-send-as-smime-info-insert, name <gmail.users.settings.sendAs.smimeInfo.insert>
+  note <Insert (upload) the given S/MIME config for the specified send-as alias. Note that pkcs12 format is required for the key.>
+
+  take user-id
+    like native-string
+    note <The user's email address. The special value `me` can be used to indicate the authenticated user.>
+  take send-as-email
+    like native-string
+    note <The email address that appears in the "From:" header for mail sent using this alias.>
+  take smime-info, like smime-info
+    void take
+
+  line </gmail/v1/users/{user-id}/settings/sendAs/{send-as-email}/smimeInfo>
+
+  seed json, loan smime-info
+
+  loot 200
+    seed json, like smime-info
+    note <Successful response>

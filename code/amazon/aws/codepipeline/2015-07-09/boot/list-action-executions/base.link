@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/list-action-executions-output
+  take form list-action-executions-output
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/pipeline-execution-not-found-exception
+  take form pipeline-execution-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/pipeline-not-found-exception
+  take form pipeline-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-action-executions, name <ListActionExecutions>
+  note <Lists the action executions that have occurred in a pipeline.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-action-executions-input, like list-action-executions-input
+
+  line </#X-Amz-Target=CodePipeline_20150709.ListActionExecutions>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-action-executions-input
+
+  loot 200
+    seed json, like list-action-executions-output
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like pipeline-not-found-exception
+    note <PipelineNotFoundException>
+  loot 482
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 483
+    seed json, like pipeline-execution-not-found-exception
+    note <PipelineExecutionNotFoundException>

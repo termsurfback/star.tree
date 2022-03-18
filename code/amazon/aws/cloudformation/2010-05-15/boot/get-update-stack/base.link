@@ -1,0 +1,250 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/capability
+  take form capability
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/insufficient-capabilities-exception
+  take form insufficient-capabilities-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/monitoring-time-in-minutes
+  take form monitoring-time-in-minutes
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/notification-arn
+  take form notification-arn
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/parameter
+  take form parameter
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/resource-type
+  take form resource-type
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/rollback-triggers
+  take form rollback-triggers
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/tag
+  take form tag
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/token-already-exists-exception
+  take form token-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/update-stack-output
+  take form update-stack-output
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-update-stack, name <GET_UpdateStack>
+  note <Updates a stack as specified in the template. After the call completes successfully, the stack update starts. You can check the status of the stack via the DescribeStacks action.
+
+To get a copy of the template for an existing stack, you can use the GetTemplate action.
+
+For more information about creating an update template, updating a stack, and monitoring the progress of the update, see [Updating a Stack](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html).>
+
+  take stack-name
+    like native-string
+    note <The name or unique stack ID of the stack to update.>
+  take template-body
+    like native-string
+    note <Structure containing the template body with a minimum length of 1 byte and a maximum length of 51,200 bytes. (For more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the CloudFormation User Guide.)
+
+Conditional: You must specify only one of the following parameters: `TemplateBody`, `TemplateURL`, or set the `UsePreviousTemplate` to `true`.>
+    void take
+  take template-url
+    like native-string
+    note <Location of file containing the template body. The URL must point to a template that is located in an Amazon S3 bucket or a Systems Manager document. For more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the CloudFormation User Guide.
+
+Conditional: You must specify only one of the following parameters: `TemplateBody`, `TemplateURL`, or set the `UsePreviousTemplate` to `true`.>
+    void take
+  take use-previous-template
+    like native-boolean
+    note <Reuse the existing template that is associated with the stack that you are updating.
+
+Conditional: You must specify only one of the following parameters: `TemplateBody`, `TemplateURL`, or set the `UsePreviousTemplate` to `true`.>
+    void take
+  take stack-policy-during-update-body
+    like native-string
+    note <Structure containing the temporary overriding stack policy body. You can specify either the `StackPolicyDuringUpdateBody` or the `StackPolicyDuringUpdateURL` parameter, but not both.
+
+If you want to update protected resources, specify a temporary overriding stack policy during this update. If you do not specify a stack policy, the current policy that is associated with the stack will be used.>
+    void take
+  take stack-policy-during-update-url
+    like native-string
+    note <Location of a file containing the temporary overriding stack policy. The URL must point to a policy (max size: 16KB) located in an S3 bucket in the same Region as the stack. You can specify either the `StackPolicyDuringUpdateBody` or the `StackPolicyDuringUpdateURL` parameter, but not both.
+
+If you want to update protected resources, specify a temporary overriding stack policy during this update. If you do not specify a stack policy, the current policy that is associated with the stack will be used.>
+    void take
+  take parameters
+    like list
+      like parameter
+    note <A list of `Parameter` structures that specify input parameters for the stack. For more information, see the [Parameter](https://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_Parameter.html) data type.>
+    void take
+  take capabilities
+    like list
+      like capability
+    note <In some cases, you must explicitly acknowledge that your stack template contains certain capabilities in order for CloudFormation to update the stack.
+
+- `CAPABILITY_IAM` and `CAPABILITY_NAMED_IAM`
+
+  Some stack templates might include resources that can affect permissions in your Amazon Web Services account; for example, by creating new Identity and Access Management (IAM) users. For those stacks, you must explicitly acknowledge this by specifying one of these capabilities.
+
+  The following IAM resources require you to specify either the `CAPABILITY_IAM` or `CAPABILITY_NAMED_IAM` capability.
+
+  - If you have IAM resources, you can specify either capability.
+
+  - If you have IAM resources with custom names, you _must_ specify `CAPABILITY_NAMED_IAM`.
+
+  - If you don't specify either of these capabilities, CloudFormation returns an `InsufficientCapabilities` error.
+
+  If your stack template contains these resources, we recommend that you review all permissions associated with them and edit their permissions if necessary.
+
+  - [AWS::IAM::AccessKey](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-iam-accesskey.html)
+
+  - [AWS::IAM::Group](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-iam-group.html)
+
+  - [AWS::IAM::InstanceProfile](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-instanceprofile.html)
+
+  - [AWS::IAM::Policy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-iam-policy.html)
+
+  - [AWS::IAM::Role](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html)
+
+  - [AWS::IAM::User](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-iam-user.html)
+
+  - [AWS::IAM::UserToGroupAddition](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-iam-addusertogroup.html)
+
+  For more information, see [Acknowledging IAM Resources in CloudFormation Templates](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-iam-template.html#capabilities).
+
+- `CAPABILITY_AUTO_EXPAND`
+
+  Some template contain macros. Macros perform custom processing on templates; this can include simple actions like find-and-replace operations, all the way to extensive transformations of entire templates. Because of this, users typically create a change set from the processed template, so that they can review the changes resulting from the macros before actually updating the stack. If your stack template contains one or more macros, and you choose to update a stack directly from the processed template, without first reviewing the resulting changes in a change set, you must acknowledge this capability. This includes the [AWS::Include](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/create-reusable-transform-function-snippets-and-add-to-your-template-with-aws-include-transform.html) and [AWS::Serverless](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-aws-serverless.html) transforms, which are macros hosted by CloudFormation.
+
+  If you want to update a stack from a stack template that contains macros _and_ nested stacks, you must update the stack directly from the template using this capability.
+
+  You should only update stacks directly from a stack template that contains macros if you know what processing the macro performs.
+
+  Each macro relies on an underlying Lambda service function for processing stack templates. Be aware that the Lambda function owner can update the function operation without CloudFormation being notified.
+
+  For more information, see [Using CloudFormation Macros to Perform Custom Processing on Templates](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-macros.html).>
+    void take
+  take resource-types
+    like list
+      like resource-type
+    note <The template resource types that you have permissions to work with for this update stack action, such as `AWS::EC2::Instance`, `AWS::EC2::*`, or `Custom::MyCustomInstance`.
+
+If the list of resource types doesn't include a resource that you're updating, the stack update fails. By default, CloudFormation grants permissions to all resource types. Identity and Access Management (IAM) uses this parameter for CloudFormation-specific condition keys in IAM policies. For more information, see [Controlling Access with Identity and Access Management](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-iam-template.html).>
+    void take
+  take role-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of an Identity and Access Management (IAM) role that CloudFormation assumes to update the stack. CloudFormation uses the role's credentials to make calls on your behalf. CloudFormation always uses this role for all future operations on the stack. As long as users have permission to operate on the stack, CloudFormation uses this role even if the users don't have permission to pass it. Ensure that the role grants least privilege.
+
+If you don't specify a value, CloudFormation uses the role that was previously associated with the stack. If no role is available, CloudFormation uses a temporary session that is generated from your user credentials.>
+    void take
+  take rollback-configuration
+    like form
+      take rollback-triggers, name <RollbackTriggers>
+        like rollback-triggers
+        void take
+        note <The triggers to monitor during stack creation or update actions.
+
+By default, CloudFormation saves the rollback triggers specified for a stack and applies them to any subsequent update operations for the stack, unless you specify otherwise. If you do specify rollback triggers for this parameter, those triggers replace any list of triggers previously specified for the stack. This means:
+
+- To use the rollback triggers previously specified for this stack, if any, don't specify this parameter.
+
+- To specify new or updated rollback triggers, you must specify _all_ the triggers that you want used for this stack, even triggers you've specifed before (for example, when creating the stack or during a previous stack update). Any triggers that you don't include in the updated list of triggers are no longer applied to the stack.
+
+- To remove all currently specified triggers, specify an empty list for this parameter.
+
+If a specified trigger is missing, the entire stack operation fails and is rolled back.>
+      take monitoring-time-in-minutes, name <MonitoringTimeInMinutes>
+        like monitoring-time-in-minutes
+        void take
+        note <The amount of time, in minutes, during which CloudFormation should monitor all the rollback triggers after the stack creation or update operation deploys all necessary resources.
+
+The default is 0 minutes.
+
+If you specify a monitoring period but do not specify any rollback triggers, CloudFormation still waits the specified period of time before cleaning up old resources after update operations. You can use this monitoring period to perform any manual stack validation desired, and manually cancel the stack creation or update (using [CancelUpdateStack](https://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_CancelUpdateStack.html), for example) as necessary.
+
+If you specify 0 for this parameter, CloudFormation still monitors the specified rollback triggers during stack creation and update operations. Then, for update operations, it begins disposing of old resources immediately once the operation completes.>
+    note <The rollback triggers for CloudFormation to monitor during stack creation and updating operations, and for the specified monitoring period afterwards.>
+    void take
+  take stack-policy-body
+    like native-string
+    note <Structure containing a new stack policy body. You can specify either the `StackPolicyBody` or the `StackPolicyURL` parameter, but not both.
+
+You might update the stack policy, for example, in order to protect a new resource that you created during a stack update. If you do not specify a stack policy, the current policy that is associated with the stack is unchanged.>
+    void take
+  take stack-policy-url
+    like native-string
+    note <Location of a file containing the updated stack policy. The URL must point to a policy (max size: 16KB) located in an S3 bucket in the same Region as the stack. You can specify either the `StackPolicyBody` or the `StackPolicyURL` parameter, but not both.
+
+You might update the stack policy, for example, in order to protect a new resource that you created during a stack update. If you do not specify a stack policy, the current policy that is associated with the stack is unchanged.>
+    void take
+  take notification-ar-ns
+    like list
+      like notification-arn
+    note <Amazon Simple Notification Service topic Amazon Resource Names (ARNs) that CloudFormation associates with the stack. Specify an empty list to remove all notification topics.>
+    void take
+  take tags
+    like list
+      like tag
+    note <Key-value pairs to associate with this stack. CloudFormation also propagates these tags to supported resources in the stack. You can specify a maximum number of 50 tags.
+
+If you don't specify this parameter, CloudFormation doesn't modify the stack's tags. If you specify an empty value, CloudFormation removes all associated tags.>
+    void take
+  take disable-rollback
+    like native-boolean
+    note <Preserve the state of previously provisioned resources when an operation fails.
+
+Default: `False`>
+    void take
+  take client-request-token
+    like native-string
+    note <A unique identifier for this `UpdateStack` request. Specify this token if you plan to retry requests so that CloudFormation knows that you're not attempting to update a stack with the same name. You might retry `UpdateStack` requests to ensure that CloudFormation successfully received them.
+
+All events triggered by a given stack operation are assigned the same client request token, which you can use to track operations. For example, if you execute a `CreateStack` operation with the token `token1`, then all the `StackEvents` generated by that operation will have `ClientRequestToken` set as `token1`.
+
+In the console, stack operations display the client request token on the Events tab. Stack operations that are initiated from the console use the token format _Console-StackOperation-ID_, which helps you easily identify the stack operation . For example, if you create a stack using the console, each stack event would be assigned the same token in the following format: `Console-CreateStack-7f59c3cf-00d2-40c7-b2ff-e75db0987002`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=UpdateStack>
+
+  find <StackName>, loan stack-name
+  find <TemplateBody>, loan template-body
+  find <TemplateURL>, loan template-url
+  find <UsePreviousTemplate>, loan use-previous-template
+  find <StackPolicyDuringUpdateBody>, loan stack-policy-during-update-body
+  find <StackPolicyDuringUpdateURL>, loan stack-policy-during-update-url
+  find <Parameters>, loan parameters
+  find <Capabilities>, loan capabilities
+  find <ResourceTypes>, loan resource-types
+  find <RoleARN>, loan role-arn
+  find <RollbackConfiguration>, loan rollback-configuration
+  find <StackPolicyBody>, loan stack-policy-body
+  find <StackPolicyURL>, loan stack-policy-url
+  find <NotificationARNs>, loan notification-ar-ns
+  find <Tags>, loan tags
+  find <DisableRollback>, loan disable-rollback
+  find <ClientRequestToken>, loan client-request-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like update-stack-output
+    note <Success>
+  loot 480
+    seed xml, like insufficient-capabilities-exception
+    note <InsufficientCapabilitiesException>
+  loot 481
+    seed xml, like token-already-exists-exception
+    note <TokenAlreadyExistsException>

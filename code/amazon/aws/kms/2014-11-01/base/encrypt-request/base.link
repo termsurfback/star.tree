@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/encryption-algorithm-spec
+  take form encryption-algorithm-spec
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/encryption-context-type
+  take form encryption-context-type
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/grant-token-list
+  take form grant-token-list
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/key-id-type
+  take form key-id-type
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/plaintext-type
+  take form plaintext-type
+
+form encrypt-request, name <EncryptRequest>
+  take key-id, name <KeyId>
+    like key-id-type
+    note <Identifies the KMS key to use in the encryption operation.
+
+To specify a KMS key, use its key ID, key ARN, alias name, or alias ARN. When using an alias name, prefix it with `"alias/"`. To specify a KMS key in a different Amazon Web Services account, you must use the key ARN or alias ARN.
+
+For example:
+
+- Key ID: `1234abcd-12ab-34cd-56ef-1234567890ab`
+
+- Key ARN: `arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab`
+
+- Alias name: `alias/ExampleAlias`
+
+- Alias ARN: `arn:aws:kms:us-east-2:111122223333:alias/ExampleAlias`
+
+To get the key ID and key ARN for a KMS key, use ListKeys or DescribeKey. To get the alias name and alias ARN, use ListAliases.>
+  take plaintext, name <Plaintext>
+    like plaintext-type
+    note <Data to be encrypted.>
+  take encryption-context, name <EncryptionContext>
+    like encryption-context-type
+    void take
+    note <Specifies the encryption context that will be used to encrypt the data. An encryption context is valid only for [cryptographic operations](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#cryptographic-operations) with a symmetric KMS key. The standard asymmetric encryption algorithms that KMS uses do not support an encryption context.
+
+An _encryption context_ is a collection of non-secret key-value pairs that represents additional authenticated data. When you use an encryption context to encrypt data, you must specify the same (an exact case-sensitive match) encryption context to decrypt the data. An encryption context is optional when encrypting with a symmetric KMS key, but it is highly recommended.
+
+For more information, see [Encryption Context](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#encrypt_context) in the _Key Management Service Developer Guide_.>
+  take grant-tokens, name <GrantTokens>
+    like grant-token-list
+    void take
+    note <A list of grant tokens.
+
+Use a grant token when your permission to call this operation comes from a new grant that has not yet achieved _eventual consistency_. For more information, see [Grant token](https://docs.aws.amazon.com/kms/latest/developerguide/grants.html#grant_token) and [Using a grant token](https://docs.aws.amazon.com/kms/latest/developerguide/grant-manage.html#using-grant-token) in the _Key Management Service Developer Guide_.>
+  take encryption-algorithm, name <EncryptionAlgorithm>
+    like encryption-algorithm-spec
+    void take
+    note <Specifies the encryption algorithm that KMS will use to encrypt the plaintext message. The algorithm must be compatible with the KMS key that you specify.
+
+This parameter is required only for asymmetric KMS keys. The default value, `SYMMETRIC_DEFAULT`, is the algorithm used for symmetric KMS keys. If you are using an asymmetric KMS key, we recommend RSAES_OAEP_SHA_256.>

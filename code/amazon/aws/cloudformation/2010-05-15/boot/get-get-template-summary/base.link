@@ -1,0 +1,74 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/get-template-summary-output
+  take form get-template-summary-output
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/stack-set-not-found-exception
+  take form stack-set-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-get-template-summary, name <GET_GetTemplateSummary>
+  note <Returns information about a new or existing template. The `GetTemplateSummary` action is useful for viewing parameter information, such as default parameter values and parameter types, before you create or update a stack or stack set.
+
+You can use the `GetTemplateSummary` action when you submit a template, or you can get template information for a stack set, or a running or deleted stack.
+
+For deleted stacks, `GetTemplateSummary` returns the template information for up to 90 days after the stack has been deleted. If the template does not exist, a `ValidationError` is returned.>
+
+  take template-body
+    like native-string
+    note <Structure containing the template body with a minimum length of 1 byte and a maximum length of 51,200 bytes. For more information about templates, see [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the CloudFormation User Guide.
+
+Conditional: You must specify only one of the following parameters: `StackName`, `StackSetName`, `TemplateBody`, or `TemplateURL`.>
+    void take
+  take template-url
+    like native-string
+    note <Location of file containing the template body. The URL must point to a template (max size: 460,800 bytes) that is located in an Amazon S3 bucket or a Systems Manager document. For more information about templates, see [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the CloudFormation User Guide.
+
+Conditional: You must specify only one of the following parameters: `StackName`, `StackSetName`, `TemplateBody`, or `TemplateURL`.>
+    void take
+  take stack-name
+    like native-string
+    note <The name or the stack ID that is associated with the stack, which are not always interchangeable. For running stacks, you can specify either the stack's name or its unique stack ID. For deleted stack, you must specify the unique stack ID.
+
+Conditional: You must specify only one of the following parameters: `StackName`, `StackSetName`, `TemplateBody`, or `TemplateURL`.>
+    void take
+  take stack-set-name
+    like native-string
+    note <The name or unique ID of the stack set from which the stack was created.
+
+Conditional: You must specify only one of the following parameters: `StackName`, `StackSetName`, `TemplateBody`, or `TemplateURL`.>
+    void take
+  take call-as
+    like native-string
+    note <[Service-managed permissions] Specifies whether you are acting as an account administrator in the organization's management account or as a delegated administrator in a member account.
+
+By default, `SELF` is specified. Use `SELF` for stack sets with self-managed permissions.
+
+- If you are signed in to the management account, specify `SELF`.
+
+- If you are signed in to a delegated administrator account, specify `DELEGATED_ADMIN`.
+
+  Your Amazon Web Services account must be registered as a delegated administrator in the management account. For more information, see [Register a delegated administrator](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-orgs-delegated-admin.html) in the _CloudFormation User Guide_.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=GetTemplateSummary>
+
+  find <TemplateBody>, loan template-body
+  find <TemplateURL>, loan template-url
+  find <StackName>, loan stack-name
+  find <StackSetName>, loan stack-set-name
+  find <CallAs>, loan call-as
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like get-template-summary-output
+    note <Success>
+  loot 480
+    seed xml, like stack-set-not-found-exception
+    note <StackSetNotFoundException>

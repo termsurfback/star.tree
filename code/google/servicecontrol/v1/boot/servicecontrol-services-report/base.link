@@ -1,0 +1,23 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/servicecontrol/v1/base/report-response
+  take form report-response
+
+boot servicecontrol-services-report, name <servicecontrol.services.report>
+  note <Reports operation results to Google Service Control, such as logs and metrics. It should be called after an operation is completed. If feasible, the client should aggregate reporting data for up to 5 seconds to reduce API traffic. Limiting aggregation to 5 seconds is to reduce data loss during client crashes. Clients should carefully choose the aggregation time window to avoid data loss risk more than 0.01% for business and compliance reasons. NOTE: the ReportRequest has the size limit (wire-format byte size) of 1MB. This method requires the `servicemanagement.services.report` permission on the specified service. For more information, see [Google Cloud IAM](https://cloud.google.com/iam).>
+
+  take service-name
+    like native-string
+    note <The service name as specified in its service configuration. For example, `"pubsub.googleapis.com"`. See [google.api.Service](https://cloud.google.com/service-management/reference/rpc/google.api#google.api.Service) for the definition of a service name.>
+  take report-request, like report-request
+    void take
+
+  line </v1/services/{service-name}:report>
+
+  seed json, loan report-request
+
+  loot 200
+    seed json, like report-response
+    note <Successful response>

@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/entity-not-found-exception
+  take form entity-not-found-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/list-schemas-response
+  take form list-schemas-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-schemas, name <ListSchemas>
+  note <Returns a list of schemas with minimal details. Schemas in Deleting status will not be included in the results. Empty results will be returned if there are no schemas available.
+
+When the `RegistryId` is not provided, all the schemas across registries will be part of the API response.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-schemas-input, like list-schemas-input
+
+  line </#X-Amz-Target=AWSGlue.ListSchemas>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-schemas-input
+
+  loot 200
+    seed json, like list-schemas-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like entity-not-found-exception
+    note <EntityNotFoundException>
+  loot 483
+    seed json, like internal-service-exception
+    note <InternalServiceException>

@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/route53-recovery-cluster/2019-12-02/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-cluster/2019-12-02/base/endpoint-temporarily-unavailable-exception
+  take form endpoint-temporarily-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-cluster/2019-12-02/base/get-routing-control-state-response
+  take form get-routing-control-state-response
+
+load @drumwork/snow/amazonaws.com/route53-recovery-cluster/2019-12-02/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-cluster/2019-12-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-cluster/2019-12-02/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-cluster/2019-12-02/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-routing-control-state, name <GetRoutingControlState>
+  note <Get the state for a routing control. A routing control is a simple on/off switch that you can use to route traffic to cells. When the state is On, traffic flows to a cell. When it's off, traffic does not flow.
+
+Before you can create a routing control, you first must create a cluster to host the control. For more information, see [CreateCluster](https://docs.aws.amazon.com/recovery-cluster/latest/api/cluster.html). Access one of the endpoints for the cluster to get or update the routing control state to redirect traffic.
+
+For more information about working with routing controls, see [Routing control](https://docs.aws.amazon.com/r53recovery/latest/dg/routing-control.html) in the Route 53 Application Recovery Controller Developer Guide.>
+
+  take x-amz-target
+    like native-string
+  take get-routing-control-state-request, like get-routing-control-state-request
+
+  line </#X-Amz-Target=ToggleCustomerAPI.GetRoutingControlState>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-routing-control-state-request
+
+  loot 200
+    seed json, like get-routing-control-state-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 484
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 485
+    seed json, like endpoint-temporarily-unavailable-exception
+    note <EndpointTemporarilyUnavailableException>

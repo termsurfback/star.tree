@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/missing-required-parameter-exception
+  take form missing-required-parameter-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/put-insight-rule-output
+  take form put-insight-rule-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-put-insight-rule, name <POST_PutInsightRule>
+  note <Creates a Contributor Insights rule. Rules evaluate log events in a CloudWatch Logs log group, enabling you to find contributor data for the log events in that log group. For more information, see [Using Contributor Insights to Analyze High-Cardinality Data](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContributorInsights.html).
+
+If you create a rule, delete it, and then re-create it with the same name, historical data from the first time the rule was created might not be available.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take put-insight-rule-input, like put-insight-rule-input
+    void take
+
+  line </#Action=PutInsightRule>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan put-insight-rule-input
+
+  loot 200
+    seed xml, like put-insight-rule-output
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 481
+    seed xml, like missing-required-parameter-exception
+    note <MissingRequiredParameterException>
+  loot 482
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>

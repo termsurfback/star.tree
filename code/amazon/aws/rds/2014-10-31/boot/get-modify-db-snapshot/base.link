@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-snapshot-not-found-fault
+  take form db-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/modify-db-snapshot-result
+  take form modify-db-snapshot-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-modify-db-snapshot, name <GET_ModifyDBSnapshot>
+  note <Updates a manual DB snapshot with a new engine version. The snapshot can be encrypted or unencrypted, but not shared or public.
+
+Amazon RDS supports upgrading DB snapshots for MySQL, Oracle, and PostgreSQL.>
+
+  take db-snapshot-identifier
+    like native-string
+    note <The identifier of the DB snapshot to modify.>
+  take engine-version
+    like native-string
+    note <The engine version to upgrade the DB snapshot to.
+
+The following are the database engines and engine versions that are available when you upgrade a DB snapshot.
+
+**MySQL** - `5.5.46` (supported for 5.1 DB snapshots)
+
+**Oracle** - `12.1.0.2.v8` (supported for 12.1.0.1 DB snapshots)
+
+- `11.2.0.4.v12` (supported for 11.2.0.2 DB snapshots)
+
+- `11.2.0.4.v11` (supported for 11.2.0.3 DB snapshots)
+
+**PostgreSQL** For the list of engine versions that are available for upgrading a DB snapshot, see [Upgrading the PostgreSQL DB Engine for Amazon RDS](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_UpgradeDBInstance.PostgreSQL.html#USER_UpgradeDBInstance.PostgreSQL.MajorVersion).>
+    void take
+  take option-group-name
+    like native-string
+    note <The option group to identify with the upgraded DB snapshot.
+
+You can specify this parameter when you upgrade an Oracle DB snapshot. The same option group considerations apply when upgrading a DB snapshot as when upgrading a DB instance. For more information, see [Option group considerations](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_UpgradeDBInstance.Oracle.html#USER_UpgradeDBInstance.Oracle.OGPG.OG) in the _Amazon RDS User Guide._>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyDBSnapshot>
+
+  find <DBSnapshotIdentifier>, loan db-snapshot-identifier
+  find <EngineVersion>, loan engine-version
+  find <OptionGroupName>, loan option-group-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-db-snapshot-result
+    note <Success>
+  loot 480
+    seed xml, like db-snapshot-not-found-fault
+    note <DBSnapshotNotFoundFault>

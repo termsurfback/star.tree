@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/get-metric-stream-output
+  take form get-metric-stream-output
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/internal-service-fault
+  take form internal-service-fault
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/missing-required-parameter-exception
+  take form missing-required-parameter-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-get-metric-stream, name <POST_GetMetricStream>
+  note <Returns information about the metric stream that you specify.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take get-metric-stream-input, like get-metric-stream-input
+    void take
+
+  line </#Action=GetMetricStream>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan get-metric-stream-input
+
+  loot 200
+    seed xml, like get-metric-stream-output
+    note <Success>
+  loot 480
+    seed xml, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed xml, like internal-service-fault
+    note <InternalServiceFault>
+  loot 482
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed xml, like missing-required-parameter-exception
+    note <MissingRequiredParameterException>
+  loot 484
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

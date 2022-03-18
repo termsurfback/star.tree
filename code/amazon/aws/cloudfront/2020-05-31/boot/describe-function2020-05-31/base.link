@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/describe-function-result
+  take form describe-function-result
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/no-such-function-exists
+  take form no-such-function-exists
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/unsupported-operation
+  take form unsupported-operation
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-function2020-05-31, name <DescribeFunction2020_05_31>
+  note <Gets configuration information and metadata about a CloudFront function, but not the function’s code. To get a function’s code, use `GetFunction`.
+
+To get configuration information and metadata about a function, you must provide the function’s name and stage. To get these values, you can use `ListFunctions`.>
+
+  take name
+    like native-string
+    note <The name of the function that you are getting information about.>
+  take stage
+    like native-string
+    note <The function’s stage, either `DEVELOPMENT` or `LIVE`.>
+    void take
+
+  line </2020-05-31/function/{name}/describe>
+
+  find <Stage>, loan stage
+
+  loot 200
+    seed xml, like describe-function-result
+    note <Success>
+  loot 480
+    seed xml, like no-such-function-exists
+    note <NoSuchFunctionExists>
+  loot 481
+    seed xml, like unsupported-operation
+    note <UnsupportedOperation>

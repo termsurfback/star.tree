@@ -1,0 +1,70 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/logging-config
+  take form logging-config
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/registry-type
+  take form registry-type
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/request-token
+  take form request-token
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/role-arn
+  take form role-arn
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/s3-url
+  take form s3-url
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/type-name
+  take form type-name
+
+form register-type-input, name <RegisterTypeInput>
+  take type, name <Type>
+    like registry-type
+    void take
+    note <The kind of extension.>
+  take type-name, name <TypeName>
+    like type-name
+    note <The name of the extension being registered.
+
+We recommend that extension names adhere to the following patterns:
+
+- For resource types, _company_or_organization_::_service_::_type_.
+
+- For modules, _company_or_organization_::_service_::_type_::MODULE.
+
+The following organization namespaces are reserved and cannot be used in your extension names:
+
+- `Alexa`
+
+- `AMZN`
+
+- `Amazon`
+
+- `AWS`
+
+- `Custom`
+
+- `Dev`>
+  take schema-handler-package, name <SchemaHandlerPackage>
+    like s3-url
+    note <A url to the S3 bucket containing the extension project package that contains the neccessary files for the extension you want to register.
+
+For information on generating a schema handler package for the extension you want to register, see [submit](https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-cli-submit.html) in the _CloudFormation CLI User Guide_.
+
+The user registering the extension must be able to access the package in the S3 bucket. That is, the user needs to have [GetObject](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html) permissions for the schema handler package. For more information, see [Actions, Resources, and Condition Keys for Amazon S3](https://docs.aws.amazon.com/IAM/latest/UserGuide/list_amazons3.html) in the _Identity and Access Management User Guide_.>
+  take logging-config, name <LoggingConfig>
+    like logging-config
+    void take
+    note <Specifies logging configuration information for an extension.>
+  take execution-role-arn, name <ExecutionRoleArn>
+    like role-arn
+    void take
+    note <The Amazon Resource Name (ARN) of the IAM role for CloudFormation to assume when invoking the extension.
+
+For CloudFormation to assume the specified execution role, the role must contain a trust relationship with the CloudFormation service principle (`resources.cloudformation.amazonaws.com`). For more information on adding trust relationships, see [Modifying a role trust policy](IAM/latest/UserGuide/roles-managingrole-editing-console.html#roles-managingrole_edit-trust-policy) in the _Identity and Access Management User Guide_.
+
+If your extension calls Amazon Web Services APIs in any of its handlers, you must create an _[IAM execution role](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html)_ that includes the necessary permissions to call those Amazon Web Services APIs, and provision that execution role in your account. When CloudFormation needs to invoke the resource type handler, CloudFormation assumes this execution role to create a temporary session token, which it then passes to the resource type handler, thereby supplying your resource type with the appropriate credentials.>
+  take client-request-token, name <ClientRequestToken>
+    like request-token
+    void take
+    note <A unique identifier that acts as an idempotency key for this registration request. Specifying a client request token prevents CloudFormation from generating more than one version of an extension from the same registeration request, even if the request is submitted multiple times.>

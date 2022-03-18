@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/add-listener-certificates-output
+  take form add-listener-certificates-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/certificate
+  take form certificate
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/certificate-not-found-exception
+  take form certificate-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/listener-not-found-exception
+  take form listener-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/too-many-certificates-exception
+  take form too-many-certificates-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-add-listener-certificates, name <GET_AddListenerCertificates>
+  note <Adds the specified SSL server certificate to the certificate list for the specified HTTPS or TLS listener.
+
+If the certificate in already in the certificate list, the call is successful but the certificate is not added again.
+
+For more information, see [HTTPS listeners](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html) in the _Application Load Balancers Guide_ or [TLS listeners](https://docs.aws.amazon.com/elasticloadbalancing/latest/network/create-tls-listener.html) in the _Network Load Balancers Guide_.>
+
+  take listener-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the listener.>
+  take certificates
+    like list
+      like certificate
+    note <The certificate to add. You can specify one certificate per call. Set `CertificateArn` to the certificate ARN but do not set `IsDefault`.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=AddListenerCertificates>
+
+  find <ListenerArn>, loan listener-arn
+  find <Certificates>, loan certificates
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like add-listener-certificates-output
+    note <Success>
+  loot 480
+    seed xml, like listener-not-found-exception
+    note <ListenerNotFoundException>
+  loot 481
+    seed xml, like too-many-certificates-exception
+    note <TooManyCertificatesException>
+  loot 482
+    seed xml, like certificate-not-found-exception
+    note <CertificateNotFoundException>

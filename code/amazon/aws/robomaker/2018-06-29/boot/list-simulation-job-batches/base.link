@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/list-simulation-job-batches-body
+  take form list-simulation-job-batches-body
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/list-simulation-job-batches-response
+  take form list-simulation-job-batches-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-simulation-job-batches, name <ListSimulationJobBatches>
+  note <Returns a list simulation job batches. You can optionally provide filters to retrieve specific simulation batch jobs.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-simulation-job-batches-body, like list-simulation-job-batches-body
+
+  line </listSimulationJobBatches>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-simulation-job-batches-body
+
+  loot 200
+    seed json, like list-simulation-job-batches-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>

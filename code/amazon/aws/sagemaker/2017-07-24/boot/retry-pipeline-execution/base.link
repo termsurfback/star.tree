@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-limit-exceeded
+  take form resource-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-not-found
+  take form resource-not-found
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/retry-pipeline-execution-response
+  take form retry-pipeline-execution-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot retry-pipeline-execution, name <RetryPipelineExecution>
+  note <Retry the execution of the pipeline.>
+
+  take x-amz-target
+    like native-string
+  take retry-pipeline-execution-request, like retry-pipeline-execution-request
+
+  line </#X-Amz-Target=SageMaker.RetryPipelineExecution>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan retry-pipeline-execution-request
+
+  loot 200
+    seed json, like retry-pipeline-execution-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found
+    note <ResourceNotFound>
+  loot 481
+    seed json, like resource-limit-exceeded
+    note <ResourceLimitExceeded>
+  loot 482
+    seed json, like conflict-exception
+    note <ConflictException>

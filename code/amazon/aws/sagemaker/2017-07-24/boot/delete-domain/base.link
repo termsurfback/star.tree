@@ -1,0 +1,31 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-in-use
+  take form resource-in-use
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-not-found
+  take form resource-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-domain, name <DeleteDomain>
+  note <Used to delete a domain. If you onboarded with IAM mode, you will need to delete your domain to onboard again using SSO. Use with caution. All of the members of the domain will lose access to their EFS volume, including data, notebooks, and other artifacts.>
+
+  take x-amz-target
+    like native-string
+  take delete-domain-request, like delete-domain-request
+
+  line </#X-Amz-Target=SageMaker.DeleteDomain>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-domain-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like resource-in-use
+    note <ResourceInUse>
+  loot 481
+    seed json, like resource-not-found
+    note <ResourceNotFound>

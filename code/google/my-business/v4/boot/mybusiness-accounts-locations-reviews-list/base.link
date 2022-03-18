@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/my-business/v4/base/list-reviews-response
+  take form list-reviews-response
+
+boot mybusiness-accounts-locations-reviews-list, name <mybusiness.accounts.locations.reviews.list>
+  note <Returns the paginated list of reviews for the specified location. This operation is only valid if the specified location is verified.>
+
+  take parent
+    like native-string
+    note <The name of the location to fetch reviews for.>
+  take order-by
+    like native-string
+    note <Specifies the field to sort reviews by. If unspecified, the order of reviews returned will default to `update_time desc`. Valid orders to sort by are `rating`, `rating desc` and `update_time desc`.>
+    void take
+  take page-size
+    like native-integer
+    note <How many reviews to fetch per page. The maximum `page_size` is 50.>
+    void take
+  take page-token
+    like native-string
+    note <If specified, it fetches the next page of reviews.>
+    void take
+
+  line </v4/{parent}/reviews>
+
+  find <orderBy>, loan order-by
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-reviews-response
+    note <Successful response>

@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/concurrent-access-exception
+  take form concurrent-access-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/stale-tag-exception
+  take form stale-tag-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/tag-policy-exception
+  take form tag-policy-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-topic, name <POST_DeleteTopic>
+  note <Deletes a topic and all its subscriptions. Deleting a topic might prevent some messages previously sent to the topic from being delivered to subscribers. This action is idempotent, so deleting a topic that does not exist does not result in an error.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-topic-input, like delete-topic-input
+    void take
+
+  line </#Action=DeleteTopic>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-topic-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 482
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>
+  loot 483
+    seed xml, like not-found-exception
+    note <NotFoundException>
+  loot 484
+    seed xml, like stale-tag-exception
+    note <StaleTagException>
+  loot 485
+    seed xml, like tag-policy-exception
+    note <TagPolicyException>
+  loot 486
+    seed xml, like concurrent-access-exception
+    note <ConcurrentAccessException>

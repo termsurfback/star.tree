@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/payment-source
+  take form payment-source
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-customers-customer-bank-accounts-body
+  take form post-customers-customer-bank-accounts-body
+
+boot post-customers-customer-bank-accounts, name <PostCustomersCustomerBankAccounts>
+  note <When you create a new credit card, you must specify a customer or recipient on which to create it.
+
+If the card’s owner has no default card, then the new card will become the default. However, if the owner already has a default, then it will not change. To change the default, you should [update the customer](/docs/api#update_customer) to have a new `default_source`.>
+
+  take customer
+    like native-string
+  take post-customers-customer-bank-accounts-body, like post-customers-customer-bank-accounts-body
+    void take
+
+  line </v1/customers/{customer}/bank_accounts>
+
+  seed x-www-form-urlencoded, loan post-customers-customer-bank-accounts-body
+
+  loot 200
+    seed json, like payment-source
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

@@ -1,0 +1,73 @@
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/import-firewall-domains-response
+  take form import-firewall-domains-response
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot import-firewall-domains, name <ImportFirewallDomains>
+  note <Imports domain names from a file into a domain list, for use in a DNS firewall rule group.
+
+Each domain specification in your domain list must satisfy the following requirements:
+
+- It can optionally start with `*` (asterisk).
+
+- With the exception of the optional starting asterisk, it must only contain the following characters: `A-Z`, `a-z`, `0-9`, `-` (hyphen).
+
+- It must be from 1-255 characters in length.>
+
+  take x-amz-target
+    like native-string
+  take import-firewall-domains-request, like import-firewall-domains-request
+
+  line </#X-Amz-Target=Route53Resolver.ImportFirewallDomains>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan import-firewall-domains-request
+
+  loot 200
+    seed json, like import-firewall-domains-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 484
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 485
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>
+  loot 486
+    seed json, like throttling-exception
+    note <ThrottlingException>

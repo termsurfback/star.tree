@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/list-tags-for-resource-response
+  take form list-tags-for-resource-response
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-tags-for-resource, name <ListTagsForResource>
+  note <Retrieve a list of the tags (keys and values) that are associated with a specified application. A _tag_ is a label that you optionally define and associate with an application. Each tag consists of a required _tag key_ and an optional associated _tag value_. A tag key is a general label that acts as a category for more specific tag values. A tag value acts as a descriptor within a tag key.>
+
+  take x-amz-target
+    like native-string
+  take list-tags-for-resource-request, like list-tags-for-resource-request
+
+  line </#X-Amz-Target=EC2WindowsBarleyService.ListTagsForResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-tags-for-resource-request
+
+  loot 200
+    seed json, like list-tags-for-resource-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>

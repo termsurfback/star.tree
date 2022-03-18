@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/delete-subscription-response
+  take form delete-subscription-response
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/locked-subscription-exception
+  take form locked-subscription-exception
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-subscription, name <DeleteSubscription>
+  note <Removes Shield Advanced from an account. Shield Advanced requires a 1-year subscription commitment. You cannot delete a subscription prior to the completion of that commitment.>
+
+  take x-amz-target
+    like native-string
+  take delete-subscription-request, like delete-subscription-request
+
+  line </#X-Amz-Target=AWSShield_20160616.DeleteSubscription>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-subscription-request
+
+  loot 200
+    seed json, like delete-subscription-response
+    note <Success>
+  loot 480
+    seed json, like internal-error-exception
+    note <InternalErrorException>
+  loot 481
+    seed json, like locked-subscription-exception
+    note <LockedSubscriptionException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

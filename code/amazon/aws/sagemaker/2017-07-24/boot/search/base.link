@@ -1,0 +1,36 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/search-response
+  take form search-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot search, name <Search>
+  note <Finds Amazon SageMaker resources that match a search query. Matching resources are returned as a list of `SearchRecord` objects in the response. You can sort the search results by any resource property in a ascending or descending order.
+
+You can query against the following value types: numeric, text, Boolean, and timestamp.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take search-request, like search-request
+
+  line </#X-Amz-Target=SageMaker.Search>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan search-request
+
+  loot 200
+    seed json, like search-response
+    note <Success>

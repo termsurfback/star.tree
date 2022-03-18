@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/provisioned-throughput-exceeded-exception
+  take form provisioned-throughput-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/request-limit-exceeded
+  take form request-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/transact-get-items-output
+  take form transact-get-items-output
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/transaction-canceled-exception
+  take form transaction-canceled-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot transact-get-items, name <TransactGetItems>
+  note <`TransactGetItems` is a synchronous operation that atomically retrieves multiple items from one or more tables (but not from indexes) in a single account and Region. A `TransactGetItems` call can contain up to 25 `TransactGetItem` objects, each of which contains a `Get` structure that specifies an item to retrieve from a table in the account and Region. A call to `TransactGetItems` cannot retrieve items from tables in more than one AWS account or Region. The aggregate size of the items in the transaction cannot exceed 4 MB.
+
+DynamoDB rejects the entire `TransactGetItems` request if any of the following is true:
+
+- A conflicting operation is in the process of updating an item to be read.
+
+- There is insufficient provisioned capacity for the transaction to be completed.
+
+- There is a user error, such as an invalid data format.
+
+- The aggregate size of the items in the transaction cannot exceed 4 MB.>
+
+  take x-amz-target
+    like native-string
+  take transact-get-items-input, like transact-get-items-input
+
+  line </#X-Amz-Target=DynamoDB_20120810.TransactGetItems>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan transact-get-items-input
+
+  loot 200
+    seed json, like transact-get-items-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like transaction-canceled-exception
+    note <TransactionCanceledException>
+  loot 482
+    seed json, like provisioned-throughput-exceeded-exception
+    note <ProvisionedThroughputExceededException>
+  loot 483
+    seed json, like request-limit-exceeded
+    note <RequestLimitExceeded>
+  loot 484
+    seed json, like internal-server-error
+    note <InternalServerError>

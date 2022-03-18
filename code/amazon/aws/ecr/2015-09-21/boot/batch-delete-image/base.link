@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/batch-delete-image-response
+  take form batch-delete-image-response
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/repository-not-found-exception
+  take form repository-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot batch-delete-image, name <BatchDeleteImage>
+  note <Deletes a list of specified images within a repository. Images are specified with either an `imageTag` or `imageDigest`.
+
+You can remove a tag from an image by specifying the image's tag in your request. When you remove the last tag from an image, the image is deleted from your repository.
+
+You can completely delete an image (and all of its tags) by specifying the image's digest in your request.>
+
+  take x-amz-target
+    like native-string
+  take batch-delete-image-request, like batch-delete-image-request
+
+  line </#X-Amz-Target=AmazonEC2ContainerRegistry_V20150921.BatchDeleteImage>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan batch-delete-image-request
+
+  loot 200
+    seed json, like batch-delete-image-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like repository-not-found-exception
+    note <RepositoryNotFoundException>

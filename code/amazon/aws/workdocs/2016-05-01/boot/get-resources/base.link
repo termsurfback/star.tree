@@ -1,0 +1,76 @@
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/failed-dependency-exception
+  take form failed-dependency-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/get-resources-response
+  take form get-resources-response
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/invalid-argument-exception
+  take form invalid-argument-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/unauthorized-operation-exception
+  take form unauthorized-operation-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/unauthorized-resource-access-exception
+  take form unauthorized-resource-access-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-resources, name <GetResources>
+  note <Retrieves a collection of resources, including folders and documents. The only `CollectionType` supported is `SHARED_WITH_ME`.>
+
+  take authentication
+    like native-string
+    note <The Amazon WorkDocs authentication token. Not required when using AWS administrator credentials to access the API.>
+    void take
+  take user-id
+    like native-string
+    note <The user ID for the resource collection. This is a required field for accessing the API operation using IAM credentials.>
+    void take
+  take collection-type
+    like native-string
+    note <The collection type.>
+    void take
+  take limit
+    like native-integer
+    note <The maximum number of resources to return.>
+    void take
+  take marker
+    like native-string
+    note <The marker for the next set of results. This marker was received from a previous call.>
+    void take
+
+  line </api/v1/resources>
+
+  hint <Authentication>, loan authentication
+
+  find <userId>, loan user-id
+  find <collectionType>, loan collection-type
+  find <limit>, loan limit
+  find <marker>, loan marker
+
+  loot 200
+    seed json, like get-resources-response
+    note <Success>
+  loot 480
+    seed json, like unauthorized-resource-access-exception
+    note <UnauthorizedResourceAccessException>
+  loot 481
+    seed json, like unauthorized-operation-exception
+    note <UnauthorizedOperationException>
+  loot 482
+    seed json, like invalid-argument-exception
+    note <InvalidArgumentException>
+  loot 483
+    seed json, like failed-dependency-exception
+    note <FailedDependencyException>
+  loot 484
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

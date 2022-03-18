@@ -1,0 +1,44 @@
+
+load @drumwork/snow/amazonaws.com/appmesh/2019-01-25/base/duration
+  take form duration
+
+load @drumwork/snow/amazonaws.com/appmesh/2019-01-25/base/grpc-retry-policy-events
+  take form grpc-retry-policy-events
+
+load @drumwork/snow/amazonaws.com/appmesh/2019-01-25/base/http-retry-policy-events
+  take form http-retry-policy-events
+
+load @drumwork/snow/amazonaws.com/appmesh/2019-01-25/base/max-retries
+  take form max-retries
+
+load @drumwork/snow/amazonaws.com/appmesh/2019-01-25/base/tcp-retry-policy-events
+  take form tcp-retry-policy-events
+
+form grpc-retry-policy, name <GrpcRetryPolicy>
+  note <An object that represents a retry policy. Specify at least one value for at least one of the types of `RetryEvents`, a value for `maxRetries`, and a value for `perRetryTimeout`. Both `server-error` and `gateway-error` under `httpRetryEvents` include the Envoy `reset` policy. For more information on the `reset` policy, see the [Envoy documentation](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/router_filter#x-envoy-retry-on).>
+  take grpc-retry-events, name <grpcRetryEvents>
+    like grpc-retry-policy-events
+    void take
+    note <Specify at least one of the valid values.>
+  take http-retry-events, name <httpRetryEvents>
+    like http-retry-policy-events
+    void take
+    note <Specify at least one of the following values.
+
+- **server-error** - HTTP status codes 500, 501, 502, 503, 504, 505, 506, 507, 508, 510, and 511
+
+- **gateway-error** - HTTP status codes 502, 503, and 504
+
+- **client-error** - HTTP status code 409
+
+- **stream-error** - Retry on refused stream>
+  take max-retries, name <maxRetries>
+    like max-retries
+    note <The maximum number of retry attempts.>
+  take per-retry-timeout, name <perRetryTimeout>
+    like duration
+    note <The timeout for each retry attempt.>
+  take tcp-retry-events, name <tcpRetryEvents>
+    like tcp-retry-policy-events
+    void take
+    note <Specify a valid value. The event occurs before any processing of a request has started and is encountered when the upstream is temporarily or permanently unavailable.>

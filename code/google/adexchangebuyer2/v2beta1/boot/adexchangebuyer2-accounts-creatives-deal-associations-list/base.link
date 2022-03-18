@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/adexchangebuyer2/v2beta1/base/list-deal-associations-response
+  take form list-deal-associations-response
+
+boot adexchangebuyer2-accounts-creatives-deal-associations-list, name <adexchangebuyer2.accounts.creatives.dealAssociations.list>
+  note <List all creative-deal associations.>
+
+  take account-id
+    like native-string
+    note <The account to list the associations from. Specify "-" to list all creatives the current user has access to.>
+  take creative-id
+    like native-string
+    note <The creative ID to list the associations from. Specify "-" to list all creatives under the above account.>
+  take page-size
+    like native-integer
+    note <Requested page size. Server may return fewer associations than requested. If unspecified, server will pick an appropriate default.>
+    void take
+  take page-token
+    like native-string
+    note <A token identifying a page of results the server should return. Typically, this is the value of ListDealAssociationsResponse.next_page_token returned from the previous call to 'ListDealAssociations' method.>
+    void take
+  take query
+    like native-string
+    note <An optional query string to filter deal associations. If no filter is specified, all associations will be returned. Supported queries are: - accountId=*account_id_string* - creativeId=*creative_id_string* - dealsId=*deals_id_string* - dealsStatus:{approved, conditionally_approved, disapproved, not_checked} - openAuctionStatus:{approved, conditionally_approved, disapproved, not_checked} Example: 'dealsId=12345 AND dealsStatus:disapproved'>
+    void take
+
+  line </v2beta1/accounts/{account-id}/creatives/{creative-id}/dealAssociations>
+
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+  find <query>, loan query
+
+  loot 200
+    seed json, like list-deal-associations-response
+    note <Successful response>

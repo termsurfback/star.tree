@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/streams.dynamodb/2012-08-10/base/get-shard-iterator-output
+  take form get-shard-iterator-output
+
+load @drumwork/snow/amazonaws.com/streams.dynamodb/2012-08-10/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/streams.dynamodb/2012-08-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/streams.dynamodb/2012-08-10/base/trimmed-data-access-exception
+  take form trimmed-data-access-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-shard-iterator, name <GetShardIterator>
+  note <Returns a shard iterator. A shard iterator provides information about how to retrieve the stream records from within a shard. Use the shard iterator in a subsequent `GetRecords` request to read the stream records from the shard.
+
+A shard iterator expires 15 minutes after it is returned to the requester.>
+
+  take x-amz-target
+    like native-string
+  take get-shard-iterator-input, like get-shard-iterator-input
+
+  line </#X-Amz-Target=DynamoDBStreams_20120810.GetShardIterator>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-shard-iterator-input
+
+  loot 200
+    seed json, like get-shard-iterator-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 482
+    seed json, like trimmed-data-access-exception
+    note <TrimmedDataAccessException>

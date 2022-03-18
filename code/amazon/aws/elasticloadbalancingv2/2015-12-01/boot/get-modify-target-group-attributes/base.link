@@ -1,0 +1,50 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/invalid-configuration-request-exception
+  take form invalid-configuration-request-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/modify-target-group-attributes-output
+  take form modify-target-group-attributes-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/target-group-attribute
+  take form target-group-attribute
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/target-group-not-found-exception
+  take form target-group-not-found-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-modify-target-group-attributes, name <GET_ModifyTargetGroupAttributes>
+  note <Modifies the specified attributes of the specified target group.>
+
+  take target-group-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the target group.>
+  take attributes
+    like list
+      like target-group-attribute
+    note <The attributes.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyTargetGroupAttributes>
+
+  find <TargetGroupArn>, loan target-group-arn
+  find <Attributes>, loan attributes
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-target-group-attributes-output
+    note <Success>
+  loot 480
+    seed xml, like target-group-not-found-exception
+    note <TargetGroupNotFoundException>
+  loot 481
+    seed xml, like invalid-configuration-request-exception
+    note <InvalidConfigurationRequestException>

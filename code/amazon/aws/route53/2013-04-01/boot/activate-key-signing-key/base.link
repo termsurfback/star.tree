@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/activate-key-signing-key-response
+  take form activate-key-signing-key-response
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/concurrent-modification
+  take form concurrent-modification
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-key-signing-key-status
+  take form invalid-key-signing-key-status
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-kms-arn
+  take form invalid-kms-arn
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-signing-status
+  take form invalid-signing-status
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/no-such-key-signing-key
+  take form no-such-key-signing-key
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot activate-key-signing-key, name <ActivateKeySigningKey>
+  note <Activates a key-signing key (KSK) so that it can be used for signing by DNSSEC. This operation changes the KSK status to `ACTIVE`.>
+
+  take hosted-zone-id
+    like native-string
+    note <A unique string used to identify a hosted zone.>
+  take name
+    like native-string
+    note <A string used to identify a key-signing key (KSK). `Name` can include numbers, letters, and underscores (_). `Name` must be unique for each key-signing key in the same hosted zone.>
+
+  line </2013-04-01/keysigningkey/{hosted-zone-id}/{name}/activate>
+
+  loot 200
+    seed xml, like activate-key-signing-key-response
+    note <Success>
+  loot 480
+    seed xml, like concurrent-modification
+    note <ConcurrentModification>
+  loot 481
+    seed xml, like no-such-key-signing-key
+    note <NoSuchKeySigningKey>
+  loot 482
+    seed xml, like invalid-key-signing-key-status
+    note <InvalidKeySigningKeyStatus>
+  loot 483
+    seed xml, like invalid-signing-status
+    note <InvalidSigningStatus>
+  loot 484
+    seed xml, like invalid-kms-arn
+    note <InvalidKMSArn>
+  loot 485
+    seed xml, like invalid-input
+    note <InvalidInput>

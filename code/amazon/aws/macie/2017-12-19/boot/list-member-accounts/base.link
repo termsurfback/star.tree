@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/macie/2017-12-19/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/macie/2017-12-19/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/macie/2017-12-19/base/list-member-accounts-result
+  take form list-member-accounts-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-member-accounts, name <ListMemberAccounts>
+  note <Lists all Amazon Macie Classic member accounts for the current Macie Classic administrator account.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-member-accounts-request, like list-member-accounts-request
+
+  line </#X-Amz-Target=MacieService.ListMemberAccounts>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-member-accounts-request
+
+  loot 200
+    seed json, like list-member-accounts-result
+    note <Success>
+  loot 480
+    seed json, like internal-exception
+    note <InternalException>
+  loot 481
+    seed json, like invalid-input-exception
+    note <InvalidInputException>

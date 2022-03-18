@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-tax-rates-tax-rate-body
+  take form get-tax-rates-tax-rate-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/tax-rate
+  take form tax-rate
+
+boot get-tax-rates-tax-rate, name <GetTaxRatesTaxRate>
+  note <Retrieves a tax rate with the given ID>
+
+  take tax-rate
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-tax-rates-tax-rate-body, like get-tax-rates-tax-rate-body
+    void take
+
+  line </v1/tax_rates/{tax-rate}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-tax-rates-tax-rate-body
+
+  loot 200
+    seed json, like tax-rate
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

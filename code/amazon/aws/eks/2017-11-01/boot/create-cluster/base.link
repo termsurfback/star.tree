@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/create-cluster-body
+  take form create-cluster-body
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/create-cluster-response
+  take form create-cluster-response
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/resource-limit-exceeded-exception
+  take form resource-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/unsupported-availability-zone-exception
+  take form unsupported-availability-zone-exception
+
+boot create-cluster, name <CreateCluster>
+  note <Creates an Amazon EKS control plane.
+
+The Amazon EKS control plane consists of control plane instances that run the Kubernetes software, such as `etcd` and the API server. The control plane runs in an account managed by Amazon Web Services, and the Kubernetes API is exposed via the Amazon EKS API server endpoint. Each Amazon EKS cluster control plane is single-tenant and unique and runs on its own set of Amazon EC2 instances.
+
+The cluster control plane is provisioned across multiple Availability Zones and fronted by an Elastic Load Balancing Network Load Balancer. Amazon EKS also provisions elastic network interfaces in your VPC subnets to provide connectivity from the control plane instances to the nodes (for example, to support `kubectl exec`, `logs`, and `proxy` data flows).
+
+Amazon EKS nodes run in your Amazon Web Services account and connect to your cluster's control plane via the Kubernetes API server endpoint and a certificate file that is created for your cluster.
+
+Cluster creation typically takes several minutes. After you create an Amazon EKS cluster, you must configure your Kubernetes tooling to communicate with the API server and launch nodes into your cluster. For more information, see [Managing Cluster Authentication](https://docs.aws.amazon.com/eks/latest/userguide/managing-auth.html) and [Launching Amazon EKS nodes](https://docs.aws.amazon.com/eks/latest/userguide/launch-workers.html) in the _Amazon EKS User Guide_.>
+
+  take create-cluster-body, like create-cluster-body
+
+  line </clusters>
+
+  seed json, loan create-cluster-body
+
+  loot 200
+    seed json, like create-cluster-response
+    note <Success>
+  loot 480
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>
+  loot 481
+    seed json, like resource-limit-exceeded-exception
+    note <ResourceLimitExceededException>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 483
+    seed json, like client-exception
+    note <ClientException>
+  loot 484
+    seed json, like server-exception
+    note <ServerException>
+  loot 485
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 486
+    seed json, like unsupported-availability-zone-exception
+    note <UnsupportedAvailabilityZoneException>

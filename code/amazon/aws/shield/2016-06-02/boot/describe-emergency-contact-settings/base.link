@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/describe-emergency-contact-settings-response
+  take form describe-emergency-contact-settings-response
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-emergency-contact-settings, name <DescribeEmergencyContactSettings>
+  note <A list of email addresses and phone numbers that the Shield Response Team (SRT) can use to contact you if you have proactive engagement enabled, for escalations to the SRT and to initiate proactive customer support.>
+
+  take x-amz-target
+    like native-string
+  take describe-emergency-contact-settings-request, like describe-emergency-contact-settings-request
+
+  line </#X-Amz-Target=AWSShield_20160616.DescribeEmergencyContactSettings>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-emergency-contact-settings-request
+
+  loot 200
+    seed json, like describe-emergency-contact-settings-response
+    note <Success>
+  loot 480
+    seed json, like internal-error-exception
+    note <InternalErrorException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

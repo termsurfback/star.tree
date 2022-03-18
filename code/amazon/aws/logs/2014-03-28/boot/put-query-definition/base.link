@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/put-query-definition-response
+  take form put-query-definition-response
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-query-definition, name <PutQueryDefinition>
+  note <Creates or updates a query definition for CloudWatch Logs Insights. For more information, see [Analyzing Log Data with CloudWatch Logs Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html).
+
+To update a query definition, specify its `queryDefinitionId` in your request. The values of `name`, `queryString`, and `logGroupNames` are changed to the values that you specify in your update operation. No current values are retained from the current query definition. For example, if you update a current query definition that includes log groups, and you don't specify the `logGroupNames` parameter in your update operation, the query definition changes to contain no log groups.
+
+You must have the `logs:PutQueryDefinition` permission to be able to perform this operation.>
+
+  take x-amz-target
+    like native-string
+  take put-query-definition-request, like put-query-definition-request
+
+  line </#X-Amz-Target=Logs_20140328.PutQueryDefinition>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan put-query-definition-request
+
+  loot 200
+    seed json, like put-query-definition-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

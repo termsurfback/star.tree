@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/sdb/2009-04-15/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/amazonaws.com/sdb/2009-04-15/base/list-domains-result
+  take form list-domains-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-list-domains, name <POST_ListDomains>
+  note <The `ListDomains` operation lists all domains associated with the Access Key ID. It returns domain names up to the limit set by [MaxNumberOfDomains](#MaxNumberOfDomains). A [NextToken](#NextToken) is returned if there are more than `MaxNumberOfDomains` domains. Calling `ListDomains` successive times with the `NextToken` provided by the operation returns up to `MaxNumberOfDomains` more domain names with each successive operation call.>
+
+  take max-number-of-domains
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take list-domains-request, like list-domains-request
+    void take
+
+  line </#Action=ListDomains>
+
+  find <MaxNumberOfDomains>, loan max-number-of-domains
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan list-domains-request
+
+  loot 200
+    seed xml, like list-domains-result
+    note <Success>
+  loot 400
+    seed xml, like invalid-next-token
+    note <InvalidNextToken>

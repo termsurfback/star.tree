@@ -1,0 +1,48 @@
+
+load @drumwork/snow/amazonaws.com/glacier/2012-06-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/glacier/2012-06-01/base/missing-parameter-value-exception
+  take form missing-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/glacier/2012-06-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/glacier/2012-06-01/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/glacier/2012-06-01/base/set-vault-access-policy-body
+  take form set-vault-access-policy-body
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot set-vault-access-policy, name <SetVaultAccessPolicy>
+  note <This operation configures an access policy for a vault and will overwrite an existing policy. To configure a vault access policy, send a PUT request to the `access-policy` subresource of the vault. An access policy is specific to a vault and is also called a vault subresource. You can set one access policy per vault and the policy can be up to 20 KB in size. For more information about vault access policies, see [Amazon Glacier Access Control with Vault Access Policies](https://docs.aws.amazon.com/amazonglacier/latest/dev/vault-access-policy.html).>
+
+  take account-id
+    like native-string
+    note <The `AccountId` value is the AWS account ID of the account that owns the vault. You can either specify an AWS account ID or optionally a single '`-`' (hyphen), in which case Amazon S3 Glacier uses the AWS account ID associated with the credentials used to sign the request. If you use an account ID, do not include any hyphens ('-') in the ID.>
+  take vault-name
+    like native-string
+    note <The name of the vault.>
+  take set-vault-access-policy-body, like set-vault-access-policy-body
+
+  line </{account-id}/vaults/{vault-name}/access-policy>
+
+  seed json, loan set-vault-access-policy-body
+
+  loot 204
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed json, like missing-parameter-value-exception
+    note <MissingParameterValueException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/unmodifiable-entity-exception
+  take form unmodifiable-entity-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-remove-role-from-instance-profile, name <GET_RemoveRoleFromInstanceProfile>
+  note <Removes the specified IAM role from the specified EC2 instance profile.
+
+Make sure that you do not have any Amazon EC2 instances running with the role you are about to remove from the instance profile. Removing a role from an instance profile that is associated with a running instance might break any applications running on the instance.
+
+For more information about IAM roles, see [Working with roles](https://docs.aws.amazon.com/IAM/latest/UserGuide/WorkingWithRoles.html). For more information about instance profiles, see [About instance profiles](https://docs.aws.amazon.com/IAM/latest/UserGuide/AboutInstanceProfiles.html).>
+
+  take instance-profile-name
+    like native-string
+    note <The name of the instance profile to update.
+
+This parameter allows (through its [regex pattern](http://wikipedia.org/wiki/regex)) a string of characters consisting of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: _+=,.@->
+  take role-name
+    like native-string
+    note <The name of the role to remove.
+
+This parameter allows (through its [regex pattern](http://wikipedia.org/wiki/regex)) a string of characters consisting of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: _+=,.@->
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=RemoveRoleFromInstanceProfile>
+
+  find <InstanceProfileName>, loan instance-profile-name
+  find <RoleName>, loan role-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed xml, like unmodifiable-entity-exception
+    note <UnmodifiableEntityException>
+  loot 483
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

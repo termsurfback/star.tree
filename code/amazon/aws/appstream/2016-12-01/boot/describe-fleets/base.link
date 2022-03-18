@@ -1,0 +1,29 @@
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/describe-fleets-result
+  take form describe-fleets-result
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-fleets, name <DescribeFleets>
+  note <Retrieves a list that describes one or more specified fleets, if the fleet names are provided. Otherwise, all fleets in the account are described.>
+
+  take x-amz-target
+    like native-string
+  take describe-fleets-request, like describe-fleets-request
+
+  line </#X-Amz-Target=PhotonAdminProxyService.DescribeFleets>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-fleets-request
+
+  loot 200
+    seed json, like describe-fleets-result
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

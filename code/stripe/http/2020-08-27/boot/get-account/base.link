@@ -1,0 +1,39 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/account
+  take form account
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-account-body
+  take form get-account-body
+
+boot get-account, name <GetAccount>
+  note <Retrieves the details of an account.>
+
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-account-body, like get-account-body
+    void take
+
+  line </v1/account>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-account-body
+
+  loot 200
+    seed json, like account
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

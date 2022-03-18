@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/list-members-body
+  take form list-members-body
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/list-members-response
+  take form list-members-response
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-members, name <ListMembers>
+  note <Retrieves the list of member accounts for a behavior graph. Does not return member accounts that were removed from the behavior graph.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-members-body, like list-members-body
+
+  line </graph/members/list>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-members-body
+
+  loot 200
+    seed json, like list-members-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>

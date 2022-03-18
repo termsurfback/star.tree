@@ -1,0 +1,101 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-spot-price-history-result
+  take form describe-spot-price-history-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/instance-type
+  take form instance-type
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-describe-spot-price-history, name <GET_DescribeSpotPriceHistory>
+  note <Describes the Spot price history. For more information, see [Spot Instance pricing history](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-instances-history.html) in the _Amazon EC2 User Guide for Linux Instances_.
+
+When you specify a start and end time, the operation returns the prices of the instance types within that time range. It also returns the last price change before the start time, which is the effective price as of the start time.>
+
+  take filter
+    like list
+      like filter
+    note <One or more filters.
+
+- `availability-zone` - The Availability Zone for which prices should be returned.
+
+- `instance-type` - The type of instance (for example, `m3.medium`).
+
+- `product-description` - The product description for the Spot price (`Linux/UNIX` | `Red Hat Enterprise Linux` | `SUSE Linux` | `Windows` | `Linux/UNIX (Amazon VPC)` | `Red Hat Enterprise Linux (Amazon VPC)` | `SUSE Linux (Amazon VPC)` | `Windows (Amazon VPC)`).
+
+- `spot-price` - The Spot price. The value must match exactly (or use wildcards; greater than or less than comparison is not supported).
+
+- `timestamp` - The time stamp of the Spot price history, in UTC format (for example, _YYYY_-_MM_-_DD_T_HH_:_MM_:_SS_Z). You can use wildcards (* and ?). Greater than or less than comparison is not supported.>
+    void take
+  take availability-zone
+    like native-string
+    note <Filters the results by the specified Availability Zone.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take end-time
+    like native-string
+    note <The date and time, up to the current date, from which to stop retrieving the price history data, in UTC format (for example, _YYYY_-_MM_-_DD_T_HH_:_MM_:_SS_Z).>
+    void take
+  take instance-type
+    like list
+      like instance-type
+    note <Filters the results by the specified instance types.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return in a single call. Specify a value between 1 and 1000. The default value is 1000. To retrieve the remaining results, make another call with the returned `NextToken` value.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next set of results.>
+    void take
+  take product-description
+    like list
+      like string
+    note <Filters the results by the specified basic product descriptions.>
+    void take
+  take start-time
+    like native-string
+    note <The date and time, up to the past 90 days, from which to start retrieving the price history data, in UTC format (for example, _YYYY_-_MM_-_DD_T_HH_:_MM_:_SS_Z).>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeSpotPriceHistory>
+
+  find <Filter>, loan filter
+  find <AvailabilityZone>, loan availability-zone
+  find <DryRun>, loan dry-run
+  find <EndTime>, loan end-time
+  find <InstanceType>, loan instance-type
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <ProductDescription>, loan product-description
+  find <StartTime>, loan start-time
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-spot-price-history-result
+    note <Success>

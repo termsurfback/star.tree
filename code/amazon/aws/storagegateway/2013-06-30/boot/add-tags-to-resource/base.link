@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/add-tags-to-resource-output
+  take form add-tags-to-resource-output
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot add-tags-to-resource, name <AddTagsToResource>
+  note <Adds one or more tags to the specified resource. You use tags to add metadata to resources, which you can use to categorize these resources. For example, you can categorize resources by purpose, owner, environment, or team. Each tag consists of a key and a value, which you define. You can add tags to the following Storage Gateway resources:
+
+- Storage gateways of all types
+
+- Storage volumes
+
+- Virtual tapes
+
+- NFS and SMB file shares
+
+- File System associations
+
+You can create a maximum of 50 tags for each resource. Virtual tapes and storage volumes that are recovered to a new gateway maintain their tags.>
+
+  take x-amz-target
+    like native-string
+  take add-tags-to-resource-input, like add-tags-to-resource-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.AddTagsToResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan add-tags-to-resource-input
+
+  loot 200
+    seed json, like add-tags-to-resource-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

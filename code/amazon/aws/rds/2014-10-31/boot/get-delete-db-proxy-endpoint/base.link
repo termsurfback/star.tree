@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-endpoint-not-found-fault
+  take form db-proxy-endpoint-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/delete-db-proxy-endpoint-response
+  take form delete-db-proxy-endpoint-response
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-proxy-endpoint-state-fault
+  take form invalid-db-proxy-endpoint-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-db-proxy-endpoint, name <GET_DeleteDBProxyEndpoint>
+  note <Deletes a `DBProxyEndpoint`. Doing so removes the ability to access the DB proxy using the endpoint that you defined. The endpoint that you delete might have provided capabilities such as read/write or read-only operations, or using a different VPC than the DB proxy's default VPC.>
+
+  take db-proxy-endpoint-name
+    like native-string
+    note <The name of the DB proxy endpoint to delete.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteDBProxyEndpoint>
+
+  find <DBProxyEndpointName>, loan db-proxy-endpoint-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-db-proxy-endpoint-response
+    note <Success>
+  loot 480
+    seed xml, like db-proxy-endpoint-not-found-fault
+    note <DBProxyEndpointNotFoundFault>
+  loot 481
+    seed xml, like invalid-db-proxy-endpoint-state-fault
+    note <InvalidDBProxyEndpointStateFault>

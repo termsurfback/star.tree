@@ -1,0 +1,31 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-topups-topup-cancel-body
+  take form post-topups-topup-cancel-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/topup
+  take form topup
+
+boot post-topups-topup-cancel, name <PostTopupsTopupCancel>
+  note <Cancels a top-up. Only pending top-ups can be canceled.>
+
+  take topup
+    like native-string
+  take post-topups-topup-cancel-body, like post-topups-topup-cancel-body
+    void take
+
+  line </v1/topups/{topup}/cancel>
+
+  seed x-www-form-urlencoded, loan post-topups-topup-cancel-body
+
+  loot 200
+    seed json, like topup
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

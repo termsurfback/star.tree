@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/budgets/2016-10-20/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/budgets/2016-10-20/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/budgets/2016-10-20/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/budgets/2016-10-20/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/budgets/2016-10-20/base/update-budget-response
+  take form update-budget-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-budget, name <UpdateBudget>
+  note <Updates a budget. You can change every part of a budget except for the `budgetName` and the `calculatedSpend`. When you modify a budget, the `calculatedSpend` drops to zero until AWS has new usage data to use for forecasting.
+
+Only one of `BudgetLimit` or `PlannedBudgetLimits` can be present in the syntax at one time. Use the syntax that matches your case. The Request Syntax section shows the `BudgetLimit` syntax. For `PlannedBudgetLimits`, see the [Examples](https://docs.aws.amazon.com/aws-cost-management/latest/APIReference/API_budgets_UpdateBudget.html#API_UpdateBudget_Examples) section.>
+
+  take x-amz-target
+    like native-string
+  take update-budget-request, like update-budget-request
+
+  line </#X-Amz-Target=AWSBudgetServiceGateway.UpdateBudget>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-budget-request
+
+  loot 200
+    seed json, like update-budget-response
+    note <Success>
+  loot 480
+    seed json, like internal-error-exception
+    note <InternalErrorException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 483
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

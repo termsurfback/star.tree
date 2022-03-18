@@ -1,0 +1,140 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/cloud-watch-output-config
+  take form cloud-watch-output-config
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/command-id
+  take form command-id
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/command-invocation-status
+  take form command-invocation-status
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/command-plugin-name
+  take form command-plugin-name
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/comment
+  take form comment
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/document-name
+  take form document-name
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/document-version
+  take form document-version
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/instance-id
+  take form instance-id
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/response-code
+  take form response-code
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/standard-error-content
+  take form standard-error-content
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/standard-output-content
+  take form standard-output-content
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/status-details
+  take form status-details
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/string-date-time
+  take form string-date-time
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/url
+  take form url
+
+form get-command-invocation-result, name <GetCommandInvocationResult>
+  take command-id, name <CommandId>
+    like command-id
+    void take
+    note <The parent command ID of the invocation plugin.>
+  take instance-id, name <InstanceId>
+    like instance-id
+    void take
+    note <The ID of the managed instance targeted by the command. A managed instance can be an EC2 instance or an instance in your hybrid environment that is configured for Systems Manager.>
+  take comment, name <Comment>
+    like comment
+    void take
+    note <The comment text for the command.>
+  take document-name, name <DocumentName>
+    like document-name
+    void take
+    note <The name of the document that was run. For example, `AWS-RunShellScript`.>
+  take document-version, name <DocumentVersion>
+    like document-version
+    void take
+    note <The Systems Manager document (SSM document) version used in the request.>
+  take plugin-name, name <PluginName>
+    like command-plugin-name
+    void take
+    note <The name of the plugin, or _step name_, for which details are reported. For example, `aws:RunShellScript` is a plugin.>
+  take response-code, name <ResponseCode>
+    like response-code
+    void take
+    note <The error level response code for the plugin script. If the response code is `-1`, then the command hasn't started running on the instance, or it wasn't received by the instance.>
+  take execution-start-date-time, name <ExecutionStartDateTime>
+    like string-date-time
+    void take
+    note <The date and time the plugin started running. Date and time are written in ISO 8601 format. For example, June 7, 2017 is represented as 2017-06-7. The following sample Amazon Web Services CLI command uses the `InvokedBefore` filter.
+
+`aws ssm list-commands --filters key=InvokedBefore,value=2017-06-07T00:00:00Z`
+
+If the plugin hasn't started to run, the string is empty.>
+  take execution-elapsed-time, name <ExecutionElapsedTime>
+    like string-date-time
+    void take
+    note <Duration since `ExecutionStartDateTime`.>
+  take execution-end-date-time, name <ExecutionEndDateTime>
+    like string-date-time
+    void take
+    note <The date and time the plugin finished running. Date and time are written in ISO 8601 format. For example, June 7, 2017 is represented as 2017-06-7. The following sample Amazon Web Services CLI command uses the `InvokedAfter` filter.
+
+`aws ssm list-commands --filters key=InvokedAfter,value=2017-06-07T00:00:00Z`
+
+If the plugin hasn't started to run, the string is empty.>
+  take status, name <Status>
+    like command-invocation-status
+    void take
+    note <The status of this invocation plugin. This status can be different than `StatusDetails`.>
+  take status-details, name <StatusDetails>
+    like status-details
+    void take
+    note <A detailed status of the command execution for an invocation. `StatusDetails` includes more information than `Status` because it includes states resulting from error and concurrency control parameters. `StatusDetails` can show different results than `Status`. For more information about these statuses, see [Understanding command statuses](https://docs.aws.amazon.com/systems-manager/latest/userguide/monitor-commands.html) in the _Amazon Web Services Systems Manager User Guide_. `StatusDetails` can be one of the following values:
+
+- Pending: The command hasn't been sent to the instance.
+
+- In Progress: The command has been sent to the instance but hasn't reached a terminal state.
+
+- Delayed: The system attempted to send the command to the target, but the target wasn't available. The instance might not be available because of network issues, because the instance was stopped, or for similar reasons. The system will try to send the command again.
+
+- Success: The command or plugin ran successfully. This is a terminal state.
+
+- Delivery Timed Out: The command wasn't delivered to the instance before the delivery timeout expired. Delivery timeouts don't count against the parent command's `MaxErrors` limit, but they do contribute to whether the parent command status is Success or Incomplete. This is a terminal state.
+
+- Execution Timed Out: The command started to run on the instance, but the execution wasn't complete before the timeout expired. Execution timeouts count against the `MaxErrors` limit of the parent command. This is a terminal state.
+
+- Failed: The command wasn't run successfully on the instance. For a plugin, this indicates that the result code wasn't zero. For a command invocation, this indicates that the result code for one or more plugins wasn't zero. Invocation failures count against the `MaxErrors` limit of the parent command. This is a terminal state.
+
+- Canceled: The command was terminated before it was completed. This is a terminal state.
+
+- Undeliverable: The command can't be delivered to the instance. The instance might not exist or might not be responding. Undeliverable invocations don't count against the parent command's `MaxErrors` limit and don't contribute to whether the parent command status is Success or Incomplete. This is a terminal state.
+
+- Terminated: The parent command exceeded its `MaxErrors` limit and subsequent command invocations were canceled by the system. This is a terminal state.>
+  take standard-output-content, name <StandardOutputContent>
+    like standard-output-content
+    void take
+    note <The first 24,000 characters written by the plugin to `stdout`. If the command hasn't finished running, if `ExecutionStatus` is neither Succeeded nor Failed, then this string is empty.>
+  take standard-output-url, name <StandardOutputUrl>
+    like url
+    void take
+    note <The URL for the complete text written by the plugin to `stdout` in Amazon Simple Storage Service (Amazon S3). If an S3 bucket wasn't specified, then this string is empty.>
+  take standard-error-content, name <StandardErrorContent>
+    like standard-error-content
+    void take
+    note <The first 8,000 characters written by the plugin to `stderr`. If the command hasn't finished running, then this string is empty.>
+  take standard-error-url, name <StandardErrorUrl>
+    like url
+    void take
+    note <The URL for the complete text written by the plugin to `stderr`. If the command hasn't finished running, then this string is empty.>
+  take cloud-watch-output-config, name <CloudWatchOutputConfig>
+    like cloud-watch-output-config
+    void take
+    note <Amazon CloudWatch Logs information where Systems Manager sent the command output.>

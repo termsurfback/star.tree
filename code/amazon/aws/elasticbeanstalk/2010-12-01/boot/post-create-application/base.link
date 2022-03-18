@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/application-description-message
+  take form application-description-message
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/too-many-applications-exception
+  take form too-many-applications-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-application, name <POST_CreateApplication>
+  note <Creates an application that has one configuration template named `default` and no application versions.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-application-message, like create-application-message
+    void take
+
+  line </#Action=CreateApplication>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-application-message
+
+  loot 200
+    seed xml, like application-description-message
+    note <Success>
+  loot 480
+    seed xml, like too-many-applications-exception
+    note <TooManyApplicationsException>

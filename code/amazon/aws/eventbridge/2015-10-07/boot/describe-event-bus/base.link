@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/eventbridge/2015-10-07/base/describe-event-bus-response
+  take form describe-event-bus-response
+
+load @drumwork/snow/amazonaws.com/eventbridge/2015-10-07/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/eventbridge/2015-10-07/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-event-bus, name <DescribeEventBus>
+  note <Displays details about an event bus in your account. This can include the external Amazon Web Services accounts that are permitted to write events to your default event bus, and the associated policy. For custom event buses and partner event buses, it displays the name, ARN, policy, state, and creation time.
+
+To enable your account to receive events from other accounts on its default event bus, use [PutPermission](https://docs.aws.amazon.com/eventbridge/latest/APIReference/API_PutPermission.html).
+
+For more information about partner event buses, see [CreateEventBus](https://docs.aws.amazon.com/eventbridge/latest/APIReference/API_CreateEventBus.html).>
+
+  take x-amz-target
+    like native-string
+  take describe-event-bus-request, like describe-event-bus-request
+
+  line </#X-Amz-Target=AWSEvents.DescribeEventBus>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-event-bus-request
+
+  loot 200
+    seed json, like describe-event-bus-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like internal-exception
+    note <InternalException>

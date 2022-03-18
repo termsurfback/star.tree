@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/firehose/2015-08-04/base/invalid-argument-exception
+  take form invalid-argument-exception
+
+load @drumwork/snow/amazonaws.com/firehose/2015-08-04/base/invalid-kms-resource-exception
+  take form invalid-kms-resource-exception
+
+load @drumwork/snow/amazonaws.com/firehose/2015-08-04/base/put-record-output
+  take form put-record-output
+
+load @drumwork/snow/amazonaws.com/firehose/2015-08-04/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/firehose/2015-08-04/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-record, name <PutRecord>
+  note <Writes a single data record into an Amazon Kinesis Data Firehose delivery stream. To write multiple data records into a delivery stream, use PutRecordBatch. Applications using these operations are referred to as producers.
+
+By default, each delivery stream can take in up to 2,000 transactions per second, 5,000 records per second, or 5 MB per second. If you use PutRecord and PutRecordBatch, the limits are an aggregate across these two operations for each delivery stream. For more information about limits and how to request an increase, see [Amazon Kinesis Data Firehose Limits](https://docs.aws.amazon.com/firehose/latest/dev/limits.html).
+
+You must specify the name of the delivery stream and the data record when using PutRecord. The data record consists of a data blob that can be up to 1,000 KiB in size, and any kind of data. For example, it can be a segment from a log file, geographic location data, website clickstream data, and so on.
+
+Kinesis Data Firehose buffers records before delivering them to the destination. To disambiguate the data blobs at the destination, a common solution is to use delimiters in the data, such as a newline (`\n`) or some other character unique within the data. This allows the consumer application to parse individual data items when reading the data from the destination.
+
+The `PutRecord` operation returns a `RecordId`, which is a unique string assigned to each record. Producer applications can use this ID for purposes such as auditability and investigation.
+
+If the `PutRecord` operation throws a `ServiceUnavailableException`, back off and retry. If the exception persists, it is possible that the throughput limits have been exceeded for the delivery stream.
+
+Data records sent to Kinesis Data Firehose are stored for 24 hours from the time they are added to a delivery stream as it tries to send the records to the destination. If the destination is unreachable for more than 24 hours, the data is no longer available.
+
+Don't concatenate two or more base64 strings to form the data fields of your records. Instead, concatenate the raw data, then perform base64 encoding.>
+
+  take x-amz-target
+    like native-string
+  take put-record-input, like put-record-input
+
+  line </#X-Amz-Target=Firehose_20150804.PutRecord>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan put-record-input
+
+  loot 200
+    seed json, like put-record-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-argument-exception
+    note <InvalidArgumentException>
+  loot 482
+    seed json, like invalid-kms-resource-exception
+    note <InvalidKMSResourceException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

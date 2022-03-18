@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-volumes-modifications-result
+  take form describe-volumes-modifications-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-volumes-modifications, name <POST_DescribeVolumesModifications>
+  note <Describes the most recent volume modification request for the specified EBS volumes.
+
+If a volume has never been modified, some information in the output will be null. If a volume has been modified more than once, the output includes only the most recent modification request.
+
+You can also use CloudWatch Events to check the status of a modification to an EBS volume. For information about CloudWatch Events, see the [Amazon CloudWatch Events User Guide](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/). For more information, see [Monitor the progress of volume modifications](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/monitoring-volume-modifications.html) in the _Amazon Elastic Compute Cloud User Guide_.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-volumes-modifications-request, like describe-volumes-modifications-request
+    void take
+
+  line </#Action=DescribeVolumesModifications>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-volumes-modifications-request
+
+  loot 200
+    seed xml, like describe-volumes-modifications-result
+    note <Success>

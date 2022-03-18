@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/no-such-config-rule-exception
+  take form no-such-config-rule-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/start-config-rules-evaluation-response
+  take form start-config-rules-evaluation-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-config-rules-evaluation, name <StartConfigRulesEvaluation>
+  note <Runs an on-demand evaluation for the specified Config rules against the last known configuration state of the resources. Use `StartConfigRulesEvaluation` when you want to test that a rule you updated is working as expected. `StartConfigRulesEvaluation` does not re-record the latest configuration state for your resources. It re-runs an evaluation against the last known state of your resources.
+
+You can specify up to 25 Config rules per request.
+
+An existing `StartConfigRulesEvaluation` call for the specified rules must complete before you can call the API again. If you chose to have Config stream to an Amazon SNS topic, you will receive a `ConfigRuleEvaluationStarted` notification when the evaluation starts.
+
+You don't need to call the `StartConfigRulesEvaluation` API to run an evaluation for a new rule. When you create a rule, Config evaluates your resources against the rule automatically.
+
+The `StartConfigRulesEvaluation` API is useful if you want to run on-demand evaluations, such as the following example:
+
+1. You have a custom rule that evaluates your IAM resources every 24 hours.
+
+2. You update your Lambda function to add additional conditions to your rule.
+
+3. Instead of waiting for the next periodic evaluation, you call the `StartConfigRulesEvaluation` API.
+
+4. Config invokes your Lambda function and evaluates your IAM resources.
+
+5. Your custom rule will still run periodic evaluations every 24 hours.>
+
+  take x-amz-target
+    like native-string
+  take start-config-rules-evaluation-request, like start-config-rules-evaluation-request
+
+  line </#X-Amz-Target=StarlingDoveService.StartConfigRulesEvaluation>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan start-config-rules-evaluation-request
+
+  loot 200
+    seed json, like start-config-rules-evaluation-response
+    note <Success>
+  loot 480
+    seed json, like no-such-config-rule-exception
+    note <NoSuchConfigRuleException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>
+  loot 483
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>

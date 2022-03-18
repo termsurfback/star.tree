@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/describe-connections-response
+  take form describe-connections-response
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/resource-not-found-fault
+  take form resource-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-connections, name <DescribeConnections>
+  note <Describes the status of the connections that have been made between the replication instance and an endpoint. Connections are created when you test an endpoint.>
+
+  take x-amz-target
+    like native-string
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-connections-message, like describe-connections-message
+
+  line </#X-Amz-Target=AmazonDMSv20160101.DescribeConnections>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+
+  seed json, loan describe-connections-message
+
+  loot 200
+    seed json, like describe-connections-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-fault
+    note <ResourceNotFoundFault>

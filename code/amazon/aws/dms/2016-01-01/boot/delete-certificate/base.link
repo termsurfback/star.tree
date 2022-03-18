@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/delete-certificate-response
+  take form delete-certificate-response
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/invalid-resource-state-fault
+  take form invalid-resource-state-fault
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/resource-not-found-fault
+  take form resource-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-certificate, name <DeleteCertificate>
+  note <Deletes the specified certificate.>
+
+  take x-amz-target
+    like native-string
+  take delete-certificate-message, like delete-certificate-message
+
+  line </#X-Amz-Target=AmazonDMSv20160101.DeleteCertificate>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-certificate-message
+
+  loot 200
+    seed json, like delete-certificate-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-fault
+    note <ResourceNotFoundFault>
+  loot 481
+    seed json, like invalid-resource-state-fault
+    note <InvalidResourceStateFault>

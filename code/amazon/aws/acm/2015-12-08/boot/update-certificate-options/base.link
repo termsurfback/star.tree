@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/invalid-arn-exception
+  take form invalid-arn-exception
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/invalid-state-exception
+  take form invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-certificate-options, name <UpdateCertificateOptions>
+  note <Updates a certificate. Currently, you can use this function to specify whether to opt in to or out of recording your certificate in a certificate transparency log. For more information, see [Opting Out of Certificate Transparency Logging](https://docs.aws.amazon.com/acm/latest/userguide/acm-bestpractices.html#best-practices-transparency).>
+
+  take x-amz-target
+    like native-string
+  take update-certificate-options-request, like update-certificate-options-request
+
+  line </#X-Amz-Target=CertificateManager.UpdateCertificateOptions>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-certificate-options-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like invalid-state-exception
+    note <InvalidStateException>
+  loot 483
+    seed json, like invalid-arn-exception
+    note <InvalidArnException>

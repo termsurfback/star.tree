@@ -1,0 +1,67 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-regions-result
+  take form describe-regions-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-describe-regions, name <GET_DescribeRegions>
+  note <Describes the Regions that are enabled for your account, or all Regions.
+
+For a list of the Regions supported by Amazon EC2, see [Regions and Endpoints](https://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region).
+
+For information about enabling and disabling Regions for your account, see [Managing AWS Regions](https://docs.aws.amazon.com/general/latest/gr/rande-manage.html) in the _AWS General Reference_.>
+
+  take filter
+    like list
+      like filter
+    note <The filters.
+
+- `endpoint` - The endpoint of the Region (for example, `ec2.us-east-1.amazonaws.com`).
+
+- `opt-in-status` - The opt-in status of the Region (`opt-in-not-required` | `opted-in` | `not-opted-in`).
+
+- `region-name` - The name of the Region (for example, `us-east-1`).>
+    void take
+  take region-name
+    like list
+      like string
+    note <The names of the Regions. You can specify any Regions, whether they are enabled and disabled for your account.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take all-regions
+    like native-boolean
+    note <Indicates whether to display all Regions, including Regions that are disabled for your account.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeRegions>
+
+  find <Filter>, loan filter
+  find <RegionName>, loan region-name
+  find <DryRun>, loan dry-run
+  find <AllRegions>, loan all-regions
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-regions-result
+    note <Success>

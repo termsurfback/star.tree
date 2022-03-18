@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/entitlement.marketplace/2017-01-11/base/get-entitlements-result
+  take form get-entitlements-result
+
+load @drumwork/snow/amazonaws.com/entitlement.marketplace/2017-01-11/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/entitlement.marketplace/2017-01-11/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/entitlement.marketplace/2017-01-11/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-entitlements, name <GetEntitlements>
+  note <GetEntitlements retrieves entitlement values for a given product. The results can be filtered based on customer identifier or product dimensions.>
+
+  take x-amz-target
+    like native-string
+  take get-entitlements-request, like get-entitlements-request
+
+  line </#X-Amz-Target=AWSMPEntitlementService.GetEntitlements>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-entitlements-request
+
+  loot 200
+    seed json, like get-entitlements-result
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>

@@ -1,0 +1,110 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/limit-exceeded-fault
+  take form limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/put-lifecycle-hook-answer
+  take form put-lifecycle-hook-answer
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-put-lifecycle-hook, name <GET_PutLifecycleHook>
+  note <Creates or updates a lifecycle hook for the specified Auto Scaling group.
+
+A lifecycle hook tells Amazon EC2 Auto Scaling to perform an action on an instance when the instance launches (before it is put into service) or as the instance terminates (before it is fully terminated).
+
+This step is a part of the procedure for adding a lifecycle hook to an Auto Scaling group:
+
+1. (Optional) Create a Lambda function and a rule that allows CloudWatch Events to invoke your Lambda function when Amazon EC2 Auto Scaling launches or terminates instances.
+
+2. (Optional) Create a notification target and an IAM role. The target can be either an Amazon SQS queue or an Amazon SNS topic. The role allows Amazon EC2 Auto Scaling to publish lifecycle notifications to the target.
+
+3. **Create the lifecycle hook. Specify whether the hook is used when the instances launch or terminate.** 4. If you need more time, record the lifecycle action heartbeat to keep the instance in a pending state using the RecordLifecycleActionHeartbeat API call.
+
+5. If you finish before the timeout period ends, complete the lifecycle action using the CompleteLifecycleAction API call.
+
+For more information, see [Amazon EC2 Auto Scaling lifecycle hooks](https://docs.aws.amazon.com/autoscaling/ec2/userguide/lifecycle-hooks.html) in the _Amazon EC2 Auto Scaling User Guide_.
+
+If you exceed your maximum limit of lifecycle hooks, which by default is 50 per Auto Scaling group, the call fails.
+
+You can view the lifecycle hooks for an Auto Scaling group using the DescribeLifecycleHooks API call. If you are no longer using a lifecycle hook, you can delete it by calling the DeleteLifecycleHook API.>
+
+  take lifecycle-hook-name
+    like native-string
+    note <The name of the lifecycle hook.>
+  take auto-scaling-group-name
+    like native-string
+    note <The name of the Auto Scaling group.>
+  take lifecycle-transition
+    like native-string
+    note <The instance state to which you want to attach the lifecycle hook. The valid values are:
+
+- autoscaling:EC2_INSTANCE_LAUNCHING
+
+- autoscaling:EC2_INSTANCE_TERMINATING
+
+Required for new lifecycle hooks, but optional when updating existing hooks.>
+    void take
+  take role-arn
+    like native-string
+    note <The ARN of the IAM role that allows the Auto Scaling group to publish to the specified notification target, for example, an Amazon SNS topic or an Amazon SQS queue.
+
+Required for new lifecycle hooks, but optional when updating existing hooks.>
+    void take
+  take notification-target-arn
+    like native-string
+    note <The ARN of the notification target that Amazon EC2 Auto Scaling uses to notify you when an instance is in the transition state for the lifecycle hook. This target can be either an SQS queue or an SNS topic.
+
+If you specify an empty string, this overrides the current ARN.
+
+This operation uses the JSON format when sending notifications to an Amazon SQS queue, and an email key-value pair format when sending notifications to an Amazon SNS topic.
+
+When you specify a notification target, Amazon EC2 Auto Scaling sends it a test message. Test messages contain the following additional key-value pair: `"Event": "autoscaling:TEST_NOTIFICATION"`.>
+    void take
+  take notification-metadata
+    like native-string
+    note <Additional information that you want to include any time Amazon EC2 Auto Scaling sends a message to the notification target.>
+    void take
+  take heartbeat-timeout
+    like native-integer
+    note <The maximum time, in seconds, that can elapse before the lifecycle hook times out. The range is from `30` to `7200` seconds. The default value is `3600` seconds (1 hour).
+
+If the lifecycle hook times out, Amazon EC2 Auto Scaling performs the action that you specified in the `DefaultResult` parameter. You can prevent the lifecycle hook from timing out by calling the RecordLifecycleActionHeartbeat API.>
+    void take
+  take default-result
+    like native-string
+    note <Defines the action the Auto Scaling group should take when the lifecycle hook timeout elapses or if an unexpected failure occurs. This parameter can be either `CONTINUE` or `ABANDON`. The default value is `ABANDON`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=PutLifecycleHook>
+
+  find <LifecycleHookName>, loan lifecycle-hook-name
+  find <AutoScalingGroupName>, loan auto-scaling-group-name
+  find <LifecycleTransition>, loan lifecycle-transition
+  find <RoleARN>, loan role-arn
+  find <NotificationTargetARN>, loan notification-target-arn
+  find <NotificationMetadata>, loan notification-metadata
+  find <HeartbeatTimeout>, loan heartbeat-timeout
+  find <DefaultResult>, loan default-result
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like put-lifecycle-hook-answer
+    note <Success>
+  loot 480
+    seed xml, like limit-exceeded-fault
+    note <LimitExceededFault>
+  loot 481
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

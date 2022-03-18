@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/wellarchitected/2020-03-31/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/wellarchitected/2020-03-31/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/wellarchitected/2020-03-31/base/list-milestones-body
+  take form list-milestones-body
+
+load @drumwork/snow/amazonaws.com/wellarchitected/2020-03-31/base/list-milestones-output
+  take form list-milestones-output
+
+load @drumwork/snow/amazonaws.com/wellarchitected/2020-03-31/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/wellarchitected/2020-03-31/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/wellarchitected/2020-03-31/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-milestones, name <ListMilestones>
+  note <List all milestones for an existing workload.>
+
+  take workload-id
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-milestones-body, like list-milestones-body
+
+  line </workloads/{workload-id}/milestonesSummaries>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-milestones-body
+
+  loot 200
+    seed json, like list-milestones-output
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 484
+    seed json, like throttling-exception
+    note <ThrottlingException>

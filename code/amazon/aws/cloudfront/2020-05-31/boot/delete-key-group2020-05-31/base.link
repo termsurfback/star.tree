@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/invalid-if-match-version
+  take form invalid-if-match-version
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/no-such-resource
+  take form no-such-resource
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/precondition-failed
+  take form precondition-failed
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/resource-in-use
+  take form resource-in-use
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-key-group2020-05-31, name <DeleteKeyGroup2020_05_31>
+  note <Deletes a key group.
+
+You cannot delete a key group that is referenced in a cache behavior. First update your distributions to remove the key group from all cache behaviors, then delete the key group.
+
+To delete a key group, you must provide the key group’s identifier and version. To get these values, use `ListKeyGroups` followed by `GetKeyGroup` or `GetKeyGroupConfig`.>
+
+  take id
+    like native-string
+    note <The identifier of the key group that you are deleting. To get the identifier, use `ListKeyGroups`.>
+  take if-match
+    like native-string
+    note <The version of the key group that you are deleting. The version is the key group’s `ETag` value. To get the `ETag`, use `GetKeyGroup` or `GetKeyGroupConfig`.>
+    void take
+
+  line </2020-05-31/key-group/{id}>
+
+  hint <If-Match>, loan if-match
+
+  loot 204
+    note <Success>
+  loot 480
+    seed xml, like invalid-if-match-version
+    note <InvalidIfMatchVersion>
+  loot 481
+    seed xml, like no-such-resource
+    note <NoSuchResource>
+  loot 482
+    seed xml, like precondition-failed
+    note <PreconditionFailed>
+  loot 483
+    seed xml, like resource-in-use
+    note <ResourceInUse>

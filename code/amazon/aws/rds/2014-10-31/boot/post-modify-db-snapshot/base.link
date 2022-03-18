@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-snapshot-not-found-fault
+  take form db-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/modify-db-snapshot-result
+  take form modify-db-snapshot-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-modify-db-snapshot, name <POST_ModifyDBSnapshot>
+  note <Updates a manual DB snapshot with a new engine version. The snapshot can be encrypted or unencrypted, but not shared or public.
+
+Amazon RDS supports upgrading DB snapshots for MySQL, Oracle, and PostgreSQL.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take modify-db-snapshot-message, like modify-db-snapshot-message
+    void take
+
+  line </#Action=ModifyDBSnapshot>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan modify-db-snapshot-message
+
+  loot 200
+    seed xml, like modify-db-snapshot-result
+    note <Success>
+  loot 480
+    seed xml, like db-snapshot-not-found-fault
+    note <DBSnapshotNotFoundFault>

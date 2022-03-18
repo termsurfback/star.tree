@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/s3/2006-03-01/base/get-object-tagging-output
+  take form get-object-tagging-output
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-object-tagging, name <GetObjectTagging>
+  note <Returns the tag-set of an object. You send the GET request against the tagging subresource associated with the object.
+
+To use this operation, you must have permission to perform the `s3:GetObjectTagging` action. By default, the GET action returns information about current version of an object. For a versioned bucket, you can have multiple versions of an object in your bucket. To retrieve tags of any other version, use the versionId query parameter. You also need permission for the `s3:GetObjectVersionTagging` action.
+
+By default, the bucket owner has this permission and can grant this permission to others.
+
+For information about the Amazon S3 object tagging feature, see [Object Tagging](https://docs.aws.amazon.com/AmazonS3/latest/dev/object-tagging.html).
+
+The following action is related to `GetObjectTagging`:
+
+- [PutObjectTagging](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObjectTagging.html)
+
+- [DeleteObjectTagging](https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObjectTagging.html)>
+
+  take bucket
+    like native-string
+    note <The bucket name containing the object for which to get the tagging information.
+
+When using this action with an access point, you must direct requests to the access point hostname. The access point hostname takes the form _AccessPointName_-_AccountId_.s3-accesspoint._Region_.amazonaws.com. When using this action with an access point through the Amazon Web Services SDKs, you provide the access point ARN in place of the bucket name. For more information about access point ARNs, see [Using access points](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-access-points.html) in the _Amazon S3 User Guide_.
+
+When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form _AccessPointName_-_AccountId_._outpostID_.s3-outposts._Region_.amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see [Using S3 on Outposts](https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html) in the _Amazon S3 User Guide_.>
+  take key
+    like native-string
+    note <Object key for which to get the tagging information.>
+  take x-amz-expected-bucket-owner
+    like native-string
+    note <The account ID of the expected bucket owner. If the bucket is owned by a different account, the request will fail with an HTTP `403 (Access Denied)` error.>
+    void take
+  take x-amz-request-payer
+    like native-string
+    void take
+  take version-id
+    like native-string
+    note <The versionId of the object for which to get the tagging information.>
+    void take
+  take tagging
+    like native-boolean
+
+  line </{bucket}/{key}#tagging>
+
+  hint <x-amz-expected-bucket-owner>, loan x-amz-expected-bucket-owner
+  hint <x-amz-request-payer>, loan x-amz-request-payer
+
+  find <versionId>, loan version-id
+  find <tagging>, loan tagging
+
+  loot 200
+    seed xml, like get-object-tagging-output
+    note <Success>

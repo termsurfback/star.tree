@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/update-snapshot-schedule-output
+  take form update-snapshot-schedule-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-snapshot-schedule, name <UpdateSnapshotSchedule>
+  note <Updates a snapshot schedule configured for a gateway volume. This operation is only supported in the cached volume and stored volume gateway types.
+
+The default snapshot schedule for volume is once every 24 hours, starting at the creation time of the volume. You can use this API to change the snapshot schedule configured for the volume.
+
+In the request you must identify the gateway volume whose snapshot schedule you want to update, and the schedule information, including when you want the snapshot to begin on a day and the frequency (in hours) of snapshots.>
+
+  take x-amz-target
+    like native-string
+  take update-snapshot-schedule-input, like update-snapshot-schedule-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.UpdateSnapshotSchedule>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-snapshot-schedule-input
+
+  loot 200
+    seed json, like update-snapshot-schedule-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

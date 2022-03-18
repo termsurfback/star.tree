@@ -1,0 +1,87 @@
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/list-jobs-response
+  take form list-jobs-response
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-jobs, name <ListJobs>
+  note <Lists jobs.
+
+Requires permission to access the [ListJobs](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiot.html#awsiot-actions-as-permissions) action.>
+
+  take status
+    like native-string
+    note <An optional filter that lets you search for jobs that have the specified status.>
+    void take
+  take target-selection
+    like native-string
+    note <Specifies whether the job will continue to run (CONTINUOUS), or will be complete after all those things specified as targets have completed the job (SNAPSHOT). If continuous, the job may also be run on a thing when a change is detected in a target. For example, a job will run on a thing when the thing is added to a target group, even after the job was completed by all things originally in the group.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return per request.>
+    void take
+  take next-token
+    like native-string
+    note <The token to retrieve the next set of results.>
+    void take
+  take thing-group-name
+    like native-string
+    note <A filter that limits the returned jobs to those for the specified group.>
+    void take
+  take thing-group-id
+    like native-string
+    note <A filter that limits the returned jobs to those for the specified group.>
+    void take
+  take namespace-id
+    like native-string
+    note <The namespace used to indicate that a job is a customer-managed job.
+
+When you specify a value for this parameter, Amazon Web Services IoT Core sends jobs notifications to MQTT topics that contain the value in the following format.
+
+`$aws/things/_THING_NAME_/jobs/_JOB_ID_/notify-namespace-_NAMESPACE_ID_/`
+
+The `namespaceId` feature is in public preview.>
+    void take
+
+  line </jobs>
+
+  find <status>, loan status
+  find <targetSelection>, loan target-selection
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+  find <thingGroupName>, loan thing-group-name
+  find <thingGroupId>, loan thing-group-id
+  find <namespaceId>, loan namespace-id
+
+  loot 200
+    seed json, like list-jobs-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

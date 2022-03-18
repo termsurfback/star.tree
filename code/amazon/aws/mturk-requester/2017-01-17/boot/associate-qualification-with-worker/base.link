@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/associate-qualification-with-worker-response
+  take form associate-qualification-with-worker-response
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/request-error
+  take form request-error
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/service-fault
+  take form service-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot associate-qualification-with-worker, name <AssociateQualificationWithWorker>
+  note <The `AssociateQualificationWithWorker` operation gives a Worker a Qualification. `AssociateQualificationWithWorker` does not require that the Worker submit a Qualification request. It gives the Qualification directly to the Worker.
+
+You can only assign a Qualification of a Qualification type that you created (using the `CreateQualificationType` operation).
+
+Note: `AssociateQualificationWithWorker` does not affect any pending Qualification requests for the Qualification by the Worker. If you assign a Qualification to a Worker, then later grant a Qualification request made by the Worker, the granting of the request may modify the Qualification score. To resolve a pending Qualification request without affecting the Qualification the Worker already has, reject the request with the `RejectQualificationRequest` operation.>
+
+  take x-amz-target
+    like native-string
+  take associate-qualification-with-worker-request, like associate-qualification-with-worker-request
+
+  line </#X-Amz-Target=MTurkRequesterServiceV20170117.AssociateQualificationWithWorker>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan associate-qualification-with-worker-request
+
+  loot 200
+    seed json, like associate-qualification-with-worker-response
+    note <Success>
+  loot 480
+    seed json, like service-fault
+    note <ServiceFault>
+  loot 481
+    seed json, like request-error
+    note <RequestError>

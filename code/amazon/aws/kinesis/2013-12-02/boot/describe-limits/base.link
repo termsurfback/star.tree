@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/describe-limits-output
+  take form describe-limits-output
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-limits, name <DescribeLimits>
+  note <Describes the shard limits and usage for the account.
+
+If you update your account limits, the old limits might be returned for a few minutes.
+
+This operation has a limit of one transaction per second per account.>
+
+  take x-amz-target
+    like native-string
+  take describe-limits-input, like describe-limits-input
+
+  line </#X-Amz-Target=Kinesis_20131202.DescribeLimits>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-limits-input
+
+  loot 200
+    seed json, like describe-limits-output
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>

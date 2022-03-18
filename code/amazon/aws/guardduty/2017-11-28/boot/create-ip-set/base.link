@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/guardduty/2017-11-28/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/guardduty/2017-11-28/base/create-ip-set-body
+  take form create-ip-set-body
+
+load @drumwork/snow/amazonaws.com/guardduty/2017-11-28/base/create-ip-set-response
+  take form create-ip-set-response
+
+load @drumwork/snow/amazonaws.com/guardduty/2017-11-28/base/internal-server-error-exception
+  take form internal-server-error-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-ip-set, name <CreateIPSet>
+  note <Creates a new IPSet, which is called a trusted IP list in the console user interface. An IPSet is a list of IP addresses that are trusted for secure communication with AWS infrastructure and applications. GuardDuty doesn't generate findings for IP addresses that are included in IPSets. Only users from the administrator account can use this operation.>
+
+  take detector-id
+    like native-string
+    note <The unique ID of the detector of the GuardDuty account that you want to create an IPSet for.>
+  take create-ip-set-body, like create-ip-set-body
+
+  line </detector/{detector-id}/ipset>
+
+  seed json, loan create-ip-set-body
+
+  loot 200
+    seed json, like create-ip-set-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like internal-server-error-exception
+    note <InternalServerErrorException>

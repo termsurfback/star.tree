@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/bad-request
+  take form bad-request
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/create-tags-body
+  take form create-tags-body
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/file-system-not-found
+  take form file-system-not-found
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-tags, name <CreateTags>
+  note <DEPRECATED - CreateTags is deprecated and not maintained. Please use the API action to create tags for EFS resources.
+
+Creates or overwrites tags associated with a file system. Each tag is a key-value pair. If a tag key specified in the request already exists on the file system, this operation overwrites its value with the value provided in the request. If you add the `Name` tag to your file system, Amazon EFS returns it in the response to the DescribeFileSystems operation.
+
+This operation requires permission for the `elasticfilesystem:CreateTags` action.>
+
+  take file-system-id
+    like native-string
+    note <The ID of the file system whose tags you want to modify (String). This operation modifies the tags only, not the file system.>
+  take create-tags-body, like create-tags-body
+
+  line </2015-02-01/create-tags/{file-system-id}>
+
+  seed json, loan create-tags-body
+
+  loot 204
+    note <Success>
+  loot 480
+    seed json, like bad-request
+    note <BadRequest>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 482
+    seed json, like file-system-not-found
+    note <FileSystemNotFound>

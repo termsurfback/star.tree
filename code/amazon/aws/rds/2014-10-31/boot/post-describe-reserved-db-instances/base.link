@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/reserved-db-instance-message
+  take form reserved-db-instance-message
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/reserved-db-instance-not-found-fault
+  take form reserved-db-instance-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-reserved-db-instances, name <POST_DescribeReservedDBInstances>
+  note <Returns information about reserved DB instances for this account, or about a specified reserved DB instance.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-reserved-db-instances-message, like describe-reserved-db-instances-message
+    void take
+
+  line </#Action=DescribeReservedDBInstances>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-reserved-db-instances-message
+
+  loot 200
+    seed xml, like reserved-db-instance-message
+    note <Success>
+  loot 480
+    seed xml, like reserved-db-instance-not-found-fault
+    note <ReservedDBInstanceNotFoundFault>

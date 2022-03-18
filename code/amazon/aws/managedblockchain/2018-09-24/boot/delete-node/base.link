@@ -1,0 +1,76 @@
+
+load @drumwork/snow/amazonaws.com/managedblockchain/2018-09-24/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/managedblockchain/2018-09-24/base/delete-node-output
+  take form delete-node-output
+
+load @drumwork/snow/amazonaws.com/managedblockchain/2018-09-24/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/managedblockchain/2018-09-24/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/managedblockchain/2018-09-24/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/managedblockchain/2018-09-24/base/resource-not-ready-exception
+  take form resource-not-ready-exception
+
+load @drumwork/snow/amazonaws.com/managedblockchain/2018-09-24/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-node, name <DeleteNode>
+  note <Deletes a node that your AWS account owns. All data on the node is lost and cannot be recovered.
+
+Applies to Hyperledger Fabric and Ethereum.>
+
+  take network-id
+    like native-string
+    note <The unique identifier of the network that the node is on.
+
+Ethereum public networks have the following `NetworkId`s:
+
+- `n-ethereum-mainnet`
+
+- `n-ethereum-rinkeby`
+
+- `n-ethereum-ropsten`>
+  take node-id
+    like native-string
+    note <The unique identifier of the node.>
+  take member-id
+    like native-string
+    note <The unique identifier of the member that owns this node.
+
+Applies only to Hyperledger Fabric and is required for Hyperledger Fabric.>
+    void take
+
+  line </networks/{network-id}/nodes/{node-id}>
+
+  find <memberId>, loan member-id
+
+  loot 200
+    seed json, like delete-node-output
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like resource-not-ready-exception
+    note <ResourceNotReadyException>
+  loot 484
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 485
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>

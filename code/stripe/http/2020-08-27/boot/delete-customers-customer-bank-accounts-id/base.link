@@ -1,0 +1,39 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/delete-customers-customer-bank-accounts-id-body
+  take form delete-customers-customer-bank-accounts-id-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/deleted-payment-source
+  take form deleted-payment-source
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/payment-source
+  take form payment-source
+
+boot delete-customers-customer-bank-accounts-id, name <DeleteCustomersCustomerBankAccountsId>
+  note <Delete a specified source for a given customer.>
+
+  take customer
+    like native-string
+  take id
+    like native-string
+  take delete-customers-customer-bank-accounts-id-body, like delete-customers-customer-bank-accounts-id-body
+    void take
+
+  line </v1/customers/{customer}/bank_accounts/{id}>
+
+  seed x-www-form-urlencoded, loan delete-customers-customer-bank-accounts-id-body
+
+  loot 200
+    seed json
+      like sink
+        like payment-source
+        like deleted-payment-source
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/environment-resource-descriptions-message
+  take form environment-resource-descriptions-message
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/insufficient-privileges-exception
+  take form insufficient-privileges-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-environment-resources, name <GET_DescribeEnvironmentResources>
+  note <Returns AWS resources for this environment.>
+
+  take environment-id
+    like native-string
+    note <The ID of the environment to retrieve AWS resource usage data.
+
+Condition: You must specify either this or an EnvironmentName, or both. If you do not specify either, AWS Elastic Beanstalk returns `MissingRequiredParameter` error.>
+    void take
+  take environment-name
+    like native-string
+    note <The name of the environment to retrieve AWS resource usage data.
+
+Condition: You must specify either this or an EnvironmentId, or both. If you do not specify either, AWS Elastic Beanstalk returns `MissingRequiredParameter` error.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeEnvironmentResources>
+
+  find <EnvironmentId>, loan environment-id
+  find <EnvironmentName>, loan environment-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like environment-resource-descriptions-message
+    note <Success>
+  loot 480
+    seed xml, like insufficient-privileges-exception
+    note <InsufficientPrivilegesException>

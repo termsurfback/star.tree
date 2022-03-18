@@ -1,0 +1,85 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/option-group-options-message
+  take form option-group-options-message
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-option-group-options, name <GET_DescribeOptionGroupOptions>
+  note <Describes all available options.>
+
+  take engine-name
+    like native-string
+    note <A required parameter. Options available for the given engine name are described.
+
+Valid Values:
+
+- `mariadb`
+
+- `mysql`
+
+- `oracle-ee`
+
+- `oracle-ee-cdb`
+
+- `oracle-se2`
+
+- `oracle-se2-cdb`
+
+- `postgres`
+
+- `sqlserver-ee`
+
+- `sqlserver-se`
+
+- `sqlserver-ex`
+
+- `sqlserver-web`>
+  take major-engine-version
+    like native-string
+    note <If specified, filters the results to include only options for the specified major engine version.>
+    void take
+  take filters
+    like list
+      like filter
+    note <This parameter isn't currently supported.>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of records to include in the response. If more records exist than the specified `MaxRecords` value, a pagination token called a marker is included in the response so that you can retrieve the remaining results.
+
+Default: 100
+
+Constraints: Minimum 20, maximum 100.>
+    void take
+  take marker
+    like native-string
+    note <An optional pagination token provided by a previous request. If this parameter is specified, the response includes only records beyond the marker, up to the value specified by `MaxRecords`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeOptionGroupOptions>
+
+  find <EngineName>, loan engine-name
+  find <MajorEngineVersion>, loan major-engine-version
+  find <Filters>, loan filters
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like option-group-options-message
+    note <Success>

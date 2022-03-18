@@ -1,0 +1,272 @@
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-already-exists-fault
+  take form db-cluster-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-parameter-group-not-found-fault
+  take form db-cluster-parameter-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-quota-exceeded-fault
+  take form db-cluster-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-snapshot-not-found-fault
+  take form db-cluster-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-snapshot-not-found-fault
+  take form db-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-subnet-group-not-found-fault
+  take form db-subnet-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/insufficient-db-cluster-capacity-fault
+  take form insufficient-db-cluster-capacity-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/insufficient-storage-cluster-capacity-fault
+  take form insufficient-storage-cluster-capacity-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-cluster-snapshot-state-fault
+  take form invalid-db-cluster-snapshot-state-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-snapshot-state-fault
+  take form invalid-db-snapshot-state-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-restore-fault
+  take form invalid-restore-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-subnet
+  take form invalid-subnet
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-vpc-network-state-fault
+  take form invalid-vpc-network-state-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/kms-key-not-accessible-fault
+  take form kms-key-not-accessible-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/option-group-not-found-fault
+  take form option-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/restore-db-cluster-from-snapshot-result
+  take form restore-db-cluster-from-snapshot-result
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/storage-quota-exceeded-fault
+  take form storage-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/tag
+  take form tag
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-restore-db-cluster-from-snapshot, name <GET_RestoreDBClusterFromSnapshot>
+  note <Creates a new DB cluster from a DB snapshot or DB cluster snapshot.
+
+If a DB snapshot is specified, the target DB cluster is created from the source DB snapshot with a default configuration and default security group.
+
+If a DB cluster snapshot is specified, the target DB cluster is created from the source DB cluster restore point with the same configuration as the original source DB cluster, except that the new DB cluster is created with the default security group.>
+
+  take availability-zones
+    like list
+      like string
+    note <Provides the list of EC2 Availability Zones that instances in the restored DB cluster can be created in.>
+    void take
+  take db-cluster-identifier
+    like native-string
+    note <The name of the DB cluster to create from the DB snapshot or DB cluster snapshot. This parameter isn't case-sensitive.
+
+Constraints:
+
+- Must contain from 1 to 63 letters, numbers, or hyphens
+
+- First character must be a letter
+
+- Cannot end with a hyphen or contain two consecutive hyphens
+
+Example: `my-snapshot-id`>
+  take snapshot-identifier
+    like native-string
+    note <The identifier for the DB snapshot or DB cluster snapshot to restore from.
+
+You can use either the name or the Amazon Resource Name (ARN) to specify a DB cluster snapshot. However, you can use only the ARN to specify a DB snapshot.
+
+Constraints:
+
+- Must match the identifier of an existing Snapshot.>
+  take engine
+    like native-string
+    note <The database engine to use for the new DB cluster.
+
+Default: The same as source
+
+Constraint: Must be compatible with the engine of the source>
+  take engine-version
+    like native-string
+    note <The version of the database engine to use for the new DB cluster.>
+    void take
+  take port
+    like native-integer
+    note <The port number on which the new DB cluster accepts connections.
+
+Constraints: Value must be `1150-65535`
+
+Default: The same port as the original DB cluster.>
+    void take
+  take db-subnet-group-name
+    like native-string
+    note <The name of the DB subnet group to use for the new DB cluster.
+
+Constraints: If supplied, must match the name of an existing DBSubnetGroup.
+
+Example: `mySubnetgroup`>
+    void take
+  take database-name
+    like native-string
+    note <Not supported.>
+    void take
+  take option-group-name
+    like native-string
+    note <_(Not supported by Neptune)_>
+    void take
+  take vpc-security-group-ids
+    like list
+      like string
+    note <A list of VPC security groups that the new DB cluster will belong to.>
+    void take
+  take tags
+    like list
+      like tag
+    note <The tags to be assigned to the restored DB cluster.>
+    void take
+  take kms-key-id
+    like native-string
+    note <The Amazon KMS key identifier to use when restoring an encrypted DB cluster from a DB snapshot or DB cluster snapshot.
+
+The KMS key identifier is the Amazon Resource Name (ARN) for the KMS encryption key. If you are restoring a DB cluster with the same Amazon account that owns the KMS encryption key used to encrypt the new DB cluster, then you can use the KMS key alias instead of the ARN for the KMS encryption key.
+
+If you do not specify a value for the `KmsKeyId` parameter, then the following will occur:
+
+- If the DB snapshot or DB cluster snapshot in `SnapshotIdentifier` is encrypted, then the restored DB cluster is encrypted using the KMS key that was used to encrypt the DB snapshot or DB cluster snapshot.
+
+- If the DB snapshot or DB cluster snapshot in `SnapshotIdentifier` is not encrypted, then the restored DB cluster is not encrypted.>
+    void take
+  take enable-iam-database-authentication
+    like native-boolean
+    note <True to enable mapping of Amazon Identity and Access Management (IAM) accounts to database accounts, and otherwise false.
+
+Default: `false`>
+    void take
+  take enable-cloudwatch-logs-exports
+    like list
+      like string
+    note <The list of logs that the restored DB cluster is to export to Amazon CloudWatch Logs.>
+    void take
+  take db-cluster-parameter-group-name
+    like native-string
+    note <The name of the DB cluster parameter group to associate with the new DB cluster.
+
+Constraints:
+
+- If supplied, must match the name of an existing DBClusterParameterGroup.>
+    void take
+  take deletion-protection
+    like native-boolean
+    note <A value that indicates whether the DB cluster has deletion protection enabled. The database can't be deleted when deletion protection is enabled. By default, deletion protection is disabled.>
+    void take
+  take copy-tags-to-snapshot
+    like native-boolean
+    note <_If set to `true`, tags are copied to any snapshot of the restored DB cluster that is created._>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=RestoreDBClusterFromSnapshot>
+
+  find <AvailabilityZones>, loan availability-zones
+  find <DBClusterIdentifier>, loan db-cluster-identifier
+  find <SnapshotIdentifier>, loan snapshot-identifier
+  find <Engine>, loan engine
+  find <EngineVersion>, loan engine-version
+  find <Port>, loan port
+  find <DBSubnetGroupName>, loan db-subnet-group-name
+  find <DatabaseName>, loan database-name
+  find <OptionGroupName>, loan option-group-name
+  find <VpcSecurityGroupIds>, loan vpc-security-group-ids
+  find <Tags>, loan tags
+  find <KmsKeyId>, loan kms-key-id
+  find <EnableIAMDatabaseAuthentication>, loan enable-iam-database-authentication
+  find <EnableCloudwatchLogsExports>, loan enable-cloudwatch-logs-exports
+  find <DBClusterParameterGroupName>, loan db-cluster-parameter-group-name
+  find <DeletionProtection>, loan deletion-protection
+  find <CopyTagsToSnapshot>, loan copy-tags-to-snapshot
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like restore-db-cluster-from-snapshot-result
+    note <Success>
+  loot 480
+    seed xml, like db-cluster-already-exists-fault
+    note <DBClusterAlreadyExistsFault>
+  loot 481
+    seed xml, like db-cluster-quota-exceeded-fault
+    note <DBClusterQuotaExceededFault>
+  loot 482
+    seed xml, like storage-quota-exceeded-fault
+    note <StorageQuotaExceededFault>
+  loot 483
+    seed xml, like db-subnet-group-not-found-fault
+    note <DBSubnetGroupNotFoundFault>
+  loot 484
+    seed xml, like db-snapshot-not-found-fault
+    note <DBSnapshotNotFoundFault>
+  loot 485
+    seed xml, like db-cluster-snapshot-not-found-fault
+    note <DBClusterSnapshotNotFoundFault>
+  loot 486
+    seed xml, like insufficient-db-cluster-capacity-fault
+    note <InsufficientDBClusterCapacityFault>
+  loot 487
+    seed xml, like insufficient-storage-cluster-capacity-fault
+    note <InsufficientStorageClusterCapacityFault>
+  loot 488
+    seed xml, like invalid-db-snapshot-state-fault
+    note <InvalidDBSnapshotStateFault>
+  loot 489
+    seed xml, like invalid-db-cluster-snapshot-state-fault
+    note <InvalidDBClusterSnapshotStateFault>
+  loot 490
+    seed xml, like storage-quota-exceeded-fault
+    note <StorageQuotaExceededFault>
+  loot 491
+    seed xml, like invalid-vpc-network-state-fault
+    note <InvalidVPCNetworkStateFault>
+  loot 492
+    seed xml, like invalid-restore-fault
+    note <InvalidRestoreFault>
+  loot 493
+    seed xml, like db-subnet-group-not-found-fault
+    note <DBSubnetGroupNotFoundFault>
+  loot 494
+    seed xml, like invalid-subnet
+    note <InvalidSubnet>
+  loot 495
+    seed xml, like option-group-not-found-fault
+    note <OptionGroupNotFoundFault>
+  loot 496
+    seed xml, like kms-key-not-accessible-fault
+    note <KMSKeyNotAccessibleFault>
+  loot 497
+    seed xml, like db-cluster-parameter-group-not-found-fault
+    note <DBClusterParameterGroupNotFoundFault>

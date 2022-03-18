@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/update-contributor-insights-output
+  take form update-contributor-insights-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-contributor-insights, name <UpdateContributorInsights>
+  note <Updates the status for contributor insights for a specific table or index.>
+
+  take x-amz-target
+    like native-string
+  take update-contributor-insights-input, like update-contributor-insights-input
+
+  line </#X-Amz-Target=DynamoDB_20120810.UpdateContributorInsights>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-contributor-insights-input
+
+  loot 200
+    seed json, like update-contributor-insights-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

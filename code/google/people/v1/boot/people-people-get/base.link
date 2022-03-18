@@ -1,0 +1,39 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/people/v1/base/person
+  take form person
+
+boot people-people-get, name <people.people.get>
+  note <Provides information about a person by specifying a resource name. Use `people/me` to indicate the authenticated user. The request returns a 400 error if 'personFields' is not specified.>
+
+  take resource-name
+    like native-string
+    note <Required. The resource name of the person to provide information about. - To get information about the authenticated user, specify `people/me`. - To get information about a google account, specify `people/{account_id}`. - To get information about a contact, specify the resource name that identifies the contact as returned by `people.connections.list`.>
+  take person-fields
+    like native-string
+    note <Required. A field mask to restrict which fields on the person are returned. Multiple fields can be specified by separating them with commas. Valid values are: * addresses * ageRanges * biographies * birthdays * calendarUrls * clientData * coverPhotos * emailAddresses * events * externalIds * genders * imClients * interests * locales * locations * memberships * metadata * miscKeywords * names * nicknames * occupations * organizations * phoneNumbers * photos * relations * sipAddresses * skills * urls * userDefined>
+    void take
+  take request-mask-include-field
+    like native-string
+    note <Required. Comma-separated list of person fields to be included in the response. Each path should start with `person.`: for example, `person.names` or `person.photos`.>
+    void take
+  take sources
+    like list
+      like native-string
+    note <Optional. A mask of what source types to return. Defaults to READ_SOURCE_TYPE_PROFILE and READ_SOURCE_TYPE_CONTACT if not set.>
+    void take
+
+  line </v1/{resource-name}>
+
+  find <personFields>, loan person-fields
+  find <requestMask.includeField>, loan request-mask-include-field
+  find <sources>, loan sources
+
+  loot 200
+    seed json, like person
+    note <Successful response>

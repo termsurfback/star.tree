@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/tag-resource-body
+  take form tag-resource-body
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/tag-resource-response
+  take form tag-resource-response
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot tag-resource, name <TagResource>
+  note <Applies tag values to a behavior graph.>
+
+  take resource-arn
+    like native-string
+    note <The ARN of the behavior graph to assign the tags to.>
+  take tag-resource-body, like tag-resource-body
+
+  line </tags/{resource-arn}>
+
+  seed json, loan tag-resource-body
+
+  loot 204
+    seed json, like tag-resource-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

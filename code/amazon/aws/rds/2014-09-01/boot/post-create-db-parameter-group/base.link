@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/create-db-parameter-group-result
+  take form create-db-parameter-group-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/db-parameter-group-already-exists-fault
+  take form db-parameter-group-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/db-parameter-group-quota-exceeded-fault
+  take form db-parameter-group-quota-exceeded-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-db-parameter-group, name <POST_CreateDBParameterGroup>
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-db-parameter-group-message, like create-db-parameter-group-message
+    void take
+
+  line </#Action=CreateDBParameterGroup>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-db-parameter-group-message
+
+  loot 200
+    seed xml, like create-db-parameter-group-result
+    note <Success>
+  loot 480
+    seed xml, like db-parameter-group-quota-exceeded-fault
+    note <DBParameterGroupQuotaExceededFault>
+  loot 481
+    seed xml, like db-parameter-group-already-exists-fault
+    note <DBParameterGroupAlreadyExistsFault>

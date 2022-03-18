@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/servicecatalog-appregistry/2020-06-24/base/get-associated-resource-response
+  take form get-associated-resource-response
+
+load @drumwork/snow/amazonaws.com/servicecatalog-appregistry/2020-06-24/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog-appregistry/2020-06-24/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog-appregistry/2020-06-24/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-associated-resource, name <GetAssociatedResource>
+  note <Gets the resource associated with the application.>
+
+  take application
+    like native-string
+    note <The name or ID of the application.>
+  take resource-type
+    like native-string
+    note <The type of resource associated with the application.>
+  take resource
+    like native-string
+    note <The name or ID of the resource associated with the application.>
+
+  line </applications/{application}/resources/{resource-type}/{resource}>
+
+  loot 200
+    seed json, like get-associated-resource-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

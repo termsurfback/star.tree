@@ -1,0 +1,34 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/describe-stack-events-output
+  take form describe-stack-events-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-stack-events, name <POST_DescribeStackEvents>
+  note <Returns all stack related events for a specified stack in reverse chronological order. For more information about a stack's event history, go to [Stacks](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/concept-stack.html) in the CloudFormation User Guide.
+
+You can list events for stacks that have failed to create or have been deleted by specifying the unique stack identifier (stack ID).>
+
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-stack-events-input, like describe-stack-events-input
+    void take
+
+  line </#Action=DescribeStackEvents>
+
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-stack-events-input
+
+  loot 200
+    seed xml, like describe-stack-events-output
+    note <Success>

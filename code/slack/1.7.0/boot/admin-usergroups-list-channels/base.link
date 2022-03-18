@@ -1,0 +1,51 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+boot admin-usergroups-list-channels, name <admin_usergroups_listChannels>
+  note <List the channels linked to an org-level IDP group (user group).>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `admin.usergroups:read`>
+  take usergroup-id
+    like native-string
+    note <ID of the IDP group to list default channels for.>
+  take team-id
+    like native-string
+    note <ID of the the workspace.>
+    void take
+  take include-num-members
+    like native-boolean
+    note <Flag to include or exclude the count of members per channel.>
+    void take
+
+  line </admin.usergroups.listChannels>
+
+  hint <token>, loan token
+
+  find <usergroup_id>, loan usergroup-id
+  find <team_id>, loan team-id
+  find <include_num_members>, loan include-num-members
+
+  loot 200
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-true
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response if the token provided is not associated with an Org Admin or Owner>

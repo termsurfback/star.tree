@@ -1,0 +1,65 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/content/v2.1/base/orders-list-response
+  take form orders-list-response
+
+boot content-orders-list, name <content.orders.list>
+  note <Lists the orders in your Merchant Center account.>
+
+  take merchant-id
+    like native-string
+    note <The ID of the account that manages the order. This cannot be a multi-client account.>
+  take acknowledged
+    like native-boolean
+    note <Obtains orders that match the acknowledgement status. When set to true, obtains orders that have been acknowledged. When false, obtains orders that have not been acknowledged. We recommend using this filter set to `false`, in conjunction with the `acknowledge` call, such that only un-acknowledged orders are returned.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of orders to return in the response, used for paging. The default value is 25 orders per page, and the maximum allowed value is 250 orders per page.>
+    void take
+  take order-by
+    like native-string
+    note <Order results by placement date in descending or ascending order. Acceptable values are: - placedDateAsc - placedDateDesc>
+    void take
+  take page-token
+    like native-string
+    note <The token returned by the previous request.>
+    void take
+  take placed-date-end
+    like native-string
+    note <Obtains orders placed before this date (exclusively), in ISO 8601 format.>
+    void take
+  take placed-date-start
+    like native-string
+    note <Obtains orders placed after this date (inclusively), in ISO 8601 format.>
+    void take
+  take statuses
+    like list
+      like native-string
+    note <Obtains orders that match any of the specified statuses. Note that `active` is a shortcut for `pendingShipment` and `partiallyShipped`, and `completed` is a shortcut for `shipped`, `partiallyDelivered`, `delivered`, `partiallyReturned`, `returned`, and `canceled`.>
+    void take
+
+  line </{merchant-id}/orders>
+
+  find <acknowledged>, loan acknowledged
+  find <maxResults>, loan max-results
+  find <orderBy>, loan order-by
+  find <pageToken>, loan page-token
+  find <placedDateEnd>, loan placed-date-end
+  find <placedDateStart>, loan placed-date-start
+  find <statuses>, loan statuses
+
+  loot 200
+    seed json, like orders-list-response
+    note <Successful response>

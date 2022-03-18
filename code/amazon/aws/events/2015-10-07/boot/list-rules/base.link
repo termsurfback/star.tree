@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/list-rules-response
+  take form list-rules-response
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-rules, name <ListRules>
+  note <Lists your Amazon EventBridge rules. You can either list all the rules or you can provide a prefix to match to the rule names.
+
+ListRules does not list the targets of a rule. To see the targets associated with a rule, use [ListTargetsByRule](https://docs.aws.amazon.com/eventbridge/latest/APIReference/API_ListTargetsByRule.html).>
+
+  take x-amz-target
+    like native-string
+  take list-rules-request, like list-rules-request
+
+  line </#X-Amz-Target=AWSEvents.ListRules>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-rules-request
+
+  loot 200
+    seed json, like list-rules-response
+    note <Success>
+  loot 480
+    seed json, like internal-exception
+    note <InternalException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

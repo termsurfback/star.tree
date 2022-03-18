@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/exit-standby-answer
+  take form exit-standby-answer
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/xml-string-max-len19
+  take form xml-string-max-len19
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-exit-standby, name <GET_ExitStandby>
+  note <Moves the specified instances out of the standby state.
+
+After you put the instances back in service, the desired capacity is incremented.
+
+For more information, see [Temporarily removing instances from your Auto Scaling group](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-enter-exit-standby.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+
+  take instance-ids
+    like list
+      like xml-string-max-len19
+    note <The IDs of the instances. You can specify up to 20 instances.>
+    void take
+  take auto-scaling-group-name
+    like native-string
+    note <The name of the Auto Scaling group.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ExitStandby>
+
+  find <InstanceIds>, loan instance-ids
+  find <AutoScalingGroupName>, loan auto-scaling-group-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like exit-standby-answer
+    note <Success>
+  loot 480
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

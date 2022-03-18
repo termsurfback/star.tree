@@ -1,0 +1,29 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/describe-experiment-response
+  take form describe-experiment-response
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-not-found
+  take form resource-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-experiment, name <DescribeExperiment>
+  note <Provides a list of an experiment's properties.>
+
+  take x-amz-target
+    like native-string
+  take describe-experiment-request, like describe-experiment-request
+
+  line </#X-Amz-Target=SageMaker.DescribeExperiment>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-experiment-request
+
+  loot 200
+    seed json, like describe-experiment-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found
+    note <ResourceNotFound>

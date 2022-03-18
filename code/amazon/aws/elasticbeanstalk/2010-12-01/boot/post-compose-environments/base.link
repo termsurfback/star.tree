@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/environment-descriptions-message
+  take form environment-descriptions-message
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/insufficient-privileges-exception
+  take form insufficient-privileges-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/too-many-environments-exception
+  take form too-many-environments-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-compose-environments, name <POST_ComposeEnvironments>
+  note <Create or update a group of environments that each run a separate component of a single application. Takes a list of version labels that specify application source bundles for each of the environments to create or update. The name of each environment and other required information must be included in the source bundles in an environment manifest named `env.yaml`. See [Compose Environments](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/environment-mgmt-compose.html) for details.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take compose-environments-message, like compose-environments-message
+    void take
+
+  line </#Action=ComposeEnvironments>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan compose-environments-message
+
+  loot 200
+    seed xml, like environment-descriptions-message
+    note <Success>
+  loot 480
+    seed xml, like too-many-environments-exception
+    note <TooManyEnvironmentsException>
+  loot 481
+    seed xml, like insufficient-privileges-exception
+    note <InsufficientPrivilegesException>

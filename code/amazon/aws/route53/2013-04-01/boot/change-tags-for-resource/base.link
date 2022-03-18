@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/change-tags-for-resource-body
+  take form change-tags-for-resource-body
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/change-tags-for-resource-response
+  take form change-tags-for-resource-response
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/no-such-health-check
+  take form no-such-health-check
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/no-such-hosted-zone
+  take form no-such-hosted-zone
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/prior-request-not-complete
+  take form prior-request-not-complete
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot change-tags-for-resource, name <ChangeTagsForResource>
+  note <Adds, edits, or deletes tags for a health check or a hosted zone.
+
+For information about using tags for cost allocation, see [Using Cost Allocation Tags](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html) in the _Billing and Cost Management User Guide_.>
+
+  take resource-type
+    like native-string
+    note <The type of the resource.
+
+- The resource type for health checks is `healthcheck`.
+
+- The resource type for hosted zones is `hostedzone`.>
+  take resource-id
+    like native-string
+    note <The ID of the resource for which you want to add, change, or delete tags.>
+  take change-tags-for-resource-body, like change-tags-for-resource-body
+
+  line </2013-04-01/tags/{resource-type}/{resource-id}>
+
+  seed xml, loan change-tags-for-resource-body
+
+  loot 200
+    seed xml, like change-tags-for-resource-response
+    note <Success>
+  loot 480
+    seed xml, like invalid-input
+    note <InvalidInput>
+  loot 481
+    seed xml, like no-such-health-check
+    note <NoSuchHealthCheck>
+  loot 482
+    seed xml, like no-such-hosted-zone
+    note <NoSuchHostedZone>
+  loot 483
+    seed xml, like prior-request-not-complete
+    note <PriorRequestNotComplete>
+  loot 484
+    seed xml, like throttling-exception
+    note <ThrottlingException>

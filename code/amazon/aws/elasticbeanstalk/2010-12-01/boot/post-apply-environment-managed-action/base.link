@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/apply-environment-managed-action-result
+  take form apply-environment-managed-action-result
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/elastic-beanstalk-service-exception
+  take form elastic-beanstalk-service-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/managed-action-invalid-state-exception
+  take form managed-action-invalid-state-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-apply-environment-managed-action, name <POST_ApplyEnvironmentManagedAction>
+  note <Applies a scheduled managed action immediately. A managed action can be applied only if its status is `Scheduled`. Get the status and action ID of a managed action with DescribeEnvironmentManagedActions.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take apply-environment-managed-action-request, like apply-environment-managed-action-request
+    void take
+
+  line </#Action=ApplyEnvironmentManagedAction>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan apply-environment-managed-action-request
+
+  loot 200
+    seed xml, like apply-environment-managed-action-result
+    note <Success>
+  loot 480
+    seed xml, like elastic-beanstalk-service-exception
+    note <ElasticBeanstalkServiceException>
+  loot 481
+    seed xml, like managed-action-invalid-state-exception
+    note <ManagedActionInvalidStateException>

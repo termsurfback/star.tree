@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/delete-cluster-response
+  take form delete-cluster-response
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/invalid-cluster-state-fault
+  take form invalid-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/service-linked-role-not-found-fault
+  take form service-linked-role-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-cluster, name <DeleteCluster>
+  note <Deletes a previously provisioned DAX cluster. _DeleteCluster_ deletes all associated nodes, node endpoints and the DAX cluster itself. When you receive a successful response from this action, DAX immediately begins deleting the cluster; you cannot cancel or revert this action.>
+
+  take x-amz-target
+    like native-string
+  take delete-cluster-request, like delete-cluster-request
+
+  line </#X-Amz-Target=AmazonDAXV3.DeleteCluster>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-cluster-request
+
+  loot 200
+    seed json, like delete-cluster-response
+    note <Success>
+  loot 480
+    seed json, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 481
+    seed json, like invalid-cluster-state-fault
+    note <InvalidClusterStateFault>
+  loot 482
+    seed json, like service-linked-role-not-found-fault
+    note <ServiceLinkedRoleNotFoundFault>
+  loot 483
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 484
+    seed json, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

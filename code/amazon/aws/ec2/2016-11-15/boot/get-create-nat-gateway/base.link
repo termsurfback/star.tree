@@ -1,0 +1,70 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/create-nat-gateway-result
+  take form create-nat-gateway-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/tag-specification
+  take form tag-specification
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-nat-gateway, name <GET_CreateNatGateway>
+  note <Creates a NAT gateway in the specified subnet. This action creates a network interface in the specified subnet with a private IP address from the IP address range of the subnet. You can create either a public NAT gateway or a private NAT gateway.
+
+With a public NAT gateway, internet-bound traffic from a private subnet can be routed to the NAT gateway, so that instances in a private subnet can connect to the internet.
+
+With a private NAT gateway, private communication is routed across VPCs and on-premises networks through a transit gateway or virtual private gateway. Common use cases include running large workloads behind a small pool of allowlisted IPv4 addresses, preserving private IPv4 addresses, and communicating between overlapping networks.
+
+For more information, see [NAT gateways](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) in the _Amazon Virtual Private Cloud User Guide_.>
+
+  take allocation-id
+    like native-string
+    note <[Public NAT gateways only] The allocation ID of an Elastic IP address to associate with the NAT gateway. You cannot specify an Elastic IP address with a private NAT gateway. If the Elastic IP address is associated with another resource, you must first disassociate it.>
+    void take
+  take client-token
+    like native-string
+    note <Unique, case-sensitive identifier that you provide to ensure the idempotency of the request. For more information, see [How to ensure idempotency](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/Run_Instance_Idempotency.html).
+
+Constraint: Maximum 64 ASCII characters.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take subnet-id
+    like native-string
+    note <The subnet in which to create the NAT gateway.>
+  take tag-specification
+    like list
+      like tag-specification
+    note <The tags to assign to the NAT gateway.>
+    void take
+  take connectivity-type
+    like native-string
+    note <Indicates whether the NAT gateway supports public or private connectivity. The default is public connectivity.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateNatGateway>
+
+  find <AllocationId>, loan allocation-id
+  find <ClientToken>, loan client-token
+  find <DryRun>, loan dry-run
+  find <SubnetId>, loan subnet-id
+  find <TagSpecification>, loan tag-specification
+  find <ConnectivityType>, loan connectivity-type
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-nat-gateway-result
+    note <Success>

@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/container-not-found-exception
+  take form container-not-found-exception
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/describe-container-output
+  take form describe-container-output
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-container, name <DescribeContainer>
+  note <Retrieves the properties of the requested container. This request is commonly used to retrieve the endpoint of a container. An endpoint is a value assigned by the service when a new container is created. A container's endpoint does not change after it has been assigned. The `DescribeContainer` request returns a single `Container` object based on `ContainerName`. To return all `Container` objects that are associated with a specified AWS account, use ListContainers.>
+
+  take x-amz-target
+    like native-string
+  take describe-container-input, like describe-container-input
+
+  line </#X-Amz-Target=MediaStore_20170901.DescribeContainer>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-container-input
+
+  loot 200
+    seed json, like describe-container-output
+    note <Success>
+  loot 480
+    seed json, like container-not-found-exception
+    note <ContainerNotFoundException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

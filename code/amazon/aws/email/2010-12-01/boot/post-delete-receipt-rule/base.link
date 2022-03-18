@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/delete-receipt-rule-response
+  take form delete-receipt-rule-response
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/rule-set-does-not-exist-exception
+  take form rule-set-does-not-exist-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-receipt-rule, name <POST_DeleteReceiptRule>
+  note <Deletes the specified receipt rule.
+
+For information about managing receipt rules, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-managing-receipt-rules.html).
+
+You can execute this operation no more than once per second.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-receipt-rule-request, like delete-receipt-rule-request
+    void take
+
+  line </#Action=DeleteReceiptRule>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-receipt-rule-request
+
+  loot 200
+    seed xml, like delete-receipt-rule-response
+    note <Success>
+  loot 480
+    seed xml, like rule-set-does-not-exist-exception
+    note <RuleSetDoesNotExistException>

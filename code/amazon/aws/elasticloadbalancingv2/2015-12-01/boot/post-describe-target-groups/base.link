@@ -1,0 +1,44 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/describe-target-groups-output
+  take form describe-target-groups-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/load-balancer-not-found-exception
+  take form load-balancer-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/target-group-not-found-exception
+  take form target-group-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-target-groups, name <POST_DescribeTargetGroups>
+  note <Describes the specified target groups or all of your target groups. By default, all target groups are described. Alternatively, you can specify one of the following to filter the results: the ARN of the load balancer, the names of one or more target groups, or the ARNs of one or more target groups.>
+
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-target-groups-input, like describe-target-groups-input
+    void take
+
+  line </#Action=DescribeTargetGroups>
+
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-target-groups-input
+
+  loot 200
+    seed xml, like describe-target-groups-output
+    note <Success>
+  loot 480
+    seed xml, like load-balancer-not-found-exception
+    note <LoadBalancerNotFoundException>
+  loot 481
+    seed xml, like target-group-not-found-exception
+    note <TargetGroupNotFoundException>

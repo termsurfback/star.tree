@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-limit-exception
+  take form invalid-limit-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/list-discovered-resources-response
+  take form list-discovered-resources-response
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/no-available-configuration-recorder-exception
+  take form no-available-configuration-recorder-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-discovered-resources, name <ListDiscoveredResources>
+  note <Accepts a resource type and returns a list of resource identifiers for the resources of that type. A resource identifier includes the resource type, ID, and (if available) the custom resource name. The results consist of resources that Config has discovered, including those that Config is not currently recording. You can narrow the results to include only resources that have specific resource IDs or a resource name.
+
+You can specify either resource IDs or a resource name, but not both, in the same request.
+
+The response is paginated. By default, Config lists 100 resource identifiers on each page. You can customize this number with the `limit` parameter. The response includes a `nextToken` string. To get the next page of results, run the request again and specify the string for the `nextToken` parameter.>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-discovered-resources-request, like list-discovered-resources-request
+
+  line </#X-Amz-Target=StarlingDoveService.ListDiscoveredResources>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <limit>, loan limit
+  find <nextToken>, loan next-token
+
+  seed json, loan list-discovered-resources-request
+
+  loot 200
+    seed json, like list-discovered-resources-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like invalid-limit-exception
+    note <InvalidLimitException>
+  loot 482
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 483
+    seed json, like no-available-configuration-recorder-exception
+    note <NoAvailableConfigurationRecorderException>

@@ -1,0 +1,43 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/compute/alpha/base/operation
+  take form operation
+
+boot compute-disks-create-snapshot, name <compute.disks.createSnapshot>
+  note <Creates a snapshot of a specified persistent disk. For regular snapshot creation, consider using snapshots.insert instead, as that method supports more features, such as creating snapshots in a project different from the source disk project.>
+
+  take project
+    like native-string
+    note <Project ID for this request.>
+  take zone
+    like native-string
+    note <The name of the zone for this request.>
+  take disk
+    like native-string
+    note <Name of the persistent disk to snapshot.>
+  take guest-flush
+    like native-boolean
+    note <[Input Only] Whether to attempt an application consistent snapshot by informing the OS to prepare for the snapshot process.>
+    void take
+  take request-id
+    like native-string
+    note <An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed. For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments. The request ID must be a valid UUID with the exception that zero UUID is not supported ( 00000000-0000-0000-0000-000000000000).>
+    void take
+  take snapshot, like snapshot
+    void take
+
+  line </projects/{project}/zones/{zone}/disks/{disk}/createSnapshot>
+
+  find <guestFlush>, loan guest-flush
+  find <requestId>, loan request-id
+
+  seed json, loan snapshot
+
+  loot 200
+    seed json, like operation
+    note <Successful response>

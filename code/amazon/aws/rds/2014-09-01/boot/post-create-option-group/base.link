@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/create-option-group-result
+  take form create-option-group-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/option-group-already-exists-fault
+  take form option-group-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/option-group-quota-exceeded-fault
+  take form option-group-quota-exceeded-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-option-group, name <POST_CreateOptionGroup>
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-option-group-message, like create-option-group-message
+    void take
+
+  line </#Action=CreateOptionGroup>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-option-group-message
+
+  loot 200
+    seed xml, like create-option-group-result
+    note <Success>
+  loot 480
+    seed xml, like option-group-already-exists-fault
+    note <OptionGroupAlreadyExistsFault>
+  loot 481
+    seed xml, like option-group-quota-exceeded-fault
+    note <OptionGroupQuotaExceededFault>

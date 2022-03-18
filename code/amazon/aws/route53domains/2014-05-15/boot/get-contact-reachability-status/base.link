@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/get-contact-reachability-status-response
+  take form get-contact-reachability-status-response
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/operation-limit-exceeded
+  take form operation-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/unsupported-tld
+  take form unsupported-tld
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-contact-reachability-status, name <GetContactReachabilityStatus>
+  note <For operations that require confirmation that the email address for the registrant contact is valid, such as registering a new domain, this operation returns information about whether the registrant contact has responded.
+
+If you want us to resend the email, use the `ResendContactReachabilityEmail` operation.>
+
+  take x-amz-target
+    like native-string
+  take get-contact-reachability-status-request, like get-contact-reachability-status-request
+
+  line </#X-Amz-Target=Route53Domains_v20140515.GetContactReachabilityStatus>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-contact-reachability-status-request
+
+  loot 200
+    seed json, like get-contact-reachability-status-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input
+    note <InvalidInput>
+  loot 481
+    seed json, like operation-limit-exceeded
+    note <OperationLimitExceeded>
+  loot 482
+    seed json, like unsupported-tld
+    note <UnsupportedTLD>

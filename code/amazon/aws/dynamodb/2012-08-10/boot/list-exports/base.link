@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/list-exports-output
+  take form list-exports-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-exports, name <ListExports>
+  note <Lists completed exports within the past 90 days.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-exports-input, like list-exports-input
+
+  line </#X-Amz-Target=DynamoDB_20120810.ListExports>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-exports-input
+
+  loot 200
+    seed json, like list-exports-output
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

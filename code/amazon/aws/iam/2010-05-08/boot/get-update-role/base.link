@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/unmodifiable-entity-exception
+  take form unmodifiable-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/update-role-response
+  take form update-role-response
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-update-role, name <GET_UpdateRole>
+  note <Updates the description or maximum session duration setting of a role.>
+
+  take role-name
+    like native-string
+    note <The name of the role that you want to modify.>
+  take description
+    like native-string
+    note <The new description that you want to apply to the specified role.>
+    void take
+  take max-session-duration
+    like native-integer
+    note <The maximum session duration (in seconds) that you want to set for the specified role. If you do not specify a value for this setting, the default maximum of one hour is applied. This setting can have a value from 1 hour to 12 hours.
+
+Anyone who assumes the role from the CLI or API can use the `DurationSeconds` API parameter or the `duration-seconds` CLI parameter to request a longer session. The `MaxSessionDuration` setting determines the maximum duration that can be requested using the `DurationSeconds` parameter. If users don't specify a value for the `DurationSeconds` parameter, their security credentials are valid for one hour by default. This applies when you use the `AssumeRole*` API operations or the `assume-role*` CLI operations but does not apply when you use those operations to create a console URL. For more information, see [Using IAM roles](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use.html) in the _IAM User Guide_.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=UpdateRole>
+
+  find <RoleName>, loan role-name
+  find <Description>, loan description
+  find <MaxSessionDuration>, loan max-session-duration
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like update-role-response
+    note <Success>
+  loot 480
+    seed xml, like unmodifiable-entity-exception
+    note <UnmodifiableEntityException>
+  loot 481
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 482
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

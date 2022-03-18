@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/list-namespaces-response
+  take form list-namespaces-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-namespaces, name <ListNamespaces>
+  note <Lists summary information about the namespaces that were created by the current account.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-namespaces-request, like list-namespaces-request
+
+  line </#X-Amz-Target=Route53AutoNaming_v20170314.ListNamespaces>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-namespaces-request
+
+  loot 200
+    seed json, like list-namespaces-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input
+    note <InvalidInput>

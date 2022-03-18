@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/describe-images-result
+  take form describe-images-result
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-images, name <DescribeImages>
+  note <Retrieves a list that describes one or more specified images, if the image names or image ARNs are provided. Otherwise, all images in the account are described.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-images-request, like describe-images-request
+
+  line </#X-Amz-Target=PhotonAdminProxyService.DescribeImages>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-images-request
+
+  loot 200
+    seed json, like describe-images-result
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

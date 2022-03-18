@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/describe-provisioning-parameters-output
+  take form describe-provisioning-parameters-output
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/invalid-parameters-exception
+  take form invalid-parameters-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-provisioning-parameters, name <DescribeProvisioningParameters>
+  note <Gets information about the configuration required to provision the specified product using the specified provisioning artifact.
+
+If the output contains a TagOption key with an empty list of values, there is a TagOption conflict for that key. The end user cannot take action to fix the conflict, and launch is not blocked. In subsequent calls to ProvisionProduct, do not include conflicted TagOption keys as tags, or this causes the error "Parameter validation failed: Missing required parameter in Tags[_N_]:_Value_". Tag the provisioned product with the value `sc-tagoption-conflict-portfolioId-productId`.>
+
+  take x-amz-target
+    like native-string
+  take describe-provisioning-parameters-input, like describe-provisioning-parameters-input
+
+  line </#X-Amz-Target=AWS242ServiceCatalogService.DescribeProvisioningParameters>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-provisioning-parameters-input
+
+  loot 200
+    seed json, like describe-provisioning-parameters-output
+    note <Success>
+  loot 480
+    seed json, like invalid-parameters-exception
+    note <InvalidParametersException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

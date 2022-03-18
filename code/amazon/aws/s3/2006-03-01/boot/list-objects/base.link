@@ -1,0 +1,92 @@
+
+load @drumwork/snow/amazonaws.com/s3/2006-03-01/base/list-objects-output
+  take form list-objects-output
+
+load @drumwork/snow/amazonaws.com/s3/2006-03-01/base/no-such-bucket
+  take form no-such-bucket
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-objects, name <ListObjects>
+  note <Returns some or all (up to 1,000) of the objects in a bucket. You can use the request parameters as selection criteria to return a subset of the objects in a bucket. A 200 OK response can contain valid or invalid XML. Be sure to design your application to parse the contents of the response and handle it appropriately.
+
+This action has been revised. We recommend that you use the newer version, [ListObjectsV2](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjectsV2.html), when developing applications. For backward compatibility, Amazon S3 continues to support `ListObjects`.
+
+The following operations are related to `ListObjects`:
+
+- [ListObjectsV2](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjectsV2.html)
+
+- [GetObject](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html)
+
+- [PutObject](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html)
+
+- [CreateBucket](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CreateBucket.html)
+
+- [ListBuckets](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListBuckets.html)>
+
+  take bucket
+    like native-string
+    note <The name of the bucket containing the objects.
+
+When using this action with an access point, you must direct requests to the access point hostname. The access point hostname takes the form _AccessPointName_-_AccountId_.s3-accesspoint._Region_.amazonaws.com. When using this action with an access point through the Amazon Web Services SDKs, you provide the access point ARN in place of the bucket name. For more information about access point ARNs, see [Using access points](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-access-points.html) in the _Amazon S3 User Guide_.
+
+When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form _AccessPointName_-_AccountId_._outpostID_.s3-outposts._Region_.amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see [Using S3 on Outposts](https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html) in the _Amazon S3 User Guide_.>
+  take x-amz-request-payer
+    like native-string
+    note <Confirms that the requester knows that she or he will be charged for the list objects request. Bucket owners need not specify this parameter in their requests.>
+    void take
+  take x-amz-expected-bucket-owner
+    like native-string
+    note <The account ID of the expected bucket owner. If the bucket is owned by a different account, the request will fail with an HTTP `403 (Access Denied)` error.>
+    void take
+  take delimiter
+    like native-string
+    note <A delimiter is a character you use to group keys.>
+    void take
+  take encoding-type
+    like native-string
+    void take
+  take marker
+    like native-string
+    note <Marker is where you want Amazon S3 to start listing from. Amazon S3 starts listing after this specified key. Marker can be any key in the bucket.>
+    void take
+  take max-keys
+    like native-integer
+    note <Sets the maximum number of keys returned in the response. By default the action returns up to 1,000 key names. The response might contain fewer keys but will never contain more.>
+    void take
+  take prefix
+    like native-string
+    note <Limits the response to keys that begin with the specified prefix.>
+    void take
+  take max-keys
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+
+  line </{bucket}>
+
+  hint <x-amz-request-payer>, loan x-amz-request-payer
+  hint <x-amz-expected-bucket-owner>, loan x-amz-expected-bucket-owner
+
+  find <delimiter>, loan delimiter
+  find <encoding-type>, loan encoding-type
+  find <marker>, loan marker
+  find <max-keys>, loan max-keys
+  find <prefix>, loan prefix
+  find <MaxKeys>, loan max-keys
+  find <Marker>, loan marker
+
+  loot 200
+    seed xml, like list-objects-output
+    note <Success>
+  loot 480
+    seed xml, like no-such-bucket
+    note <NoSuchBucket>

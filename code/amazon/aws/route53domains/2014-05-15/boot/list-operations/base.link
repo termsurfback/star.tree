@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/list-operations-response
+  take form list-operations-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-operations, name <ListOperations>
+  note <Returns information about all of the operations that return an operation ID and that have ever been performed on domains that were registered by the current account.>
+
+  take x-amz-target
+    like native-string
+  take max-items
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take list-operations-request, like list-operations-request
+
+  line </#X-Amz-Target=Route53Domains_v20140515.ListOperations>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxItems>, loan max-items
+  find <Marker>, loan marker
+
+  seed json, loan list-operations-request
+
+  loot 200
+    seed json, like list-operations-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input
+    note <InvalidInput>

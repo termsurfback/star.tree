@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/describe-stream-consumer-output
+  take form describe-stream-consumer-output
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/invalid-argument-exception
+  take form invalid-argument-exception
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-stream-consumer, name <DescribeStreamConsumer>
+  note <To get the description of a registered consumer, provide the ARN of the consumer. Alternatively, you can provide the ARN of the data stream and the name you gave the consumer when you registered it. You may also provide all three parameters, as long as they don't conflict with each other. If you don't know the name or ARN of the consumer that you want to describe, you can use the ListStreamConsumers operation to get a list of the descriptions of all the consumers that are currently registered with a given data stream.
+
+This operation has a limit of 20 transactions per second per stream.>
+
+  take x-amz-target
+    like native-string
+  take describe-stream-consumer-input, like describe-stream-consumer-input
+
+  line </#X-Amz-Target=Kinesis_20131202.DescribeStreamConsumer>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-stream-consumer-input
+
+  loot 200
+    seed json, like describe-stream-consumer-output
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like invalid-argument-exception
+    note <InvalidArgumentException>

@@ -1,0 +1,376 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-already-exists-fault
+  take form db-cluster-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-parameter-group-not-found-fault
+  take form db-cluster-parameter-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-quota-exceeded-fault
+  take form db-cluster-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-subnet-group-not-found-fault
+  take form db-subnet-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/domain-not-found-fault
+  take form domain-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/insufficient-storage-cluster-capacity-fault
+  take form insufficient-storage-cluster-capacity-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-subnet-group-state-fault
+  take form invalid-db-subnet-group-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-s3-bucket-fault
+  take form invalid-s3-bucket-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-subnet
+  take form invalid-subnet
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-vpc-network-state-fault
+  take form invalid-vpc-network-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/kms-key-not-accessible-fault
+  take form kms-key-not-accessible-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/restore-db-cluster-from-s3-result
+  take form restore-db-cluster-from-s3-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/storage-quota-exceeded-fault
+  take form storage-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/tag
+  take form tag
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-restore-db-cluster-from-s3, name <GET_RestoreDBClusterFromS3>
+  note <Creates an Amazon Aurora DB cluster from MySQL data stored in an Amazon S3 bucket. Amazon RDS must be authorized to access the Amazon S3 bucket and the data must be created using the Percona XtraBackup utility as described in [Migrating Data from MySQL by Using an Amazon S3 Bucket](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Migrating.ExtMySQL.html#AuroraMySQL.Migrating.ExtMySQL.S3) in the _Amazon Aurora User Guide_.
+
+This action only restores the DB cluster, not the DB instances for that DB cluster. You must invoke the `CreateDBInstance` action to create DB instances for the restored DB cluster, specifying the identifier of the restored DB cluster in `DBClusterIdentifier`. You can create DB instances only after the `RestoreDBClusterFromS3` action has completed and the DB cluster is available.
+
+For more information on Amazon Aurora, see [What Is Amazon Aurora?](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_AuroraOverview.html) in the _Amazon Aurora User Guide._
+
+This action only applies to Aurora DB clusters. The source DB engine must be MySQL.>
+
+  take availability-zones
+    like list
+      like string
+    note <A list of Availability Zones (AZs) where instances in the restored DB cluster can be created.>
+    void take
+  take backup-retention-period
+    like native-integer
+    note <The number of days for which automated backups of the restored DB cluster are retained. You must specify a minimum value of 1.
+
+Default: 1
+
+Constraints:
+
+- Must be a value from 1 to 35>
+    void take
+  take character-set-name
+    like native-string
+    note <A value that indicates that the restored DB cluster should be associated with the specified CharacterSet.>
+    void take
+  take database-name
+    like native-string
+    note <The database name for the restored DB cluster.>
+    void take
+  take db-cluster-identifier
+    like native-string
+    note <The name of the DB cluster to create from the source data in the Amazon S3 bucket. This parameter isn't case-sensitive.
+
+Constraints:
+
+- Must contain from 1 to 63 letters, numbers, or hyphens.
+
+- First character must be a letter.
+
+- Can't end with a hyphen or contain two consecutive hyphens.
+
+Example: `my-cluster1`>
+  take db-cluster-parameter-group-name
+    like native-string
+    note <The name of the DB cluster parameter group to associate with the restored DB cluster. If this argument is omitted, `default.aurora5.6` is used.
+
+Constraints:
+
+- If supplied, must match the name of an existing DBClusterParameterGroup.>
+    void take
+  take vpc-security-group-ids
+    like list
+      like string
+    note <A list of EC2 VPC security groups to associate with the restored DB cluster.>
+    void take
+  take db-subnet-group-name
+    like native-string
+    note <A DB subnet group to associate with the restored DB cluster.
+
+Constraints: If supplied, must match the name of an existing DBSubnetGroup.
+
+Example: `mySubnetgroup`>
+    void take
+  take engine
+    like native-string
+    note <The name of the database engine to be used for this DB cluster.
+
+Valid Values: `aurora` (for MySQL 5.6-compatible Aurora), `aurora-mysql` (for MySQL 5.7-compatible Aurora), and `aurora-postgresql`>
+  take engine-version
+    like native-string
+    note <The version number of the database engine to use.
+
+To list all of the available engine versions for `aurora` (for MySQL 5.6-compatible Aurora), use the following command:
+
+`aws rds describe-db-engine-versions --engine aurora --query "DBEngineVersions[].EngineVersion"`
+
+To list all of the available engine versions for `aurora-mysql` (for MySQL 5.7-compatible Aurora), use the following command:
+
+`aws rds describe-db-engine-versions --engine aurora-mysql --query "DBEngineVersions[].EngineVersion"`
+
+To list all of the available engine versions for `aurora-postgresql`, use the following command:
+
+`aws rds describe-db-engine-versions --engine aurora-postgresql --query "DBEngineVersions[].EngineVersion"`
+
+**Aurora MySQL** Example: `5.6.10a`, `5.6.mysql_aurora.1.19.2`, `5.7.12`, `5.7.mysql_aurora.2.04.5`
+
+**Aurora PostgreSQL** Example: `9.6.3`, `10.7`>
+    void take
+  take port
+    like native-integer
+    note <The port number on which the instances in the restored DB cluster accept connections.
+
+Default: `3306`>
+    void take
+  take master-username
+    like native-string
+    note <The name of the master user for the restored DB cluster.
+
+Constraints:
+
+- Must be 1 to 16 letters or numbers.
+
+- First character must be a letter.
+
+- Can't be a reserved word for the chosen database engine.>
+  take master-user-password
+    like native-string
+    note <The password for the master database user. This password can contain any printable ASCII character except "/", """, or "@".
+
+Constraints: Must contain from 8 to 41 characters.>
+  take option-group-name
+    like native-string
+    note <A value that indicates that the restored DB cluster should be associated with the specified option group.
+
+Permanent options can't be removed from an option group. An option group can't be removed from a DB cluster once it is associated with a DB cluster.>
+    void take
+  take preferred-backup-window
+    like native-string
+    note <The daily time range during which automated backups are created if automated backups are enabled using the `BackupRetentionPeriod` parameter.
+
+The default is a 30-minute window selected at random from an 8-hour block of time for each Amazon Web Services Region. To view the time blocks available, see [Backup window](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Managing.Backups.html#Aurora.Managing.Backups.BackupWindow) in the _Amazon Aurora User Guide._
+
+Constraints:
+
+- Must be in the format `hh24:mi-hh24:mi`.
+
+- Must be in Universal Coordinated Time (UTC).
+
+- Must not conflict with the preferred maintenance window.
+
+- Must be at least 30 minutes.>
+    void take
+  take preferred-maintenance-window
+    like native-string
+    note <The weekly time range during which system maintenance can occur, in Universal Coordinated Time (UTC).
+
+Format: `ddd:hh24:mi-ddd:hh24:mi`
+
+The default is a 30-minute window selected at random from an 8-hour block of time for each Amazon Web Services Region, occurring on a random day of the week. To see the time blocks available, see [Adjusting the Preferred Maintenance Window](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_UpgradeDBInstance.Maintenance.html#AdjustingTheMaintenanceWindow.Aurora) in the _Amazon Aurora User Guide._
+
+Valid Days: Mon, Tue, Wed, Thu, Fri, Sat, Sun.
+
+Constraints: Minimum 30-minute window.>
+    void take
+  take tags
+    like list
+      like tag
+    void take
+  take storage-encrypted
+    like native-boolean
+    note <A value that indicates whether the restored DB cluster is encrypted.>
+    void take
+  take kms-key-id
+    like native-string
+    note <The Amazon Web Services KMS key identifier for an encrypted DB cluster.
+
+The Amazon Web Services KMS key identifier is the key ARN, key ID, alias ARN, or alias name for the Amazon Web Services KMS customer master key (CMK). To use a CMK in a different Amazon Web Services account, specify the key ARN or alias ARN.
+
+If the StorageEncrypted parameter is enabled, and you do not specify a value for the `KmsKeyId` parameter, then Amazon RDS will use your default CMK. There is a default CMK for your Amazon Web Services account. Your Amazon Web Services account has a different default CMK for each Amazon Web Services Region.>
+    void take
+  take enable-iam-database-authentication
+    like native-boolean
+    note <A value that indicates whether to enable mapping of Amazon Web Services Identity and Access Management (IAM) accounts to database accounts. By default, mapping is disabled.
+
+For more information, see [IAM Database Authentication](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/UsingWithRDS.IAMDBAuth.html) in the _Amazon Aurora User Guide._>
+    void take
+  take source-engine
+    like native-string
+    note <The identifier for the database engine that was backed up to create the files stored in the Amazon S3 bucket.
+
+Valid values: `mysql`>
+  take source-engine-version
+    like native-string
+    note <The version of the database that the backup files were created from.
+
+MySQL versions 5.5, 5.6, and 5.7 are supported.
+
+Example: `5.6.40`, `5.7.28`>
+  take s3-bucket-name
+    like native-string
+    note <The name of the Amazon S3 bucket that contains the data used to create the Amazon Aurora DB cluster.>
+  take s3-prefix
+    like native-string
+    note <The prefix for all of the file names that contain the data used to create the Amazon Aurora DB cluster. If you do not specify a **SourceS3Prefix** value, then the Amazon Aurora DB cluster is created by using all of the files in the Amazon S3 bucket.>
+    void take
+  take s3-ingestion-role-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the Amazon Web Services Identity and Access Management (IAM) role that authorizes Amazon RDS to access the Amazon S3 bucket on your behalf.>
+  take backtrack-window
+    like native-integer
+    note <The target backtrack window, in seconds. To disable backtracking, set this value to 0.
+
+Currently, Backtrack is only supported for Aurora MySQL DB clusters.
+
+Default: 0
+
+Constraints:
+
+- If specified, this value must be set to a number from 0 to 259,200 (72 hours).>
+    void take
+  take enable-cloudwatch-logs-exports
+    like list
+      like string
+    note <The list of logs that the restored DB cluster is to export to CloudWatch Logs. The values in the list depend on the DB engine being used. For more information, see [Publishing Database Logs to Amazon CloudWatch Logs](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_LogAccess.html#USER_LogAccess.Procedural.UploadtoCloudWatch) in the _Amazon Aurora User Guide_.>
+    void take
+  take deletion-protection
+    like native-boolean
+    note <A value that indicates whether the DB cluster has deletion protection enabled. The database can't be deleted when deletion protection is enabled. By default, deletion protection is disabled.>
+    void take
+  take copy-tags-to-snapshot
+    like native-boolean
+    note <A value that indicates whether to copy all tags from the restored DB cluster to snapshots of the restored DB cluster. The default is not to copy them.>
+    void take
+  take domain
+    like native-string
+    note <Specify the Active Directory directory ID to restore the DB cluster in. The domain must be created prior to this operation.
+
+For Amazon Aurora DB clusters, Amazon RDS can use Kerberos Authentication to authenticate users that connect to the DB cluster. For more information, see [Kerberos Authentication](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/kerberos-authentication.html) in the _Amazon Aurora User Guide_.>
+    void take
+  take domain-iam-role-name
+    like native-string
+    note <Specify the name of the IAM role to be used when making API calls to the Directory Service.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=RestoreDBClusterFromS3>
+
+  find <AvailabilityZones>, loan availability-zones
+  find <BackupRetentionPeriod>, loan backup-retention-period
+  find <CharacterSetName>, loan character-set-name
+  find <DatabaseName>, loan database-name
+  find <DBClusterIdentifier>, loan db-cluster-identifier
+  find <DBClusterParameterGroupName>, loan db-cluster-parameter-group-name
+  find <VpcSecurityGroupIds>, loan vpc-security-group-ids
+  find <DBSubnetGroupName>, loan db-subnet-group-name
+  find <Engine>, loan engine
+  find <EngineVersion>, loan engine-version
+  find <Port>, loan port
+  find <MasterUsername>, loan master-username
+  find <MasterUserPassword>, loan master-user-password
+  find <OptionGroupName>, loan option-group-name
+  find <PreferredBackupWindow>, loan preferred-backup-window
+  find <PreferredMaintenanceWindow>, loan preferred-maintenance-window
+  find <Tags>, loan tags
+  find <StorageEncrypted>, loan storage-encrypted
+  find <KmsKeyId>, loan kms-key-id
+  find <EnableIAMDatabaseAuthentication>, loan enable-iam-database-authentication
+  find <SourceEngine>, loan source-engine
+  find <SourceEngineVersion>, loan source-engine-version
+  find <S3BucketName>, loan s3-bucket-name
+  find <S3Prefix>, loan s3-prefix
+  find <S3IngestionRoleArn>, loan s3-ingestion-role-arn
+  find <BacktrackWindow>, loan backtrack-window
+  find <EnableCloudwatchLogsExports>, loan enable-cloudwatch-logs-exports
+  find <DeletionProtection>, loan deletion-protection
+  find <CopyTagsToSnapshot>, loan copy-tags-to-snapshot
+  find <Domain>, loan domain
+  find <DomainIAMRoleName>, loan domain-iam-role-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like restore-db-cluster-from-s3-result
+    note <Success>
+  loot 480
+    seed xml, like db-cluster-already-exists-fault
+    note <DBClusterAlreadyExistsFault>
+  loot 481
+    seed xml, like db-cluster-quota-exceeded-fault
+    note <DBClusterQuotaExceededFault>
+  loot 482
+    seed xml, like storage-quota-exceeded-fault
+    note <StorageQuotaExceededFault>
+  loot 483
+    seed xml, like db-subnet-group-not-found-fault
+    note <DBSubnetGroupNotFoundFault>
+  loot 484
+    seed xml, like invalid-vpc-network-state-fault
+    note <InvalidVPCNetworkStateFault>
+  loot 485
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>
+  loot 486
+    seed xml, like invalid-db-subnet-group-state-fault
+    note <InvalidDBSubnetGroupStateFault>
+  loot 487
+    seed xml, like invalid-subnet
+    note <InvalidSubnet>
+  loot 488
+    seed xml, like invalid-s3-bucket-fault
+    note <InvalidS3BucketFault>
+  loot 489
+    seed xml, like db-cluster-parameter-group-not-found-fault
+    note <DBClusterParameterGroupNotFoundFault>
+  loot 490
+    seed xml, like kms-key-not-accessible-fault
+    note <KMSKeyNotAccessibleFault>
+  loot 491
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>
+  loot 492
+    seed xml, like domain-not-found-fault
+    note <DomainNotFoundFault>
+  loot 493
+    seed xml, like insufficient-storage-cluster-capacity-fault
+    note <InsufficientStorageClusterCapacityFault>

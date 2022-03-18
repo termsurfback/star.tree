@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/list-policy-generations-response
+  take form list-policy-generations-response
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-policy-generations, name <ListPolicyGenerations>
+  note <Lists all of the policy generations requested in the last seven days.>
+
+  take max-results
+    like native-integer
+    note <The maximum number of results to return in the response.>
+    void take
+  take next-token
+    like native-string
+    note <A token used for pagination of results returned.>
+    void take
+  take principal-arn
+    like native-string
+    note <The ARN of the IAM entity (user or role) for which you are generating a policy. Use this with `ListGeneratedPolicies` to filter the results to only include results for a specific principal.>
+    void take
+
+  line </policy/generation>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+  find <principalArn>, loan principal-arn
+
+  loot 200
+    seed json, like list-policy-generations-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

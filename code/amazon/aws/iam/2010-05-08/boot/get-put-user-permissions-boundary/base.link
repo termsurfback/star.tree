@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/policy-not-attachable-exception
+  take form policy-not-attachable-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-put-user-permissions-boundary, name <GET_PutUserPermissionsBoundary>
+  note <Adds or updates the policy that is specified as the IAM user's permissions boundary. You can use an Amazon Web Services managed policy or a customer managed policy to set the boundary for a user. Use the boundary to control the maximum permissions that the user can have. Setting a permissions boundary is an advanced feature that can affect the permissions for the user.
+
+Policies that are used as permissions boundaries do not provide permissions. You must also attach a permissions policy to the user. To learn how the effective permissions for a user are evaluated, see [IAM JSON policy evaluation logic](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html) in the IAM User Guide.>
+
+  take user-name
+    like native-string
+    note <The name (friendly name, not ARN) of the IAM user for which you want to set the permissions boundary.>
+  take permissions-boundary
+    like native-string
+    note <The ARN of the policy that is used to set the permissions boundary for the user.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=PutUserPermissionsBoundary>
+
+  find <UserName>, loan user-name
+  find <PermissionsBoundary>, loan permissions-boundary
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like invalid-input-exception
+    note <InvalidInputException>
+  loot 482
+    seed xml, like policy-not-attachable-exception
+    note <PolicyNotAttachableException>
+  loot 483
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

@@ -1,0 +1,31 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/invoice
+  take form invoice
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-invoices-invoice-mark-uncollectible-body
+  take form post-invoices-invoice-mark-uncollectible-body
+
+boot post-invoices-invoice-mark-uncollectible, name <PostInvoicesInvoiceMarkUncollectible>
+  note <Marking an invoice as uncollectible is useful for keeping track of bad debts that can be written off for accounting purposes.>
+
+  take invoice
+    like native-string
+  take post-invoices-invoice-mark-uncollectible-body, like post-invoices-invoice-mark-uncollectible-body
+    void take
+
+  line </v1/invoices/{invoice}/mark_uncollectible>
+
+  seed x-www-form-urlencoded, loan post-invoices-invoice-mark-uncollectible-body
+
+  loot 200
+    seed json, like invoice
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

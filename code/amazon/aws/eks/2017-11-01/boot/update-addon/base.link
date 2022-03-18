@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/update-addon-body
+  take form update-addon-body
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/update-addon-response
+  take form update-addon-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-addon, name <UpdateAddon>
+  note <Updates an Amazon EKS add-on.>
+
+  take name
+    like native-string
+    note <The name of the cluster.>
+  take addon-name
+    like native-string
+    note <The name of the add-on. The name must match one of the names returned by [`ListAddons`](https://docs.aws.amazon.com/eks/latest/APIReference/API_ListAddons.html) .>
+  take update-addon-body, like update-addon-body
+
+  line </clusters/{name}/addons/{addon-name}/update>
+
+  seed json, loan update-addon-body
+
+  loot 200
+    seed json, like update-addon-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>
+  loot 484
+    seed json, like client-exception
+    note <ClientException>
+  loot 485
+    seed json, like server-exception
+    note <ServerException>

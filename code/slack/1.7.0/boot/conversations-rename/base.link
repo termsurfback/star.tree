@@ -1,0 +1,53 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/conversations-rename-body
+  take form conversations-rename-body
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+load @drumwork/snow/slack.com/1.7.0/base/objs-conversation
+  take form objs-conversation
+
+boot conversations-rename, name <conversations_rename>
+  note <Renames a conversation.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `conversations:write`>
+    void take
+  take conversations-rename-body, like conversations-rename-body
+    void take
+
+  line </conversations.rename>
+
+  hint <token>, loan token
+
+  seed x-www-form-urlencoded, loan conversations-rename-body
+
+  loot 200
+    seed json
+      like form
+        take channel, name <channel>
+          like objs-conversation
+        take ok, name <ok>
+          like defs-ok-true
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take callstack, name <callstack>
+          void take
+        take error, name <error>
+        take needed, name <needed>
+          void take
+        take ok, name <ok>
+          like defs-ok-false
+        take provided, name <provided>
+          void take
+    note <Typical error response when the calling user is not a member of the conversation>

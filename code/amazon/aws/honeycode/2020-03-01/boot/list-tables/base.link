@@ -1,0 +1,79 @@
+
+load @drumwork/snow/amazonaws.com/honeycode/2020-03-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/honeycode/2020-03-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/honeycode/2020-03-01/base/list-tables-result
+  take form list-tables-result
+
+load @drumwork/snow/amazonaws.com/honeycode/2020-03-01/base/request-timeout-exception
+  take form request-timeout-exception
+
+load @drumwork/snow/amazonaws.com/honeycode/2020-03-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/honeycode/2020-03-01/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/honeycode/2020-03-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/honeycode/2020-03-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-tables, name <ListTables>
+  note <The ListTables API allows you to retrieve a list of all the tables in a workbook.>
+
+  take workbook-id
+    like native-string
+    note <The ID of the workbook whose tables are being retrieved.
+
+If a workbook with the specified id could not be found, this API throws ResourceNotFoundException.>
+  take max-results
+    like native-integer
+    note <The maximum number of tables to return in each page of the results.>
+    void take
+  take next-token
+    like native-string
+    note <This parameter is optional. If a nextToken is not specified, the API returns the first page of data.
+
+Pagination tokens expire after 1 hour. If you use a token that was returned more than an hour back, the API will throw ValidationException.>
+    void take
+
+  line </workbooks/{workbook-id}/tables>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  loot 200
+    seed json, like list-tables-result
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like request-timeout-exception
+    note <RequestTimeoutException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 484
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 485
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 486
+    seed json, like validation-exception
+    note <ValidationException>

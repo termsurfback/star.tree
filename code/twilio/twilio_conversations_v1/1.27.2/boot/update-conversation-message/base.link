@@ -1,0 +1,35 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_conversations_v1/1.27.2/base/conversations-v1-conversation-conversation-message
+  take form conversations-v1-conversation-conversation-message
+
+load @drumwork/snow/twilio.com/twilio_conversations_v1/1.27.2/base/update-conversation-message-body
+  take form update-conversation-message-body
+
+boot update-conversation-message, name <UpdateConversationMessage>
+  note <Update an existing message in the conversation>
+
+  take conversation-sid
+    like native-string
+    note <The unique ID of the \[Conversation\](https://www.twilio.com/docs/conversations/api/conversation-resource) for this message.>
+  take sid
+    like native-string
+    note <A 34 character string that uniquely identifies this resource.>
+  take x-twilio-webhook-enabled
+    like native-string
+    note <The X-Twilio-Webhook-Enabled HTTP request header>
+    void take
+  take update-conversation-message-body, like update-conversation-message-body
+    void take
+
+  line </v1/Conversations/{conversation-sid}/Messages/{sid}>
+
+  hint <X-Twilio-Webhook-Enabled>, loan x-twilio-webhook-enabled
+
+  seed x-www-form-urlencoded, loan update-conversation-message-body
+
+  loot 200
+    seed json, like conversations-v1-conversation-conversation-message
+    note <OK>

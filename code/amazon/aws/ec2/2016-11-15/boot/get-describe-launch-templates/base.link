@@ -1,0 +1,82 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-launch-templates-result
+  take form describe-launch-templates-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/launch-template-id
+  take form launch-template-id
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/launch-template-name
+  take form launch-template-name
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-launch-templates, name <GET_DescribeLaunchTemplates>
+  note <Describes one or more launch templates.>
+
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take launch-template-id
+    like list
+      like launch-template-id
+    note <One or more launch template IDs.>
+    void take
+  take launch-template-name
+    like list
+      like launch-template-name
+    note <One or more launch template names.>
+    void take
+  take filter
+    like list
+      like filter
+    note <One or more filters.
+
+- `create-time` - The time the launch template was created.
+
+- `launch-template-name` - The name of the launch template.
+
+- `tag`:&lt;key&gt; - The key/value combination of a tag assigned to the resource. Use the tag key in the filter name and the tag value as the filter value. For example, to find all resources that have a tag with the key `Owner` and the value `TeamA`, specify `tag:Owner` for the filter name and `TeamA` for the filter value.
+
+- `tag-key` - The key of a tag assigned to the resource. Use this filter to find all resources assigned a tag with a specific key, regardless of the tag value.>
+    void take
+  take next-token
+    like native-string
+    note <The token to request the next page of results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return in a single call. To retrieve the remaining results, make another call with the returned `NextToken` value. This value can be between 1 and 200.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeLaunchTemplates>
+
+  find <DryRun>, loan dry-run
+  find <LaunchTemplateId>, loan launch-template-id
+  find <LaunchTemplateName>, loan launch-template-name
+  find <Filter>, loan filter
+  find <NextToken>, loan next-token
+  find <MaxResults>, loan max-results
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-launch-templates-result
+    note <Success>

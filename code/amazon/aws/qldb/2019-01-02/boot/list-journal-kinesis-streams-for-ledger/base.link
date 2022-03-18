@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/list-journal-kinesis-streams-for-ledger-response
+  take form list-journal-kinesis-streams-for-ledger-response
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/resource-precondition-not-met-exception
+  take form resource-precondition-not-met-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-journal-kinesis-streams-for-ledger, name <ListJournalKinesisStreamsForLedger>
+  note <Returns an array of all Amazon QLDB journal stream descriptors for a given ledger. The output of each stream descriptor includes the same details that are returned by `DescribeJournalKinesisStream`.
+
+This action does not return any expired journal streams. For more information, see [Expiration for terminal streams](https://docs.aws.amazon.com/qldb/latest/developerguide/streams.create.html#streams.create.states.expiration) in the _Amazon QLDB Developer Guide_.
+
+This action returns a maximum of `MaxResults` items. It is paginated so that you can retrieve all the items by calling `ListJournalKinesisStreamsForLedger` multiple times.>
+
+  take name
+    like native-string
+    note <The name of the ledger.>
+  take max-results
+    like native-integer
+    note <The maximum number of results to return in a single `ListJournalKinesisStreamsForLedger` request. (The actual number of results returned might be fewer.)>
+    void take
+  take next-token
+    like native-string
+    note <A pagination token, indicating that you want to retrieve the next page of results. If you received a value for `NextToken` in the response from a previous `ListJournalKinesisStreamsForLedger` call, you should use that value as input here.>
+    void take
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+
+  line </ledgers/{name}/journal-kinesis-streams>
+
+  find <max_results>, loan max-results
+  find <next_token>, loan next-token
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like list-journal-kinesis-streams-for-ledger-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like resource-precondition-not-met-exception
+    note <ResourcePreconditionNotMetException>

@@ -1,0 +1,44 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/instance-id
+  take form instance-id
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/monitor-instances-result
+  take form monitor-instances-result
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-monitor-instances, name <GET_MonitorInstances>
+  note <Enables detailed monitoring for a running instance. Otherwise, basic monitoring is enabled. For more information, see [Monitoring your instances and volumes](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-cloudwatch.html) in the _Amazon EC2 User Guide_.
+
+To disable detailed monitoring, see .>
+
+  take instance-id
+    like list
+      like instance-id
+    note <The IDs of the instances.>
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=MonitorInstances>
+
+  find <InstanceId>, loan instance-id
+  find <DryRun>, loan dry-run
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like monitor-instances-result
+    note <Success>

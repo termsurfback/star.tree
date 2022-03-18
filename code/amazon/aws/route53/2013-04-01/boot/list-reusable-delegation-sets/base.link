@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/list-reusable-delegation-sets-response
+  take form list-reusable-delegation-sets-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-reusable-delegation-sets, name <ListReusableDelegationSets>
+  note <Retrieves a list of the reusable delegation sets that are associated with the current Amazon Web Services account.>
+
+  take marker
+    like native-string
+    note <If the value of `IsTruncated` in the previous response was `true`, you have more reusable delegation sets. To get another group, submit another `ListReusableDelegationSets` request.
+
+For the value of `marker`, specify the value of `NextMarker` from the previous response, which is the ID of the first reusable delegation set that Amazon Route 53 will return if you submit another request.
+
+If the value of `IsTruncated` in the previous response was `false`, there are no more reusable delegation sets to get.>
+    void take
+  take maxitems
+    like native-string
+    note <The number of reusable delegation sets that you want Amazon Route 53 to return in the response to this request. If you specify a value greater than 100, Route 53 returns only the first 100 reusable delegation sets.>
+    void take
+
+  line </2013-04-01/delegationset>
+
+  find <marker>, loan marker
+  find <maxitems>, loan maxitems
+
+  loot 200
+    seed xml, like list-reusable-delegation-sets-response
+    note <Success>
+  loot 480
+    seed xml, like invalid-input
+    note <InvalidInput>

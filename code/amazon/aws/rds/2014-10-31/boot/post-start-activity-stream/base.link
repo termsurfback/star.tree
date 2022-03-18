@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-instance-state-fault
+  take form invalid-db-instance-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/kms-key-not-accessible-fault
+  take form kms-key-not-accessible-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/resource-not-found-fault
+  take form resource-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/start-activity-stream-response
+  take form start-activity-stream-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-start-activity-stream, name <POST_StartActivityStream>
+  note <Starts a database activity stream to monitor activity on the database. For more information, see [Database Activity Streams](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/DBActivityStreams.html) in the _Amazon Aurora User Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take start-activity-stream-request, like start-activity-stream-request
+    void take
+
+  line </#Action=StartActivityStream>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan start-activity-stream-request
+
+  loot 200
+    seed xml, like start-activity-stream-response
+    note <Success>
+  loot 480
+    seed xml, like invalid-db-instance-state-fault
+    note <InvalidDBInstanceStateFault>
+  loot 481
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>
+  loot 482
+    seed xml, like resource-not-found-fault
+    note <ResourceNotFoundFault>
+  loot 483
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>
+  loot 484
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>
+  loot 485
+    seed xml, like kms-key-not-accessible-fault
+    note <KMSKeyNotAccessibleFault>

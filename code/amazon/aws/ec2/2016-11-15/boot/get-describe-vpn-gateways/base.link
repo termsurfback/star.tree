@@ -1,0 +1,74 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-vpn-gateways-result
+  take form describe-vpn-gateways-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/vpn-gateway-id
+  take form vpn-gateway-id
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-vpn-gateways, name <GET_DescribeVpnGateways>
+  note <Describes one or more of your virtual private gateways.
+
+For more information, see [AWS Site-to-Site VPN](https://docs.aws.amazon.com/vpn/latest/s2svpn/VPC_VPN.html) in the _AWS Site-to-Site VPN User Guide_.>
+
+  take filter
+    like list
+      like filter
+    note <One or more filters.
+
+- `amazon-side-asn` - The Autonomous System Number (ASN) for the Amazon side of the gateway.
+
+- `attachment.state` - The current state of the attachment between the gateway and the VPC (`attaching` | `attached` | `detaching` | `detached`).
+
+- `attachment.vpc-id` - The ID of an attached VPC.
+
+- `availability-zone` - The Availability Zone for the virtual private gateway (if applicable).
+
+- `state` - The state of the virtual private gateway (`pending` | `available` | `deleting` | `deleted`).
+
+- `tag`:&lt;key&gt; - The key/value combination of a tag assigned to the resource. Use the tag key in the filter name and the tag value as the filter value. For example, to find all resources that have a tag with the key `Owner` and the value `TeamA`, specify `tag:Owner` for the filter name and `TeamA` for the filter value.
+
+- `tag-key` - The key of a tag assigned to the resource. Use this filter to find all resources assigned a tag with a specific key, regardless of the tag value.
+
+- `type` - The type of virtual private gateway. Currently the only supported type is `ipsec.1`.
+
+- `vpn-gateway-id` - The ID of the virtual private gateway.>
+    void take
+  take vpn-gateway-id
+    like list
+      like vpn-gateway-id
+    note <One or more virtual private gateway IDs.
+
+Default: Describes all your virtual private gateways.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeVpnGateways>
+
+  find <Filter>, loan filter
+  find <VpnGatewayId>, loan vpn-gateway-id
+  find <DryRun>, loan dry-run
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-vpn-gateways-result
+    note <Success>

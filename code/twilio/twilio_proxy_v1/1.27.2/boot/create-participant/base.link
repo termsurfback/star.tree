@@ -1,0 +1,29 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_proxy_v1/1.27.2/base/create-participant-body
+  take form create-participant-body
+
+load @drumwork/snow/twilio.com/twilio_proxy_v1/1.27.2/base/proxy-v1-service-session-participant
+  take form proxy-v1-service-session-participant
+
+boot create-participant, name <CreateParticipant>
+  note <Add a new Participant to the Session>
+
+  take service-sid
+    like native-string
+    note <The SID of the parent \[Service\](https://www.twilio.com/docs/proxy/api/service) resource.>
+  take session-sid
+    like native-string
+    note <The SID of the parent \[Session\](https://www.twilio.com/docs/proxy/api/session) resource.>
+  take create-participant-body, like create-participant-body
+    void take
+
+  line </v1/Services/{service-sid}/Sessions/{session-sid}/Participants>
+
+  seed x-www-form-urlencoded, loan create-participant-body
+
+  loot 201
+    seed json, like proxy-v1-service-session-participant
+    note <Created>

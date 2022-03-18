@@ -1,0 +1,96 @@
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/list-phone-numbers-response
+  take form list-phone-numbers-response
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/phone-number-country-code
+  take form phone-number-country-code
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/phone-number-type
+  take form phone-number-type
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-phone-numbers, name <ListPhoneNumbers>
+  note <Provides information about the phone numbers for the specified Amazon Connect instance.
+
+For more information about phone numbers, see [Set Up Phone Numbers for Your Contact Center](https://docs.aws.amazon.com/connect/latest/adminguide/contact-center-phone-number.html) in the _Amazon Connect Administrator Guide_.>
+
+  take instance-id
+    like native-string
+    note <The identifier of the Amazon Connect instance. You can find the instanceId in the ARN of the instance.>
+  take phone-number-types
+    like list
+      like phone-number-type
+    note <The type of phone number.>
+    void take
+  take phone-number-country-codes
+    like list
+      like phone-number-country-code
+    note <The ISO country code.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next set of results. Use the value returned in the previous response in the next request to retrieve the next set of results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return per page.>
+    void take
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+
+  line </phone-numbers-summary/{instance-id}>
+
+  find <phoneNumberTypes>, loan phone-number-types
+  find <phoneNumberCountryCodes>, loan phone-number-country-codes
+  find <nextToken>, loan next-token
+  find <maxResults>, loan max-results
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like list-phone-numbers-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like internal-service-exception
+    note <InternalServiceException>

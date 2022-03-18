@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/get-insight-selectors-response
+  take form get-insight-selectors-response
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/insight-not-enabled-exception
+  take form insight-not-enabled-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/invalid-trail-name-exception
+  take form invalid-trail-name-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/operation-not-permitted-exception
+  take form operation-not-permitted-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/trail-not-found-exception
+  take form trail-not-found-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/unsupported-operation-exception
+  take form unsupported-operation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-insight-selectors, name <GetInsightSelectors>
+  note <Describes the settings for the Insights event selectors that you configured for your trail. `GetInsightSelectors` shows if CloudTrail Insights event logging is enabled on the trail, and if it is, which insight types are enabled. If you run `GetInsightSelectors` on a trail that does not have Insights events enabled, the operation throws the exception `InsightNotEnabledException`
+
+For more information, see [Logging CloudTrail Insights Events for Trails](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-insights-events-with-cloudtrail.html) in the _CloudTrail User Guide_.>
+
+  take x-amz-target
+    like native-string
+  take get-insight-selectors-request, like get-insight-selectors-request
+
+  line </#X-Amz-Target=com.amazonaws.cloudtrail.v20131101.CloudTrail_20131101.GetInsightSelectors>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-insight-selectors-request
+
+  loot 200
+    seed json, like get-insight-selectors-response
+    note <Success>
+  loot 480
+    seed json, like trail-not-found-exception
+    note <TrailNotFoundException>
+  loot 481
+    seed json, like invalid-trail-name-exception
+    note <InvalidTrailNameException>
+  loot 482
+    seed json, like unsupported-operation-exception
+    note <UnsupportedOperationException>
+  loot 483
+    seed json, like operation-not-permitted-exception
+    note <OperationNotPermittedException>
+  loot 484
+    seed json, like insight-not-enabled-exception
+    note <InsightNotEnabledException>

@@ -1,0 +1,51 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-request-environment-info, name <GET_RequestEnvironmentInfo>
+  note <Initiates a request to compile the specified type of information of the deployed environment.
+
+Setting the `InfoType` to `tail` compiles the last lines from the application server log files of every Amazon EC2 instance in your environment.
+
+Setting the `InfoType` to `bundle` compresses the application server log files for every Amazon EC2 instance into a `.zip` file. Legacy and .NET containers do not support bundle logs.
+
+Use RetrieveEnvironmentInfo to obtain the set of logs.
+
+Related Topics
+
+- RetrieveEnvironmentInfo>
+
+  take environment-id
+    like native-string
+    note <The ID of the environment of the requested data.
+
+If no such environment is found, `RequestEnvironmentInfo` returns an `InvalidParameterValue` error.
+
+Condition: You must specify either this or an EnvironmentName, or both. If you do not specify either, AWS Elastic Beanstalk returns `MissingRequiredParameter` error.>
+    void take
+  take environment-name
+    like native-string
+    note <The name of the environment of the requested data.
+
+If no such environment is found, `RequestEnvironmentInfo` returns an `InvalidParameterValue` error.
+
+Condition: You must specify either this or an EnvironmentId, or both. If you do not specify either, AWS Elastic Beanstalk returns `MissingRequiredParameter` error.>
+    void take
+  take info-type
+    like native-string
+    note <The type of information to request.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=RequestEnvironmentInfo>
+
+  find <EnvironmentId>, loan environment-id
+  find <EnvironmentName>, loan environment-name
+  find <InfoType>, loan info-type
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>

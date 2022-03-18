@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/list-associated-route53-health-checks-response
+  take form list-associated-route53-health-checks-response
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-associated-route53-health-checks, name <ListAssociatedRoute53HealthChecks>
+  note <Returns an array of all Amazon Route 53 health checks associated with a specific routing control.>
+
+  take routing-control-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the routing control that you're getting details for.>
+  take max-results
+    like native-integer
+    note <The number of objects that you want to return with this call.>
+    void take
+  take next-token
+    like native-string
+    note <The token that identifies which batch of results you want to see.>
+    void take
+
+  line </routingcontrol/{routing-control-arn}/associatedRoute53HealthChecks>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like list-associated-route53-health-checks-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

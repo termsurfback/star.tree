@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/backup-not-found-exception
+  take form backup-not-found-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/describe-backup-output
+  take form describe-backup-output
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-backup, name <DescribeBackup>
+  note <Describes an existing backup of a table.
+
+You can call `DescribeBackup` at a maximum rate of 10 times per second.>
+
+  take x-amz-target
+    like native-string
+  take describe-backup-input, like describe-backup-input
+
+  line </#X-Amz-Target=DynamoDB_20120810.DescribeBackup>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-backup-input
+
+  loot 200
+    seed json, like describe-backup-output
+    note <Success>
+  loot 480
+    seed json, like backup-not-found-exception
+    note <BackupNotFoundException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

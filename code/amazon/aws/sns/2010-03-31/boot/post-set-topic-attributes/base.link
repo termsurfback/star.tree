@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-security-exception
+  take form invalid-security-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-set-topic-attributes, name <POST_SetTopicAttributes>
+  note <Allows a topic owner to set an attribute of the topic to a new value.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take set-topic-attributes-input, like set-topic-attributes-input
+    void take
+
+  line </#Action=SetTopicAttributes>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan set-topic-attributes-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 482
+    seed xml, like not-found-exception
+    note <NotFoundException>
+  loot 483
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>
+  loot 484
+    seed xml, like invalid-security-exception
+    note <InvalidSecurityException>

@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/bad-request
+  take form bad-request
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/data-repository-task-not-found
+  take form data-repository-task-not-found
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/describe-data-repository-tasks-response
+  take form describe-data-repository-tasks-response
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/file-system-not-found
+  take form file-system-not-found
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-data-repository-tasks, name <DescribeDataRepositoryTasks>
+  note <Returns the description of specific Amazon FSx for Lustre data repository tasks, if one or more `TaskIds` values are provided in the request, or if filters are used in the request. You can use filters to narrow the response to include just tasks for specific file systems, or tasks in a specific lifecycle state. Otherwise, it returns all data repository tasks owned by your Amazon Web Services account in the Amazon Web Services Region of the endpoint that you're calling.
+
+When retrieving all tasks, you can paginate the response by using the optional `MaxResults` parameter to limit the number of tasks returned in a response. If more tasks remain, Amazon FSx returns a `NextToken` value in the response. In this case, send a later request with the `NextToken` request parameter set to the value of `NextToken` from the last response.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-data-repository-tasks-request, like describe-data-repository-tasks-request
+
+  line </#X-Amz-Target=AWSSimbaAPIService_v20180301.DescribeDataRepositoryTasks>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-data-repository-tasks-request
+
+  loot 200
+    seed json, like describe-data-repository-tasks-response
+    note <Success>
+  loot 480
+    seed json, like bad-request
+    note <BadRequest>
+  loot 481
+    seed json, like file-system-not-found
+    note <FileSystemNotFound>
+  loot 482
+    seed json, like data-repository-task-not-found
+    note <DataRepositoryTaskNotFound>
+  loot 483
+    seed json, like internal-server-error
+    note <InternalServerError>

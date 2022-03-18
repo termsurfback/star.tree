@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/describe-endpoints-response
+  take form describe-endpoints-response
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-endpoints, name <DescribeEndpoints>
+  note <DescribeEndpoints returns a list of available endpoints to make Timestream API calls against. This API is available through both Write and Query.
+
+Because Timestream’s SDKs are designed to transparently work with the service’s architecture, including the management and mapping of the service endpoints, _it is not recommended that you use this API unless_:
+
+- Your application uses a programming language that does not yet have SDK support
+
+- You require better control over the client-side implementation
+
+For detailed information on how to use DescribeEndpoints, see [The Endpoint Discovery Pattern and REST APIs](https://docs.aws.amazon.com/timestream/latest/developerguide/Using-API.endpoint-discovery.html).>
+
+  take x-amz-target
+    like native-string
+  take describe-endpoints-request, like describe-endpoints-request
+
+  line </#X-Amz-Target=Timestream_20181101.DescribeEndpoints>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-endpoints-request
+
+  loot 200
+    seed json, like describe-endpoints-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>

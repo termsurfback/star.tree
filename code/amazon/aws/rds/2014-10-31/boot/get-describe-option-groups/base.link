@@ -1,0 +1,97 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/option-group-not-found-fault
+  take form option-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/option-groups
+  take form option-groups
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-option-groups, name <GET_DescribeOptionGroups>
+  note <Describes the available option groups.>
+
+  take option-group-name
+    like native-string
+    note <The name of the option group to describe. Can't be supplied together with EngineName or MajorEngineVersion.>
+    void take
+  take filters
+    like list
+      like filter
+    note <This parameter isn't currently supported.>
+    void take
+  take marker
+    like native-string
+    note <An optional pagination token provided by a previous DescribeOptionGroups request. If this parameter is specified, the response includes only records beyond the marker, up to the value specified by `MaxRecords`.>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of records to include in the response. If more records exist than the specified `MaxRecords` value, a pagination token called a marker is included in the response so that you can retrieve the remaining results.
+
+Default: 100
+
+Constraints: Minimum 20, maximum 100.>
+    void take
+  take engine-name
+    like native-string
+    note <Filters the list of option groups to only include groups associated with a specific database engine.
+
+Valid Values:
+
+- `mariadb`
+
+- `mysql`
+
+- `oracle-ee`
+
+- `oracle-ee-cdb`
+
+- `oracle-se2`
+
+- `oracle-se2-cdb`
+
+- `postgres`
+
+- `sqlserver-ee`
+
+- `sqlserver-se`
+
+- `sqlserver-ex`
+
+- `sqlserver-web`>
+    void take
+  take major-engine-version
+    like native-string
+    note <Filters the list of option groups to only include groups associated with a specific database engine version. If specified, then EngineName must also be specified.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeOptionGroups>
+
+  find <OptionGroupName>, loan option-group-name
+  find <Filters>, loan filters
+  find <Marker>, loan marker
+  find <MaxRecords>, loan max-records
+  find <EngineName>, loan engine-name
+  find <MajorEngineVersion>, loan major-engine-version
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like option-groups
+    note <Success>
+  loot 480
+    seed xml, like option-group-not-found-fault
+    note <OptionGroupNotFoundFault>

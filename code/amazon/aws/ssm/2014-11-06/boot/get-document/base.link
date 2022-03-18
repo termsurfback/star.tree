@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/get-document-result
+  take form get-document-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-document
+  take form invalid-document
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-document-version
+  take form invalid-document-version
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-document, name <GetDocument>
+  note <Gets the contents of the specified Amazon Web Services Systems Manager document (SSM document).>
+
+  take x-amz-target
+    like native-string
+  take get-document-request, like get-document-request
+
+  line </#X-Amz-Target=AmazonSSM.GetDocument>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-document-request
+
+  loot 200
+    seed json, like get-document-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like invalid-document
+    note <InvalidDocument>
+  loot 482
+    seed json, like invalid-document-version
+    note <InvalidDocumentVersion>

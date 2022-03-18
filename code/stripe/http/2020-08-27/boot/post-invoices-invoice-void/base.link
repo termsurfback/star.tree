@@ -1,0 +1,31 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/invoice
+  take form invoice
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-invoices-invoice-void-body
+  take form post-invoices-invoice-void-body
+
+boot post-invoices-invoice-void, name <PostInvoicesInvoiceVoid>
+  note <Mark a finalized invoice as void. This cannot be undone. Voiding an invoice is similar to [deletion](#delete_invoice), however it only applies to finalized invoices and maintains a papertrail where the invoice can still be found.>
+
+  take invoice
+    like native-string
+  take post-invoices-invoice-void-body, like post-invoices-invoice-void-body
+    void take
+
+  line </v1/invoices/{invoice}/void>
+
+  seed x-www-form-urlencoded, loan post-invoices-invoice-void-body
+
+  loot 200
+    seed json, like invoice
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

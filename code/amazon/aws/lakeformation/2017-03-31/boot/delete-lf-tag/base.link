@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/lakeformation/2017-03-31/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/lakeformation/2017-03-31/base/delete-lf-tag-response
+  take form delete-lf-tag-response
+
+load @drumwork/snow/amazonaws.com/lakeformation/2017-03-31/base/entity-not-found-exception
+  take form entity-not-found-exception
+
+load @drumwork/snow/amazonaws.com/lakeformation/2017-03-31/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/lakeformation/2017-03-31/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/lakeformation/2017-03-31/base/operation-timeout-exception
+  take form operation-timeout-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-lf-tag, name <DeleteLFTag>
+  note <Deletes the specified tag key name. If the attribute key does not exist or the tag does not exist, then the operation will not do anything. If the attribute key exists, then the operation checks if any resources are tagged with this attribute key, if yes, the API throws a 400 Exception with the message "Delete not allowed" as the tag key is still attached with resources. You can consider untagging resources with this tag key.>
+
+  take x-amz-target
+    like native-string
+  take delete-lf-tag-request, like delete-lf-tag-request
+
+  line </#X-Amz-Target=AWSLakeFormation.DeleteLFTag>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-lf-tag-request
+
+  loot 200
+    seed json, like delete-lf-tag-response
+    note <Success>
+  loot 480
+    seed json, like entity-not-found-exception
+    note <EntityNotFoundException>
+  loot 481
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 482
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 483
+    seed json, like operation-timeout-exception
+    note <OperationTimeoutException>
+  loot 484
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

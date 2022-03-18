@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/direct-connect-client-exception
+  take form direct-connect-client-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/direct-connect-server-exception
+  take form direct-connect-server-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/lag
+  take form lag
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-lag, name <DeleteLag>
+  note <Deletes the specified link aggregation group (LAG). You cannot delete a LAG if it has active virtual interfaces or hosted connections.>
+
+  take x-amz-target
+    like native-string
+  take delete-lag-request, like delete-lag-request
+
+  line </#X-Amz-Target=OvertureService.DeleteLag>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-lag-request
+
+  loot 200
+    seed json, like lag
+    note <Success>
+  loot 480
+    seed json, like direct-connect-server-exception
+    note <DirectConnectServerException>
+  loot 481
+    seed json, like direct-connect-client-exception
+    note <DirectConnectClientException>

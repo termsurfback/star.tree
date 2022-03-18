@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/invalid-event-pattern-exception
+  take form invalid-event-pattern-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/test-event-pattern-response
+  take form test-event-pattern-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot test-event-pattern, name <TestEventPattern>
+  note <Tests whether the specified event pattern matches the provided event.
+
+Most services in Amazon Web Services treat : or / as the same character in Amazon Resource Names (ARNs). However, EventBridge uses an exact match in event patterns and rules. Be sure to use the correct ARN characters when creating event patterns so that they match the ARN syntax in the event you want to match.>
+
+  take x-amz-target
+    like native-string
+  take test-event-pattern-request, like test-event-pattern-request
+
+  line </#X-Amz-Target=AWSEvents.TestEventPattern>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan test-event-pattern-request
+
+  loot 200
+    seed json, like test-event-pattern-response
+    note <Success>
+  loot 480
+    seed json, like invalid-event-pattern-exception
+    note <InvalidEventPatternException>
+  loot 481
+    seed json, like internal-exception
+    note <InternalException>

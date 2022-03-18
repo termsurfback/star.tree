@@ -1,0 +1,44 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/access-point-not-found-exception
+  take form access-point-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/access-point-port
+  take form access-point-port
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/delete-load-balancer-listener-output
+  take form delete-load-balancer-listener-output
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-load-balancer-listeners, name <GET_DeleteLoadBalancerListeners>
+  note <Deletes the specified listeners from the specified load balancer.>
+
+  take load-balancer-name
+    like native-string
+    note <The name of the load balancer.>
+  take load-balancer-ports
+    like list
+      like access-point-port
+    note <The client port numbers of the listeners.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteLoadBalancerListeners>
+
+  find <LoadBalancerName>, loan load-balancer-name
+  find <LoadBalancerPorts>, loan load-balancer-ports
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-load-balancer-listener-output
+    note <Success>
+  loot 480
+    seed xml, like access-point-not-found-exception
+    note <AccessPointNotFoundException>

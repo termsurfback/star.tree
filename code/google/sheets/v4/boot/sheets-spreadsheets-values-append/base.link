@@ -1,0 +1,55 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/sheets/v4/base/append-values-response
+  take form append-values-response
+
+boot sheets-spreadsheets-values-append, name <sheets.spreadsheets.values.append>
+  note <Appends values to a spreadsheet. The input range is used to search for existing data and find a "table" within that range. Values will be appended to the next row of the table, starting with the first column of the table. See the [guide](/sheets/api/guides/values#appending_values) and [sample code](/sheets/api/samples/writing#append_values) for specific details of how tables are detected and data is appended. The caller must specify the spreadsheet ID, range, and a valueInputOption. The `valueInputOption` only controls how the input data will be added to the sheet (column-wise or row-wise), it does not influence what cell the data starts being written to.>
+
+  take spreadsheet-id
+    like native-string
+    note <The ID of the spreadsheet to update.>
+  take range
+    like native-string
+    note <The [A1 notation](/sheets/api/guides/concepts#cell) of a range to search for a logical table of data. Values are appended after the last row of the table.>
+  take include-values-in-response
+    like native-boolean
+    note <Determines if the update response should include the values of the cells that were appended. By default, responses do not include the updated values.>
+    void take
+  take insert-data-option
+    like native-string
+    note <How the input data should be inserted.>
+    void take
+  take response-date-time-render-option
+    like native-string
+    note <Determines how dates, times, and durations in the response should be rendered. This is ignored if response_value_render_option is FORMATTED_VALUE. The default dateTime render option is SERIAL_NUMBER.>
+    void take
+  take response-value-render-option
+    like native-string
+    note <Determines how values in the response should be rendered. The default render option is FORMATTED_VALUE.>
+    void take
+  take value-input-option
+    like native-string
+    note <How the input data should be interpreted.>
+    void take
+  take value-range, like value-range
+    void take
+
+  line </v4/spreadsheets/{spreadsheet-id}/values/{range}:append>
+
+  find <includeValuesInResponse>, loan include-values-in-response
+  find <insertDataOption>, loan insert-data-option
+  find <responseDateTimeRenderOption>, loan response-date-time-render-option
+  find <responseValueRenderOption>, loan response-value-render-option
+  find <valueInputOption>, loan value-input-option
+
+  seed json, loan value-range
+
+  loot 200
+    seed json, like append-values-response
+    note <Successful response>

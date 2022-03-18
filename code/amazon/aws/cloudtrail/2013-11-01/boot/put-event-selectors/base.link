@@ -1,0 +1,91 @@
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/insufficient-dependency-service-access-permission-exception
+  take form insufficient-dependency-service-access-permission-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/invalid-event-selectors-exception
+  take form invalid-event-selectors-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/invalid-home-region-exception
+  take form invalid-home-region-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/invalid-trail-name-exception
+  take form invalid-trail-name-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/not-organization-master-account-exception
+  take form not-organization-master-account-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/operation-not-permitted-exception
+  take form operation-not-permitted-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/put-event-selectors-response
+  take form put-event-selectors-response
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/trail-not-found-exception
+  take form trail-not-found-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/unsupported-operation-exception
+  take form unsupported-operation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-event-selectors, name <PutEventSelectors>
+  note <Configures an event selector or advanced event selectors for your trail. Use event selectors or advanced event selectors to specify management and data event settings for your trail. By default, trails created without specific event selectors are configured to log all read and write management events, and no data events.
+
+When an event occurs in your account, CloudTrail evaluates the event selectors or advanced event selectors in all trails. For each trail, if the event matches any event selector, the trail processes and logs the event. If the event doesn't match any event selector, the trail doesn't log the event.
+
+Example
+
+1. You create an event selector for a trail and specify that you want write-only events.
+
+2. The EC2 `GetConsoleOutput` and `RunInstances` API operations occur in your account.
+
+3. CloudTrail evaluates whether the events match your event selectors.
+
+4. The `RunInstances` is a write-only event and it matches your event selector. The trail logs the event.
+
+5. The `GetConsoleOutput` is a read-only event that doesn't match your event selector. The trail doesn't log the event.
+
+The `PutEventSelectors` operation must be called from the region in which the trail was created; otherwise, an `InvalidHomeRegionException` exception is thrown.
+
+You can configure up to five event selectors for each trail. For more information, see [Logging data and management events for trails](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-management-and-data-events-with-cloudtrail.html) and [Quotas in CloudTrail](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/WhatIsCloudTrail-Limits.html) in the _CloudTrail User Guide_.
+
+You can add advanced event selectors, and conditions for your advanced event selectors, up to a maximum of 500 values for all conditions and selectors on a trail. You can use either `AdvancedEventSelectors` or `EventSelectors`, but not both. If you apply `AdvancedEventSelectors` to a trail, any existing `EventSelectors` are overwritten. For more information about advanced event selectors, see [Logging data events for trails](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-data-events-with-cloudtrail.html) in the _CloudTrail User Guide_.>
+
+  take x-amz-target
+    like native-string
+  take put-event-selectors-request, like put-event-selectors-request
+
+  line </#X-Amz-Target=com.amazonaws.cloudtrail.v20131101.CloudTrail_20131101.PutEventSelectors>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan put-event-selectors-request
+
+  loot 200
+    seed json, like put-event-selectors-response
+    note <Success>
+  loot 480
+    seed json, like trail-not-found-exception
+    note <TrailNotFoundException>
+  loot 481
+    seed json, like invalid-trail-name-exception
+    note <InvalidTrailNameException>
+  loot 482
+    seed json, like invalid-home-region-exception
+    note <InvalidHomeRegionException>
+  loot 483
+    seed json, like invalid-event-selectors-exception
+    note <InvalidEventSelectorsException>
+  loot 484
+    seed json, like unsupported-operation-exception
+    note <UnsupportedOperationException>
+  loot 485
+    seed json, like operation-not-permitted-exception
+    note <OperationNotPermittedException>
+  loot 486
+    seed json, like not-organization-master-account-exception
+    note <NotOrganizationMasterAccountException>
+  loot 487
+    seed json, like insufficient-dependency-service-access-permission-exception
+    note <InsufficientDependencyServiceAccessPermissionException>

@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/suspend-contact-recording-body
+  take form suspend-contact-recording-body
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/suspend-contact-recording-response
+  take form suspend-contact-recording-response
+
+boot suspend-contact-recording, name <SuspendContactRecording>
+  note <When a contact is being recorded, this API suspends recording the call. For example, you might suspend the call recording while collecting sensitive information, such as a credit card number. Then use ResumeContactRecording to restart recording.
+
+The period of time that the recording is suspended is filled with silence in the final recording.
+
+Only voice recordings are supported at this time.>
+
+  take suspend-contact-recording-body, like suspend-contact-recording-body
+
+  line </contact/suspend-recording>
+
+  seed json, loan suspend-contact-recording-body
+
+  loot 200
+    seed json, like suspend-contact-recording-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-service-exception
+    note <InternalServiceException>

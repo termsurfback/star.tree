@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-usage-limit-fault
+  take form invalid-usage-limit-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unsupported-operation-fault
+  take form unsupported-operation-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/usage-limit
+  take form usage-limit
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/usage-limit-not-found-fault
+  take form usage-limit-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-modify-usage-limit, name <POST_ModifyUsageLimit>
+  note <Modifies a usage limit in a cluster. You can't modify the feature type or period of a usage limit.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take modify-usage-limit-message, like modify-usage-limit-message
+    void take
+
+  line </#Action=ModifyUsageLimit>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan modify-usage-limit-message
+
+  loot 200
+    seed xml, like usage-limit
+    note <Success>
+  loot 480
+    seed xml, like invalid-usage-limit-fault
+    note <InvalidUsageLimitFault>
+  loot 481
+    seed xml, like usage-limit-not-found-fault
+    note <UsageLimitNotFoundFault>
+  loot 482
+    seed xml, like unsupported-operation-fault
+    note <UnsupportedOperationFault>

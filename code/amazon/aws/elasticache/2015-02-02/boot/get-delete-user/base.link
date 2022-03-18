@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/default-user-associated-to-user-group-fault
+  take form default-user-associated-to-user-group-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-user-state-fault
+  take form invalid-user-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/user
+  take form user
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/user-not-found-fault
+  take form user-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-user, name <GET_DeleteUser>
+  note <For Redis engine version 6.x onwards: Deletes a user. The user will be removed from all user groups and in turn removed from all replication groups. For more information, see [Using Role Based Access Control (RBAC)](http://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/Clusters.RBAC.html).>
+
+  take user-id
+    like native-string
+    note <The ID of the user.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteUser>
+
+  find <UserId>, loan user-id
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like user
+    note <Success>
+  loot 480
+    seed xml, like invalid-user-state-fault
+    note <InvalidUserStateFault>
+  loot 481
+    seed xml, like user-not-found-fault
+    note <UserNotFoundFault>
+  loot 482
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed xml, like default-user-associated-to-user-group-fault
+    note <DefaultUserAssociatedToUserGroupFault>

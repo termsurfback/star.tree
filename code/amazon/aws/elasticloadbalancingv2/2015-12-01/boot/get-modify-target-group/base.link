@@ -1,0 +1,121 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/grpc-code
+  take form grpc-code
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/http-code
+  take form http-code
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/invalid-configuration-request-exception
+  take form invalid-configuration-request-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/modify-target-group-output
+  take form modify-target-group-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/target-group-not-found-exception
+  take form target-group-not-found-exception
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-modify-target-group, name <GET_ModifyTargetGroup>
+  note <Modifies the health checks used when evaluating the health state of the targets in the specified target group.>
+
+  take target-group-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the target group.>
+  take health-check-protocol
+    like native-string
+    note <The protocol the load balancer uses when performing health checks on targets. For Application Load Balancers, the default is HTTP. For Network Load Balancers and Gateway Load Balancers, the default is TCP. The TCP protocol is not supported for health checks if the protocol of the target group is HTTP or HTTPS. It is supported for health checks only if the protocol of the target group is TCP, TLS, UDP, or TCP_UDP. The GENEVE, TLS, UDP, and TCP_UDP protocols are not supported for health checks.
+
+With Network Load Balancers, you can't modify this setting.>
+    void take
+  take health-check-port
+    like native-string
+    note <The port the load balancer uses when performing health checks on targets.>
+    void take
+  take health-check-path
+    like native-string
+    note <[HTTP/HTTPS health checks] The destination for health checks on the targets.
+
+[HTTP1 or HTTP2 protocol version] The ping path. The default is /.
+
+[GRPC protocol version] The path of a custom health check method with the format /package.service/method. The default is /Amazon Web Services.ALB/healthcheck.>
+    void take
+  take health-check-enabled
+    like native-boolean
+    note <Indicates whether health checks are enabled.>
+    void take
+  take health-check-interval-seconds
+    like native-integer
+    note <The approximate amount of time, in seconds, between health checks of an individual target. For TCP health checks, the supported values are 10 or 30 seconds.
+
+With Network Load Balancers, you can't modify this setting.>
+    void take
+  take health-check-timeout-seconds
+    like native-integer
+    note <[HTTP/HTTPS health checks] The amount of time, in seconds, during which no response means a failed health check.
+
+With Network Load Balancers, you can't modify this setting.>
+    void take
+  take healthy-threshold-count
+    like native-integer
+    note <The number of consecutive health checks successes required before considering an unhealthy target healthy.>
+    void take
+  take unhealthy-threshold-count
+    like native-integer
+    note <The number of consecutive health check failures required before considering the target unhealthy. For target groups with a protocol of TCP or TLS, this value must be the same as the healthy threshold count.>
+    void take
+  take matcher
+    like form
+      take http-code, name <HttpCode>
+        like http-code
+        void take
+        note <For Application Load Balancers, you can specify values between 200 and 499, and the default value is 200. You can specify multiple values (for example, "200,202") or a range of values (for example, "200-299").
+
+For Network Load Balancers and Gateway Load Balancers, this must be "200-399".>
+      take grpc-code, name <GrpcCode>
+        like grpc-code
+        void take
+        note <You can specify values between 0 and 99. You can specify multiple values (for example, "0,1") or a range of values (for example, "0-5"). The default value is 12.>
+    note <[HTTP/HTTPS health checks] The HTTP or gRPC codes to use when checking for a successful response from a target.
+
+With Network Load Balancers, you can't modify this setting.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyTargetGroup>
+
+  find <TargetGroupArn>, loan target-group-arn
+  find <HealthCheckProtocol>, loan health-check-protocol
+  find <HealthCheckPort>, loan health-check-port
+  find <HealthCheckPath>, loan health-check-path
+  find <HealthCheckEnabled>, loan health-check-enabled
+  find <HealthCheckIntervalSeconds>, loan health-check-interval-seconds
+  find <HealthCheckTimeoutSeconds>, loan health-check-timeout-seconds
+  find <HealthyThresholdCount>, loan healthy-threshold-count
+  find <UnhealthyThresholdCount>, loan unhealthy-threshold-count
+  find <Matcher>, loan matcher
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-target-group-output
+    note <Success>
+  loot 480
+    seed xml, like target-group-not-found-exception
+    note <TargetGroupNotFoundException>
+  loot 481
+    seed xml, like invalid-configuration-request-exception
+    note <InvalidConfigurationRequestException>

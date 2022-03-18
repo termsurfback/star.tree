@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/missing-parameter-value-exception
+  take form missing-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/update-backup-plan-body
+  take form update-backup-plan-body
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/update-backup-plan-output
+  take form update-backup-plan-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-backup-plan, name <UpdateBackupPlan>
+  note <Updates an existing backup plan identified by its `backupPlanId` with the input document in JSON format. The new version is uniquely identified by a `VersionId`.>
+
+  take backup-plan-id
+    like native-string
+    note <Uniquely identifies a backup plan.>
+  take update-backup-plan-body, like update-backup-plan-body
+
+  line </backup/plans/{backup-plan-id}>
+
+  seed json, loan update-backup-plan-body
+
+  loot 200
+    seed json, like update-backup-plan-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed json, like missing-parameter-value-exception
+    note <MissingParameterValueException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

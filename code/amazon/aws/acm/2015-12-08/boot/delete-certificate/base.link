@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/invalid-arn-exception
+  take form invalid-arn-exception
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-certificate, name <DeleteCertificate>
+  note <Deletes a certificate and its associated private key. If this action succeeds, the certificate no longer appears in the list that can be displayed by calling the ListCertificates action or be retrieved by calling the GetCertificate action. The certificate will not be available for use by Amazon Web Services services integrated with ACM.
+
+You cannot delete an ACM certificate that is being used by another Amazon Web Services service. To delete a certificate that is in use, the certificate association must first be removed.>
+
+  take x-amz-target
+    like native-string
+  take delete-certificate-request, like delete-certificate-request
+
+  line </#X-Amz-Target=CertificateManager.DeleteCertificate>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-certificate-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>
+  loot 482
+    seed json, like invalid-arn-exception
+    note <InvalidArnException>

@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/create-alias-result
+  take form create-alias-result
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/entity-already-exists-exception
+  take form entity-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/entity-does-not-exist-exception
+  take form entity-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-alias, name <CreateAlias>
+  note <Creates an alias for a directory and assigns the alias to the directory. The alias is used to construct the access URL for the directory, such as `http://&lt;alias&gt;.awsapps.com`.
+
+After an alias has been created, it cannot be deleted or reused, so this operation should only be used when absolutely necessary.>
+
+  take x-amz-target
+    like native-string
+  take create-alias-request, like create-alias-request
+
+  line </#X-Amz-Target=DirectoryService_20150416.CreateAlias>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-alias-request
+
+  loot 200
+    seed json, like create-alias-result
+    note <Success>
+  loot 480
+    seed json, like entity-already-exists-exception
+    note <EntityAlreadyExistsException>
+  loot 481
+    seed json, like entity-does-not-exist-exception
+    note <EntityDoesNotExistException>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 483
+    seed json, like client-exception
+    note <ClientException>
+  loot 484
+    seed json, like service-exception
+    note <ServiceException>

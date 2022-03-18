@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/invalid-arn-exception
+  take form invalid-arn-exception
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/invalid-state-exception
+  take form invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/permission-already-exists-exception
+  take form permission-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/request-failed-exception
+  take form request-failed-exception
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-permission, name <CreatePermission>
+  note <Grants one or more permissions on a private CA to the AWS Certificate Manager (ACM) service principal (`acm.amazonaws.com`). These permissions allow ACM to issue and renew ACM certificates that reside in the same AWS account as the CA.
+
+You can list current permissions with the [ListPermissions](https://docs.aws.amazon.com/acm-pca/latest/APIReference/API_ListPermissions.html) action and revoke them with the [DeletePermission](https://docs.aws.amazon.com/acm-pca/latest/APIReference/API_DeletePermission.html) action.
+
+**About Permissions** - If the private CA and the certificates it issues reside in the same account, you can use `CreatePermission` to grant permissions for ACM to carry out automatic certificate renewals.
+
+- For automatic certificate renewal to succeed, the ACM service principal needs permissions to create, retrieve, and list certificates.
+
+- If the private CA and the ACM certificates reside in different accounts, then permissions cannot be used to enable automatic renewals. Instead, the ACM certificate owner must set up a resource-based policy to enable cross-account issuance and renewals. For more information, see [Using a Resource Based Policy with ACM Private CA](https://docs.aws.amazon.com/acm-pca/latest/userguide/pca-rbp.html).>
+
+  take x-amz-target
+    like native-string
+  take create-permission-request, like create-permission-request
+
+  line </#X-Amz-Target=ACMPrivateCA.CreatePermission>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-permission-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-arn-exception
+    note <InvalidArnException>
+  loot 482
+    seed json, like permission-already-exists-exception
+    note <PermissionAlreadyExistsException>
+  loot 483
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 484
+    seed json, like invalid-state-exception
+    note <InvalidStateException>
+  loot 485
+    seed json, like request-failed-exception
+    note <RequestFailedException>

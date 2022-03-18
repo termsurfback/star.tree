@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/deauthorize-connection-response
+  take form deauthorize-connection-response
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot deauthorize-connection, name <DeauthorizeConnection>
+  note <Removes all authorization parameters from the connection. This lets you remove the secret from the connection so you can reuse it without having to create a new connection.>
+
+  take x-amz-target
+    like native-string
+  take deauthorize-connection-request, like deauthorize-connection-request
+
+  line </#X-Amz-Target=AWSEvents.DeauthorizeConnection>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan deauthorize-connection-request
+
+  loot 200
+    seed json, like deauthorize-connection-response
+    note <Success>
+  loot 480
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-exception
+    note <InternalException>

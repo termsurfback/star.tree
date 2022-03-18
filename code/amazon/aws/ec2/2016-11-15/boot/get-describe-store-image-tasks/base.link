@@ -1,0 +1,77 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-store-image-tasks-result
+  take form describe-store-image-tasks-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/image-id
+  take form image-id
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-store-image-tasks, name <GET_DescribeStoreImageTasks>
+  note <Describes the progress of the AMI store tasks. You can describe the store tasks for specified AMIs. If you don't specify the AMIs, you get a paginated list of store tasks from the last 31 days.
+
+For each AMI task, the response indicates if the task is `InProgress`, `Completed`, or `Failed`. For tasks `InProgress`, the response shows the estimated progress as a percentage.
+
+Tasks are listed in reverse chronological order. Currently, only tasks from the past 31 days can be viewed.
+
+To use this API, you must have the required permissions. For more information, see [Permissions for storing and restoring AMIs using Amazon S3](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ami-store-restore.html#ami-s3-permissions) in the _Amazon Elastic Compute Cloud User Guide_.
+
+For more information, see [Store and restore an AMI using Amazon S3](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ami-store-restore.html) in the _Amazon Elastic Compute Cloud User Guide_.>
+
+  take image-id
+    like list
+      like image-id
+    note <The AMI IDs for which to show progress. Up to 20 AMI IDs can be included in a request.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take filter
+    like list
+      like filter
+    note <The filters.
+
+- `task-state` - Returns tasks in a certain state (`InProgress` | `Completed` | `Failed`)
+
+- `bucket` - Returns task information for tasks that targeted a specific bucket. For the filter value, specify the bucket name.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next page of results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return in a single call. To retrieve the remaining results, make another call with the returned `NextToken` value. This value can be between 1 and 200. You cannot specify this parameter and the `ImageIDs` parameter in the same call.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeStoreImageTasks>
+
+  find <ImageId>, loan image-id
+  find <DryRun>, loan dry-run
+  find <Filter>, loan filter
+  find <NextToken>, loan next-token
+  find <MaxResults>, loan max-results
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-store-image-tasks-result
+    note <Success>

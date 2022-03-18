@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/list-batch-inference-jobs-response
+  take form list-batch-inference-jobs-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-batch-inference-jobs, name <ListBatchInferenceJobs>
+  note <Gets a list of the batch inference jobs that have been performed off of a solution version.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-batch-inference-jobs-request, like list-batch-inference-jobs-request
+
+  line </#X-Amz-Target=AmazonPersonalize.ListBatchInferenceJobs>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-batch-inference-jobs-request
+
+  loot 200
+    seed json, like list-batch-inference-jobs-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>

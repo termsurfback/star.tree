@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/customer-master-key-spec
+  take form customer-master-key-spec
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/encryption-algorithm-spec-list
+  take form encryption-algorithm-spec-list
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/key-id-type
+  take form key-id-type
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/key-spec
+  take form key-spec
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/key-usage-type
+  take form key-usage-type
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/public-key-type
+  take form public-key-type
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/signing-algorithm-spec-list
+  take form signing-algorithm-spec-list
+
+form get-public-key-response, name <GetPublicKeyResponse>
+  take key-id, name <KeyId>
+    like key-id-type
+    void take
+    note <The Amazon Resource Name ([key ARN](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#key-id-key-ARN)) of the asymmetric KMS key from which the public key was downloaded.>
+  take public-key, name <PublicKey>
+    like public-key-type
+    void take
+    note <The exported public key.
+
+The value is a DER-encoded X.509 public key, also known as `SubjectPublicKeyInfo` (SPKI), as defined in [RFC 5280](https://tools.ietf.org/html/rfc5280). When you use the HTTP API or the Amazon Web Services CLI, the value is Base64-encoded. Otherwise, it is not Base64-encoded.>
+  take customer-master-key-spec, name <CustomerMasterKeySpec>
+    like customer-master-key-spec
+    void take
+    note <Instead, use the `KeySpec` field in the `GetPublicKey` response.
+
+The `KeySpec` and `CustomerMasterKeySpec` fields have the same value. We recommend that you use the `KeySpec` field in your code. However, to avoid breaking changes, KMS will support both fields.
+
+This field has been deprecated. Instead, use the KeySpec field.>
+  take key-spec, name <KeySpec>
+    like key-spec
+    void take
+    note <The type of the of the public key that was downloaded.>
+  take key-usage, name <KeyUsage>
+    like key-usage-type
+    void take
+    note <The permitted use of the public key. Valid values are `ENCRYPT_DECRYPT` or `SIGN_VERIFY`.
+
+This information is critical. If a public key with `SIGN_VERIFY` key usage encrypts data outside of KMS, the ciphertext cannot be decrypted.>
+  take encryption-algorithms, name <EncryptionAlgorithms>
+    like encryption-algorithm-spec-list
+    void take
+    note <The encryption algorithms that KMS supports for this key.
+
+This information is critical. If a public key encrypts data outside of KMS by using an unsupported encryption algorithm, the ciphertext cannot be decrypted.
+
+This field appears in the response only when the `KeyUsage` of the public key is `ENCRYPT_DECRYPT`.>
+  take signing-algorithms, name <SigningAlgorithms>
+    like signing-algorithm-spec-list
+    void take
+    note <The signing algorithms that KMS supports for this key.
+
+This field appears in the response only when the `KeyUsage` of the public key is `SIGN_VERIFY`.>

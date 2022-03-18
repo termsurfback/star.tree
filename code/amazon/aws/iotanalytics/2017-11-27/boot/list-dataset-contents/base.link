@@ -1,0 +1,73 @@
+
+load @drumwork/snow/amazonaws.com/iotanalytics/2017-11-27/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iotanalytics/2017-11-27/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iotanalytics/2017-11-27/base/list-dataset-contents-response
+  take form list-dataset-contents-response
+
+load @drumwork/snow/amazonaws.com/iotanalytics/2017-11-27/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iotanalytics/2017-11-27/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/iotanalytics/2017-11-27/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-dataset-contents, name <ListDatasetContents>
+  note <Lists information about dataset contents that have been created.>
+
+  take dataset-name
+    like native-string
+    note <The name of the dataset whose contents information you want to list.>
+  take next-token
+    like native-string
+    note <The token for the next set of results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return in this request.>
+    void take
+  take scheduled-on-or-after
+    like native-string
+    note <A filter to limit results to those dataset contents whose creation is scheduled on or after the given time. See the field `triggers.schedule` in the `CreateDataset` request. (timestamp)>
+    void take
+  take scheduled-before
+    like native-string
+    note <A filter to limit results to those dataset contents whose creation is scheduled before the given time. See the field `triggers.schedule` in the `CreateDataset` request. (timestamp)>
+    void take
+
+  line </datasets/{dataset-name}/contents>
+
+  find <nextToken>, loan next-token
+  find <maxResults>, loan max-results
+  find <scheduledOnOrAfter>, loan scheduled-on-or-after
+  find <scheduledBefore>, loan scheduled-before
+
+  loot 200
+    seed json, like list-dataset-contents-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 482
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

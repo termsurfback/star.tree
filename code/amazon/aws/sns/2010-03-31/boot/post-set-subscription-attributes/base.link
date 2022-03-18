@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/filter-policy-limit-exceeded-exception
+  take form filter-policy-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-set-subscription-attributes, name <POST_SetSubscriptionAttributes>
+  note <Allows a subscription owner to set an attribute of the subscription to a new value.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take set-subscription-attributes-input, like set-subscription-attributes-input
+    void take
+
+  line </#Action=SetSubscriptionAttributes>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan set-subscription-attributes-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed xml, like filter-policy-limit-exceeded-exception
+    note <FilterPolicyLimitExceededException>
+  loot 482
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 483
+    seed xml, like not-found-exception
+    note <NotFoundException>
+  loot 484
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>

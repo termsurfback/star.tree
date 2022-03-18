@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-tax-codes-id-body
+  take form get-tax-codes-id-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/tax-code
+  take form tax-code
+
+boot get-tax-codes-id, name <GetTaxCodesId>
+  note <Retrieves the details of an existing tax code. Supply the unique tax code ID and Stripe will return the corresponding tax code information.>
+
+  take id
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-tax-codes-id-body, like get-tax-codes-id-body
+    void take
+
+  line </v1/tax_codes/{id}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-tax-codes-id-body
+
+  loot 200
+    seed json, like tax-code
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

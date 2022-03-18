@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/attribute-limit-exceeded-exception
+  take form attribute-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/cluster-not-found-exception
+  take form cluster-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/put-attributes-response
+  take form put-attributes-response
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/target-not-found-exception
+  take form target-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-attributes, name <PutAttributes>
+  note <Create or update an attribute on an Amazon ECS resource. If the attribute does not exist, it is created. If the attribute exists, its value is replaced with the specified value. To delete an attribute, use DeleteAttributes. For more information, see [Attributes](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-placement-constraints.html#attributes) in the _Amazon Elastic Container Service Developer Guide_.>
+
+  take x-amz-target
+    like native-string
+  take put-attributes-request, like put-attributes-request
+
+  line </#X-Amz-Target=AmazonEC2ContainerServiceV20141113.PutAttributes>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan put-attributes-request
+
+  loot 200
+    seed json, like put-attributes-response
+    note <Success>
+  loot 480
+    seed json, like cluster-not-found-exception
+    note <ClusterNotFoundException>
+  loot 481
+    seed json, like target-not-found-exception
+    note <TargetNotFoundException>
+  loot 482
+    seed json, like attribute-limit-exceeded-exception
+    note <AttributeLimitExceededException>
+  loot 483
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>

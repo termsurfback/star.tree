@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/tag-resource-body
+  take form tag-resource-body
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/tag-resource-response
+  take form tag-resource-response
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot tag-resource, name <TagResource>
+  note <Adds or edits tags for a AWS RoboMaker resource.
+
+Each tag consists of a tag key and a tag value. Tag keys and tag values are both required, but tag values can be empty strings.
+
+For information about the rules that apply to tag keys and tag values, see [User-Defined Tag Restrictions](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/allocation-tag-restrictions.html) in the _AWS Billing and Cost Management User Guide_.>
+
+  take resource-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the AWS RoboMaker resource you are tagging.>
+  take tag-resource-body, like tag-resource-body
+
+  line </tags/{resource-arn}>
+
+  seed json, loan tag-resource-body
+
+  loot 200
+    seed json, like tag-resource-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>

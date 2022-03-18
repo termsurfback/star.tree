@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/access-point-not-found-exception
+  take form access-point-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/instance
+  take form instance
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/invalid-end-point-exception
+  take form invalid-end-point-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/register-end-points-output
+  take form register-end-points-output
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-register-instances-with-load-balancer, name <GET_RegisterInstancesWithLoadBalancer>
+  note <Adds the specified instances to the specified load balancer.
+
+The instance must be a running instance in the same network as the load balancer (EC2-Classic or the same VPC). If you have EC2-Classic instances and a load balancer in a VPC with ClassicLink enabled, you can link the EC2-Classic instances to that VPC and then register the linked EC2-Classic instances with the load balancer in the VPC.
+
+Note that `RegisterInstanceWithLoadBalancer` completes when the request has been registered. Instance registration takes a little time to complete. To check the state of the registered instances, use DescribeLoadBalancers or DescribeInstanceHealth.
+
+After the instance is registered, it starts receiving traffic and requests from the load balancer. Any instance that is not in one of the Availability Zones registered for the load balancer is moved to the `OutOfService` state. If an Availability Zone is added to the load balancer later, any instances registered with the load balancer move to the `InService` state.
+
+To deregister instances from a load balancer, use DeregisterInstancesFromLoadBalancer.
+
+For more information, see [Register or De-Register EC2 Instances](https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/elb-deregister-register-instances.html) in the _Classic Load Balancers Guide_.>
+
+  take load-balancer-name
+    like native-string
+    note <The name of the load balancer.>
+  take instances
+    like list
+      like instance
+    note <The IDs of the instances.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=RegisterInstancesWithLoadBalancer>
+
+  find <LoadBalancerName>, loan load-balancer-name
+  find <Instances>, loan instances
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like register-end-points-output
+    note <Success>
+  loot 480
+    seed xml, like access-point-not-found-exception
+    note <AccessPointNotFoundException>
+  loot 481
+    seed xml, like invalid-end-point-exception
+    note <InvalidEndPointException>

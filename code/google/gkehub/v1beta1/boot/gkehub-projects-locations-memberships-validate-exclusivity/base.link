@@ -1,0 +1,30 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/gkehub/v1beta1/base/validate-exclusivity-response
+  take form validate-exclusivity-response
+
+boot gkehub-projects-locations-memberships-validate-exclusivity, name <gkehub.projects.locations.memberships.validateExclusivity>
+  note <ValidateExclusivity validates the state of exclusivity in the cluster. The validation does not depend on an existing Hub membership resource.>
+
+  take parent
+    like native-string
+    note <Required. The parent (project and location) where the Memberships will be created. Specified in the format `projects/*/locations/*`.>
+  take cr-manifest
+    like native-string
+    note <Optional. The YAML of the membership CR in the cluster. Empty if the membership CR does not exist.>
+    void take
+  take intended-membership
+    like native-string
+    note <Required. The intended membership name under the `parent`. This method only does validation in anticipation of a CreateMembership call with the same name.>
+    void take
+
+  line </v1beta1/{parent}/memberships:validateExclusivity>
+
+  find <crManifest>, loan cr-manifest
+  find <intendedMembership>, loan intended-membership
+
+  loot 200
+    seed json, like validate-exclusivity-response
+    note <Successful response>

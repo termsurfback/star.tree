@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/stop-contact-recording-body
+  take form stop-contact-recording-body
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/stop-contact-recording-response
+  take form stop-contact-recording-response
+
+boot stop-contact-recording, name <StopContactRecording>
+  note <Stops recording a call when a contact is being recorded. StopContactRecording is a one-time action. If you use StopContactRecording to stop recording an ongoing call, you can't use StartContactRecording to restart it. For scenarios where the recording has started and you want to suspend it for sensitive information (for example, to collect a credit card number), and then restart it, use SuspendContactRecording and ResumeContactRecording.
+
+Only voice recordings are supported at this time.>
+
+  take stop-contact-recording-body, like stop-contact-recording-body
+
+  line </contact/stop-recording>
+
+  seed json, loan stop-contact-recording-body
+
+  loot 200
+    seed json, like stop-contact-recording-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-service-exception
+    note <InternalServiceException>

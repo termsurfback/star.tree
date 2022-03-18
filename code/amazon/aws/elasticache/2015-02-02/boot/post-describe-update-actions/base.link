@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/update-actions-message
+  take form update-actions-message
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-update-actions, name <POST_DescribeUpdateActions>
+  note <Returns details of the update actions>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-update-actions-message, like describe-update-actions-message
+    void take
+
+  line </#Action=DescribeUpdateActions>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-update-actions-message
+
+  loot 200
+    seed xml, like update-actions-message
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 481
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

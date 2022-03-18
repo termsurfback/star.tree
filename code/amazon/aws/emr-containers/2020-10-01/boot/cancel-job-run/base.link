@@ -1,0 +1,34 @@
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/cancel-job-run-response
+  take form cancel-job-run-response
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot cancel-job-run, name <CancelJobRun>
+  note <Cancels a job run. A job run is a unit of work, such as a Spark jar, PySpark script, or SparkSQL query, that you submit to Amazon EMR on EKS.>
+
+  take job-run-id
+    like native-string
+    note <The ID of the job run to cancel.>
+  take virtual-cluster-id
+    like native-string
+    note <The ID of the virtual cluster for which the job run will be canceled.>
+
+  line </virtualclusters/{virtual-cluster-id}/jobruns/{job-run-id}>
+
+  loot 200
+    seed json, like cancel-job-run-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>

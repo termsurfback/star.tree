@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/pipeline-not-found-exception
+  take form pipeline-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-pipeline, name <DeletePipeline>
+  note <Deletes a pipeline, its pipeline definition, and its run history. AWS Data Pipeline attempts to cancel instances associated with the pipeline that are currently being processed by task runners.
+
+Deleting a pipeline cannot be undone. You cannot query or restore a deleted pipeline. To temporarily pause a pipeline instead of deleting it, call SetStatus with the status set to `PAUSE` on individual components. Components that are paused by SetStatus can be resumed.>
+
+  take x-amz-target
+    like native-string
+  take delete-pipeline-input, like delete-pipeline-input
+
+  line </#X-Amz-Target=DataPipeline.DeletePipeline>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-pipeline-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like pipeline-not-found-exception
+    note <PipelineNotFoundException>
+  loot 481
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 482
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

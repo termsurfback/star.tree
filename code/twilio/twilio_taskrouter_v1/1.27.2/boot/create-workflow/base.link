@@ -1,0 +1,24 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_taskrouter_v1/1.27.2/base/create-workflow-body
+  take form create-workflow-body
+
+load @drumwork/snow/twilio.com/twilio_taskrouter_v1/1.27.2/base/taskrouter-v1-workspace-workflow
+  take form taskrouter-v1-workspace-workflow
+
+boot create-workflow, name <CreateWorkflow>
+  take workspace-sid
+    like native-string
+    note <The SID of the Workspace that the new Workflow to create belongs to.>
+  take create-workflow-body, like create-workflow-body
+    void take
+
+  line </v1/Workspaces/{workspace-sid}/Workflows>
+
+  seed x-www-form-urlencoded, loan create-workflow-body
+
+  loot 201
+    seed json, like taskrouter-v1-workspace-workflow
+    note <Created>

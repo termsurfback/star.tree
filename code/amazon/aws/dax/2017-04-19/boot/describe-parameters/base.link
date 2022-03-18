@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/describe-parameters-response
+  take form describe-parameters-response
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/parameter-group-not-found-fault
+  take form parameter-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/service-linked-role-not-found-fault
+  take form service-linked-role-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-parameters, name <DescribeParameters>
+  note <Returns the detailed parameter list for a particular parameter group.>
+
+  take x-amz-target
+    like native-string
+  take describe-parameters-request, like describe-parameters-request
+
+  line </#X-Amz-Target=AmazonDAXV3.DescribeParameters>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-parameters-request
+
+  loot 200
+    seed json, like describe-parameters-response
+    note <Success>
+  loot 480
+    seed json, like parameter-group-not-found-fault
+    note <ParameterGroupNotFoundFault>
+  loot 481
+    seed json, like service-linked-role-not-found-fault
+    note <ServiceLinkedRoleNotFoundFault>
+  loot 482
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed json, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

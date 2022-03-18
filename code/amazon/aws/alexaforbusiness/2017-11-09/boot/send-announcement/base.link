@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/already-exists-exception
+  take form already-exists-exception
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/send-announcement-response
+  take form send-announcement-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot send-announcement, name <SendAnnouncement>
+  note <Triggers an asynchronous flow to send text, SSML, or audio announcements to rooms that are identified by a search or filter.>
+
+  take x-amz-target
+    like native-string
+  take send-announcement-request, like send-announcement-request
+
+  line </#X-Amz-Target=AlexaForBusiness.SendAnnouncement>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan send-announcement-request
+
+  loot 200
+    seed json, like send-announcement-response
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed json, like already-exists-exception
+    note <AlreadyExistsException>

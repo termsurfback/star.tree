@@ -1,0 +1,264 @@
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-invoices-upcoming-lines-body
+  take form get-invoices-upcoming-lines-body
+
+boot get-invoices-upcoming-lines, name <GetInvoicesUpcomingLines>
+  note <When retrieving an upcoming invoice, you’ll get a **lines** property containing the total count of line items and the first handful of those items. There is also a URL where you can retrieve the full (paginated) list of line items.>
+
+  take automatic-tax
+    like form
+      take enabled, name <enabled>
+    note <Settings for automatic tax lookup for this invoice preview.>
+    void take
+  take coupon
+    like native-string
+    note <The code of the coupon to apply. If `subscription` or `subscription_items` is provided, the invoice returned will preview updating or creating a subscription with that coupon. Otherwise, it will preview applying that coupon to the customer for the next upcoming invoice from among the customer&#39;s subscriptions. The invoice can be previewed without a coupon by passing this value as an empty string.>
+    void take
+  take customer
+    like native-string
+    note <The identifier of the customer whose upcoming invoice you&#39;d like to retrieve.>
+    void take
+  take customer-details
+    like form
+      take address, name <address>
+        void take
+      take shipping, name <shipping>
+        void take
+      take tax, name <tax>
+        like form
+          take ip-address, name <ip_address>
+            void take
+        void take
+      take tax-exempt, name <tax_exempt>
+        void take
+      take tax-ids, name <tax_ids>
+        void take
+    note <Details about the customer you want to invoice or overrides for an existing customer.>
+    void take
+  take discounts
+    like sink
+      like list
+        like form
+          take coupon, name <coupon>
+            void take
+          take discount, name <discount>
+            void take
+      like native-string
+    note <The coupons to redeem into discounts for the invoice preview. If not specified, inherits the discount from the customer or subscription. Pass an empty string to avoid inheriting any discounts. To preview the upcoming invoice for a subscription that hasn&#39;t been created, use `coupon` instead.>
+    void take
+  take ending-before
+    like native-string
+    note <A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.>
+    void take
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take invoice-items
+    like list
+      like form
+        take amount, name <amount>
+          void take
+        take currency, name <currency>
+          void take
+        take description, name <description>
+          void take
+        take discountable, name <discountable>
+          void take
+        take discounts, name <discounts>
+          void take
+        take invoiceitem, name <invoiceitem>
+          void take
+        take metadata, name <metadata>
+          void take
+        take period, name <period>
+          like form
+            take end, name <end>
+            take start, name <start>
+          void take
+        take price, name <price>
+          void take
+        take price-data, name <price_data>
+          like form
+            take currency, name <currency>
+            take product, name <product>
+            take tax-behavior, name <tax_behavior>
+              void take
+            take unit-amount, name <unit_amount>
+              void take
+            take unit-amount-decimal, name <unit_amount_decimal>
+              void take
+          void take
+        take quantity, name <quantity>
+          void take
+        take tax-rates, name <tax_rates>
+          void take
+        take unit-amount, name <unit_amount>
+          void take
+        take unit-amount-decimal, name <unit_amount_decimal>
+          void take
+    note <List of invoice items to add or update in the upcoming invoice preview.>
+    void take
+  take limit
+    like native-integer
+    note <A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.>
+    void take
+  take schedule
+    like native-string
+    note <The identifier of the unstarted schedule whose upcoming invoice you&#39;d like to retrieve. Cannot be used with subscription or subscription fields.>
+    void take
+  take starting-after
+    like native-string
+    note <A cursor for use in pagination. `starting_after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with `obj_foo`, your subsequent call can include `starting_after=obj_foo` in order to fetch the next page of the list.>
+    void take
+  take subscription
+    like native-string
+    note <The identifier of the subscription for which you&#39;d like to retrieve the upcoming invoice. If not provided, but a `subscription_items` is provided, you will preview creating a subscription with those items. If neither `subscription` nor `subscription_items` is provided, you will retrieve the next upcoming invoice from among the customer&#39;s subscriptions.>
+    void take
+  take subscription-billing-cycle-anchor
+    like sink
+      like native-string
+      like native-integer
+    note <For new subscriptions, a future timestamp to anchor the subscription&#39;s [billing cycle](https://stripe.com/docs/subscriptions/billing-cycle). This is used to determine the date of the first full invoice, and, for plans with `month` or `year` intervals, the day of the month for subsequent invoices. For existing subscriptions, the value can only be set to `now` or `unchanged`.>
+    void take
+  take subscription-cancel-at
+    like sink
+      like native-integer
+      like native-string
+    note <Timestamp indicating when the subscription should be scheduled to cancel. Will prorate if within the current period and prorations have been enabled using `proration_behavior`.>
+    void take
+  take subscription-cancel-at-period-end
+    like native-boolean
+    note <Boolean indicating whether this subscription should cancel at the end of the current period.>
+    void take
+  take subscription-cancel-now
+    like native-boolean
+    note <This simulates the subscription being canceled or expired immediately.>
+    void take
+  take subscription-default-tax-rates
+    like sink
+      like list
+        like native-string
+      like native-string
+    note <If provided, the invoice returned will preview updating or creating a subscription with these default tax rates. The default tax rates will apply to any line item that does not have `tax_rates` set.>
+    void take
+  take subscription-items
+    like list
+      like form
+        take billing-thresholds, name <billing_thresholds>
+          void take
+        take clear-usage, name <clear_usage>
+          void take
+        take deleted, name <deleted>
+          void take
+        take id, name <id>
+          void take
+        take metadata, name <metadata>
+          void take
+        take price, name <price>
+          void take
+        take price-data, name <price_data>
+          like form
+            take currency, name <currency>
+            take product, name <product>
+            take recurring, name <recurring>
+              like form
+                take interval, name <interval>
+                take interval-count, name <interval_count>
+                  void take
+            take tax-behavior, name <tax_behavior>
+              void take
+            take unit-amount, name <unit_amount>
+              void take
+            take unit-amount-decimal, name <unit_amount_decimal>
+              void take
+          void take
+        take quantity, name <quantity>
+          void take
+        take tax-rates, name <tax_rates>
+          void take
+    note <A list of up to 20 subscription items, each with an attached price.>
+    void take
+  take subscription-proration-behavior
+    like native-string
+    note <Determines how to handle [prorations](https://stripe.com/docs/subscriptions/billing-cycle#prorations) when the billing cycle changes (e.g., when switching plans, resetting `billing_cycle_anchor=now`, or starting a trial), or if an item&#39;s `quantity` changes. Valid values are `create_prorations`, `none`, or `always_invoice`. Passing `create_prorations` will cause proration invoice items to be created when applicable. These proration items will only be invoiced immediately under [certain conditions](https://stripe.com/docs/subscriptions/upgrading-downgrading#immediate-payment). In order to always invoice immediately for prorations, pass `always_invoice`. Prorations can be disabled by passing `none`.>
+    void take
+  take subscription-proration-date
+    like native-integer
+    note <If previewing an update to a subscription, and doing proration, `subscription_proration_date` forces the proration to be calculated as though the update was done at the specified time. The time given must be within the current subscription period, and cannot be before the subscription was on its current plan. If set, `subscription`, and one of `subscription_items`, or `subscription_trial_end` are required. Also, `subscription_proration_behavior` cannot be set to &#39;none&#39;.>
+    void take
+  take subscription-start-date
+    like native-integer
+    note <Date a subscription is intended to start (can be future or past)>
+    void take
+  take subscription-trial-end
+    like sink
+      like native-string
+      like native-integer
+    note <If provided, the invoice returned will preview updating or creating a subscription with that trial end. If set, one of `subscription_items` or `subscription` is required.>
+    void take
+  take subscription-trial-from-plan
+    like native-boolean
+    note <Indicates if a plan&#39;s `trial_period_days` should be applied to the subscription. Setting `subscription_trial_end` per subscription is preferred, and this defaults to `false`. Setting this flag to `true` together with `subscription_trial_end` is not allowed.>
+    void take
+  take get-invoices-upcoming-lines-body, like get-invoices-upcoming-lines-body
+    void take
+
+  line </v1/invoices/upcoming/lines>
+
+  find <automatic_tax>, loan automatic-tax
+  find <coupon>, loan coupon
+  find <customer>, loan customer
+  find <customer_details>, loan customer-details
+  find <discounts>, loan discounts
+  find <ending_before>, loan ending-before
+  find <expand>, loan expand
+  find <invoice_items>, loan invoice-items
+  find <limit>, loan limit
+  find <schedule>, loan schedule
+  find <starting_after>, loan starting-after
+  find <subscription>, loan subscription
+  find <subscription_billing_cycle_anchor>, loan subscription-billing-cycle-anchor
+  find <subscription_cancel_at>, loan subscription-cancel-at
+  find <subscription_cancel_at_period_end>, loan subscription-cancel-at-period-end
+  find <subscription_cancel_now>, loan subscription-cancel-now
+  find <subscription_default_tax_rates>, loan subscription-default-tax-rates
+  find <subscription_items>, loan subscription-items
+  find <subscription_proration_behavior>, loan subscription-proration-behavior
+  find <subscription_proration_date>, loan subscription-proration-date
+  find <subscription_start_date>, loan subscription-start-date
+  find <subscription_trial_end>, loan subscription-trial-end
+  find <subscription_trial_from_plan>, loan subscription-trial-from-plan
+
+  seed x-www-form-urlencoded, loan get-invoices-upcoming-lines-body
+
+  loot 200
+    seed json
+      like form
+        take data, name <data>
+        take has-more, name <has_more>
+        take object, name <object>
+        take url, name <url>
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

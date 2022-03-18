@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/already-exists-exception
+  take form already-exists-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/create-schema-response
+  take form create-schema-response
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/entity-not-found-exception
+  take form entity-not-found-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/resource-number-limit-exceeded-exception
+  take form resource-number-limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-schema, name <CreateSchema>
+  note <Creates a new schema set and registers the schema definition. Returns an error if the schema set already exists without actually registering the version.
+
+When the schema set is created, a version checkpoint will be set to the first version. Compatibility mode "DISABLED" restricts any additional schema versions from being added after the first schema version. For all other compatibility modes, validation of compatibility settings will be applied only from the second version onwards when the `RegisterSchemaVersion` API is used.
+
+When this API is called without a `RegistryId`, this will create an entry for a "default-registry" in the registry database tables, if it is not already present.>
+
+  take x-amz-target
+    like native-string
+  take create-schema-input, like create-schema-input
+
+  line </#X-Amz-Target=AWSGlue.CreateSchema>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-schema-input
+
+  loot 200
+    seed json, like create-schema-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like entity-not-found-exception
+    note <EntityNotFoundException>
+  loot 483
+    seed json, like already-exists-exception
+    note <AlreadyExistsException>
+  loot 484
+    seed json, like resource-number-limit-exceeded-exception
+    note <ResourceNumberLimitExceededException>
+  loot 485
+    seed json, like internal-service-exception
+    note <InternalServiceException>

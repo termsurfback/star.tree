@@ -1,0 +1,49 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+boot files-remote-share, name <files_remote_share>
+  note <Share a remote file into a channel.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `remote_files:share`>
+    void take
+  take file
+    like native-string
+    note <Specify a file registered with Slack by providing its ID. Either this field or `external_id` or both are required.>
+    void take
+  take external-id
+    like native-string
+    note <The globally unique identifier (GUID) for the file, as set by the app registering the file with Slack.  Either this field or `file` or both are required.>
+    void take
+  take channels
+    like native-string
+    note <Comma-separated list of channel IDs where the file will be shared.>
+    void take
+
+  line </files.remote.share>
+
+  find <token>, loan token
+  find <file>, loan file
+  find <external_id>, loan external-id
+  find <channels>, loan channels
+
+  loot 200
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-true
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response>

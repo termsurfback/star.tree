@@ -1,0 +1,83 @@
+
+load @drumwork/snow/amazonaws.com/apigateway/2015-07-09/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/apigateway/2015-07-09/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/apigateway/2015-07-09/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/apigateway/2015-07-09/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/apigateway/2015-07-09/base/put-rest-api-body
+  take form put-rest-api-body
+
+load @drumwork/snow/amazonaws.com/apigateway/2015-07-09/base/rest-api
+  take form rest-api
+
+load @drumwork/snow/amazonaws.com/apigateway/2015-07-09/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/amazonaws.com/apigateway/2015-07-09/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-rest-api, name <PutRestApi>
+  note <A feature of the API Gateway control service for updating an existing API with an input of external API definitions. The update can take the form of merging the supplied definition into the existing API or overwriting the existing API.>
+
+  take restapi-id
+    like native-string
+    note <[Required] The string identifier of the associated RestApi.>
+  take mode
+    like native-string
+    note <The `mode` query parameter to specify the update mode. Valid values are "merge" and "overwrite". By default, the update mode is "merge".>
+    void take
+  take failonwarnings
+    like native-boolean
+    note <A query parameter to indicate whether to rollback the API update (`true`) or not (`false`) when a warning is encountered. The default value is `false`.>
+    void take
+  take parameters
+    like form
+    note <Custom header parameters as part of the request. For example, to exclude DocumentationParts from an imported API, set `ignore=documentation` as a `parameters` value, as in the AWS CLI command of `aws apigateway import-rest-api --parameters ignore=documentation --body 'file:///path/to/imported-api-body.json'`.>
+    void take
+  take put-rest-api-body, like put-rest-api-body
+
+  line </restapis/{restapi-id}>
+
+  find <mode>, loan mode
+  find <failonwarnings>, loan failonwarnings
+  find <parameters>, loan parameters
+
+  seed json, loan put-rest-api-body
+
+  loot 200
+    seed json, like rest-api
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 482
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 483
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 484
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 485
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>

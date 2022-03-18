@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-resource-id
+  take form invalid-resource-id
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-resource-type
+  take form invalid-resource-type
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/remove-tags-from-resource-result
+  take form remove-tags-from-resource-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/too-many-updates
+  take form too-many-updates
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot remove-tags-from-resource, name <RemoveTagsFromResource>
+  note <Removes tag keys from the specified resource.>
+
+  take x-amz-target
+    like native-string
+  take remove-tags-from-resource-request, like remove-tags-from-resource-request
+
+  line </#X-Amz-Target=AmazonSSM.RemoveTagsFromResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan remove-tags-from-resource-request
+
+  loot 200
+    seed json, like remove-tags-from-resource-result
+    note <Success>
+  loot 480
+    seed json, like invalid-resource-type
+    note <InvalidResourceType>
+  loot 481
+    seed json, like invalid-resource-id
+    note <InvalidResourceId>
+  loot 482
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 483
+    seed json, like too-many-updates
+    note <TooManyUpdates>

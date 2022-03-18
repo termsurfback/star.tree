@@ -1,0 +1,90 @@
+
+load @drumwork/snow/amazonaws.com/dlm/2018-01-12/base/get-lifecycle-policies-response
+  take form get-lifecycle-policies-response
+
+load @drumwork/snow/amazonaws.com/dlm/2018-01-12/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/dlm/2018-01-12/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/dlm/2018-01-12/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/dlm/2018-01-12/base/policy-id
+  take form policy-id
+
+load @drumwork/snow/amazonaws.com/dlm/2018-01-12/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/dlm/2018-01-12/base/resource-type-values
+  take form resource-type-values
+
+load @drumwork/snow/amazonaws.com/dlm/2018-01-12/base/tag-filter
+  take form tag-filter
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-lifecycle-policies, name <GetLifecyclePolicies>
+  note <Gets summary information about all or the specified data lifecycle policies.
+
+To get complete information about a policy, use GetLifecyclePolicy.>
+
+  take policy-ids
+    like list
+      like policy-id
+    note <The identifiers of the data lifecycle policies.>
+    void take
+  take state
+    like native-string
+    note <The activation state.>
+    void take
+  take resource-types
+    like list
+      like resource-type-values
+    note <The resource type.>
+    void take
+  take target-tags
+    like list
+      like tag-filter
+    note <The target tag for a policy.
+
+Tags are strings in the format `key=value`.>
+    void take
+  take tags-to-add
+    like list
+      like tag-filter
+    note <The tags to add to objects created by the policy.
+
+Tags are strings in the format `key=value`.
+
+These user-defined tags are added in addition to the Amazon Web Services-added lifecycle tags.>
+    void take
+
+  line </policies>
+
+  find <policyIds>, loan policy-ids
+  find <state>, loan state
+  find <resourceTypes>, loan resource-types
+  find <targetTags>, loan target-tags
+  find <tagsToAdd>, loan tags-to-add
+
+  loot 200
+    seed json, like get-lifecycle-policies-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 483
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>

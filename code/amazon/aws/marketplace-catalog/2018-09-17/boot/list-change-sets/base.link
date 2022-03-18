@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/marketplace-catalog/2018-09-17/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/marketplace-catalog/2018-09-17/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/marketplace-catalog/2018-09-17/base/list-change-sets-body
+  take form list-change-sets-body
+
+load @drumwork/snow/amazonaws.com/marketplace-catalog/2018-09-17/base/list-change-sets-response
+  take form list-change-sets-response
+
+load @drumwork/snow/amazonaws.com/marketplace-catalog/2018-09-17/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/marketplace-catalog/2018-09-17/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-change-sets, name <ListChangeSets>
+  note <Returns the list of change sets owned by the account being used to make the call. You can filter this list by providing any combination of `entityId`, `ChangeSetName`, and status. If you provide more than one filter, the API operation applies a logical AND between the filters.
+
+You can describe a change during the 60-day request history retention period for API calls.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-change-sets-body, like list-change-sets-body
+
+  line </ListChangeSets>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-change-sets-body
+
+  loot 200
+    seed json, like list-change-sets-response
+    note <Success>
+  loot 480
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>

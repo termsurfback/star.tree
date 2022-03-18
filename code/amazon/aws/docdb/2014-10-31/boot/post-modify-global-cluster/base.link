@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/global-cluster-not-found-fault
+  take form global-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/invalid-global-cluster-state-fault
+  take form invalid-global-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/modify-global-cluster-result
+  take form modify-global-cluster-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-modify-global-cluster, name <POST_ModifyGlobalCluster>
+  note <Modify a setting for an Amazon DocumentDB global cluster. You can change one or more configuration parameters (for example: deletion protection), or the global cluster identifier by specifying these parameters and the new values in the request.
+
+This action only applies to Amazon DocumentDB clusters.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take modify-global-cluster-message, like modify-global-cluster-message
+    void take
+
+  line </#Action=ModifyGlobalCluster>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan modify-global-cluster-message
+
+  loot 200
+    seed xml, like modify-global-cluster-result
+    note <Success>
+  loot 480
+    seed xml, like global-cluster-not-found-fault
+    note <GlobalClusterNotFoundFault>
+  loot 481
+    seed xml, like invalid-global-cluster-state-fault
+    note <InvalidGlobalClusterStateFault>

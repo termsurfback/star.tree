@@ -1,0 +1,29 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/proximitybeacon/v1beta1/base/beacon
+  take form beacon
+
+boot proximitybeacon-beacons-update, name <proximitybeacon.beacons.update>
+  note <Updates the information about the specified beacon. **Any field that you do not populate in the submitted beacon will be permanently erased**, so you should follow the "read, modify, write" pattern to avoid inadvertently destroying data. Changes to the beacon status via this method will be silently ignored. To update beacon status, use the separate methods on this API for activation, deactivation, and decommissioning. Authenticate using an [OAuth access token](https://developers.google.com/identity/protocols/OAuth2) from a signed-in user with **Is owner** or **Can edit** permissions in the Google Developers Console project.>
+
+  take beacon-name
+    like native-string
+    note <Resource name of this beacon. A beacon name has the format "beacons/N!beaconId" where the beaconId is the base16 ID broadcast by the beacon and N is a code for the beacon's type. Possible values are `3` for Eddystone, `1` for iBeacon, or `5` for AltBeacon. This field must be left empty when registering. After reading a beacon, clients can use the name for future operations.>
+  take project-id
+    like native-string
+    note <The project id of the beacon to update. If the project id is not specified then the project making the request is used. The project id must match the project that owns the beacon. Optional.>
+    void take
+  take beacon, like beacon
+    void take
+
+  line </v1beta1/{beacon-name}>
+
+  find <projectId>, loan project-id
+
+  seed json, loan beacon
+
+  loot 200
+    seed json, like beacon
+    note <Successful response>

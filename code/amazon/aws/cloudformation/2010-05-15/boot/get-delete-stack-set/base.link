@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/delete-stack-set-output
+  take form delete-stack-set-output
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/operation-in-progress-exception
+  take form operation-in-progress-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/stack-set-not-empty-exception
+  take form stack-set-not-empty-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-stack-set, name <GET_DeleteStackSet>
+  note <Deletes a stack set. Before you can delete a stack set, all of its member stack instances must be deleted. For more information about how to do this, see DeleteStackInstances.>
+
+  take stack-set-name
+    like native-string
+    note <The name or unique ID of the stack set that you're deleting. You can obtain this value by running ListStackSets.>
+  take call-as
+    like native-string
+    note <[Service-managed permissions] Specifies whether you are acting as an account administrator in the organization's management account or as a delegated administrator in a member account.
+
+By default, `SELF` is specified. Use `SELF` for stack sets with self-managed permissions.
+
+- If you are signed in to the management account, specify `SELF`.
+
+- If you are signed in to a delegated administrator account, specify `DELEGATED_ADMIN`.
+
+  Your Amazon Web Services account must be registered as a delegated administrator in the management account. For more information, see [Register a delegated administrator](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-orgs-delegated-admin.html) in the _CloudFormation User Guide_.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteStackSet>
+
+  find <StackSetName>, loan stack-set-name
+  find <CallAs>, loan call-as
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-stack-set-output
+    note <Success>
+  loot 480
+    seed xml, like stack-set-not-empty-exception
+    note <StackSetNotEmptyException>
+  loot 481
+    seed xml, like operation-in-progress-exception
+    note <OperationInProgressException>

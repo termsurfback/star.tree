@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/xray/2016-04-12/base/get-trace-graph-body
+  take form get-trace-graph-body
+
+load @drumwork/snow/amazonaws.com/xray/2016-04-12/base/get-trace-graph-result
+  take form get-trace-graph-result
+
+load @drumwork/snow/amazonaws.com/xray/2016-04-12/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/xray/2016-04-12/base/throttled-exception
+  take form throttled-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-trace-graph, name <GetTraceGraph>
+  note <Retrieves a service graph for one or more specific trace IDs.>
+
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-trace-graph-body, like get-trace-graph-body
+
+  line </TraceGraph>
+
+  find <NextToken>, loan next-token
+
+  seed json, loan get-trace-graph-body
+
+  loot 200
+    seed json, like get-trace-graph-result
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like throttled-exception
+    note <ThrottledException>

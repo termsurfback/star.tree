@@ -1,0 +1,75 @@
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/claim-game-server-output
+  take form claim-game-server-output
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/out-of-capacity-exception
+  take form out-of-capacity-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot claim-game-server, name <ClaimGameServer>
+  note <**This operation is used with the GameLift FleetIQ solution and game server groups.** Locates an available game server and temporarily reserves it to host gameplay and players. This operation is called from a game client or client service (such as a matchmaker) to request hosting resources for a new game session. In response, GameLift FleetIQ locates an available game server, places it in `CLAIMED` status for 60 seconds, and returns connection information that players can use to connect to the game server.
+
+To claim a game server, identify a game server group. You can also specify a game server ID, although this approach bypasses GameLift FleetIQ placement optimization. Optionally, include game data to pass to the game server at the start of a game session, such as a game map or player information.
+
+When a game server is successfully claimed, connection information is returned. A claimed game server's utilization status remains `AVAILABLE` while the claim status is set to `CLAIMED` for up to 60 seconds. This time period gives the game server time to update its status to `UTILIZED` (using UpdateGameServer) once players join. If the game server's status is not updated within 60 seconds, the game server reverts to unclaimed status and is available to be claimed by another request. The claim time period is a fixed value and is not configurable.
+
+If you try to claim a specific game server, this request will fail in the following cases:
+
+- If the game server utilization status is `UTILIZED`.
+
+- If the game server claim status is `CLAIMED`.
+
+When claiming a specific game server, this request will succeed even if the game server is running on an instance in `DRAINING` status. To avoid this, first check the instance status by calling DescribeGameServerInstances.
+
+**Learn more** [GameLift FleetIQ Guide](https://docs.aws.amazon.com/gamelift/latest/fleetiqguide/gsg-intro.html)
+
+**Related actions** RegisterGameServer | ListGameServers | ClaimGameServer | DescribeGameServer | UpdateGameServer | DeregisterGameServer | [All APIs by task](https://docs.aws.amazon.com/gamelift/latest/fleetiqguide/reference-awssdk-fleetiq.html)>
+
+  take x-amz-target
+    like native-string
+  take claim-game-server-input, like claim-game-server-input
+
+  line </#X-Amz-Target=GameLift.ClaimGameServer>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan claim-game-server-input
+
+  loot 200
+    seed json, like claim-game-server-output
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 482
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 483
+    seed json, like out-of-capacity-exception
+    note <OutOfCapacityException>
+  loot 484
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 485
+    seed json, like internal-service-exception
+    note <InternalServiceException>

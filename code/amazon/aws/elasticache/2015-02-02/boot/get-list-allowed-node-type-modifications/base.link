@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/allowed-node-type-modifications-message
+  take form allowed-node-type-modifications-message
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-cluster-not-found-fault
+  take form cache-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/replication-group-not-found-fault
+  take form replication-group-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-list-allowed-node-type-modifications, name <GET_ListAllowedNodeTypeModifications>
+  note <Lists all available node types that you can scale your Redis cluster's or replication group's current node type.
+
+When you use the `ModifyCacheCluster` or `ModifyReplicationGroup` operations to scale your cluster or replication group, the value of the `CacheNodeType` parameter must be one of the node types returned by this operation.>
+
+  take cache-cluster-id
+    like native-string
+    note <The name of the cluster you want to scale up to a larger node instanced type. ElastiCache uses the cluster id to identify the current node type of this cluster and from that to create a list of node types you can scale up to.
+
+You must provide a value for either the `CacheClusterId` or the `ReplicationGroupId`.>
+    void take
+  take replication-group-id
+    like native-string
+    note <The name of the replication group want to scale up to a larger node type. ElastiCache uses the replication group id to identify the current node type being used by this replication group, and from that to create a list of node types you can scale up to.
+
+You must provide a value for either the `CacheClusterId` or the `ReplicationGroupId`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ListAllowedNodeTypeModifications>
+
+  find <CacheClusterId>, loan cache-cluster-id
+  find <ReplicationGroupId>, loan replication-group-id
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like allowed-node-type-modifications-message
+    note <Success>
+  loot 480
+    seed xml, like cache-cluster-not-found-fault
+    note <CacheClusterNotFoundFault>
+  loot 481
+    seed xml, like replication-group-not-found-fault
+    note <ReplicationGroupNotFoundFault>
+  loot 482
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>
+  loot 483
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>

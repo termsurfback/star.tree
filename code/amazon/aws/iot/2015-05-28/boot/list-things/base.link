@@ -1,0 +1,89 @@
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/list-things-response
+  take form list-things-response
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-things, name <ListThings>
+  note <Lists your things. Use the **attributeName** and **attributeValue** parameters to filter your things. For example, calling `ListThings` with attributeName=Color and attributeValue=Red retrieves all things in the registry that contain an attribute **Color** with the value **Red**.
+
+Requires permission to access the [ListThings](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiot.html#awsiot-actions-as-permissions) action.
+
+You will not be charged for calling this API if an `Access denied` error is returned. You will also not be charged if no attributes or pagination token was provided in request and no pagination token and no results were returned.>
+
+  take next-token
+    like native-string
+    note <To retrieve the next set of results, the `nextToken` value from a previous response; otherwise **null** to receive the first set of results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return in this operation.>
+    void take
+  take attribute-name
+    like native-string
+    note <The attribute name used to search for things.>
+    void take
+  take attribute-value
+    like native-string
+    note <The attribute value used to search for things.>
+    void take
+  take thing-type-name
+    like native-string
+    note <The name of the thing type used to search for things.>
+    void take
+  take use-prefix-attribute-value
+    like native-boolean
+    note <When `true`, the action returns the thing resources with attribute values that start with the `attributeValue` provided.
+
+When `false`, or not present, the action returns only the thing resources with attribute values that match the entire `attributeValue` provided.>
+    void take
+
+  line </things>
+
+  find <nextToken>, loan next-token
+  find <maxResults>, loan max-results
+  find <attributeName>, loan attribute-name
+  find <attributeValue>, loan attribute-value
+  find <thingTypeName>, loan thing-type-name
+  find <usePrefixAttributeValue>, loan use-prefix-attribute-value
+
+  loot 200
+    seed json, like list-things-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 484
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

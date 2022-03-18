@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/ssm-incidents/2018-05-10/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/ssm-incidents/2018-05-10/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/ssm-incidents/2018-05-10/base/list-incident-records-body
+  take form list-incident-records-body
+
+load @drumwork/snow/amazonaws.com/ssm-incidents/2018-05-10/base/list-incident-records-output
+  take form list-incident-records-output
+
+load @drumwork/snow/amazonaws.com/ssm-incidents/2018-05-10/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/ssm-incidents/2018-05-10/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-incident-records, name <ListIncidentRecords>
+  note <Lists all incident records in your account. Use this command to retrieve the Amazon Resource Name (ARN) of the incident record you want to update.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-incident-records-body, like list-incident-records-body
+
+  line </listIncidentRecords>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-incident-records-body
+
+  loot 200
+    seed json, like list-incident-records-output
+    note <Success>
+  loot 480
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like internal-server-exception
+    note <InternalServerException>

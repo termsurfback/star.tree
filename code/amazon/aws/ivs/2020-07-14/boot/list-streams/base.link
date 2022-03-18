@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/list-streams-body
+  take form list-streams-body
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/list-streams-response
+  take form list-streams-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-streams, name <ListStreams>
+  note <Gets summary information about live streams in your account, in the AWS region where the API request is processed.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-streams-body, like list-streams-body
+
+  line </ListStreams>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-streams-body
+
+  loot 200
+    seed json, like list-streams-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

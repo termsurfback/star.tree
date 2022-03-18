@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-in-use-fault
+  take form resource-in-use-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-suspend-processes, name <POST_SuspendProcesses>
+  note <Suspends the specified auto scaling processes, or all processes, for the specified Auto Scaling group.
+
+If you suspend either the `Launch` or `Terminate` process types, it can prevent other process types from functioning properly. For more information, see [Suspending and resuming scaling processes](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-suspend-resume-processes.html) in the _Amazon EC2 Auto Scaling User Guide_.
+
+To resume processes that have been suspended, call the ResumeProcesses API.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take scaling-process-query, like scaling-process-query
+    void take
+
+  line </#Action=SuspendProcesses>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan scaling-process-query
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like resource-in-use-fault
+    note <ResourceInUseFault>
+  loot 481
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

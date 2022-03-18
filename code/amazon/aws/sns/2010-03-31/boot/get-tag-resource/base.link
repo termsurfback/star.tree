@@ -1,0 +1,92 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/concurrent-access-exception
+  take form concurrent-access-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/stale-tag-exception
+  take form stale-tag-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/tag
+  take form tag
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/tag-limit-exceeded-exception
+  take form tag-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/tag-policy-exception
+  take form tag-policy-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/tag-resource-response
+  take form tag-resource-response
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-tag-resource, name <GET_TagResource>
+  note <Add tags to the specified Amazon SNS topic. For an overview, see [Amazon SNS Tags](https://docs.aws.amazon.com/sns/latest/dg/sns-tags.html) in the _Amazon SNS Developer Guide_.
+
+When you use topic tags, keep the following guidelines in mind:
+
+- Adding more than 50 tags to a topic isn't recommended.
+
+- Tags don't have any semantic meaning. Amazon SNS interprets tags as character strings.
+
+- Tags are case-sensitive.
+
+- A new tag with a key identical to that of an existing tag overwrites the existing tag.
+
+- Tagging actions are limited to 10 TPS per account, per Region. If your application requires a higher throughput, file a [technical support request](https://console.aws.amazon.com/support/home#/case/create?issueType=technical).>
+
+  take resource-arn
+    like native-string
+    note <The ARN of the topic to which to add tags.>
+  take tags
+    like list
+      like tag
+    note <The tags to be added to the specified topic. A tag consists of a required key and an optional value.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=TagResource>
+
+  find <ResourceArn>, loan resource-arn
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like tag-resource-response
+    note <Success>
+  loot 480
+    seed xml, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed xml, like tag-limit-exceeded-exception
+    note <TagLimitExceededException>
+  loot 482
+    seed xml, like stale-tag-exception
+    note <StaleTagException>
+  loot 483
+    seed xml, like tag-policy-exception
+    note <TagPolicyException>
+  loot 484
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 485
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>
+  loot 486
+    seed xml, like concurrent-access-exception
+    note <ConcurrentAccessException>

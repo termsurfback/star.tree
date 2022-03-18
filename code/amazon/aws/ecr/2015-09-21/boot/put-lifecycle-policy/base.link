@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/put-lifecycle-policy-response
+  take form put-lifecycle-policy-response
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/repository-not-found-exception
+  take form repository-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-lifecycle-policy, name <PutLifecyclePolicy>
+  note <Creates or updates the lifecycle policy for the specified repository. For more information, see [Lifecycle policy template](https://docs.aws.amazon.com/AmazonECR/latest/userguide/LifecyclePolicies.html).>
+
+  take x-amz-target
+    like native-string
+  take put-lifecycle-policy-request, like put-lifecycle-policy-request
+
+  line </#X-Amz-Target=AmazonEC2ContainerRegistry_V20150921.PutLifecyclePolicy>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan put-lifecycle-policy-request
+
+  loot 200
+    seed json, like put-lifecycle-policy-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like repository-not-found-exception
+    note <RepositoryNotFoundException>

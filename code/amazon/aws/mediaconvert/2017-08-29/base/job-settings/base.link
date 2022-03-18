@@ -1,0 +1,111 @@
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/avail-blanking
+  take form avail-blanking
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/esam-settings
+  take form esam-settings
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/extended-data-services
+  take form extended-data-services
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/integer-min-negative1000-max1000
+  take form integer-min-negative1000-max1000
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/kantar-watermark-settings
+  take form kantar-watermark-settings
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/list-of-input
+  take form list-of-input
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/list-of-output-group
+  take form list-of-output-group
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/motion-image-inserter
+  take form motion-image-inserter
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/nielsen-configuration
+  take form nielsen-configuration
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/nielsen-non-linear-watermark-settings
+  take form nielsen-non-linear-watermark-settings
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/timecode-config
+  take form timecode-config
+
+load @drumwork/snow/amazonaws.com/mediaconvert/2017-08-29/base/timed-metadata-insertion
+  take form timed-metadata-insertion
+
+form job-settings, name <JobSettings>
+  note <JobSettings contains all the transcode settings for a job.>
+  take ad-avail-offset, name <AdAvailOffset>
+    like integer-min-negative1000-max1000
+    void take
+    note <When specified, this offset (in milliseconds) is added to the input Ad Avail PTS time.>
+    host xml
+      host name, text <adAvailOffset>
+  take avail-blanking, name <AvailBlanking>
+    like avail-blanking
+    void take
+    note <Settings for ad avail blanking. Video can be blanked or overlaid with an image, and audio muted during SCTE-35 triggered ad avails.>
+    host xml
+      host name, text <availBlanking>
+  take esam, name <Esam>
+    like esam-settings
+    void take
+    note <Settings for Event Signaling And Messaging (ESAM). If you don't do ad insertion, you can ignore these settings.>
+    host xml
+      host name, text <esam>
+  take extended-data-services, name <ExtendedDataServices>
+    like extended-data-services
+    void take
+    note <Hexadecimal value as per EIA-608 Line 21 Data Services, section 9.5.1.5 05h Content Advisory.>
+    host xml
+      host name, text <extendedDataServices>
+  take inputs, name <Inputs>
+    like list-of-input
+    void take
+    note <Use Inputs (inputs) to define source file used in the transcode job. There can be multiple inputs add in a job. These inputs will be concantenated together to create the output.>
+    host xml
+      host name, text <inputs>
+  take kantar-watermark, name <KantarWatermark>
+    like kantar-watermark-settings
+    void take
+    note <Use these settings only when you use Kantar watermarking. Specify the values that MediaConvert uses to generate and place Kantar watermarks in your output audio. These settings apply to every output in your job. In addition to specifying these values, you also need to store your Kantar credentials in AWS Secrets Manager. For more information, see https://docs.aws.amazon.com/mediaconvert/latest/ug/kantar-watermarking.html.>
+    host xml
+      host name, text <kantarWatermark>
+  take motion-image-inserter, name <MotionImageInserter>
+    like motion-image-inserter
+    void take
+    note <Overlay motion graphics on top of your video. The motion graphics that you specify here appear on all outputs in all output groups. For more information, see https://docs.aws.amazon.com/mediaconvert/latest/ug/motion-graphic-overlay.html.>
+    host xml
+      host name, text <motionImageInserter>
+  take nielsen-configuration, name <NielsenConfiguration>
+    like nielsen-configuration
+    void take
+    note <Settings for your Nielsen configuration. If you don't do Nielsen measurement and analytics, ignore these settings. When you enable Nielsen configuration (nielsenConfiguration), MediaConvert enables PCM to ID3 tagging for all outputs in the job. To enable Nielsen configuration programmatically, include an instance of nielsenConfiguration in your JSON job specification. Even if you don't include any children of nielsenConfiguration, you still enable the setting.>
+    host xml
+      host name, text <nielsenConfiguration>
+  take nielsen-non-linear-watermark, name <NielsenNonLinearWatermark>
+    like nielsen-non-linear-watermark-settings
+    void take
+    note <Ignore these settings unless you are using Nielsen non-linear watermarking. Specify the values that MediaConvert uses to generate and place Nielsen watermarks in your output audio. In addition to specifying these values, you also need to set up your cloud TIC server. These settings apply to every output in your job. The MediaConvert implementation is currently with the following Nielsen versions: Nielsen Watermark SDK Version 5.2.1 Nielsen NLM Watermark Engine Version 1.2.7 Nielsen Watermark Authenticator [SID_TIC] Version [5.0.0]>
+    host xml
+      host name, text <nielsenNonLinearWatermark>
+  take output-groups, name <OutputGroups>
+    like list-of-output-group
+    void take
+    note <(OutputGroups) contains one group of settings for each set of outputs that share a common package type. All unpackaged files (MPEG-4, MPEG-2 TS, Quicktime, MXF, and no container) are grouped in a single output group as well. Required in (OutputGroups) is a group of settings that apply to the whole group. This required object depends on the value you set for (Type) under (OutputGroups)&gt;(OutputGroupSettings). Type, settings object pairs are as follows. * FILE_GROUP_SETTINGS, FileGroupSettings * HLS_GROUP_SETTINGS, HlsGroupSettings * DASH_ISO_GROUP_SETTINGS, DashIsoGroupSettings * MS_SMOOTH_GROUP_SETTINGS, MsSmoothGroupSettings * CMAF_GROUP_SETTINGS, CmafGroupSettings>
+    host xml
+      host name, text <outputGroups>
+  take timecode-config, name <TimecodeConfig>
+    like timecode-config
+    void take
+    note <These settings control how the service handles timecodes throughout the job. These settings don't affect input clipping.>
+    host xml
+      host name, text <timecodeConfig>
+  take timed-metadata-insertion, name <TimedMetadataInsertion>
+    like timed-metadata-insertion
+    void take
+    note <Enable Timed metadata insertion (TimedMetadataInsertion) to include ID3 tags in any HLS outputs. To include timed metadata, you must enable it here, enable it in each output container, and specify tags and timecodes in ID3 insertion (Id3Insertion) objects.>
+    host xml
+      host name, text <timedMetadataInsertion>

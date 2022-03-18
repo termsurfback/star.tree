@@ -1,0 +1,24 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_taskrouter_v1/1.27.2/base/create-task-channel-body
+  take form create-task-channel-body
+
+load @drumwork/snow/twilio.com/twilio_taskrouter_v1/1.27.2/base/taskrouter-v1-workspace-task-channel
+  take form taskrouter-v1-workspace-task-channel
+
+boot create-task-channel, name <CreateTaskChannel>
+  take workspace-sid
+    like native-string
+    note <The SID of the Workspace that the new Task Channel belongs to.>
+  take create-task-channel-body, like create-task-channel-body
+    void take
+
+  line </v1/Workspaces/{workspace-sid}/TaskChannels>
+
+  seed x-www-form-urlencoded, loan create-task-channel-body
+
+  loot 201
+    seed json, like taskrouter-v1-workspace-task-channel
+    note <Created>

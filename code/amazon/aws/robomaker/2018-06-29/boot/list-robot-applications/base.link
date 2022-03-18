@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/list-robot-applications-body
+  take form list-robot-applications-body
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/list-robot-applications-response
+  take form list-robot-applications-response
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-robot-applications, name <ListRobotApplications>
+  note <Returns a list of robot application. You can optionally provide filters to retrieve specific robot applications.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-robot-applications-body, like list-robot-applications-body
+
+  line </listRobotApplications>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-robot-applications-body
+
+  loot 200
+    seed json, like list-robot-applications-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

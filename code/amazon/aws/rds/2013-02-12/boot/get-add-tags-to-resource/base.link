@@ -1,0 +1,42 @@
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/db-snapshot-not-found-fault
+  take form db-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/tag
+  take form tag
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-add-tags-to-resource, name <GET_AddTagsToResource>
+  take resource-name
+    like native-string
+  take tags
+    like list
+      like tag
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=AddTagsToResource>
+
+  find <ResourceName>, loan resource-name
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>
+  loot 481
+    seed xml, like db-snapshot-not-found-fault
+    note <DBSnapshotNotFoundFault>

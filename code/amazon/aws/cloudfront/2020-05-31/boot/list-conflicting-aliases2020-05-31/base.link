@@ -1,0 +1,56 @@
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/invalid-argument
+  take form invalid-argument
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/list-conflicting-aliases-result
+  take form list-conflicting-aliases-result
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/no-such-distribution
+  take form no-such-distribution
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-conflicting-aliases2020-05-31, name <ListConflictingAliases2020_05_31>
+  note <Gets a list of aliases (also called CNAMEs or alternate domain names) that conflict or overlap with the provided alias, and the associated CloudFront distributions and Amazon Web Services accounts for each conflicting alias. In the returned list, the distribution and account IDs are partially hidden, which allows you to identify the distributions and accounts that you own, but helps to protect the information of ones that you don’t own.
+
+Use this operation to find aliases that are in use in CloudFront that conflict or overlap with the provided alias. For example, if you provide `www.example.com` as input, the returned list can include `www.example.com` and the overlapping wildcard alternate domain name (`*.example.com`), if they exist. If you provide `*.example.com` as input, the returned list can include `*.example.com` and any alternate domain names covered by that wildcard (for example, `www.example.com`, `test.example.com`, `dev.example.com`, and so on), if they exist.
+
+To list conflicting aliases, you provide the alias to search and the ID of a distribution in your account that has an attached SSL/TLS certificate that includes the provided alias. For more information, including how to set up the distribution and certificate, see [Moving an alternate domain name to a different distribution](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CNAMEs.html#alternate-domain-names-move) in the _Amazon CloudFront Developer Guide_.
+
+You can optionally specify the maximum number of items to receive in the response. If the total number of items in the list exceeds the maximum that you specify, or the default maximum, the response is paginated. To get the next page of items, send a subsequent request that specifies the `NextMarker` value from the current response as the `Marker` value in the subsequent request.>
+
+  take distribution-id
+    like native-string
+    note <The ID of a distribution in your account that has an attached SSL/TLS certificate that includes the provided alias.>
+  take alias
+    like native-string
+    note <The alias (also called a CNAME) to search for conflicting aliases.>
+  take marker
+    like native-string
+    note <Use this field when paginating results to indicate where to begin in the list of conflicting aliases. The response includes conflicting aliases in the list that occur after the marker. To get the next page of the list, set this field’s value to the value of `NextMarker` from the current page’s response.>
+    void take
+  take max-items
+    like native-integer
+    note <The maximum number of conflicting aliases that you want in the response.>
+    void take
+
+  line </2020-05-31/conflicting-alias#DistributionId&Alias>
+
+  find <DistributionId>, loan distribution-id
+  find <Alias>, loan alias
+  find <Marker>, loan marker
+  find <MaxItems>, loan max-items
+
+  loot 200
+    seed xml, like list-conflicting-aliases-result
+    note <Success>
+  loot 480
+    seed xml, like invalid-argument
+    note <InvalidArgument>
+  loot 481
+    seed xml, like no-such-distribution
+    note <NoSuchDistribution>

@@ -1,0 +1,29 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/realtimebidding/v1/base/creative
+  take form creative
+
+boot realtimebidding-buyers-creatives-patch, name <realtimebidding.buyers.creatives.patch>
+  note <Updates a creative.>
+
+  take name
+    like native-string
+    note <Output only. Name of the creative. Follows the pattern `buyers/{buyer}/creatives/{creative}`, where `{buyer}` represents the account ID of the buyer who owns the creative, and `{creative}` is the buyer-specific creative ID that references this creative in the bid response.>
+  take update-mask
+    like native-string
+    note <Field mask to use for partial in-place updates.>
+    void take
+  take creative, like creative
+    void take
+
+  line </v1/{name}>
+
+  find <updateMask>, loan update-mask
+
+  seed json, loan creative
+
+  loot 200
+    seed json, like creative
+    note <Successful response>

@@ -1,0 +1,87 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-instance-event-windows-result
+  take form describe-instance-event-windows-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/instance-event-window-id
+  take form instance-event-window-id
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-instance-event-windows, name <GET_DescribeInstanceEventWindows>
+  note <Describes the specified event windows or all event windows.
+
+If you specify event window IDs, the output includes information for only the specified event windows. If you specify filters, the output includes information for only those event windows that meet the filter criteria. If you do not specify event windows IDs or filters, the output includes information for all event windows, which can affect performance. We recommend that you use pagination to ensure that the operation returns quickly and successfully.
+
+For more information, see [Define event windows for scheduled events](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/event-windows.html) in the _Amazon EC2 User Guide_.>
+
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take instance-event-window-id
+    like list
+      like instance-event-window-id
+    note <The IDs of the event windows.>
+    void take
+  take filter
+    like list
+      like filter
+    note <One or more filters.
+
+- `dedicated-host-id` - The event windows associated with the specified Dedicated Host ID.
+
+- `event-window-name` - The event windows associated with the specified names.
+
+- `instance-id` - The event windows associated with the specified instance ID.
+
+- `instance-tag` - The event windows associated with the specified tag and value.
+
+- `instance-tag-key` - The event windows associated with the specified tag key, regardless of the value.
+
+- `instance-tag-value` - The event windows associated with the specified tag value, regardless of the key.
+
+- `tag:&lt;key&gt;` - The key/value combination of a tag assigned to the event window. Use the tag key in the filter name and the tag value as the filter value. For example, to find all resources that have a tag with the key `Owner` and the value `CMX`, specify `tag:Owner` for the filter name and `CMX` for the filter value.
+
+- `tag-key` - The key of a tag assigned to the event window. Use this filter to find all event windows that have a tag with a specific key, regardless of the tag value.
+
+- `tag-value` - The value of a tag assigned to the event window. Use this filter to find all event windows that have a tag with a specific value, regardless of the tag key.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return in a single call. To retrieve the remaining results, make another call with the returned `NextToken` value. This value can be between 20 and 500. You cannot specify this parameter and the event window IDs parameter in the same call.>
+    void take
+  take next-token
+    like native-string
+    note <The token to request the next page of results.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeInstanceEventWindows>
+
+  find <DryRun>, loan dry-run
+  find <InstanceEventWindowId>, loan instance-event-window-id
+  find <Filter>, loan filter
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-instance-event-windows-result
+    note <Success>

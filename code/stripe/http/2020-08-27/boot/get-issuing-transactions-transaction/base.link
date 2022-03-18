@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-issuing-transactions-transaction-body
+  take form get-issuing-transactions-transaction-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/issuing-transaction
+  take form issuing-transaction
+
+boot get-issuing-transactions-transaction, name <GetIssuingTransactionsTransaction>
+  note <Retrieves an Issuing `Transaction` object.>
+
+  take transaction
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-issuing-transactions-transaction-body, like get-issuing-transactions-transaction-body
+    void take
+
+  line </v1/issuing/transactions/{transaction}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-issuing-transactions-transaction-body
+
+  loot 200
+    seed json, like issuing-transaction
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

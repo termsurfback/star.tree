@@ -1,0 +1,67 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/certificate-message
+  take form certificate-message
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/certificate-not-found-fault
+  take form certificate-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/filter
+  take form filter
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-certificates, name <GET_DescribeCertificates>
+  note <Lists the set of CA certificates provided by Amazon RDS for this Amazon Web Services account.>
+
+  take certificate-identifier
+    like native-string
+    note <The user-supplied certificate identifier. If this parameter is specified, information for only the identified certificate is returned. This parameter isn't case-sensitive.
+
+Constraints:
+
+- Must match an existing CertificateIdentifier.>
+    void take
+  take filters
+    like list
+      like filter
+    note <This parameter isn't currently supported.>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of records to include in the response. If more records exist than the specified `MaxRecords` value, a pagination token called a marker is included in the response so you can retrieve the remaining results.
+
+Default: 100
+
+Constraints: Minimum 20, maximum 100.>
+    void take
+  take marker
+    like native-string
+    note <An optional pagination token provided by a previous `DescribeCertificates` request. If this parameter is specified, the response includes only records beyond the marker, up to the value specified by `MaxRecords`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeCertificates>
+
+  find <CertificateIdentifier>, loan certificate-identifier
+  find <Filters>, loan filters
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like certificate-message
+    note <Success>
+  loot 480
+    seed xml, like certificate-not-found-fault
+    note <CertificateNotFoundFault>

@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/associate-instance-storage-config-body
+  take form associate-instance-storage-config-body
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/associate-instance-storage-config-response
+  take form associate-instance-storage-config-response
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/resource-conflict-exception
+  take form resource-conflict-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot associate-instance-storage-config, name <AssociateInstanceStorageConfig>
+  note <This API is in preview release for Amazon Connect and is subject to change.
+
+Associates a storage resource type for the first time. You can only associate one type of storage configuration in a single call. This means, for example, that you can't define an instance with multiple S3 buckets for storing chat transcripts.
+
+This API does not create a resource that doesn't exist. It only associates it to the instance. Ensure that the resource being specified in the storage configuration, like an S3 bucket, exists when being used for association.>
+
+  take instance-id
+    like native-string
+    note <The identifier of the Amazon Connect instance. You can find the instanceId in the ARN of the instance.>
+  take associate-instance-storage-config-body, like associate-instance-storage-config-body
+
+  line </instance/{instance-id}/storage-config>
+
+  seed json, loan associate-instance-storage-config-body
+
+  loot 200
+    seed json, like associate-instance-storage-config-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like resource-conflict-exception
+    note <ResourceConflictException>
+  loot 482
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 483
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 484
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 485
+    seed json, like throttling-exception
+    note <ThrottlingException>

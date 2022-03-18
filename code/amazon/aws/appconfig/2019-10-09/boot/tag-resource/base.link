@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/tag-resource-body
+  take form tag-resource-body
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot tag-resource, name <TagResource>
+  note <Metadata to assign to an AppConfig resource. Tags help organize and categorize your AppConfig resources. Each tag consists of a key and an optional value, both of which you define. You can specify a maximum of 50 tags for a resource.>
+
+  take resource-arn
+    like native-string
+    note <The ARN of the resource for which to retrieve tags.>
+  take tag-resource-body, like tag-resource-body
+
+  line </tags/{resource-arn}>
+
+  seed json, loan tag-resource-body
+
+  loot 204
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

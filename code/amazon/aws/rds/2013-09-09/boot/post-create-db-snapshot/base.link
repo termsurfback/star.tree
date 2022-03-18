@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/rds/2013-09-09/base/create-db-snapshot-result
+  take form create-db-snapshot-result
+
+load @drumwork/snow/amazonaws.com/rds/2013-09-09/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-09-09/base/db-snapshot-already-exists-fault
+  take form db-snapshot-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-09-09/base/invalid-db-instance-state-fault
+  take form invalid-db-instance-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-09-09/base/snapshot-quota-exceeded-fault
+  take form snapshot-quota-exceeded-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-db-snapshot, name <POST_CreateDBSnapshot>
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-db-snapshot-message, like create-db-snapshot-message
+    void take
+
+  line </#Action=CreateDBSnapshot>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-db-snapshot-message
+
+  loot 200
+    seed xml, like create-db-snapshot-result
+    note <Success>
+  loot 480
+    seed xml, like db-snapshot-already-exists-fault
+    note <DBSnapshotAlreadyExistsFault>
+  loot 481
+    seed xml, like invalid-db-instance-state-fault
+    note <InvalidDBInstanceStateFault>
+  loot 482
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>
+  loot 483
+    seed xml, like snapshot-quota-exceeded-fault
+    note <SnapshotQuotaExceededFault>

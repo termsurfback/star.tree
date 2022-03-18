@@ -1,0 +1,66 @@
+
+load @drumwork/snow/amazonaws.com/devops-guru/2020-12-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/devops-guru/2020-12-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/devops-guru/2020-12-01/base/list-anomalies-for-insight-body
+  take form list-anomalies-for-insight-body
+
+load @drumwork/snow/amazonaws.com/devops-guru/2020-12-01/base/list-anomalies-for-insight-response
+  take form list-anomalies-for-insight-response
+
+load @drumwork/snow/amazonaws.com/devops-guru/2020-12-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/devops-guru/2020-12-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/devops-guru/2020-12-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-anomalies-for-insight, name <ListAnomaliesForInsight>
+  note <Returns a list of the anomalies that belong to an insight that you specify using its ID.>
+
+  take insight-id
+    like native-string
+    note <The ID of the insight. The returned anomalies belong to this insight.>
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-anomalies-for-insight-body, like list-anomalies-for-insight-body
+
+  line </anomalies/insight/{insight-id}>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-anomalies-for-insight-body
+
+  loot 200
+    seed json, like list-anomalies-for-insight-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like validation-exception
+    note <ValidationException>

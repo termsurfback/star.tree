@@ -1,0 +1,177 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/date-time
+  take form date-time
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/double
+  take form double
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/image-disk-container
+  take form image-disk-container
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/import-image-license-configuration-request
+  take form import-image-license-configuration-request
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/import-image-result
+  take form import-image-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/tag-specification
+  take form tag-specification
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-import-image, name <GET_ImportImage>
+  note <Import single or multi-volume disk images or EBS snapshots into an Amazon Machine Image (AMI).
+
+For more information, see [Importing a VM as an image using VM Import/Export](https://docs.aws.amazon.com/vm-import/latest/userguide/vmimport-image-import.html) in the _VM Import/Export User Guide_.>
+
+  take architecture
+    like native-string
+    note <The architecture of the virtual machine.
+
+Valid values: `i386` | `x86_64` | `arm64`>
+    void take
+  take client-data
+    like form
+      take comment, name <Comment>
+        like string
+        void take
+        note <A user-defined comment about the disk upload.>
+      take upload-end, name <UploadEnd>
+        like date-time
+        void take
+        note <The time that the disk upload ends.>
+      take upload-size, name <UploadSize>
+        like double
+        void take
+        note <The size of the uploaded disk image, in GiB.>
+      take upload-start, name <UploadStart>
+        like date-time
+        void take
+        note <The time that the disk upload starts.>
+    note <The client-specific data.>
+    void take
+  take client-token
+    like native-string
+    note <The token to enable idempotency for VM import requests.>
+    void take
+  take description
+    like native-string
+    note <A description string for the import image task.>
+    void take
+  take disk-container
+    like list
+      like image-disk-container
+    note <Information about the disk containers.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take encrypted
+    like native-boolean
+    note <Specifies whether the destination AMI of the imported image should be encrypted. The default KMS key for EBS is used unless you specify a non-default KMS key using `KmsKeyId`. For more information, see [Amazon EBS Encryption](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html) in the _Amazon Elastic Compute Cloud User Guide_.>
+    void take
+  take hypervisor
+    like native-string
+    note <The target hypervisor platform.
+
+Valid values: `xen`>
+    void take
+  take kms-key-id
+    like native-string
+    note <An identifier for the symmetric KMS key to use when creating the encrypted AMI. This parameter is only required if you want to use a non-default KMS key; if this parameter is not specified, the default KMS key for EBS is used. If a `KmsKeyId` is specified, the `Encrypted` flag must also be set.
+
+The KMS key identifier may be provided in any of the following formats:
+
+- Key ID
+
+- Key alias. The alias ARN contains the `arn:aws:kms` namespace, followed by the Region of the key, the Amazon Web Services account ID of the key owner, the `alias` namespace, and then the key alias. For example, arn:aws:kms:_us-east-1_:_012345678910_:alias/_ExampleAlias_.
+
+- ARN using key ID. The ID ARN contains the `arn:aws:kms` namespace, followed by the Region of the key, the Amazon Web Services account ID of the key owner, the `key` namespace, and then the key ID. For example, arn:aws:kms:_us-east-1_:_012345678910_:key/_abcd1234-a123-456a-a12b-a123b4cd56ef_.
+
+- ARN using key alias. The alias ARN contains the `arn:aws:kms` namespace, followed by the Region of the key, the Amazon Web Services account ID of the key owner, the `alias` namespace, and then the key alias. For example, arn:aws:kms:_us-east-1_:_012345678910_:alias/_ExampleAlias_.
+
+Amazon Web Services parses `KmsKeyId` asynchronously, meaning that the action you call may appear to complete even though you provided an invalid identifier. This action will eventually report failure.
+
+The specified KMS key must exist in the Region that the AMI is being copied to.
+
+Amazon EBS does not support asymmetric KMS keys.>
+    void take
+  take license-type
+    like native-string
+    note <The license type to be used for the Amazon Machine Image (AMI) after importing.
+
+By default, we detect the source-system operating system (OS) and apply the appropriate license. Specify `AWS` to replace the source-system license with an Amazon Web Services license, if appropriate. Specify `BYOL` to retain the source-system license, if appropriate.
+
+To use `BYOL`, you must have existing licenses with rights to use these licenses in a third party cloud, such as Amazon Web Services. For more information, see [Prerequisites](https://docs.aws.amazon.com/vm-import/latest/userguide/vmimport-image-import.html#prerequisites-image) in the VM Import/Export User Guide.>
+    void take
+  take platform
+    like native-string
+    note <The operating system of the virtual machine.
+
+Valid values: `Windows` | `Linux`>
+    void take
+  take role-name
+    like native-string
+    note <The name of the role to use when not using the default role, 'vmimport'.>
+    void take
+  take license-specifications
+    like list
+      like import-image-license-configuration-request
+    note <The ARNs of the license configurations.>
+    void take
+  take tag-specification
+    like list
+      like tag-specification
+    note <The tags to apply to the import image task during creation.>
+    void take
+  take usage-operation
+    like native-string
+    note <The usage operation value. For more information, see [AMI billing information fields](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/billing-info-fields.html) in the _Amazon Elastic Compute Cloud User Guide_.>
+    void take
+  take boot-mode
+    like native-string
+    note <The boot mode of the virtual machine.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ImportImage>
+
+  find <Architecture>, loan architecture
+  find <ClientData>, loan client-data
+  find <ClientToken>, loan client-token
+  find <Description>, loan description
+  find <DiskContainer>, loan disk-container
+  find <DryRun>, loan dry-run
+  find <Encrypted>, loan encrypted
+  find <Hypervisor>, loan hypervisor
+  find <KmsKeyId>, loan kms-key-id
+  find <LicenseType>, loan license-type
+  find <Platform>, loan platform
+  find <RoleName>, loan role-name
+  find <LicenseSpecifications>, loan license-specifications
+  find <TagSpecification>, loan tag-specification
+  find <UsageOperation>, loan usage-operation
+  find <BootMode>, loan boot-mode
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like import-image-result
+    note <Success>

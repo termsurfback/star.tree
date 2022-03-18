@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/mgn/2020-02-26/base/describe-source-servers-body
+  take form describe-source-servers-body
+
+load @drumwork/snow/amazonaws.com/mgn/2020-02-26/base/describe-source-servers-response
+  take form describe-source-servers-response
+
+load @drumwork/snow/amazonaws.com/mgn/2020-02-26/base/uninitialized-account-exception
+  take form uninitialized-account-exception
+
+load @drumwork/snow/amazonaws.com/mgn/2020-02-26/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-source-servers, name <DescribeSourceServers>
+  note <Retrieves all SourceServers or multiple SourceServers by ID.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-source-servers-body, like describe-source-servers-body
+
+  line </DescribeSourceServers>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan describe-source-servers-body
+
+  loot 200
+    seed json, like describe-source-servers-response
+    note <Success>
+  loot 480
+    seed json, like uninitialized-account-exception
+    note <UninitializedAccountException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>

@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/coupon
+  take form coupon
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-coupons-coupon-body
+  take form get-coupons-coupon-body
+
+boot get-coupons-coupon, name <GetCouponsCoupon>
+  note <Retrieves the coupon with the given ID.>
+
+  take coupon
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-coupons-coupon-body, like get-coupons-coupon-body
+    void take
+
+  line </v1/coupons/{coupon}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-coupons-coupon-body
+
+  loot 200
+    seed json, like coupon
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

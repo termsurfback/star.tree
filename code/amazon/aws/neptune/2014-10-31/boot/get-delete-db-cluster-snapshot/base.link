@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-snapshot-not-found-fault
+  take form db-cluster-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/delete-db-cluster-snapshot-result
+  take form delete-db-cluster-snapshot-result
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-cluster-snapshot-state-fault
+  take form invalid-db-cluster-snapshot-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-db-cluster-snapshot, name <GET_DeleteDBClusterSnapshot>
+  note <Deletes a DB cluster snapshot. If the snapshot is being copied, the copy operation is terminated.
+
+The DB cluster snapshot must be in the `available` state to be deleted.>
+
+  take db-cluster-snapshot-identifier
+    like native-string
+    note <The identifier of the DB cluster snapshot to delete.
+
+Constraints: Must be the name of an existing DB cluster snapshot in the `available` state.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteDBClusterSnapshot>
+
+  find <DBClusterSnapshotIdentifier>, loan db-cluster-snapshot-identifier
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-db-cluster-snapshot-result
+    note <Success>
+  loot 480
+    seed xml, like invalid-db-cluster-snapshot-state-fault
+    note <InvalidDBClusterSnapshotStateFault>
+  loot 481
+    seed xml, like db-cluster-snapshot-not-found-fault
+    note <DBClusterSnapshotNotFoundFault>

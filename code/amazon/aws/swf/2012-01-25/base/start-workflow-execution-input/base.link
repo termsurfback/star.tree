@@ -1,0 +1,101 @@
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/arn
+  take form arn
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/child-policy
+  take form child-policy
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/data
+  take form data
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/domain-name
+  take form domain-name
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/duration-in-seconds-optional
+  take form duration-in-seconds-optional
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/tag-list
+  take form tag-list
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/task-list
+  take form task-list
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/task-priority
+  take form task-priority
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/workflow-id
+  take form workflow-id
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/workflow-type
+  take form workflow-type
+
+form start-workflow-execution-input, name <StartWorkflowExecutionInput>
+  take domain, name <domain>
+    like domain-name
+    note <The name of the domain in which the workflow execution is created.>
+  take workflow-id, name <workflowId>
+    like workflow-id
+    note <The user defined identifier associated with the workflow execution. You can use this to associate a custom identifier with the workflow execution. You may specify the same identifier if a workflow execution is logically a _restart_ of a previous execution. You cannot have two open workflow executions with the same `workflowId` at the same time within the same domain.
+
+The specified string must not start or end with whitespace. It must not contain a `:` (colon), `/` (slash), `|` (vertical bar), or any control characters (`\u0000-\u001f` | `\u007f-\u009f`). Also, it must not _be_ the literal string `arn`.>
+  take workflow-type, name <workflowType>
+    like workflow-type
+    note <The type of the workflow to start.>
+  take task-list, name <taskList>
+    like task-list
+    void take
+    note <The task list to use for the decision tasks generated for this workflow execution. This overrides the `defaultTaskList` specified when registering the workflow type.
+
+A task list for this workflow execution must be specified either as a default for the workflow type or through this parameter. If neither this parameter is set nor a default task list was specified at registration time then a fault is returned.
+
+The specified string must not start or end with whitespace. It must not contain a `:` (colon), `/` (slash), `|` (vertical bar), or any control characters (`\u0000-\u001f` | `\u007f-\u009f`). Also, it must not _be_ the literal string `arn`.>
+  take task-priority, name <taskPriority>
+    like task-priority
+    void take
+    note <The task priority to use for this workflow execution. This overrides any default priority that was assigned when the workflow type was registered. If not set, then the default task priority for the workflow type is used. Valid values are integers that range from Java's `Integer.MIN_VALUE` (-2147483648) to `Integer.MAX_VALUE` (2147483647). Higher numbers indicate higher priority.
+
+For more information about setting task priority, see [Setting Task Priority](https://docs.aws.amazon.com/amazonswf/latest/developerguide/programming-priority.html) in the _Amazon SWF Developer Guide_.>
+  take input, name <input>
+    like data
+    void take
+    note <The input for the workflow execution. This is a free form string which should be meaningful to the workflow you are starting. This `input` is made available to the new workflow execution in the `WorkflowExecutionStarted` history event.>
+  take execution-start-to-close-timeout, name <executionStartToCloseTimeout>
+    like duration-in-seconds-optional
+    void take
+    note <The total duration for this workflow execution. This overrides the defaultExecutionStartToCloseTimeout specified when registering the workflow type.
+
+The duration is specified in seconds; an integer greater than or equal to `0`. Exceeding this limit causes the workflow execution to time out. Unlike some of the other timeout parameters in Amazon SWF, you cannot specify a value of "NONE" for this timeout; there is a one-year max limit on the time that a workflow execution can run.
+
+An execution start-to-close timeout must be specified either through this parameter or as a default when the workflow type is registered. If neither this parameter nor a default execution start-to-close timeout is specified, a fault is returned.>
+  take tag-list, name <tagList>
+    like tag-list
+    void take
+    note <The list of tags to associate with the workflow execution. You can specify a maximum of 5 tags. You can list workflow executions with a specific tag by calling ListOpenWorkflowExecutions or ListClosedWorkflowExecutions and specifying a TagFilter.>
+  take task-start-to-close-timeout, name <taskStartToCloseTimeout>
+    like duration-in-seconds-optional
+    void take
+    note <Specifies the maximum duration of decision tasks for this workflow execution. This parameter overrides the `defaultTaskStartToCloseTimout` specified when registering the workflow type using RegisterWorkflowType.
+
+The duration is specified in seconds, an integer greater than or equal to `0`. You can use `NONE` to specify unlimited duration.
+
+A task start-to-close timeout for this workflow execution must be specified either as a default for the workflow type or through this parameter. If neither this parameter is set nor a default task start-to-close timeout was specified at registration time then a fault is returned.>
+  take child-policy, name <childPolicy>
+    like child-policy
+    void take
+    note <If set, specifies the policy to use for the child workflow executions of this workflow execution if it is terminated, by calling the TerminateWorkflowExecution action explicitly or due to an expired timeout. This policy overrides the default child policy specified when registering the workflow type using RegisterWorkflowType.
+
+The supported child policies are:
+
+- `TERMINATE` - The child executions are terminated.
+
+- `REQUEST_CANCEL` - A request to cancel is attempted for each child execution by recording a `WorkflowExecutionCancelRequested` event in its history. It is up to the decider to take appropriate actions when it receives an execution history with this event.
+
+- `ABANDON` - No action is taken. The child executions continue to run.
+
+A child policy for this workflow execution must be specified either as a default for the workflow type or through this parameter. If neither this parameter is set nor a default child policy was specified at registration time then a fault is returned.>
+  take lambda-role, name <lambdaRole>
+    like arn
+    void take
+    note <The IAM role to attach to this workflow execution.
+
+Executions of this workflow type need IAM roles to invoke Lambda functions. If you don't attach an IAM role, any attempt to schedule a Lambda task fails. This results in a `ScheduleLambdaFunctionFailed` history event. For more information, see [https://docs.aws.amazon.com/amazonswf/latest/developerguide/lambda-task.html](https://docs.aws.amazon.com/amazonswf/latest/developerguide/lambda-task.html) in the _Amazon SWF Developer Guide_.>

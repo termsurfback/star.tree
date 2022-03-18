@@ -1,0 +1,36 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/bigquery/v2/base/list-models-response
+  take form list-models-response
+
+boot bigquery-models-list, name <bigquery.models.list>
+  note <Lists all models in the specified dataset. Requires the READER dataset role. After retrieving the list of models, you can get information about a particular model by calling the models.get method.>
+
+  take project-id
+    like native-string
+    note <Required. Project ID of the models to list.>
+  take dataset-id
+    like native-string
+    note <Required. Dataset ID of the models to list.>
+  take max-results
+    like native-integer
+    note <The maximum number of results to return in a single response page. Leverage the page tokens to iterate through the entire collection.>
+    void take
+  take page-token
+    like native-string
+    note <Page token, returned by a previous call to request the next page of results>
+    void take
+
+  line </projects/{project-id}/datasets/{dataset-id}/models>
+
+  find <maxResults>, loan max-results
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-models-response
+    note <Successful response>

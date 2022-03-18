@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/byoip-cidr-not-found-exception
+  take form byoip-cidr-not-found-exception
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/deprovision-byoip-cidr-response
+  take form deprovision-byoip-cidr-response
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/incorrect-cidr-state-exception
+  take form incorrect-cidr-state-exception
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/invalid-argument-exception
+  take form invalid-argument-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot deprovision-byoip-cidr, name <DeprovisionByoipCidr>
+  note <Releases the specified address range that you provisioned to use with your AWS resources through bring your own IP addresses (BYOIP) and deletes the corresponding address pool.
+
+Before you can release an address range, you must stop advertising it by using [WithdrawByoipCidr](https://docs.aws.amazon.com/global-accelerator/latest/api/WithdrawByoipCidr.html) and you must not have any accelerators that are using static IP addresses allocated from its address range.
+
+For more information, see [Bring Your Own IP Addresses (BYOIP)](https://docs.aws.amazon.com/global-accelerator/latest/dg/using-byoip.html) in the _AWS Global Accelerator Developer Guide_.>
+
+  take x-amz-target
+    like native-string
+  take deprovision-byoip-cidr-request, like deprovision-byoip-cidr-request
+
+  line </#X-Amz-Target=GlobalAccelerator_V20180706.DeprovisionByoipCidr>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan deprovision-byoip-cidr-request
+
+  loot 200
+    seed json, like deprovision-byoip-cidr-response
+    note <Success>
+  loot 480
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>
+  loot 481
+    seed json, like invalid-argument-exception
+    note <InvalidArgumentException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 483
+    seed json, like byoip-cidr-not-found-exception
+    note <ByoipCidrNotFoundException>
+  loot 484
+    seed json, like incorrect-cidr-state-exception
+    note <IncorrectCidrStateException>

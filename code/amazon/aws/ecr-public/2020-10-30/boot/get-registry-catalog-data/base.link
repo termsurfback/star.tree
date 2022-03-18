@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/get-registry-catalog-data-response
+  take form get-registry-catalog-data-response
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/unsupported-command-exception
+  take form unsupported-command-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-registry-catalog-data, name <GetRegistryCatalogData>
+  note <Retrieves catalog metadata for a public registry.>
+
+  take x-amz-target
+    like native-string
+  take get-registry-catalog-data-request, like get-registry-catalog-data-request
+
+  line </#X-Amz-Target=SpencerFrontendService.GetRegistryCatalogData>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-registry-catalog-data-request
+
+  loot 200
+    seed json, like get-registry-catalog-data-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like unsupported-command-exception
+    note <UnsupportedCommandException>

@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/servicemanagement/v1/base/list-service-rollouts-response
+  take form list-service-rollouts-response
+
+boot servicemanagement-services-rollouts-list, name <servicemanagement.services.rollouts.list>
+  note <Lists the history of the service configuration rollouts for a managed service, from the newest to the oldest.>
+
+  take service-name
+    like native-string
+    note <Required. The name of the service. See the [overview](/service-management/overview) for naming requirements. For example: `example.googleapis.com`.>
+  take filter
+    like native-string
+    note <Required. Use `filter` to return subset of rollouts. The following filters are supported: -- To limit the results to only those in [status](google.api.servicemanagement.v1.RolloutStatus) 'SUCCESS', use filter='status=SUCCESS' -- To limit the results to those in [status](google.api.servicemanagement.v1.RolloutStatus) 'CANCELLED' or 'FAILED', use filter='status=CANCELLED OR status=FAILED'>
+    void take
+  take page-size
+    like native-integer
+    note <The max number of items to include in the response list. Page size is 50 if not specified. Maximum value is 100.>
+    void take
+  take page-token
+    like native-string
+    note <The token of the page to retrieve.>
+    void take
+
+  line </v1/services/{service-name}/rollouts>
+
+  find <filter>, loan filter
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-service-rollouts-response
+    note <Successful response>

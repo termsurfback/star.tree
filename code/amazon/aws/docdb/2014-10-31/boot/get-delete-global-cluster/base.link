@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/delete-global-cluster-result
+  take form delete-global-cluster-result
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/global-cluster-not-found-fault
+  take form global-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/invalid-global-cluster-state-fault
+  take form invalid-global-cluster-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-global-cluster, name <GET_DeleteGlobalCluster>
+  note <Deletes a global cluster. The primary and secondary clusters must already be detached or deleted before attempting to delete a global cluster.
+
+This action only applies to Amazon DocumentDB clusters.>
+
+  take global-cluster-identifier
+    like native-string
+    note <The cluster identifier of the global cluster being deleted.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteGlobalCluster>
+
+  find <GlobalClusterIdentifier>, loan global-cluster-identifier
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-global-cluster-result
+    note <Success>
+  loot 480
+    seed xml, like global-cluster-not-found-fault
+    note <GlobalClusterNotFoundFault>
+  loot 481
+    seed xml, like invalid-global-cluster-state-fault
+    note <InvalidGlobalClusterStateFault>

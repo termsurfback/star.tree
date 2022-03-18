@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/create-group-certificate-authority-response
+  take form create-group-certificate-authority-response
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/internal-server-error-exception
+  take form internal-server-error-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-group-certificate-authority, name <CreateGroupCertificateAuthority>
+  note <Creates a CA for the group. If a CA already exists, it will rotate the existing CA.>
+
+  take group-id
+    like native-string
+    note <The ID of the Greengrass group.>
+  take x-amzn-client-token
+    like native-string
+    note <A client token used to correlate requests and responses.>
+    void take
+
+  line </greengrass/groups/{group-id}/certificateauthorities>
+
+  hint <X-Amzn-Client-Token>, loan x-amzn-client-token
+
+  loot 200
+    seed json, like create-group-certificate-authority-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like internal-server-error-exception
+    note <InternalServerErrorException>

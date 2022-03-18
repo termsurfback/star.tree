@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/create-cachedi-scsi-volume-output
+  take form create-cachedi-scsi-volume-output
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-cachedi-scsi-volume, name <CreateCachediSCSIVolume>
+  note <Creates a cached volume on a specified cached volume gateway. This operation is only supported in the cached volume gateway type.
+
+Cache storage must be allocated to the gateway before you can create a cached volume. Use the AddCache operation to add cache storage to a gateway.
+
+In the request, you must specify the gateway, size of the volume in bytes, the iSCSI target name, an IP address on which to expose the target, and a unique client token. In response, the gateway creates the volume and returns information about it. This information includes the volume Amazon Resource Name (ARN), its size, and the iSCSI target ARN that initiators can use to connect to the volume target.
+
+Optionally, you can provide the ARN for an existing volume as the `SourceVolumeARN` for this cached volume, which creates an exact copy of the existing volume’s latest recovery point. The `VolumeSizeInBytes` value must be equal to or larger than the size of the copied volume, in bytes.>
+
+  take x-amz-target
+    like native-string
+  take create-cachedi-scsi-volume-input, like create-cachedi-scsi-volume-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.CreateCachediSCSIVolume>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-cachedi-scsi-volume-input
+
+  loot 200
+    seed json, like create-cachedi-scsi-volume-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

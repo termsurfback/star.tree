@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/base-exception
+  take form base-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/update-stopword-options-response
+  take form update-stopword-options-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-update-stopword-options, name <POST_UpdateStopwordOptions>
+  note <Configures stopwords for the search domain. Stopwords are used during indexing and when processing search requests. The maximum size of the stopwords dictionary is 10 KB.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take update-stopword-options-request, like update-stopword-options-request
+    void take
+
+  line </#Action=UpdateStopwordOptions>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan update-stopword-options-request
+
+  loot 200
+    seed xml, like update-stopword-options-response
+    note <Success>
+  loot 409
+    seed xml, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 480
+    seed xml, like base-exception
+    note <BaseException>
+  loot 500
+    seed xml, like internal-exception
+    note <InternalException>

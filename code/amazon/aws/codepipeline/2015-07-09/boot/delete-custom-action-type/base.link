@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-custom-action-type, name <DeleteCustomActionType>
+  note <Marks a custom action as deleted. `PollForJobs` for the custom action fails after the action is marked for deletion. Used for custom actions only.
+
+To re-create a custom action after it has been deleted you must use a string in the version field that has never been used before. This string can be an incremented version number, for example. To restore a deleted custom action, use a JSON file that is identical to the deleted action, including the original string in the version field.>
+
+  take x-amz-target
+    like native-string
+  take delete-custom-action-type-input, like delete-custom-action-type-input
+
+  line </#X-Amz-Target=CodePipeline_20150709.DeleteCustomActionType>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-custom-action-type-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>

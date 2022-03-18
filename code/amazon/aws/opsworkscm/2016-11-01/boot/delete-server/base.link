@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/delete-server-response
+  take form delete-server-response
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/invalid-state-exception
+  take form invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-server, name <DeleteServer>
+  note <Deletes the server and the underlying AWS CloudFormation stacks (including the server's EC2 instance). When you run this command, the server state is updated to `DELETING`. After the server is deleted, it is no longer returned by `DescribeServer` requests. If the AWS CloudFormation stack cannot be deleted, the server cannot be deleted.
+
+This operation is asynchronous.
+
+An `InvalidStateException` is thrown when a server deletion is already in progress. A `ResourceNotFoundException` is thrown when the server does not exist. A `ValidationException` is raised when parameters of the request are not valid.>
+
+  take x-amz-target
+    like native-string
+  take delete-server-request, like delete-server-request
+
+  line </#X-Amz-Target=OpsWorksCM_V2016_11_01.DeleteServer>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-server-request
+
+  loot 200
+    seed json, like delete-server-response
+    note <Success>
+  loot 480
+    seed json, like invalid-state-exception
+    note <InvalidStateException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>

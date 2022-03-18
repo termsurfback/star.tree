@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/firebaserules/v1/base/list-releases-response
+  take form list-releases-response
+
+boot firebaserules-projects-releases-list, name <firebaserules.projects.releases.list>
+  note <List the `Release` values for a project. This list may optionally be filtered by `Release` name, `Ruleset` name, `TestSuite` name, or any combination thereof.>
+
+  take name
+    like native-string
+    note <Required. Resource name for the project. Format: `projects/{project_id}`>
+  take filter
+    like native-string
+    note <`Release` filter. The list method supports filters with restrictions on the `Release.name`, and `Release.ruleset_name`. Example 1: A filter of 'name=prod*' might return `Release`s with names within 'projects/foo' prefixed with 'prod': Name -&gt; Ruleset Name: * projects/foo/releases/prod -&gt; projects/foo/rulesets/uuid1234 * projects/foo/releases/prod/v1 -&gt; projects/foo/rulesets/uuid1234 * projects/foo/releases/prod/v2 -&gt; projects/foo/rulesets/uuid8888 Example 2: A filter of `name=prod* ruleset_name=uuid1234` would return only `Release` instances for 'projects/foo' with names prefixed with 'prod' referring to the same `Ruleset` name of 'uuid1234': Name -&gt; Ruleset Name: * projects/foo/releases/prod -&gt; projects/foo/rulesets/1234 * projects/foo/releases/prod/v1 -&gt; projects/foo/rulesets/1234 In the examples, the filter parameters refer to the search filters are relative to the project. Fully qualified prefixed may also be used.>
+    void take
+  take page-size
+    like native-integer
+    note <Page size to load. Maximum of 100. Defaults to 10. Note: `page_size` is just a hint and the service may choose to load fewer than `page_size` results due to the size of the output. To traverse all of the releases, the caller should iterate until the `page_token` on the response is empty.>
+    void take
+  take page-token
+    like native-string
+    note <Next page token for the next batch of `Release` instances.>
+    void take
+
+  line </v1/{name}/releases>
+
+  find <filter>, loan filter
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-releases-response
+    note <Successful response>

@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/data-unavailable-exception
+  take form data-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/get-savings-plans-utilization-details-response
+  take form get-savings-plans-utilization-details-response
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-savings-plans-utilization-details, name <GetSavingsPlansUtilizationDetails>
+  note <Retrieves attribute data along with aggregate utilization and savings data for a given time period. This doesn't support granular or grouped data (daily/monthly) in response. You can't retrieve data by dates in a single response similar to `GetSavingsPlanUtilization`, but you have the option to make multiple calls to `GetSavingsPlanUtilizationDetails` by providing individual dates. You can use `GetDimensionValues` in `SAVINGS_PLANS` to determine the possible dimension values.
+
+`GetSavingsPlanUtilizationDetails` internally groups data by `SavingsPlansArn`.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-savings-plans-utilization-details-request, like get-savings-plans-utilization-details-request
+
+  line </#X-Amz-Target=AWSInsightsIndexService.GetSavingsPlansUtilizationDetails>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan get-savings-plans-utilization-details-request
+
+  loot 200
+    seed json, like get-savings-plans-utilization-details-response
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed json, like data-unavailable-exception
+    note <DataUnavailableException>
+  loot 482
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>

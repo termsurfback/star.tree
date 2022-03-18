@@ -1,0 +1,25 @@
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/boolean-type
+  take form boolean-type
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/non-empty-resource-policy-type
+  take form non-empty-resource-policy-type
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/secret-id-type
+  take form secret-id-type
+
+form put-resource-policy-request, name <PutResourcePolicyRequest>
+  take secret-id, name <SecretId>
+    like secret-id-type
+    note <Specifies the secret that you want to attach the resource-based policy. You can specify either the ARN or the friendly name of the secret.
+
+If you specify an ARN, we generally recommend that you specify a complete ARN. You can specify a partial ARN too—for example, if you don’t include the final hyphen and six random characters that Secrets Manager adds at the end of the ARN when you created the secret. A partial ARN match can work as long as it uniquely matches only one secret. However, if your secret has a name that ends in a hyphen followed by six characters (before Secrets Manager adds the hyphen and six characters to the ARN) and you try to use that as a partial ARN, then those characters cause Secrets Manager to assume that you’re specifying a complete ARN. This confusion can cause unexpected results. To avoid this situation, we recommend that you don’t create secret names ending with a hyphen followed by six characters.
+
+If you specify an incomplete ARN without the random suffix, and instead provide the 'friendly name', you _must_ not include the random suffix. If you do include the random suffix added by Secrets Manager, you receive either a _ResourceNotFoundException_ or an _AccessDeniedException_ error, depending on your permissions.>
+  take resource-policy, name <ResourcePolicy>
+    like non-empty-resource-policy-type
+    note <A JSON-formatted string constructed according to the grammar and syntax for an Amazon Web Services resource-based policy. The policy in the string identifies who can access or manage this secret and its versions. For information on how to format a JSON parameter for the various command line tool environments, see [Using JSON for Parameters](http://docs.aws.amazon.com/cli/latest/userguide/cli-using-param.html#cli-using-param-json) in the _CLI User Guide_.>
+  take block-public-policy, name <BlockPublicPolicy>
+    like boolean-type
+    void take
+    note <(Optional) If you set the parameter, `BlockPublicPolicy` to true, then you block resource-based policies that allow broad access to the secret.>

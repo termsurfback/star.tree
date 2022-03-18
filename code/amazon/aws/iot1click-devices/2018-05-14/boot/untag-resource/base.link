@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot untag-resource, name <UntagResource>
+  note <Using tag keys, deletes the tags (key/value pairs) associated with the specified resource ARN.>
+
+  take resource-arn
+    like native-string
+    note <The ARN of the resource.>
+  take tag-keys
+    like list
+      like string
+    note <A collections of tag keys. For example, {"key1","key2"}>
+
+  line </tags/{resource-arn}#tagKeys>
+
+  find <tagKeys>, loan tag-keys
+
+  loot 204
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

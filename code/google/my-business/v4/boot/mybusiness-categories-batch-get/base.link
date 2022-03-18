@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/my-business/v4/base/batch-get-business-categories-response
+  take form batch-get-business-categories-response
+
+boot mybusiness-categories-batch-get, name <mybusiness.categories.batchGet>
+  note <Returns a list of business categories for the provided language and GConcept ids.>
+
+  take category-ids
+    like list
+      like native-string
+    note <Required. At least one name must be set. The GConcept ids the localized category names should be returned for.>
+    void take
+  take language-code
+    like native-string
+    note <Required. The BCP 47 code of language that the category names should be returned in.>
+    void take
+  take region-code
+    like native-string
+    note <Optional. The ISO 3166-1 alpha-2 country code used to infer non-standard language.>
+    void take
+  take view
+    like native-string
+    note <Required. Specifies which parts to the Category resource should be returned in the response.>
+    void take
+
+  line </v4/categories:batchGet>
+
+  find <categoryIds>, loan category-ids
+  find <languageCode>, loan language-code
+  find <regionCode>, loan region-code
+  find <view>, loan view
+
+  loot 200
+    seed json, like batch-get-business-categories-response
+    note <Successful response>

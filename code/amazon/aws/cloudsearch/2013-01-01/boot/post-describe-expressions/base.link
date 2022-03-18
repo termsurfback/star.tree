@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2013-01-01/base/base-exception
+  take form base-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2013-01-01/base/describe-expressions-response
+  take form describe-expressions-response
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2013-01-01/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2013-01-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-expressions, name <POST_DescribeExpressions>
+  note <Gets the expressions configured for the search domain. Can be limited to specific expressions by name. By default, shows all expressions and includes any pending changes to the configuration. Set the `Deployed` option to `true` to show the active configuration and exclude pending changes. For more information, see [Configuring Expressions](http://docs.aws.amazon.com/cloudsearch/latest/developerguide/configuring-expressions.html) in the _Amazon CloudSearch Developer Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-expressions-request, like describe-expressions-request
+    void take
+
+  line </#Action=DescribeExpressions>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-expressions-request
+
+  loot 200
+    seed xml, like describe-expressions-response
+    note <Success>
+  loot 480
+    seed xml, like base-exception
+    note <BaseException>
+  loot 481
+    seed xml, like internal-exception
+    note <InternalException>
+  loot 482
+    seed xml, like resource-not-found-exception
+    note <ResourceNotFoundException>

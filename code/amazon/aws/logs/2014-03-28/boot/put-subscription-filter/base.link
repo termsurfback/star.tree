@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/operation-aborted-exception
+  take form operation-aborted-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-subscription-filter, name <PutSubscriptionFilter>
+  note <Creates or updates a subscription filter and associates it with the specified log group. Subscription filters allow you to subscribe to a real-time stream of log events ingested through [PutLogEvents](https://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/API_PutLogEvents.html) and have them delivered to a specific destination. When log events are sent to the receiving service, they are Base64 encoded and compressed with the gzip format.
+
+The following destinations are supported for subscription filters:
+
+- An Amazon Kinesis stream belonging to the same account as the subscription filter, for same-account delivery.
+
+- A logical destination that belongs to a different account, for cross-account delivery.
+
+- An Amazon Kinesis Firehose delivery stream that belongs to the same account as the subscription filter, for same-account delivery.
+
+- An Lambda function that belongs to the same account as the subscription filter, for same-account delivery.
+
+Each log group can have up to two subscription filters associated with it. If you are updating an existing filter, you must specify the correct name in `filterName`.
+
+To perform a `PutSubscriptionFilter` operation, you must also have the `iam:PassRole` permission.>
+
+  take x-amz-target
+    like native-string
+  take put-subscription-filter-request, like put-subscription-filter-request
+
+  line </#X-Amz-Target=Logs_20140328.PutSubscriptionFilter>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan put-subscription-filter-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like operation-aborted-exception
+    note <OperationAbortedException>
+  loot 483
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 484
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

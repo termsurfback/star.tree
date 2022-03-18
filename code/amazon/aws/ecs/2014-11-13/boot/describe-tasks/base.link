@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/cluster-not-found-exception
+  take form cluster-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/describe-tasks-response
+  take form describe-tasks-response
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-tasks, name <DescribeTasks>
+  note <Describes a specified task or tasks.>
+
+  take x-amz-target
+    like native-string
+  take describe-tasks-request, like describe-tasks-request
+
+  line </#X-Amz-Target=AmazonEC2ContainerServiceV20141113.DescribeTasks>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-tasks-request
+
+  loot 200
+    seed json, like describe-tasks-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like client-exception
+    note <ClientException>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 483
+    seed json, like cluster-not-found-exception
+    note <ClusterNotFoundException>

@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/delete-insight-rules-output
+  take form delete-insight-rules-output
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/missing-required-parameter-exception
+  take form missing-required-parameter-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-insight-rules, name <POST_DeleteInsightRules>
+  note <Permanently deletes the specified Contributor Insights rules.
+
+If you create a rule, delete it, and then re-create it with the same name, historical data from the first time the rule was created might not be available.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-insight-rules-input, like delete-insight-rules-input
+    void take
+
+  line </#Action=DeleteInsightRules>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-insight-rules-input
+
+  loot 200
+    seed xml, like delete-insight-rules-output
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 481
+    seed xml, like missing-required-parameter-exception
+    note <MissingRequiredParameterException>

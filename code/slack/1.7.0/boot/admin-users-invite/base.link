@@ -1,0 +1,39 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/admin-users-invite-body
+  take form admin-users-invite-body
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+boot admin-users-invite, name <admin_users_invite>
+  note <Invite a user to a workspace.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `admin.users:write`>
+  take admin-users-invite-body, like admin-users-invite-body
+
+  line </admin.users.invite>
+
+  hint <token>, loan token
+
+  seed x-www-form-urlencoded, loan admin-users-invite-body
+
+  loot 200
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-true
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response>

@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/cfn-registry-exception
+  take form cfn-registry-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/deactivate-type-output
+  take form deactivate-type-output
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/type-not-found-exception
+  take form type-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-deactivate-type, name <POST_DeactivateType>
+  note <Deactivates a public extension that was previously activated in this account and region.
+
+Once deactivated, an extension cannot be used in any CloudFormation operation. This includes stack update operations where the stack template includes the extension, even if no updates are being made to the extension. In addition, deactivated extensions are not automatically updated if a new version of the extension is released.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take deactivate-type-input, like deactivate-type-input
+    void take
+
+  line </#Action=DeactivateType>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan deactivate-type-input
+
+  loot 200
+    seed xml, like deactivate-type-output
+    note <Success>
+  loot 480
+    seed xml, like cfn-registry-exception
+    note <CFNRegistryException>
+  loot 481
+    seed xml, like type-not-found-exception
+    note <TypeNotFoundException>

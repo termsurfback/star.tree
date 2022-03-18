@@ -1,0 +1,163 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/image-id
+  take form image-id
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/kernel-id
+  take form kernel-id
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/key-pair-name
+  take form key-pair-name
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/ramdisk-id
+  take form ramdisk-id
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/run-scheduled-instances-result
+  take form run-scheduled-instances-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/scheduled-instances-block-device-mapping-set
+  take form scheduled-instances-block-device-mapping-set
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/scheduled-instances-iam-instance-profile
+  take form scheduled-instances-iam-instance-profile
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/scheduled-instances-monitoring
+  take form scheduled-instances-monitoring
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/scheduled-instances-network-interface-set
+  take form scheduled-instances-network-interface-set
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/scheduled-instances-placement
+  take form scheduled-instances-placement
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/scheduled-instances-security-group-id-set
+  take form scheduled-instances-security-group-id-set
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/subnet-id
+  take form subnet-id
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-run-scheduled-instances, name <GET_RunScheduledInstances>
+  note <Launches the specified Scheduled Instances.
+
+Before you can launch a Scheduled Instance, you must purchase it and obtain an identifier using PurchaseScheduledInstances.
+
+You must launch a Scheduled Instance during its scheduled time period. You can't stop or reboot a Scheduled Instance, but you can terminate it as needed. If you terminate a Scheduled Instance before the current scheduled time period ends, you can launch it again after a few minutes. For more information, see [Scheduled Instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-scheduled-instances.html) in the _Amazon EC2 User Guide_.>
+
+  take client-token
+    like native-string
+    note <Unique, case-sensitive identifier that ensures the idempotency of the request. For more information, see [Ensuring Idempotency](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/Run_Instance_Idempotency.html).>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take instance-count
+    like native-integer
+    note <The number of instances.
+
+Default: 1>
+    void take
+  take launch-specification
+    like form
+      take block-device-mappings, name <BlockDeviceMappings>
+        like scheduled-instances-block-device-mapping-set
+        void take
+        note <The block device mapping entries.>
+        host xml
+          host name, text <BlockDeviceMapping>
+      take ebs-optimized, name <EbsOptimized>
+        like boolean
+        void take
+        note <Indicates whether the instances are optimized for EBS I/O. This optimization provides dedicated throughput to Amazon EBS and an optimized configuration stack to provide optimal EBS I/O performance. This optimization isn't available with all instance types. Additional usage charges apply when using an EBS-optimized instance.
+
+Default: `false`>
+      take iam-instance-profile, name <IamInstanceProfile>
+        like scheduled-instances-iam-instance-profile
+        void take
+        note <The IAM instance profile.>
+      take image-id, name <ImageId>
+        like image-id
+        note <The ID of the Amazon Machine Image (AMI).>
+      take instance-type, name <InstanceType>
+        like string
+        void take
+        note <The instance type.>
+      take kernel-id, name <KernelId>
+        like kernel-id
+        void take
+        note <The ID of the kernel.>
+      take key-name, name <KeyName>
+        like key-pair-name
+        void take
+        note <The name of the key pair.>
+      take monitoring, name <Monitoring>
+        like scheduled-instances-monitoring
+        void take
+        note <Enable or disable monitoring for the instances.>
+      take network-interfaces, name <NetworkInterfaces>
+        like scheduled-instances-network-interface-set
+        void take
+        note <The network interfaces.>
+        host xml
+          host name, text <NetworkInterface>
+      take placement, name <Placement>
+        like scheduled-instances-placement
+        void take
+        note <The placement information.>
+      take ramdisk-id, name <RamdiskId>
+        like ramdisk-id
+        void take
+        note <The ID of the RAM disk.>
+      take security-group-ids, name <SecurityGroupIds>
+        like scheduled-instances-security-group-id-set
+        void take
+        note <The IDs of the security groups.>
+        host xml
+          host name, text <SecurityGroupId>
+      take subnet-id, name <SubnetId>
+        like subnet-id
+        void take
+        note <The ID of the subnet in which to launch the instances.>
+      take user-data, name <UserData>
+        like string
+        void take
+        note <The base64-encoded MIME user data.>
+    note <The launch specification. You must match the instance type, Availability Zone, network, and platform of the schedule that you purchased.>
+  take scheduled-instance-id
+    like native-string
+    note <The Scheduled Instance ID.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=RunScheduledInstances>
+
+  find <ClientToken>, loan client-token
+  find <DryRun>, loan dry-run
+  find <InstanceCount>, loan instance-count
+  find <LaunchSpecification>, loan launch-specification
+  find <ScheduledInstanceId>, loan scheduled-instance-id
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like run-scheduled-instances-result
+    note <Success>

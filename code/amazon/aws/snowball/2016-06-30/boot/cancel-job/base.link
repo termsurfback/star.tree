@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/cancel-job-result
+  take form cancel-job-result
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/invalid-job-state-exception
+  take form invalid-job-state-exception
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/invalid-resource-exception
+  take form invalid-resource-exception
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/kms-request-failed-exception
+  take form kms-request-failed-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot cancel-job, name <CancelJob>
+  note <Cancels the specified job. You can only cancel a job before its `JobState` value changes to `PreparingAppliance`. Requesting the `ListJobs` or `DescribeJob` action returns a job's `JobState` as part of the response element data returned.>
+
+  take x-amz-target
+    like native-string
+  take cancel-job-request, like cancel-job-request
+
+  line </#X-Amz-Target=AWSIESnowballJobManagementService.CancelJob>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan cancel-job-request
+
+  loot 200
+    seed json, like cancel-job-result
+    note <Success>
+  loot 480
+    seed json, like invalid-resource-exception
+    note <InvalidResourceException>
+  loot 481
+    seed json, like invalid-job-state-exception
+    note <InvalidJobStateException>
+  loot 482
+    seed json, like kms-request-failed-exception
+    note <KMSRequestFailedException>

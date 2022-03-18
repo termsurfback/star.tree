@@ -1,0 +1,77 @@
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/create-solution-version-response
+  take form create-solution-version-response
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-solution-version, name <CreateSolutionVersion>
+  note <Trains or retrains an active solution. A solution is created using the CreateSolution operation and must be in the ACTIVE state before calling `CreateSolutionVersion`. A new version of the solution is created every time you call this operation.
+
+**Status** A solution version can be in one of the following states:
+
+- CREATE PENDING
+
+- CREATE IN_PROGRESS
+
+- ACTIVE
+
+- CREATE FAILED
+
+- CREATE STOPPING
+
+- CREATE STOPPED
+
+To get the status of the version, call DescribeSolutionVersion. Wait until the status shows as ACTIVE before calling `CreateCampaign`.
+
+If the status shows as CREATE FAILED, the response includes a `failureReason` key, which describes why the job failed.
+
+**Related APIs** - ListSolutionVersions
+
+- DescribeSolutionVersion
+
+- ListSolutions
+
+- CreateSolution
+
+- DescribeSolution
+
+- DeleteSolution>
+
+  take x-amz-target
+    like native-string
+  take create-solution-version-request, like create-solution-version-request
+
+  line </#X-Amz-Target=AmazonPersonalize.CreateSolutionVersion>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-solution-version-request
+
+  loot 200
+    seed json, like create-solution-version-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 483
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>

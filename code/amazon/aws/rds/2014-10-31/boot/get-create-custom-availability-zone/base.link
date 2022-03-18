@@ -1,0 +1,68 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/create-custom-availability-zone-result
+  take form create-custom-availability-zone-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/custom-availability-zone-already-exists-fault
+  take form custom-availability-zone-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/custom-availability-zone-quota-exceeded-fault
+  take form custom-availability-zone-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/kms-key-not-accessible-fault
+  take form kms-key-not-accessible-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-custom-availability-zone, name <GET_CreateCustomAvailabilityZone>
+  note <Creates a custom Availability Zone (AZ).
+
+A custom AZ is an on-premises AZ that is integrated with a VMware vSphere cluster.
+
+For more information about RDS on VMware, see the [RDS on VMware User Guide.](https://docs.aws.amazon.com/AmazonRDS/latest/RDSonVMwareUserGuide/rds-on-vmware.html)>
+
+  take custom-availability-zone-name
+    like native-string
+    note <The name of the custom Availability Zone (AZ).>
+  take existing-vpn-id
+    like native-string
+    note <The ID of an existing virtual private network (VPN) between the Amazon RDS website and the VMware vSphere cluster.>
+    void take
+  take new-vpn-tunnel-name
+    like native-string
+    note <The name of a new VPN tunnel between the Amazon RDS website and the VMware vSphere cluster.
+
+Specify this parameter only if `ExistingVpnId` isn't specified.>
+    void take
+  take vpn-tunnel-originator-ip
+    like native-string
+    note <The IP address of network traffic from your on-premises data center. A custom AZ receives the network traffic.
+
+Specify this parameter only if `ExistingVpnId` isn't specified.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateCustomAvailabilityZone>
+
+  find <CustomAvailabilityZoneName>, loan custom-availability-zone-name
+  find <ExistingVpnId>, loan existing-vpn-id
+  find <NewVpnTunnelName>, loan new-vpn-tunnel-name
+  find <VpnTunnelOriginatorIP>, loan vpn-tunnel-originator-ip
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-custom-availability-zone-result
+    note <Success>
+  loot 480
+    seed xml, like custom-availability-zone-already-exists-fault
+    note <CustomAvailabilityZoneAlreadyExistsFault>
+  loot 481
+    seed xml, like custom-availability-zone-quota-exceeded-fault
+    note <CustomAvailabilityZoneQuotaExceededFault>
+  loot 482
+    seed xml, like kms-key-not-accessible-fault
+    note <KMSKeyNotAccessibleFault>

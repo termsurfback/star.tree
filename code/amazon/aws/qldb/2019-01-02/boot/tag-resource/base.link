@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/tag-resource-body
+  take form tag-resource-body
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/tag-resource-response
+  take form tag-resource-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot tag-resource, name <TagResource>
+  note <Adds one or more tags to a specified Amazon QLDB resource.
+
+A resource can have up to 50 tags. If you try to create more than 50 tags for a resource, your request fails and returns an error.>
+
+  take resource-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) to which you want to add the tags. For example:
+
+`arn:aws:qldb:us-east-1:123456789012:ledger/exampleLedger`>
+  take tag-resource-body, like tag-resource-body
+
+  line </tags/{resource-arn}>
+
+  seed json, loan tag-resource-body
+
+  loot 200
+    seed json, like tag-resource-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

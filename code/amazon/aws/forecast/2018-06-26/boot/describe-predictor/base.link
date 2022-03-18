@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/forecast/2018-06-26/base/describe-predictor-response
+  take form describe-predictor-response
+
+load @drumwork/snow/amazonaws.com/forecast/2018-06-26/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/forecast/2018-06-26/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-predictor, name <DescribePredictor>
+  note <Describes a predictor created using the CreatePredictor operation.
+
+In addition to listing the properties provided in the `CreatePredictor` request, this operation lists the following properties:
+
+- `DatasetImportJobArns` - The dataset import jobs used to import training data.
+
+- `AutoMLAlgorithmArns` - If AutoML is performed, the algorithms that were evaluated.
+
+- `CreationTime`
+
+- `LastModificationTime`
+
+- `Status`
+
+- `Message` - If an error occurred, information about the error.>
+
+  take x-amz-target
+    like native-string
+  take describe-predictor-request, like describe-predictor-request
+
+  line </#X-Amz-Target=AmazonForecast.DescribePredictor>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-predictor-request
+
+  loot 200
+    seed json, like describe-predictor-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

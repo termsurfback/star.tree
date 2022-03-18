@@ -1,0 +1,56 @@
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/create-keys-and-certificate-response
+  take form create-keys-and-certificate-response
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+boot create-keys-and-certificate, name <CreateKeysAndCertificate>
+  note <Creates a 2048-bit RSA key pair and issues an X.509 certificate using the issued public key. You can also call `CreateKeysAndCertificate` over MQTT from a device, for more information, see [Provisioning MQTT API](https://docs.aws.amazon.com/iot/latest/developerguide/provision-wo-cert.html#provision-mqtt-api).
+
+**Note** This is the only time IoT issues the private key for this certificate, so it is important to keep it in a secure location.
+
+Requires permission to access the [CreateKeysAndCertificate](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiot.html#awsiot-actions-as-permissions) action.>
+
+  take set-as-active
+    like native-boolean
+    note <Specifies whether the certificate is active.>
+    void take
+
+  line </keys-and-certificate>
+
+  find <setAsActive>, loan set-as-active
+
+  loot 200
+    seed json, like create-keys-and-certificate-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 484
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

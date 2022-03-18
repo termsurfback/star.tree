@@ -1,0 +1,29 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/bigtableadmin/v1/base/operation
+  take form operation
+
+boot bigtableadmin-projects-instances-clusters-backups-create, name <bigtableadmin.projects.instances.clusters.backups.create>
+  note <Starts creating a new Cloud Bigtable Backup. The returned backup long-running operation can be used to track creation of the backup. The metadata field type is CreateBackupMetadata. The response field type is Backup, if successful. Cancelling the returned operation will stop the creation and delete the backup.>
+
+  take parent
+    like native-string
+    note <Required. This must be one of the clusters in the instance in which this table is located. The backup will be stored in this cluster. Values are of the form `projects/{project}/instances/{instance}/clusters/{cluster}`.>
+  take backup-id
+    like native-string
+    note <Required. The id of the backup to be created. The `backup_id` along with the parent `parent` are combined as {parent}/backups/{backup_id} to create the full backup name, of the form: `projects/{project}/instances/{instance}/clusters/{cluster}/backups/{backup_id}`. This string must be between 1 and 50 characters in length and match the regex _a-zA-Z0-9*.>
+    void take
+  take backup, like backup
+    void take
+
+  line </v2/{parent}/backups>
+
+  find <backupId>, loan backup-id
+
+  seed json, loan backup
+
+  loot 200
+    seed json, like operation
+    note <Successful response>

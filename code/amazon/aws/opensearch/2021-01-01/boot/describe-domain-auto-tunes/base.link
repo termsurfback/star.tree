@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/opensearch/2021-01-01/base/base-exception
+  take form base-exception
+
+load @drumwork/snow/amazonaws.com/opensearch/2021-01-01/base/describe-domain-auto-tunes-body
+  take form describe-domain-auto-tunes-body
+
+load @drumwork/snow/amazonaws.com/opensearch/2021-01-01/base/describe-domain-auto-tunes-response
+  take form describe-domain-auto-tunes-response
+
+load @drumwork/snow/amazonaws.com/opensearch/2021-01-01/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/opensearch/2021-01-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/opensearch/2021-01-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-domain-auto-tunes, name <DescribeDomainAutoTunes>
+  note <Provides scheduled Auto-Tune action details for the domain, such as Auto-Tune action type, description, severity, and scheduled date.>
+
+  take domain-name
+    like native-string
+    note <The domain name for which you want Auto-Tune action details.>
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-domain-auto-tunes-body, like describe-domain-auto-tunes-body
+
+  line </2021-01-01/opensearch/domain/{domain-name}/autoTunes>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-domain-auto-tunes-body
+
+  loot 200
+    seed json, like describe-domain-auto-tunes-response
+    note <Success>
+  loot 480
+    seed json, like base-exception
+    note <BaseException>
+  loot 481
+    seed json, like internal-exception
+    note <InternalException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like validation-exception
+    note <ValidationException>

@@ -1,0 +1,92 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/create-traffic-mirror-session-result
+  take form create-traffic-mirror-session-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/tag-specification
+  take form tag-specification
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-traffic-mirror-session, name <GET_CreateTrafficMirrorSession>
+  note <Creates a Traffic Mirror session.
+
+A Traffic Mirror session actively copies packets from a Traffic Mirror source to a Traffic Mirror target. Create a filter, and then assign it to the session to define a subset of the traffic to mirror, for example all TCP traffic.
+
+The Traffic Mirror source and the Traffic Mirror target (monitoring appliances) can be in the same VPC, or in a different VPC connected via VPC peering or a transit gateway.
+
+By default, no traffic is mirrored. Use [CreateTrafficMirrorFilter](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateTrafficMirrorFilter.htm) to create filter rules that specify the traffic to mirror.>
+
+  take network-interface-id
+    like native-string
+    note <The ID of the source network interface.>
+  take traffic-mirror-target-id
+    like native-string
+    note <The ID of the Traffic Mirror target.>
+  take traffic-mirror-filter-id
+    like native-string
+    note <The ID of the Traffic Mirror filter.>
+  take packet-length
+    like native-integer
+    note <The number of bytes in each packet to mirror. These are bytes after the VXLAN header. Do not specify this parameter when you want to mirror the entire packet. To mirror a subset of the packet, set this to the length (in bytes) that you want to mirror. For example, if you set this value to 100, then the first 100 bytes that meet the filter criteria are copied to the target.
+
+If you do not want to mirror the entire packet, use the `PacketLength` parameter to specify the number of bytes in each packet to mirror.>
+    void take
+  take session-number
+    like native-integer
+    note <The session number determines the order in which sessions are evaluated when an interface is used by multiple sessions. The first session with a matching filter is the one that mirrors the packets.
+
+Valid values are 1-32766.>
+  take virtual-network-id
+    like native-integer
+    note <The VXLAN ID for the Traffic Mirror session. For more information about the VXLAN protocol, see [RFC 7348](https://tools.ietf.org/html/rfc7348). If you do not specify a `VirtualNetworkId`, an account-wide unique id is chosen at random.>
+    void take
+  take description
+    like native-string
+    note <The description of the Traffic Mirror session.>
+    void take
+  take tag-specification
+    like list
+      like tag-specification
+    note <The tags to assign to a Traffic Mirror session.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take client-token
+    like native-string
+    note <Unique, case-sensitive identifier that you provide to ensure the idempotency of the request. For more information, see [How to Ensure Idempotency](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/Run_Instance_Idempotency.html).>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateTrafficMirrorSession>
+
+  find <NetworkInterfaceId>, loan network-interface-id
+  find <TrafficMirrorTargetId>, loan traffic-mirror-target-id
+  find <TrafficMirrorFilterId>, loan traffic-mirror-filter-id
+  find <PacketLength>, loan packet-length
+  find <SessionNumber>, loan session-number
+  find <VirtualNetworkId>, loan virtual-network-id
+  find <Description>, loan description
+  find <TagSpecification>, loan tag-specification
+  find <DryRun>, loan dry-run
+  find <ClientToken>, loan client-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-traffic-mirror-session-result
+    note <Success>

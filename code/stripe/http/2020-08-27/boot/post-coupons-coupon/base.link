@@ -1,0 +1,31 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/coupon
+  take form coupon
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-coupons-coupon-body
+  take form post-coupons-coupon-body
+
+boot post-coupons-coupon, name <PostCouponsCoupon>
+  note <Updates the metadata of a coupon. Other coupon details (currency, duration, amount_off) are, by design, not editable.>
+
+  take coupon
+    like native-string
+  take post-coupons-coupon-body, like post-coupons-coupon-body
+    void take
+
+  line </v1/coupons/{coupon}>
+
+  seed x-www-form-urlencoded, loan post-coupons-coupon-body
+
+  loot 200
+    seed json, like coupon
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

@@ -1,0 +1,54 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+load @drumwork/snow/slack.com/1.7.0/base/objs-user
+  take form objs-user
+
+boot users-info, name <users_info>
+  note <Gets information about a user.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `users:read`>
+  take include-locale
+    like native-boolean
+    note <Set this to `true` to receive the locale for this user. Defaults to `false`>
+    void take
+  take user
+    like native-string
+    note <User to get info on>
+    void take
+
+  line </users.info>
+
+  find <token>, loan token
+  find <include_locale>, loan include-locale
+  find <user>, loan user
+
+  loot 200
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-true
+        take user, name <user>
+          like objs-user
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take callstack, name <callstack>
+          void take
+        take error, name <error>
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response>

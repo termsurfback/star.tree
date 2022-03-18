@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/replication-group-message
+  take form replication-group-message
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/replication-group-not-found-fault
+  take form replication-group-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-replication-groups, name <POST_DescribeReplicationGroups>
+  note <Returns information about a particular replication group. If no identifier is specified, `DescribeReplicationGroups` returns information about all replication groups.
+
+This operation is valid for Redis only.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-replication-groups-message, like describe-replication-groups-message
+    void take
+
+  line </#Action=DescribeReplicationGroups>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-replication-groups-message
+
+  loot 200
+    seed xml, like replication-group-message
+    note <Success>
+  loot 480
+    seed xml, like replication-group-not-found-fault
+    note <ReplicationGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

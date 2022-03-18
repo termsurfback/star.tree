@@ -1,0 +1,76 @@
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/entity-not-exists-exception
+  take form entity-not-exists-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/failed-dependency-exception
+  take form failed-dependency-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/get-folder-path-response
+  take form get-folder-path-response
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/unauthorized-operation-exception
+  take form unauthorized-operation-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/unauthorized-resource-access-exception
+  take form unauthorized-resource-access-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-folder-path, name <GetFolderPath>
+  note <Retrieves the path information (the hierarchy from the root folder) for the specified folder.
+
+By default, Amazon WorkDocs returns a maximum of 100 levels upwards from the requested folder and only includes the IDs of the parent folders in the path. You can limit the maximum number of levels. You can also request the parent folder names.>
+
+  take folder-id
+    like native-string
+    note <The ID of the folder.>
+  take authentication
+    like native-string
+    note <Amazon WorkDocs authentication token. Not required when using AWS administrator credentials to access the API.>
+    void take
+  take limit
+    like native-integer
+    note <The maximum number of levels in the hierarchy to return.>
+    void take
+  take fields
+    like native-string
+    note <A comma-separated list of values. Specify "NAME" to include the names of the parent folders.>
+    void take
+  take marker
+    like native-string
+    note <This value is not supported.>
+    void take
+
+  line </api/v1/folders/{folder-id}/path>
+
+  hint <Authentication>, loan authentication
+
+  find <limit>, loan limit
+  find <fields>, loan fields
+  find <marker>, loan marker
+
+  loot 200
+    seed json, like get-folder-path-response
+    note <Success>
+  loot 480
+    seed json, like entity-not-exists-exception
+    note <EntityNotExistsException>
+  loot 481
+    seed json, like unauthorized-operation-exception
+    note <UnauthorizedOperationException>
+  loot 482
+    seed json, like unauthorized-resource-access-exception
+    note <UnauthorizedResourceAccessException>
+  loot 483
+    seed json, like failed-dependency-exception
+    note <FailedDependencyException>
+  loot 484
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

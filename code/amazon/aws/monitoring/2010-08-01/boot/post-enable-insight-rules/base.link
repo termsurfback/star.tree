@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/enable-insight-rules-output
+  take form enable-insight-rules-output
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/missing-required-parameter-exception
+  take form missing-required-parameter-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-enable-insight-rules, name <POST_EnableInsightRules>
+  note <Enables the specified Contributor Insights rules. When rules are enabled, they immediately begin analyzing log data.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take enable-insight-rules-input, like enable-insight-rules-input
+    void take
+
+  line </#Action=EnableInsightRules>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan enable-insight-rules-input
+
+  loot 200
+    seed xml, like enable-insight-rules-output
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 481
+    seed xml, like missing-required-parameter-exception
+    note <MissingRequiredParameterException>
+  loot 482
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>

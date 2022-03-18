@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/global-cluster-not-found-fault
+  take form global-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/global-clusters-message
+  take form global-clusters-message
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-global-clusters, name <GET_DescribeGlobalClusters>
+  note <Returns information about Amazon DocumentDB global clusters. This API supports pagination.
+
+This action only applies to Amazon DocumentDB clusters.>
+
+  take global-cluster-identifier
+    like native-string
+    note <The user-supplied cluster identifier. If this parameter is specified, information from only the specific cluster is returned. This parameter isn't case-sensitive.>
+    void take
+  take filters
+    like list
+      like filter
+    note <A filter that specifies one or more global DB clusters to describe.
+
+Supported filters: `db-cluster-id` accepts cluster identifiers and cluster Amazon Resource Names (ARNs). The results list will only include information about the clusters identified by these ARNs.>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of records to include in the response. If more records exist than the specified `MaxRecords` value, a pagination token called a marker is included in the response so that you can retrieve the remaining results.>
+    void take
+  take marker
+    like native-string
+    note <An optional pagination token provided by a previous `DescribeGlobalClusters` request. If this parameter is specified, the response includes only records beyond the marker, up to the value specified by `MaxRecords`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeGlobalClusters>
+
+  find <GlobalClusterIdentifier>, loan global-cluster-identifier
+  find <Filters>, loan filters
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like global-clusters-message
+    note <Success>
+  loot 480
+    seed xml, like global-cluster-not-found-fault
+    note <GlobalClusterNotFoundFault>

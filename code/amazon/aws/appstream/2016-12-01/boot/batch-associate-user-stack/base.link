@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/batch-associate-user-stack-result
+  take form batch-associate-user-stack-result
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/operation-not-permitted-exception
+  take form operation-not-permitted-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot batch-associate-user-stack, name <BatchAssociateUserStack>
+  note <Associates the specified users with the specified stacks. Users in a user pool cannot be assigned to stacks with fleets that are joined to an Active Directory domain.>
+
+  take x-amz-target
+    like native-string
+  take batch-associate-user-stack-request, like batch-associate-user-stack-request
+
+  line </#X-Amz-Target=PhotonAdminProxyService.BatchAssociateUserStack>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan batch-associate-user-stack-request
+
+  loot 200
+    seed json, like batch-associate-user-stack-result
+    note <Success>
+  loot 480
+    seed json, like operation-not-permitted-exception
+    note <OperationNotPermittedException>
+  loot 481
+    seed json, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

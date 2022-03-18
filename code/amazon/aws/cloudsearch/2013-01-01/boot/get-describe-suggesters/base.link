@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2013-01-01/base/base-exception
+  take form base-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2013-01-01/base/describe-suggesters-response
+  take form describe-suggesters-response
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2013-01-01/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2013-01-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2013-01-01/base/standard-name
+  take form standard-name
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-suggesters, name <GET_DescribeSuggesters>
+  note <Gets the suggesters configured for a domain. A suggester enables you to display possible matches before users finish typing their queries. Can be limited to specific suggesters by name. By default, shows all suggesters and includes any pending changes to the configuration. Set the `Deployed` option to `true` to show the active configuration and exclude pending changes. For more information, see [Getting Search Suggestions](http://docs.aws.amazon.com/cloudsearch/latest/developerguide/getting-suggestions.html) in the _Amazon CloudSearch Developer Guide_.>
+
+  take domain-name
+    like native-string
+    note <The name of the domain you want to describe.>
+  take suggester-names
+    like list
+      like standard-name
+    note <The suggesters you want to describe.>
+    void take
+  take deployed
+    like native-boolean
+    note <Whether to display the deployed configuration (`true`) or include any pending changes (`false`). Defaults to `false`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeSuggesters>
+
+  find <DomainName>, loan domain-name
+  find <SuggesterNames>, loan suggester-names
+  find <Deployed>, loan deployed
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-suggesters-response
+    note <Success>
+  loot 480
+    seed xml, like base-exception
+    note <BaseException>
+  loot 481
+    seed xml, like internal-exception
+    note <InternalException>
+  loot 482
+    seed xml, like resource-not-found-exception
+    note <ResourceNotFoundException>

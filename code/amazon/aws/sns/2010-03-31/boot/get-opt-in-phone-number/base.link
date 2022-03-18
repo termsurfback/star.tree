@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/opt-in-phone-number-response
+  take form opt-in-phone-number-response
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/throttled-exception
+  take form throttled-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-opt-in-phone-number, name <GET_OptInPhoneNumber>
+  note <Use this request to opt in a phone number that is opted out, which enables you to resume sending SMS messages to the number.
+
+You can opt in a phone number only once every 30 days.>
+
+  take phone-number
+    like native-string
+    note <The phone number to opt in. Use E.164 format.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=OptInPhoneNumber>
+
+  find <phoneNumber>, loan phone-number
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like opt-in-phone-number-response
+    note <Success>
+  loot 480
+    seed xml, like throttled-exception
+    note <ThrottledException>
+  loot 481
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 482
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>
+  loot 483
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>

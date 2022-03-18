@@ -1,0 +1,110 @@
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/calculate-route-car-mode-options
+  take form calculate-route-car-mode-options
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/calculate-route-request-waypoint-positions-list
+  take form calculate-route-request-waypoint-positions-list
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/calculate-route-truck-mode-options
+  take form calculate-route-truck-mode-options
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/distance-unit
+  take form distance-unit
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/position
+  take form position
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/timestamp
+  take form timestamp
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/travel-mode
+  take form travel-mode
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+form calculate-route-request, name <CalculateRouteRequest>
+  take car-mode-options, name <CarModeOptions>
+    like calculate-route-car-mode-options
+    void take
+    note <Specifies route preferences when traveling by `Car`, such as avoiding routes that use ferries or tolls.
+
+Requirements: `TravelMode` must be specified as `Car`.>
+  take depart-now, name <DepartNow>
+    like boolean
+    void take
+    note <Sets the time of departure as the current time. Uses the current time to calculate a route. Otherwise, the best time of day to travel with the best traffic conditions is used to calculate the route.
+
+Default Value: `false`
+
+Valid Values: `false` | `true`>
+  take departure-position, name <DeparturePosition>
+    like position
+    note <The start position for the route. Defined in [WGS 84](https://earth-info.nga.mil/GandG/wgs84/index.html) format: `[longitude, latitude]`.
+
+- For example, `[-123.115, 49.285]`
+
+If you specify a departure that's not located on a road, Amazon Location [moves the position to the nearest road](https://docs.aws.amazon.com/location/latest/developerguide/calculate-route.html#snap-to-nearby-road).
+
+Valid Values: `[-180 to 180,-90 to 90]`>
+  take departure-time, name <DepartureTime>
+    like timestamp
+    void take
+    note <Specifies the desired time of departure. Uses the given time to calculate a route. Otherwise, the best time of day to travel with the best traffic conditions is used to calculate the route.
+
+Setting a departure time in the past returns a `400 ValidationException` error.
+
+- In [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format: `YYYY-MM-DDThh:mm:ss.sssZ`. For example, `2020-07-2T12:15:20.000Z+01:00`>
+  take destination-position, name <DestinationPosition>
+    like position
+    note <The finish position for the route. Defined in [WGS 84](https://earth-info.nga.mil/GandG/wgs84/index.html) format: `[longitude, latitude]`.
+
+- For example, `[-122.339, 47.615]`
+
+If you specify a destination that's not located on a road, Amazon Location [moves the position to the nearest road](https://docs.aws.amazon.com/location/latest/developerguide/calculate-route.html#snap-to-nearby-road).
+
+Valid Values: `[-180 to 180,-90 to 90]`>
+  take distance-unit, name <DistanceUnit>
+    like distance-unit
+    void take
+    note <Set the unit system to specify the distance.
+
+Default Value: `Kilometers`>
+  take include-leg-geometry, name <IncludeLegGeometry>
+    like boolean
+    void take
+    note <Set to include the geometry details in the result for each path between a pair of positions.
+
+Default Value: `false`
+
+Valid Values: `false` | `true`>
+  take travel-mode, name <TravelMode>
+    like travel-mode
+    void take
+    note <Specifies the mode of transport when calculating a route. Used in estimating the speed of travel and road compatibility.
+
+The `TravelMode` you specify determines how you specify route preferences:
+
+- If traveling by `Car` use the `CarModeOptions` parameter.
+
+- If traveling by `Truck` use the `TruckModeOptions` parameter.
+
+Default Value: `Car`>
+  take truck-mode-options, name <TruckModeOptions>
+    like calculate-route-truck-mode-options
+    void take
+    note <Specifies route preferences when traveling by `Truck`, such as avoiding routes that use ferries or tolls, and truck specifications to consider when choosing an optimal road.
+
+Requirements: `TravelMode` must be specified as `Truck`.>
+  take waypoint-positions, name <WaypointPositions>
+    like calculate-route-request-waypoint-positions-list
+    void take
+    note <Specifies an ordered list of up to 23 intermediate positions to include along a route between the departure position and destination position.
+
+- For example, from the `DeparturePosition` `[-123.115, 49.285]`, the route follows the order that the waypoint positions are given `[[-122.757, 49.0021],[-122.349, 47.620]]`
+
+If you specify a waypoint position that's not located on a road, Amazon Location [moves the position to the nearest road](https://docs.aws.amazon.com/location/latest/developerguide/calculate-route.html#snap-to-nearby-road).
+
+Specifying more than 23 waypoints returns a `400 ValidationException` error.
+
+Valid Values: `[-180 to 180,-90 to 90]`>

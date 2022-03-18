@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/invalid-endpoint-exception
+  take form invalid-endpoint-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-table, name <DeleteTable>
+  note <Deletes a given Timestream table. This is an irreversible operation. After a Timestream database table is deleted, the time series data stored in the table cannot be recovered.
+
+Due to the nature of distributed retries, the operation can return either success or a ResourceNotFoundException. Clients should consider them equivalent.>
+
+  take x-amz-target
+    like native-string
+  take delete-table-request, like delete-table-request
+
+  line </#X-Amz-Target=Timestream_20181101.DeleteTable>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-table-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 484
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 485
+    seed json, like invalid-endpoint-exception
+    note <InvalidEndpointException>

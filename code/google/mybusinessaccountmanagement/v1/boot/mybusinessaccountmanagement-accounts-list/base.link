@@ -1,0 +1,40 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/mybusinessaccountmanagement/v1/base/list-accounts-response
+  take form list-accounts-response
+
+boot mybusinessaccountmanagement-accounts-list, name <mybusinessaccountmanagement.accounts.list>
+  note <Lists all of the accounts for the authenticated user. This includes all accounts that the user owns, as well as any accounts for which the user has management rights.>
+
+  take filter
+    like native-string
+    note <Optional. A filter constraining the accounts to return. The response includes only entries that match the filter. If `filter` is empty, then no constraints are applied and all accounts (paginated) are retrieved for the requested account. For example, a request with the filter `type=USER_GROUP` will only return user groups. The `type` field is the only supported filter.>
+    void take
+  take page-size
+    like native-integer
+    note <Optional. How many accounts to fetch per page. The minimum supported page_size is 2. The default and maximum is 20.>
+    void take
+  take page-token
+    like native-string
+    note <Optional. If specified, the next page of accounts is retrieved. The `pageToken` is returned when a call to `accounts.list` returns more results than can fit into the requested page size.>
+    void take
+  take parent-account
+    like native-string
+    note <Optional. The resource name of the account for which the list of directly accessible accounts is to be retrieved. This only makes sense for Organizations and User Groups. If empty, will return `ListAccounts` for the authenticated user. `accounts/{account_id}`.>
+    void take
+
+  line </v1/accounts>
+
+  find <filter>, loan filter
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+  find <parentAccount>, loan parent-account
+
+  loot 200
+    seed json, like list-accounts-response
+    note <Successful response>

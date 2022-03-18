@@ -1,0 +1,27 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_chat_v2/1.27.2/base/chat-v2-service-channel-invite
+  take form chat-v2-service-channel-invite
+
+load @drumwork/snow/twilio.com/twilio_chat_v2/1.27.2/base/create-invite-body
+  take form create-invite-body
+
+boot create-invite, name <CreateInvite>
+  take service-sid
+    like native-string
+    note <The SID of the \[Service\](https://www.twilio.com/docs/chat/rest/service-resource) to create the Invite resource under.>
+  take channel-sid
+    like native-string
+    note <The SID of the \[Channel\](https://www.twilio.com/docs/chat/channels) the new Invite resource belongs to. This value can be the Channel resource&#39;s \`sid\` or \`unique\_name\`.>
+  take create-invite-body, like create-invite-body
+    void take
+
+  line </v2/Services/{service-sid}/Channels/{channel-sid}/Invites>
+
+  seed x-www-form-urlencoded, loan create-invite-body
+
+  loot 201
+    seed json, like chat-v2-service-channel-invite
+    note <Created>

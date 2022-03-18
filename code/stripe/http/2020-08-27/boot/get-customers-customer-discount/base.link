@@ -1,0 +1,39 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/discount
+  take form discount
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-customers-customer-discount-body
+  take form get-customers-customer-discount-body
+
+boot get-customers-customer-discount, name <GetCustomersCustomerDiscount>
+  take customer
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-customers-customer-discount-body, like get-customers-customer-discount-body
+    void take
+
+  line </v1/customers/{customer}/discount>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-customers-customer-discount-body
+
+  loot 200
+    seed json, like discount
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

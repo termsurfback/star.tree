@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-not-found-fault
+  take form db-proxy-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/describe-db-proxies-response
+  take form describe-db-proxies-response
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/filter
+  take form filter
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-db-proxies, name <GET_DescribeDBProxies>
+  note <Returns information about DB proxies.>
+
+  take db-proxy-name
+    like native-string
+    note <The name of the DB proxy. If you omit this parameter, the output includes information about all DB proxies owned by your Amazon Web Services account ID.>
+    void take
+  take filters
+    like list
+      like filter
+    note <This parameter is not currently supported.>
+    void take
+  take marker
+    like native-string
+    note <An optional pagination token provided by a previous request. If this parameter is specified, the response includes only records beyond the marker, up to the value specified by `MaxRecords`.>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of records to include in the response. If more records exist than the specified `MaxRecords` value, a pagination token called a marker is included in the response so that the remaining results can be retrieved.
+
+Default: 100
+
+Constraints: Minimum 20, maximum 100.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeDBProxies>
+
+  find <DBProxyName>, loan db-proxy-name
+  find <Filters>, loan filters
+  find <Marker>, loan marker
+  find <MaxRecords>, loan max-records
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-db-proxies-response
+    note <Success>
+  loot 480
+    seed xml, like db-proxy-not-found-fault
+    note <DBProxyNotFoundFault>

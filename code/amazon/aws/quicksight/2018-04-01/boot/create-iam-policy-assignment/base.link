@@ -1,0 +1,70 @@
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/concurrent-updating-exception
+  take form concurrent-updating-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/create-iam-policy-assignment-body
+  take form create-iam-policy-assignment-body
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/create-iam-policy-assignment-response
+  take form create-iam-policy-assignment-response
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/resource-exists-exception
+  take form resource-exists-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-iam-policy-assignment, name <CreateIAMPolicyAssignment>
+  note <Creates an assignment with one specified IAMpolicy, identified by its Amazon Resource Name (ARN). This policy assignment is attached to the specified groups or users of Amazon QuickSight. Assignment names are unique per Amazon Web Services account. To avoid overwriting rules in other namespaces, use assignment names that are unique.>
+
+  take aws-account-id
+    like native-string
+    note <The ID of the Amazon Web Services account where you want to assign an IAMpolicy to Amazon QuickSight users or groups.>
+  take namespace
+    like native-string
+    note <The namespace that contains the assignment.>
+  take create-iam-policy-assignment-body, like create-iam-policy-assignment-body
+
+  line </accounts/{aws-account-id}/namespaces/{namespace}/iam-policy-assignments/>
+
+  seed json, loan create-iam-policy-assignment-body
+
+  loot 200
+    seed json, like create-iam-policy-assignment-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed json, like resource-exists-exception
+    note <ResourceExistsException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 484
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 485
+    seed json, like concurrent-updating-exception
+    note <ConcurrentUpdatingException>
+  loot 486
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

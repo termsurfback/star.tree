@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/delete-vpc-endpoints-result
+  take form delete-vpc-endpoints-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/vpc-endpoint-id
+  take form vpc-endpoint-id
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-vpc-endpoints, name <GET_DeleteVpcEndpoints>
+  note <Deletes one or more specified VPC endpoints. You can delete any of the following types of VPC endpoints.
+
+- Gateway endpoint,
+
+- Gateway Load Balancer endpoint,
+
+- Interface endpoint
+
+The following rules apply when you delete a VPC endpoint:
+
+- When you delete a gateway endpoint, we delete the endpoint routes in the route tables that are associated with the endpoint.
+
+- When you delete a Gateway Load Balancer endpoint, we delete the endpoint network interfaces.
+
+  You can only delete Gateway Load Balancer endpoints when the routes that are associated with the endpoint are deleted.
+
+- When you delete an interface endpoint, we delete the endpoint network interfaces.>
+
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take vpc-endpoint-id
+    like list
+      like vpc-endpoint-id
+    note <One or more VPC endpoint IDs.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteVpcEndpoints>
+
+  find <DryRun>, loan dry-run
+  find <VpcEndpointId>, loan vpc-endpoint-id
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-vpc-endpoints-result
+    note <Success>

@@ -1,0 +1,34 @@
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/create-resource-definition-body
+  take form create-resource-definition-body
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/create-resource-definition-response
+  take form create-resource-definition-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-resource-definition, name <CreateResourceDefinition>
+  note <Creates a resource definition which contains a list of resources to be used in a group. You can create an initial version of the definition by providing a list of resources now, or use ''CreateResourceDefinitionVersion'' later.>
+
+  take x-amzn-client-token
+    like native-string
+    note <A client token used to correlate requests and responses.>
+    void take
+  take create-resource-definition-body, like create-resource-definition-body
+
+  line </greengrass/definition/resources>
+
+  hint <X-Amzn-Client-Token>, loan x-amzn-client-token
+
+  seed json, loan create-resource-definition-body
+
+  loot 200
+    seed json, like create-resource-definition-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>

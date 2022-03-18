@@ -1,0 +1,111 @@
+
+load @drumwork/snow/amazonaws.com/s3/2006-03-01/base/list-objects-v2-output
+  take form list-objects-v2-output
+
+load @drumwork/snow/amazonaws.com/s3/2006-03-01/base/no-such-bucket
+  take form no-such-bucket
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-objects-v2, name <ListObjectsV2>
+  note <Returns some or all (up to 1,000) of the objects in a bucket with each request. You can use the request parameters as selection criteria to return a subset of the objects in a bucket. A `200 OK` response can contain valid or invalid XML. Make sure to design your application to parse the contents of the response and handle it appropriately. Objects are returned sorted in an ascending order of the respective key names in the list. For more information about listing objects, see [Listing object keys programmatically](https://docs.aws.amazon.com/AmazonS3/latest/userguide/ListingKeysUsingAPIs.html)
+
+To use this operation, you must have READ access to the bucket.
+
+To use this action in an Identity and Access Management (IAM) policy, you must have permissions to perform the `s3:ListBucket` action. The bucket owner has this permission by default and can grant this permission to others. For more information about permissions, see [Permissions Related to Bucket Subresource Operations](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-with-s3-actions.html#using-with-s3-actions-related-to-bucket-subresources) and [Managing Access Permissions to Your Amazon S3 Resources](https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-access-control.html).
+
+This section describes the latest revision of this action. We recommend that you use this revised API for application development. For backward compatibility, Amazon S3 continues to support the prior version of this API, [ListObjects](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjects.html).
+
+To get a list of your buckets, see [ListBuckets](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListBuckets.html).
+
+The following operations are related to `ListObjectsV2`:
+
+- [GetObject](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html)
+
+- [PutObject](https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html)
+
+- [CreateBucket](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CreateBucket.html)>
+
+  take bucket
+    like native-string
+    note <Bucket name to list.
+
+When using this action with an access point, you must direct requests to the access point hostname. The access point hostname takes the form _AccessPointName_-_AccountId_.s3-accesspoint._Region_.amazonaws.com. When using this action with an access point through the Amazon Web Services SDKs, you provide the access point ARN in place of the bucket name. For more information about access point ARNs, see [Using access points](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-access-points.html) in the _Amazon S3 User Guide_.
+
+When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form _AccessPointName_-_AccountId_._outpostID_.s3-outposts._Region_.amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see [Using S3 on Outposts](https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html) in the _Amazon S3 User Guide_.>
+  take x-amz-request-payer
+    like native-string
+    note <Confirms that the requester knows that she or he will be charged for the list objects request in V2 style. Bucket owners need not specify this parameter in their requests.>
+    void take
+  take x-amz-expected-bucket-owner
+    like native-string
+    note <The account ID of the expected bucket owner. If the bucket is owned by a different account, the request will fail with an HTTP `403 (Access Denied)` error.>
+    void take
+  take delimiter
+    like native-string
+    note <A delimiter is a character you use to group keys.>
+    void take
+  take encoding-type
+    like native-string
+    note <Encoding type used by Amazon S3 to encode object keys in the response.>
+    void take
+  take max-keys
+    like native-integer
+    note <Sets the maximum number of keys returned in the response. By default the action returns up to 1,000 key names. The response might contain fewer keys but will never contain more.>
+    void take
+  take prefix
+    like native-string
+    note <Limits the response to keys that begin with the specified prefix.>
+    void take
+  take continuation-token
+    like native-string
+    note <ContinuationToken indicates Amazon S3 that the list is being continued on this bucket with a token. ContinuationToken is obfuscated and is not a real key.>
+    void take
+  take fetch-owner
+    like native-boolean
+    note <The owner field is not present in listV2 by default, if you want to return owner field with each key in the result then set the fetch owner field to true.>
+    void take
+  take start-after
+    like native-string
+    note <StartAfter is where you want Amazon S3 to start listing from. Amazon S3 starts listing after this specified key. StartAfter can be any key in the bucket.>
+    void take
+  take max-keys
+    like native-string
+    note <Pagination limit>
+    void take
+  take continuation-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-type
+    like native-string
+
+  line </{bucket}#list-type=2>
+
+  hint <x-amz-request-payer>, loan x-amz-request-payer
+  hint <x-amz-expected-bucket-owner>, loan x-amz-expected-bucket-owner
+
+  find <delimiter>, loan delimiter
+  find <encoding-type>, loan encoding-type
+  find <max-keys>, loan max-keys
+  find <prefix>, loan prefix
+  find <continuation-token>, loan continuation-token
+  find <fetch-owner>, loan fetch-owner
+  find <start-after>, loan start-after
+  find <MaxKeys>, loan max-keys
+  find <ContinuationToken>, loan continuation-token
+  find <list-type>, loan list-type
+
+  loot 200
+    seed xml, like list-objects-v2-output
+    note <Success>
+  loot 480
+    seed xml, like no-such-bucket
+    note <NoSuchBucket>

@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-endpoint-already-exists-fault
+  take form db-proxy-endpoint-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-endpoint-not-found-fault
+  take form db-proxy-endpoint-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-proxy-endpoint-state-fault
+  take form invalid-db-proxy-endpoint-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-proxy-state-fault
+  take form invalid-db-proxy-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/modify-db-proxy-endpoint-response
+  take form modify-db-proxy-endpoint-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-modify-db-proxy-endpoint, name <POST_ModifyDBProxyEndpoint>
+  note <Changes the settings for an existing DB proxy endpoint.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take modify-db-proxy-endpoint-request, like modify-db-proxy-endpoint-request
+    void take
+
+  line </#Action=ModifyDBProxyEndpoint>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan modify-db-proxy-endpoint-request
+
+  loot 200
+    seed xml, like modify-db-proxy-endpoint-response
+    note <Success>
+  loot 480
+    seed xml, like db-proxy-endpoint-not-found-fault
+    note <DBProxyEndpointNotFoundFault>
+  loot 481
+    seed xml, like db-proxy-endpoint-already-exists-fault
+    note <DBProxyEndpointAlreadyExistsFault>
+  loot 482
+    seed xml, like invalid-db-proxy-endpoint-state-fault
+    note <InvalidDBProxyEndpointStateFault>
+  loot 483
+    seed xml, like invalid-db-proxy-state-fault
+    note <InvalidDBProxyStateFault>

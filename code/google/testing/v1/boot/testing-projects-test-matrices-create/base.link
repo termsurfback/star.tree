@@ -1,0 +1,29 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/testing/v1/base/test-matrix
+  take form test-matrix
+
+boot testing-projects-test-matrices-create, name <testing.projects.testMatrices.create>
+  note <Creates and runs a matrix of tests according to the given specifications. Unsupported environments will be returned in the state UNSUPPORTED. A test matrix is limited to use at most 2000 devices in parallel. May return any of the following canonical error codes: - PERMISSION_DENIED - if the user is not authorized to write to project - INVALID_ARGUMENT - if the request is malformed or if the matrix tries to use too many simultaneous devices.>
+
+  take project-id
+    like native-string
+    note <The GCE project under which this job will run.>
+  take request-id
+    like native-string
+    note <A string id used to detect duplicated requests. Ids are automatically scoped to a project, so users should ensure the ID is unique per-project. A UUID is recommended. Optional, but strongly recommended.>
+    void take
+  take test-matrix, like test-matrix
+    void take
+
+  line </v1/projects/{project-id}/testMatrices>
+
+  find <requestId>, loan request-id
+
+  seed json, loan test-matrix
+
+  loot 200
+    seed json, like test-matrix
+    note <Successful response>

@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/access-denied-fault
+  take form access-denied-fault
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/describe-applicable-individual-assessments-response
+  take form describe-applicable-individual-assessments-response
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/invalid-resource-state-fault
+  take form invalid-resource-state-fault
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/resource-not-found-fault
+  take form resource-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-applicable-individual-assessments, name <DescribeApplicableIndividualAssessments>
+  note <Provides a list of individual assessments that you can specify for a new premigration assessment run, given one or more parameters.
+
+If you specify an existing migration task, this operation provides the default individual assessments you can specify for that task. Otherwise, the specified parameters model elements of a possible migration task on which to base a premigration assessment run.
+
+To use these migration task modeling parameters, you must specify an existing replication instance, a source database engine, a target database engine, and a migration type. This combination of parameters potentially limits the default individual assessments available for an assessment run created for a corresponding migration task.
+
+If you specify no parameters, this operation provides a list of all possible individual assessments that you can specify for an assessment run. If you specify any one of the task modeling parameters, you must specify all of them or the operation cannot provide a list of individual assessments. The only parameter that you can specify alone is for an existing migration task. The specified task definition then determines the default list of individual assessments that you can specify in an assessment run for the task.>
+
+  take x-amz-target
+    like native-string
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-applicable-individual-assessments-message, like describe-applicable-individual-assessments-message
+
+  line </#X-Amz-Target=AmazonDMSv20160101.DescribeApplicableIndividualAssessments>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+
+  seed json, loan describe-applicable-individual-assessments-message
+
+  loot 200
+    seed json, like describe-applicable-individual-assessments-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-fault
+    note <AccessDeniedFault>
+  loot 481
+    seed json, like resource-not-found-fault
+    note <ResourceNotFoundFault>
+  loot 482
+    seed json, like invalid-resource-state-fault
+    note <InvalidResourceStateFault>

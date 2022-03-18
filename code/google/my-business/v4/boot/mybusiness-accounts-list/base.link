@@ -1,0 +1,40 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/my-business/v4/base/list-accounts-response
+  take form list-accounts-response
+
+boot mybusiness-accounts-list, name <mybusiness.accounts.list>
+  note <Lists all of the accounts for the authenticated user. This includes all accounts that the user owns, as well as any accounts for which the user has management rights.>
+
+  take filter
+    like native-string
+    note <A filter constraining the accounts to return. The response includes only entries that match the filter. If `filter` is empty, then no constraints are applied and all accounts (paginated) are retrieved for the requested account. For example, a request with the filter `type=USER_GROUP` will only return user groups.>
+    void take
+  take name
+    like native-string
+    note <The resource name of the account for which the list of directly accessible accounts is to be retrieved. This only makes sense for Organizations and User Groups. If empty, will return `ListAccounts` for the authenticated user.>
+    void take
+  take page-size
+    like native-integer
+    note <How many accounts to fetch per page. Default is 20, minimum is 2, and maximum page size is 20.>
+    void take
+  take page-token
+    like native-string
+    note <If specified, the next page of accounts is retrieved. The `pageToken` is returned when a call to `accounts.list` returns more results than can fit into the requested page size.>
+    void take
+
+  line </v4/accounts>
+
+  find <filter>, loan filter
+  find <name>, loan name
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-accounts-response
+    note <Successful response>

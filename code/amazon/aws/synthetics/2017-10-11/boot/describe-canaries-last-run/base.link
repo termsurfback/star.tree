@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/describe-canaries-last-run-body
+  take form describe-canaries-last-run-body
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/describe-canaries-last-run-response
+  take form describe-canaries-last-run-response
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-canaries-last-run, name <DescribeCanariesLastRun>
+  note <Use this operation to see information from the most recent run of each canary that you have created.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-canaries-last-run-body, like describe-canaries-last-run-body
+
+  line </canaries/last-run>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-canaries-last-run-body
+
+  loot 200
+    seed json, like describe-canaries-last-run-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>

@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/apprunner/2020-05-15/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/apprunner/2020-05-15/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/apprunner/2020-05-15/base/invalid-state-exception
+  take form invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/apprunner/2020-05-15/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/apprunner/2020-05-15/base/resume-service-response
+  take form resume-service-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot resume-service, name <ResumeService>
+  note <Resume an active AWS App Runner service. App Runner provisions compute capacity for the service.
+
+This is an asynchronous operation. On a successful call, you can use the returned `OperationId` and the ListOperations call to track the operation's progress.>
+
+  take x-amz-target
+    like native-string
+  take resume-service-request, like resume-service-request
+
+  line </#X-Amz-Target=AppRunner.ResumeService>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan resume-service-request
+
+  loot 200
+    seed json, like resume-service-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>
+  loot 483
+    seed json, like invalid-state-exception
+    note <InvalidStateException>

@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/invalid-state-exception
+  take form invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/start-maintenance-response
+  take form start-maintenance-response
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-maintenance, name <StartMaintenance>
+  note <Manually starts server maintenance. This command can be useful if an earlier maintenance attempt failed, and the underlying cause of maintenance failure has been resolved. The server is in an `UNDER_MAINTENANCE` state while maintenance is in progress.
+
+Maintenance can only be started on servers in `HEALTHY` and `UNHEALTHY` states. Otherwise, an `InvalidStateException` is thrown. A `ResourceNotFoundException` is thrown when the server does not exist. A `ValidationException` is raised when parameters of the request are not valid.>
+
+  take x-amz-target
+    like native-string
+  take start-maintenance-request, like start-maintenance-request
+
+  line </#X-Amz-Target=OpsWorksCM_V2016_11_01.StartMaintenance>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan start-maintenance-request
+
+  loot 200
+    seed json, like start-maintenance-response
+    note <Success>
+  loot 480
+    seed json, like invalid-state-exception
+    note <InvalidStateException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>

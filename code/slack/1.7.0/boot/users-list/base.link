@@ -1,0 +1,66 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+load @drumwork/snow/slack.com/1.7.0/base/objs-response-metadata
+  take form objs-response-metadata
+
+boot users-list, name <users_list>
+  note <Lists all users in a Slack team.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `users:read`>
+    void take
+  take limit
+    like native-integer
+    note <The maximum number of items to return. Fewer than the requested number of items may be returned, even if the end of the users list hasn&#39;t been reached. Providing no `limit` value will result in Slack attempting to deliver you the entire result set. If the collection is too large you may experience `limit_required` or HTTP 500 errors.>
+    void take
+  take cursor
+    like native-string
+    note <Paginate through collections of data by setting the `cursor` parameter to a `next_cursor` attribute returned by a previous request&#39;s `response_metadata`. Default value fetches the first &quot;page&quot; of the collection. See [pagination](/docs/pagination) for more detail.>
+    void take
+  take include-locale
+    like native-boolean
+    note <Set this to `true` to receive the locale for users. Defaults to `false`>
+    void take
+
+  line </users.list>
+
+  find <token>, loan token
+  find <limit>, loan limit
+  find <cursor>, loan cursor
+  find <include_locale>, loan include-locale
+
+  loot 200
+    seed json
+      like form
+        take cache-ts, name <cache_ts>
+        take members, name <members>
+        take ok, name <ok>
+          like defs-ok-true
+        take response-metadata, name <response_metadata>
+          like objs-response-metadata
+          void take
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take callstack, name <callstack>
+          void take
+        take error, name <error>
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response>

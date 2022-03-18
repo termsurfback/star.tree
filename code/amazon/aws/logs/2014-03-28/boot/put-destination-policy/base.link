@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/operation-aborted-exception
+  take form operation-aborted-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-destination-policy, name <PutDestinationPolicy>
+  note <Creates or updates an access policy associated with an existing destination. An access policy is an [IAM policy document](https://docs.aws.amazon.com/IAM/latest/UserGuide/policies_overview.html) that is used to authorize claims to register a subscription filter against a given destination.
+
+If multiple Amazon Web Services accounts are sending logs to this destination, each sender account must be listed separately in the policy. The policy does not support specifying `*` as the Principal or the use of the `aws:PrincipalOrgId` global key.>
+
+  take x-amz-target
+    like native-string
+  take put-destination-policy-request, like put-destination-policy-request
+
+  line </#X-Amz-Target=Logs_20140328.PutDestinationPolicy>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan put-destination-policy-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like operation-aborted-exception
+    note <OperationAbortedException>
+  loot 482
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

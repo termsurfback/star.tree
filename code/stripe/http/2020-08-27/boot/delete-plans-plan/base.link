@@ -1,0 +1,31 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/delete-plans-plan-body
+  take form delete-plans-plan-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/deleted-plan
+  take form deleted-plan
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+boot delete-plans-plan, name <DeletePlansPlan>
+  note <Deleting plans means new subscribers can’t be added. Existing subscribers aren’t affected.>
+
+  take plan
+    like native-string
+  take delete-plans-plan-body, like delete-plans-plan-body
+    void take
+
+  line </v1/plans/{plan}>
+
+  seed x-www-form-urlencoded, loan delete-plans-plan-body
+
+  loot 200
+    seed json, like deleted-plan
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

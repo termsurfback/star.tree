@@ -1,0 +1,100 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/date-time
+  take form date-time
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/fleet-excess-capacity-termination-policy
+  take form fleet-excess-capacity-termination-policy
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/fleet-launch-template-config-list-request
+  take form fleet-launch-template-config-list-request
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/fleet-type
+  take form fleet-type
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/on-demand-options-request
+  take form on-demand-options-request
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/spot-options-request
+  take form spot-options-request
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/tag-specification-list
+  take form tag-specification-list
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/target-capacity-specification-request
+  take form target-capacity-specification-request
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+load @drumwork/snow/base/string
+  take form string
+
+form create-fleet-request, name <CreateFleetRequest>
+  take dry-run, name <DryRun>
+    like boolean
+    void take
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+  take client-token, name <ClientToken>
+    like string
+    void take
+    note <Unique, case-sensitive identifier that you provide to ensure the idempotency of the request. For more information, see [Ensuring Idempotency](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/Run_Instance_Idempotency.html).>
+  take spot-options, name <SpotOptions>
+    like spot-options-request
+    void take
+    note <Describes the configuration of Spot Instances in an EC2 Fleet.>
+  take on-demand-options, name <OnDemandOptions>
+    like on-demand-options-request
+    void take
+    note <Describes the configuration of On-Demand Instances in an EC2 Fleet.>
+  take excess-capacity-termination-policy, name <ExcessCapacityTerminationPolicy>
+    like fleet-excess-capacity-termination-policy
+    void take
+    note <Indicates whether running instances should be terminated if the total target capacity of the EC2 Fleet is decreased below the current size of the EC2 Fleet.>
+  take launch-template-configs, name <LaunchTemplateConfigs>
+    like fleet-launch-template-config-list-request
+    note <The configuration for the EC2 Fleet.>
+  take target-capacity-specification, name <TargetCapacitySpecification>
+    like target-capacity-specification-request
+    note <The number of units to request.>
+  take terminate-instances-with-expiration, name <TerminateInstancesWithExpiration>
+    like boolean
+    void take
+    note <Indicates whether running instances should be terminated when the EC2 Fleet expires.>
+  take type, name <Type>
+    like fleet-type
+    void take
+    note <The fleet type. The default value is `maintain`.
+
+- `maintain` - The EC2 Fleet places an asynchronous request for your desired capacity, and continues to maintain your desired Spot capacity by replenishing interrupted Spot Instances.
+
+- `request` - The EC2 Fleet places an asynchronous one-time request for your desired capacity, but does submit Spot requests in alternative capacity pools if Spot capacity is unavailable, and does not maintain Spot capacity if Spot Instances are interrupted.
+
+- `instant` - The EC2 Fleet places a synchronous one-time request for your desired capacity, and returns errors for any instances that could not be launched.
+
+For more information, see [EC2 Fleet request types](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-fleet-configuration-strategies.html#ec2-fleet-request-type) in the _Amazon EC2 User Guide_.>
+  take valid-from, name <ValidFrom>
+    like date-time
+    void take
+    note <The start date and time of the request, in UTC format (for example, _YYYY_-_MM_-_DD_T_HH_:_MM_:_SS_Z). The default is to start fulfilling the request immediately.>
+  take valid-until, name <ValidUntil>
+    like date-time
+    void take
+    note <The end date and time of the request, in UTC format (for example, _YYYY_-_MM_-_DD_T_HH_:_MM_:_SS_Z). At this point, no new EC2 Fleet requests are placed or able to fulfill the request. If no value is specified, the request remains until you cancel it.>
+  take replace-unhealthy-instances, name <ReplaceUnhealthyInstances>
+    like boolean
+    void take
+    note <Indicates whether EC2 Fleet should replace unhealthy Spot Instances. Supported only for fleets of type `maintain`. For more information, see [EC2 Fleet health checks](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/manage-ec2-fleet.html#ec2-fleet-health-checks) in the _Amazon EC2 User Guide_.>
+  take tag-specifications, name <TagSpecifications>
+    like tag-specification-list
+    void take
+    note <The key-value pair for tagging the EC2 Fleet request on creation. For more information, see [Tagging your resources](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html#tag-resources).
+
+If the fleet type is `instant`, specify a resource type of `fleet` to tag the fleet or `instance` to tag the instances at launch.
+
+If the fleet type is `maintain` or `request`, specify a resource type of `fleet` to tag the fleet. You cannot specify a resource type of `instance`. To tag instances at launch, specify the tags in a [launch template](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-launch-templates.html#create-launch-template).>
+    host xml
+      host name, text <TagSpecification>
+  take context, name <Context>
+    like string
+    void take
+    note <Reserved.>

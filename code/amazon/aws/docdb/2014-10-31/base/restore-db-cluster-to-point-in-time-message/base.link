@@ -1,0 +1,119 @@
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/boolean-optional
+  take form boolean-optional
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/integer-optional
+  take form integer-optional
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/log-type-list
+  take form log-type-list
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/t-stamp
+  take form t-stamp
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/tag-list
+  take form tag-list
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/vpc-security-group-id-list
+  take form vpc-security-group-id-list
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+load @drumwork/snow/base/string
+  take form string
+
+form restore-db-cluster-to-point-in-time-message, name <RestoreDBClusterToPointInTimeMessage>
+  note <Represents the input to RestoreDBClusterToPointInTime.>
+  take db-cluster-identifier, name <DBClusterIdentifier>
+    like string
+    note <The name of the new cluster to be created.
+
+Constraints:
+
+- Must contain from 1 to 63 letters, numbers, or hyphens.
+
+- The first character must be a letter.
+
+- Cannot end with a hyphen or contain two consecutive hyphens.>
+  take source-db-cluster-identifier, name <SourceDBClusterIdentifier>
+    like string
+    note <The identifier of the source cluster from which to restore.
+
+Constraints:
+
+- Must match the identifier of an existing `DBCluster`.>
+  take restore-to-time, name <RestoreToTime>
+    like t-stamp
+    void take
+    note <The date and time to restore the cluster to.
+
+Valid values: A time in Universal Coordinated Time (UTC) format.
+
+Constraints:
+
+- Must be before the latest restorable time for the instance.
+
+- Must be specified if the `UseLatestRestorableTime` parameter is not provided.
+
+- Cannot be specified if the `UseLatestRestorableTime` parameter is `true`.
+
+- Cannot be specified if the `RestoreType` parameter is `copy-on-write`.
+
+Example: `2015-03-07T23:45:00Z`>
+  take use-latest-restorable-time, name <UseLatestRestorableTime>
+    like boolean
+    void take
+    note <A value that is set to `true` to restore the cluster to the latest restorable backup time, and `false` otherwise.
+
+Default: `false`
+
+Constraints: Cannot be specified if the `RestoreToTime` parameter is provided.>
+  take port, name <Port>
+    like integer-optional
+    void take
+    note <The port number on which the new cluster accepts connections.
+
+Constraints: Must be a value from `1150` to `65535`.
+
+Default: The default port for the engine.>
+  take db-subnet-group-name, name <DBSubnetGroupName>
+    like string
+    void take
+    note <The subnet group name to use for the new cluster.
+
+Constraints: If provided, must match the name of an existing `DBSubnetGroup`.
+
+Example: `mySubnetgroup`>
+  take vpc-security-group-ids, name <VpcSecurityGroupIds>
+    like vpc-security-group-id-list
+    void take
+    note <A list of VPC security groups that the new cluster belongs to.>
+  take tags, name <Tags>
+    like tag-list
+    void take
+    note <The tags to be assigned to the restored cluster.>
+  take kms-key-id, name <KmsKeyId>
+    like string
+    void take
+    note <The KMS key identifier to use when restoring an encrypted cluster from an encrypted cluster.
+
+The KMS key identifier is the Amazon Resource Name (ARN) for the KMS encryption key. If you are restoring a cluster with the same account that owns the KMS encryption key used to encrypt the new cluster, then you can use the KMS key alias instead of the ARN for the KMS encryption key.
+
+You can restore to a new cluster and encrypt the new cluster with an KMS key that is different from the KMS key used to encrypt the source cluster. The new DB cluster is encrypted with the KMS key identified by the `KmsKeyId` parameter.
+
+If you do not specify a value for the `KmsKeyId` parameter, then the following occurs:
+
+- If the cluster is encrypted, then the restored cluster is encrypted using the KMS key that was used to encrypt the source cluster.
+
+- If the cluster is not encrypted, then the restored cluster is not encrypted.
+
+If `DBClusterIdentifier` refers to a cluster that is not encrypted, then the restore request is rejected.>
+  take enable-cloudwatch-logs-exports, name <EnableCloudwatchLogsExports>
+    like log-type-list
+    void take
+    note <A list of log types that must be enabled for exporting to Amazon CloudWatch Logs.>
+  take deletion-protection, name <DeletionProtection>
+    like boolean-optional
+    void take
+    note <Specifies whether this cluster can be deleted. If `DeletionProtection` is enabled, the cluster cannot be deleted unless it is modified and `DeletionProtection` is disabled. `DeletionProtection` protects clusters from being accidentally deleted.>

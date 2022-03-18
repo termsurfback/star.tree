@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/get-flow-template-revisions-response
+  take form get-flow-template-revisions-response
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-flow-template-revisions, name <GetFlowTemplateRevisions>
+  note <Gets revisions of the specified workflow. Only the last 100 revisions are stored. If the workflow has been deprecated, this action will return revisions that occurred before the deprecation. This action won't work for workflows that have been deleted.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-flow-template-revisions-request, like get-flow-template-revisions-request
+
+  line </#X-Amz-Target=IotThingsGraphFrontEndService.GetFlowTemplateRevisions>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan get-flow-template-revisions-request
+
+  loot 200
+    seed json, like get-flow-template-revisions-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

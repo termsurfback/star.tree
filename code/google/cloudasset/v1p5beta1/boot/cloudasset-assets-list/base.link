@@ -1,0 +1,52 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/cloudasset/v1p5beta1/base/list-assets-response
+  take form list-assets-response
+
+boot cloudasset-assets-list, name <cloudasset.assets.list>
+  note <Lists assets with time and resource types and returns paged results in response.>
+
+  take parent
+    like native-string
+    note <Required. Name of the organization or project the assets belong to. Format: "organizations/[organization-number]" (such as "organizations/123"), "projects/[project-id]" (such as "projects/my-project-id"), or "projects/[project-number]" (such as "projects/12345").>
+  take asset-types
+    like list
+      like native-string
+    note <A list of asset types to take a snapshot for. For example: "compute.googleapis.com/Disk". Regular expression is also supported. For example: * "compute.googleapis.com.*" snapshots resources whose asset type starts with "compute.googleapis.com". * ".*Instance" snapshots resources whose asset type ends with "Instance". * ".*Instance.*" snapshots resources whose asset type contains "Instance". See [RE2](https://github.com/google/re2/wiki/Syntax) for all supported regular expression syntax. If the regular expression does not match any supported asset type, an INVALID_ARGUMENT error will be returned. If specified, only matching assets will be returned, otherwise, it will snapshot all asset types. See [Introduction to Cloud Asset Inventory](https://cloud.google.com/asset-inventory/docs/overview) for all supported asset types.>
+    void take
+  take content-type
+    like native-string
+    note <Asset content type. If not specified, no content but the asset name will be returned.>
+    void take
+  take page-size
+    like native-integer
+    note <The maximum number of assets to be returned in a single response. Default is 100, minimum is 1, and maximum is 1000.>
+    void take
+  take page-token
+    like native-string
+    note <The `next_page_token` returned from the previous `ListAssetsResponse`, or unspecified for the first `ListAssetsRequest`. It is a continuation of a prior `ListAssets` call, and the API should return the next page of assets.>
+    void take
+  take read-time
+    like native-string
+    note <Timestamp to take an asset snapshot. This can only be set to a timestamp between the current time and the current time minus 35 days (inclusive). If not specified, the current time will be used. Due to delays in resource data collection and indexing, there is a volatile window during which running the same query may get different results.>
+    void take
+
+  line </v1p5beta1/{parent}/assets>
+
+  find <assetTypes>, loan asset-types
+  find <contentType>, loan content-type
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+  find <readTime>, loan read-time
+
+  loot 200
+    seed json, like list-assets-response
+    note <Successful response>

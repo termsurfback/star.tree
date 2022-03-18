@@ -1,0 +1,135 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/category
+  take form category
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/cfn-registry-exception
+  take form cfn-registry-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/list-types-output
+  take form list-types-output
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/publisher-id
+  take form publisher-id
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/type-name-prefix
+  take form type-name-prefix
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-list-types, name <GET_ListTypes>
+  note <Returns summary information about extension that have been registered with CloudFormation.>
+
+  take visibility
+    like native-string
+    note <The scope at which the extensions are visible and usable in CloudFormation operations.
+
+Valid values include:
+
+- `PRIVATE`: Extensions that are visible and usable within this account and region. This includes:
+
+  - Private extensions you have registered in this account and region.
+
+  - Public extensions that you have activated in this account and region.
+
+- `PUBLIC`: Extensions that are publicly visible and available to be activated within any Amazon account. This includes extensions from Amazon, as well as third-party publishers.
+
+The default is `PRIVATE`.>
+    void take
+  take provisioning-type
+    like native-string
+    note <For resource types, the provisioning behavior of the resource type. CloudFormation determines the provisioning type during registration, based on the types of handlers in the schema handler package submitted.
+
+Valid values include:
+
+- `FULLY_MUTABLE`: The resource type includes an update handler to process updates to the type during stack update operations.
+
+- `IMMUTABLE`: The resource type does not include an update handler, so the type cannot be updated and must instead be replaced during stack update operations.
+
+- `NON_PROVISIONABLE`: The resource type does not include create, read, and delete handlers, and therefore cannot actually be provisioned.
+
+The default is `FULLY_MUTABLE`.>
+    void take
+  take deprecated-status
+    like native-string
+    note <The deprecation status of the extension that you want to get summary information about.
+
+Valid values include:
+
+- `LIVE`: The extension is registered for use in CloudFormation operations.
+
+- `DEPRECATED`: The extension has been deregistered and can no longer be used in CloudFormation operations.>
+    void take
+  take type
+    like native-string
+    note <The type of extension.>
+    void take
+  take filters
+    like form
+      take category, name <Category>
+        like category
+        void take
+        note <The category of extensions to return.
+
+- `REGISTERED`: Private extensions that have been registered for this account and region.
+
+- `ACTIVATED`: Public extensions that have been activated for this account and region.
+
+- `THIRD-PARTY`: Extensions available for use from publishers other than Amazon. This includes:
+
+  - Private extensions registered in the account.
+
+  - Public extensions from publishers other than Amazon, whether activated or not.
+
+- `AWS-TYPES`: Extensions available for use from Amazon.>
+      take publisher-id, name <PublisherId>
+        like publisher-id
+        void take
+        note <The id of the publisher of the extension.
+
+Extensions published by Amazon are not assigned a publisher ID. Use the `AWS-TYPES` category to specify a list of types published by Amazon.>
+      take type-name-prefix, name <TypeNamePrefix>
+        like type-name-prefix
+        void take
+        note <A prefix to use as a filter for results.>
+    note <Filter criteria to use in determining which extensions to return.
+
+If you specify a filter, CloudFormation ignores any specified `Visibility` value when returning the list of types.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to be returned with a single call. If the number of available results exceeds this maximum, the response includes a `NextToken` value that you can assign to the `NextToken` request parameter to get the next set of results.>
+    void take
+  take next-token
+    like native-string
+    note <If the previous paginated request didn't return all of the remaining results, the response object's `NextToken` parameter value is set to a token. To retrieve the next set of results, call this action again and assign that token to the request object's `NextToken` parameter. If there are no remaining results, the previous response object's `NextToken` parameter is set to `null`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ListTypes>
+
+  find <Visibility>, loan visibility
+  find <ProvisioningType>, loan provisioning-type
+  find <DeprecatedStatus>, loan deprecated-status
+  find <Type>, loan type
+  find <Filters>, loan filters
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like list-types-output
+    note <Success>
+  loot 480
+    seed xml, like cfn-registry-exception
+    note <CFNRegistryException>

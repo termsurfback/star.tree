@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/delete-stack-instances-output
+  take form delete-stack-instances-output
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/invalid-operation-exception
+  take form invalid-operation-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/operation-id-already-exists-exception
+  take form operation-id-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/operation-in-progress-exception
+  take form operation-in-progress-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/stack-set-not-found-exception
+  take form stack-set-not-found-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/stale-request-exception
+  take form stale-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-stack-instances, name <POST_DeleteStackInstances>
+  note <Deletes stack instances for the specified accounts, in the specified Regions.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-stack-instances-input, like delete-stack-instances-input
+    void take
+
+  line </#Action=DeleteStackInstances>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-stack-instances-input
+
+  loot 200
+    seed xml, like delete-stack-instances-output
+    note <Success>
+  loot 480
+    seed xml, like stack-set-not-found-exception
+    note <StackSetNotFoundException>
+  loot 481
+    seed xml, like operation-in-progress-exception
+    note <OperationInProgressException>
+  loot 482
+    seed xml, like operation-id-already-exists-exception
+    note <OperationIdAlreadyExistsException>
+  loot 483
+    seed xml, like stale-request-exception
+    note <StaleRequestException>
+  loot 484
+    seed xml, like invalid-operation-exception
+    note <InvalidOperationException>

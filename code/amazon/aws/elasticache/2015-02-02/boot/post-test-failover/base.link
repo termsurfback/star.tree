@@ -1,0 +1,107 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/api-call-rate-for-customer-exceeded-fault
+  take form api-call-rate-for-customer-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-cache-cluster-state-fault
+  take form invalid-cache-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-kms-key-fault
+  take form invalid-kms-key-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-replication-group-state-fault
+  take form invalid-replication-group-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/node-group-not-found-fault
+  take form node-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/replication-group-not-found-fault
+  take form replication-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/test-failover-not-available-fault
+  take form test-failover-not-available-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/test-failover-result
+  take form test-failover-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-test-failover, name <POST_TestFailover>
+  note <Represents the input of a `TestFailover` operation which test automatic failover on a specified node group (called shard in the console) in a replication group (called cluster in the console).
+
+**Note the following** - A customer can use this operation to test automatic failover on up to 5 shards (called node groups in the ElastiCache API and Amazon CLI) in any rolling 24-hour period.
+
+- If calling this operation on shards in different clusters (called replication groups in the API and CLI), the calls can be made concurrently.
+
+- If calling this operation multiple times on different shards in the same Redis (cluster mode enabled) replication group, the first node replacement must complete before a subsequent call can be made.
+
+- To determine whether the node replacement is complete you can check Events using the Amazon ElastiCache console, the Amazon CLI, or the ElastiCache API. Look for the following automatic failover related events, listed here in order of occurrance:
+
+  1. Replication group message: `Test Failover API called for node group &lt;node-group-id&gt;`
+
+  2. Cache cluster message: `Failover from primary node &lt;primary-node-id&gt; to replica node &lt;node-id&gt; completed`
+
+  3. Replication group message: `Failover from primary node &lt;primary-node-id&gt; to replica node &lt;node-id&gt; completed`
+
+  4. Cache cluster message: `Recovering cache nodes &lt;node-id&gt;`
+
+  5. Cache cluster message: `Finished recovery for cache nodes &lt;node-id&gt;`
+
+  For more information see:
+
+  - [Viewing ElastiCache Events](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/ECEvents.Viewing.html) in the _ElastiCache User Guide_
+
+  - [DescribeEvents](https://docs.aws.amazon.com/AmazonElastiCache/latest/APIReference/API_DescribeEvents.html) in the ElastiCache API Reference
+
+Also see, [Testing Multi-AZ](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/AutoFailover.html#auto-failover-test) in the _ElastiCache User Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take test-failover-message, like test-failover-message
+    void take
+
+  line </#Action=TestFailover>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan test-failover-message
+
+  loot 200
+    seed xml, like test-failover-result
+    note <Success>
+  loot 480
+    seed xml, like api-call-rate-for-customer-exceeded-fault
+    note <APICallRateForCustomerExceededFault>
+  loot 481
+    seed xml, like invalid-cache-cluster-state-fault
+    note <InvalidCacheClusterStateFault>
+  loot 482
+    seed xml, like invalid-replication-group-state-fault
+    note <InvalidReplicationGroupStateFault>
+  loot 483
+    seed xml, like node-group-not-found-fault
+    note <NodeGroupNotFoundFault>
+  loot 484
+    seed xml, like replication-group-not-found-fault
+    note <ReplicationGroupNotFoundFault>
+  loot 485
+    seed xml, like test-failover-not-available-fault
+    note <TestFailoverNotAvailableFault>
+  loot 486
+    seed xml, like invalid-kms-key-fault
+    note <InvalidKMSKeyFault>
+  loot 487
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 488
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

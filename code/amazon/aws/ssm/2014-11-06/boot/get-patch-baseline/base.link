@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/does-not-exist-exception
+  take form does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/get-patch-baseline-result
+  take form get-patch-baseline-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-resource-id
+  take form invalid-resource-id
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-patch-baseline, name <GetPatchBaseline>
+  note <Retrieves information about a patch baseline.>
+
+  take x-amz-target
+    like native-string
+  take get-patch-baseline-request, like get-patch-baseline-request
+
+  line </#X-Amz-Target=AmazonSSM.GetPatchBaseline>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-patch-baseline-request
+
+  loot 200
+    seed json, like get-patch-baseline-result
+    note <Success>
+  loot 480
+    seed json, like does-not-exist-exception
+    note <DoesNotExistException>
+  loot 481
+    seed json, like invalid-resource-id
+    note <InvalidResourceId>
+  loot 482
+    seed json, like internal-server-error
+    note <InternalServerError>

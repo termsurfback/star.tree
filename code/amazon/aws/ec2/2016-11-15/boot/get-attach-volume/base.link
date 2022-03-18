@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/volume-attachment
+  take form volume-attachment
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-attach-volume, name <GET_AttachVolume>
+  note <Attaches an EBS volume to a running or stopped instance and exposes it to the instance with the specified device name.
+
+Encrypted EBS volumes must be attached to instances that support Amazon EBS encryption. For more information, see [Amazon EBS encryption](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html) in the _Amazon Elastic Compute Cloud User Guide_.
+
+After you attach an EBS volume, you must make it available. For more information, see [Make an EBS volume available for use](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-using-volumes.html).
+
+If a volume has an Amazon Web Services Marketplace product code:
+
+- The volume can be attached only to a stopped instance.
+
+- Amazon Web Services Marketplace product codes are copied from the volume to the instance.
+
+- You must be subscribed to the product.
+
+- The instance type and operating system of the instance must support the product. For example, you can't detach a volume from a Windows instance and attach it to a Linux instance.
+
+For more information, see [Attach an Amazon EBS volume to an instance](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-attaching-volume.html) in the _Amazon Elastic Compute Cloud User Guide_.>
+
+  take device
+    like native-string
+    note <The device name (for example, `/dev/sdh` or `xvdh`).>
+  take instance-id
+    like native-string
+    note <The ID of the instance.>
+  take volume-id
+    like native-string
+    note <The ID of the EBS volume. The volume and instance must be within the same Availability Zone.>
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=AttachVolume>
+
+  find <Device>, loan device
+  find <InstanceId>, loan instance-id
+  find <VolumeId>, loan volume-id
+  find <DryRun>, loan dry-run
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like volume-attachment
+    note <Success>

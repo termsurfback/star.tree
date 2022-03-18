@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/create-patch-baseline-result
+  take form create-patch-baseline-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/idempotent-parameter-mismatch
+  take form idempotent-parameter-mismatch
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/resource-limit-exceeded-exception
+  take form resource-limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-patch-baseline, name <CreatePatchBaseline>
+  note <Creates a patch baseline.
+
+For information about valid key-value pairs in `PatchFilters` for each supported operating system type, see PatchFilter.>
+
+  take x-amz-target
+    like native-string
+  take create-patch-baseline-request, like create-patch-baseline-request
+
+  line </#X-Amz-Target=AmazonSSM.CreatePatchBaseline>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-patch-baseline-request
+
+  loot 200
+    seed json, like create-patch-baseline-result
+    note <Success>
+  loot 480
+    seed json, like idempotent-parameter-mismatch
+    note <IdempotentParameterMismatch>
+  loot 481
+    seed json, like resource-limit-exceeded-exception
+    note <ResourceLimitExceededException>
+  loot 482
+    seed json, like internal-server-error
+    note <InternalServerError>

@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/create-backup-response
+  take form create-backup-response
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/invalid-state-exception
+  take form invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-backup, name <CreateBackup>
+  note <Creates an application-level backup of a server. While the server is in the `BACKING_UP` state, the server cannot be changed, and no additional backup can be created.
+
+Backups can be created for servers in `RUNNING`, `HEALTHY`, and `UNHEALTHY` states. By default, you can create a maximum of 50 manual backups.
+
+This operation is asynchronous.
+
+A `LimitExceededException` is thrown when the maximum number of manual backups is reached. An `InvalidStateException` is thrown when the server is not in any of the following states: RUNNING, HEALTHY, or UNHEALTHY. A `ResourceNotFoundException` is thrown when the server is not found. A `ValidationException` is thrown when parameters of the request are not valid.>
+
+  take x-amz-target
+    like native-string
+  take create-backup-request, like create-backup-request
+
+  line </#X-Amz-Target=OpsWorksCM_V2016_11_01.CreateBackup>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-backup-request
+
+  loot 200
+    seed json, like create-backup-response
+    note <Success>
+  loot 480
+    seed json, like invalid-state-exception
+    note <InvalidStateException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like validation-exception
+    note <ValidationException>

@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/bad-request
+  take form bad-request
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/delete-tags-body
+  take form delete-tags-body
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/file-system-not-found
+  take form file-system-not-found
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-tags, name <DeleteTags>
+  note <DEPRECATED - DeleteTags is deprecated and not maintained. Please use the API action to remove tags from EFS resources.
+
+Deletes the specified tags from a file system. If the `DeleteTags` request includes a tag key that doesn't exist, Amazon EFS ignores it and doesn't cause an error. For more information about tags and related restrictions, see [Tag restrictions](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html) in the _Billing and Cost Management User Guide_.
+
+This operation requires permissions for the `elasticfilesystem:DeleteTags` action.>
+
+  take file-system-id
+    like native-string
+    note <The ID of the file system whose tags you want to delete (String).>
+  take delete-tags-body, like delete-tags-body
+
+  line </2015-02-01/delete-tags/{file-system-id}>
+
+  seed json, loan delete-tags-body
+
+  loot 204
+    note <Success>
+  loot 480
+    seed json, like bad-request
+    note <BadRequest>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 482
+    seed json, like file-system-not-found
+    note <FileSystemNotFound>

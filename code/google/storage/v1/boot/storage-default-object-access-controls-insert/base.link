@@ -1,0 +1,34 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/storage/v1/base/object-access-control
+  take form object-access-control
+
+boot storage-default-object-access-controls-insert, name <storage.defaultObjectAccessControls.insert>
+  note <Creates a new default object ACL entry on the specified bucket.>
+
+  take bucket
+    like native-string
+    note <Name of a bucket.>
+  take provisional-user-project
+    like native-string
+    note <The project to be billed for this request if the target bucket is requester-pays bucket.>
+    void take
+  take user-project
+    like native-string
+    note <The project to be billed for this request. Required for Requester Pays buckets.>
+    void take
+  take object-access-control, like object-access-control
+    void take
+
+  line </b/{bucket}/defaultObjectAcl>
+
+  find <provisionalUserProject>, loan provisional-user-project
+  find <userProject>, loan user-project
+
+  seed json, loan object-access-control
+
+  loot 200
+    seed json, like object-access-control
+    note <Successful response>

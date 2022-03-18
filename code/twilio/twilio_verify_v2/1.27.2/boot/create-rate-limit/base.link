@@ -1,0 +1,26 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_verify_v2/1.27.2/base/create-rate-limit-body
+  take form create-rate-limit-body
+
+load @drumwork/snow/twilio.com/twilio_verify_v2/1.27.2/base/verify-v2-service-rate-limit
+  take form verify-v2-service-rate-limit
+
+boot create-rate-limit, name <CreateRateLimit>
+  note <Create a new Rate Limit for a Service>
+
+  take service-sid
+    like native-string
+    note <The SID of the \[Service\](https://www.twilio.com/docs/verify/api/service) the resource is associated with.>
+  take create-rate-limit-body, like create-rate-limit-body
+    void take
+
+  line </v2/Services/{service-sid}/RateLimits>
+
+  seed x-www-form-urlencoded, loan create-rate-limit-body
+
+  loot 201
+    seed json, like verify-v2-service-rate-limit
+    note <Created>

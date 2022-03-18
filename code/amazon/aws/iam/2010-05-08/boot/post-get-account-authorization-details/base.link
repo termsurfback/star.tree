@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/get-account-authorization-details-response
+  take form get-account-authorization-details-response
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-get-account-authorization-details, name <POST_GetAccountAuthorizationDetails>
+  note <Retrieves information about all IAM users, groups, roles, and policies in your Amazon Web Services account, including their relationships to one another. Use this operation to obtain a snapshot of the configuration of IAM permissions (users, groups, roles, and policies) in your account.
+
+Policies returned by this operation are URL-encoded compliant with [RFC 3986](https://tools.ietf.org/html/rfc3986). You can use a URL decoding method to convert the policy back to plain JSON text. For example, if you use Java, you can use the `decode` method of the `java.net.URLDecoder` utility class in the Java SDK. Other languages and SDKs provide similar functionality.
+
+You can optionally filter the results using the `Filter` parameter. You can paginate the results using the `MaxItems` and `Marker` parameters.>
+
+  take max-items
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take get-account-authorization-details-request, like get-account-authorization-details-request
+    void take
+
+  line </#Action=GetAccountAuthorizationDetails>
+
+  find <MaxItems>, loan max-items
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan get-account-authorization-details-request
+
+  loot 200
+    seed xml, like get-account-authorization-details-response
+    note <Success>
+  loot 480
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

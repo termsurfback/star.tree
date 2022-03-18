@@ -1,0 +1,92 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/date-time
+  take form date-time
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-scheduled-instances-result
+  take form describe-scheduled-instances-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/scheduled-instance-id
+  take form scheduled-instance-id
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-scheduled-instances, name <GET_DescribeScheduledInstances>
+  note <Describes the specified Scheduled Instances or all your Scheduled Instances.>
+
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take filter
+    like list
+      like filter
+    note <The filters.
+
+- `availability-zone` - The Availability Zone (for example, `us-west-2a`).
+
+- `instance-type` - The instance type (for example, `c4.large`).
+
+- `network-platform` - The network platform (`EC2-Classic` or `EC2-VPC`).
+
+- `platform` - The platform (`Linux/UNIX` or `Windows`).>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return in a single call. This value can be between 5 and 300. The default value is 100. To retrieve the remaining results, make another call with the returned `NextToken` value.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next set of results.>
+    void take
+  take scheduled-instance-id
+    like list
+      like scheduled-instance-id
+    note <The Scheduled Instance IDs.>
+    void take
+  take slot-start-time-range
+    like form
+      take earliest-time, name <EarliestTime>
+        like date-time
+        void take
+        note <The earliest date and time, in UTC, for the Scheduled Instance to start.>
+      take latest-time, name <LatestTime>
+        like date-time
+        void take
+        note <The latest date and time, in UTC, for the Scheduled Instance to start.>
+    note <The time period for the first schedule to start.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeScheduledInstances>
+
+  find <DryRun>, loan dry-run
+  find <Filter>, loan filter
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <ScheduledInstanceId>, loan scheduled-instance-id
+  find <SlotStartTimeRange>, loan slot-start-time-range
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-scheduled-instances-result
+    note <Success>

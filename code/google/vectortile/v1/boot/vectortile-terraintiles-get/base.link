@@ -1,0 +1,115 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/vectortile/v1/base/terrain-tile
+  take form terrain-tile
+
+boot vectortile-terraintiles-get, name <vectortile.terraintiles.get>
+  note <Gets a terrain tile by its tile resource name.>
+
+  take name
+    like native-string
+    note <Required. Resource name of the tile. The tile resource name is prefixed by its collection ID `terraintiles/` followed by the resource ID, which encodes the tile's global x and y coordinates and zoom level as `@,,z`. For example, `terraintiles/@1,2,3z`.>
+  take altitude-precision-centimeters
+    like native-integer
+    note <The precision of terrain altitudes in centimeters. Possible values: between 1 (cm level precision) and 1,000,000 (10-kilometer level precision).>
+    void take
+  take client-info-api-client
+    like native-string
+    note <API client name and version. For example, the SDK calling the API. The exact format is up to the client.>
+    void take
+  take client-info-application-id
+    like native-string
+    note <Application ID, such as the package name on Android and the bundle identifier on iOS platforms.>
+    void take
+  take client-info-application-version
+    like native-string
+    note <Application version number, such as "1.2.3". The exact format is application-dependent.>
+    void take
+  take client-info-device-model
+    like native-string
+    note <Device model as reported by the device. The exact format is platform-dependent.>
+    void take
+  take client-info-operating-system
+    like native-string
+    note <Operating system name and version as reported by the OS. For example, "Mac OS X 10.10.4". The exact format is platform-dependent.>
+    void take
+  take client-info-platform
+    like native-string
+    note <Platform where the application is running.>
+    void take
+  take client-info-user-id
+    like native-string
+    note <Required. A client-generated user ID. The ID should be generated and persisted during the first user session or whenever a pre-existing ID is not found. The exact format is up to the client. This must be non-empty in a GetFeatureTileRequest (whether via the header or GetFeatureTileRequest.client_info).>
+    void take
+  take max-elevation-resolution-cells
+    like native-integer
+    note <The maximum allowed resolution for the returned elevation heightmap. Possible values: between 1 and 1024 (and not less than min_elevation_resolution_cells). Over-sized heightmaps will be non-uniformly down-sampled such that each edge is no longer than this value. Non-uniformity is chosen to maximise the amount of preserved data. For example: Original resolution: 100px (width) * 30px (height) max_elevation_resolution: 30 New resolution: 30px (width) * 30px (height)>
+    void take
+  take min-elevation-resolution-cells
+    like native-integer
+    note <api-linter: core::0131::request-unknown-fields=disabled aip.dev/not-precedent: Maintaining existing request parameter pattern. The minimum allowed resolution for the returned elevation heightmap. Possible values: between 0 and 1024 (and not more than max_elevation_resolution_cells). Zero is supported for backward compatibility. Under-sized heightmaps will be non-uniformly up-sampled such that each edge is no shorter than this value. Non-uniformity is chosen to maximise the amount of preserved data. For example: Original resolution: 30px (width) * 10px (height) min_elevation_resolution: 30 New resolution: 30px (width) * 30px (height)>
+    void take
+  take terrain-formats
+    like list
+      like native-string
+    note <Terrain formats that the client understands.>
+    void take
+  take enable-modeled-volumes
+    like native-boolean
+    note <Flag indicating whether 3D building models should be enabled. If this is set structures will be returned as 3D modeled volumes rather than 2.5D extruded areas where possible.>
+    void take
+  take enable-political-features
+    like native-boolean
+    note <Flag indicating whether political features should be returned.>
+    void take
+  take enable-private-roads
+    like native-boolean
+    note <Flag indicating whether the returned tile will contain road features that are marked private. Private roads are indicated by the Feature.segment_info.road_info.is_private field.>
+    void take
+  take enable-unclipped-buildings
+    like native-boolean
+    note <Flag indicating whether unclipped buildings should be returned. If this is set, building render ops will extend beyond the tile boundary. Buildings will only be returned on the tile that contains their centroid.>
+    void take
+  take language-code
+    like native-string
+    note <Required. The BCP-47 language code corresponding to the language in which the name was requested, such as "en-US" or "sr-Latn". For more information, see http://www.unicode.org/reports/tr35/#Unicode_locale_identifier.>
+    void take
+  take region-code
+    like native-string
+    note <Required. The Unicode country/region code (CLDR) of the location from which the request is coming from, such as "US" and "419". For more information, see http://www.unicode.org/reports/tr35/#unicode_region_subtag.>
+    void take
+
+  line </v1/{name}>
+
+  find <altitudePrecisionCentimeters>, loan altitude-precision-centimeters
+  find <clientInfo.apiClient>, loan client-info-api-client
+  find <clientInfo.applicationId>, loan client-info-application-id
+  find <clientInfo.applicationVersion>, loan client-info-application-version
+  find <clientInfo.deviceModel>, loan client-info-device-model
+  find <clientInfo.operatingSystem>, loan client-info-operating-system
+  find <clientInfo.platform>, loan client-info-platform
+  find <clientInfo.userId>, loan client-info-user-id
+  find <maxElevationResolutionCells>, loan max-elevation-resolution-cells
+  find <minElevationResolutionCells>, loan min-elevation-resolution-cells
+  find <terrainFormats>, loan terrain-formats
+  find <enableModeledVolumes>, loan enable-modeled-volumes
+  find <enablePoliticalFeatures>, loan enable-political-features
+  find <enablePrivateRoads>, loan enable-private-roads
+  find <enableUnclippedBuildings>, loan enable-unclipped-buildings
+  find <languageCode>, loan language-code
+  find <regionCode>, loan region-code
+
+  loot 200
+    seed json, like terrain-tile
+    note <Successful response>

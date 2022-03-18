@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/list-action-types-output
+  take form list-action-types-output
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-action-types, name <ListActionTypes>
+  note <Gets a summary of all AWS CodePipeline action types associated with your account.>
+
+  take x-amz-target
+    like native-string
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-action-types-input, like list-action-types-input
+
+  line </#X-Amz-Target=CodePipeline_20150709.ListActionTypes>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <nextToken>, loan next-token
+
+  seed json, loan list-action-types-input
+
+  loot 200
+    seed json, like list-action-types-output
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>

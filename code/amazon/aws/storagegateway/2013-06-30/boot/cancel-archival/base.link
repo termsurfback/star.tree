@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/cancel-archival-output
+  take form cancel-archival-output
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot cancel-archival, name <CancelArchival>
+  note <Cancels archiving of a virtual tape to the virtual tape shelf (VTS) after the archiving process is initiated. This operation is only supported in the tape gateway type.>
+
+  take x-amz-target
+    like native-string
+  take cancel-archival-input, like cancel-archival-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.CancelArchival>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan cancel-archival-input
+
+  loot 200
+    seed json, like cancel-archival-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/access-point-not-found-exception
+  take form access-point-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/apply-security-groups-to-load-balancer-output
+  take form apply-security-groups-to-load-balancer-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/invalid-configuration-request-exception
+  take form invalid-configuration-request-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/invalid-security-group-exception
+  take form invalid-security-group-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-apply-security-groups-to-load-balancer, name <POST_ApplySecurityGroupsToLoadBalancer>
+  note <Associates one or more security groups with your load balancer in a virtual private cloud (VPC). The specified security groups override the previously associated security groups.
+
+For more information, see [Security Groups for Load Balancers in a VPC](https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/elb-security-groups.html#elb-vpc-security-groups) in the _Classic Load Balancers Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take apply-security-groups-to-load-balancer-input, like apply-security-groups-to-load-balancer-input
+    void take
+
+  line </#Action=ApplySecurityGroupsToLoadBalancer>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan apply-security-groups-to-load-balancer-input
+
+  loot 200
+    seed xml, like apply-security-groups-to-load-balancer-output
+    note <Success>
+  loot 480
+    seed xml, like access-point-not-found-exception
+    note <AccessPointNotFoundException>
+  loot 481
+    seed xml, like invalid-configuration-request-exception
+    note <InvalidConfigurationRequestException>
+  loot 482
+    seed xml, like invalid-security-group-exception
+    note <InvalidSecurityGroupException>

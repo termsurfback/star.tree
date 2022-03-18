@@ -1,0 +1,48 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+load @drumwork/snow/slack.com/1.7.0/base/objs-subteam
+  take form objs-subteam
+
+load @drumwork/snow/slack.com/1.7.0/base/usergroups-users-update-body
+  take form usergroups-users-update-body
+
+boot usergroups-users-update, name <usergroups_users_update>
+  note <Update the list of users for a User Group>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `usergroups:write`>
+  take usergroups-users-update-body, like usergroups-users-update-body
+    void take
+
+  line </usergroups.users.update>
+
+  hint <token>, loan token
+
+  seed x-www-form-urlencoded, loan usergroups-users-update-body
+
+  loot 200
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-true
+        take usergroup, name <usergroup>
+          like objs-subteam
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take callstack, name <callstack>
+          void take
+        take error, name <error>
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response>

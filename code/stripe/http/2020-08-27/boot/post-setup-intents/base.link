@@ -1,0 +1,28 @@
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-setup-intents-body
+  take form post-setup-intents-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/setup-intent
+  take form setup-intent
+
+boot post-setup-intents, name <PostSetupIntents>
+  note <Creates a SetupIntent object.
+
+After the SetupIntent is created, attach a payment method and [confirm](/docs/api/setup_intents/confirm) to collect any required permissions to charge the payment method later.>
+
+  take post-setup-intents-body, like post-setup-intents-body
+    void take
+
+  line </v1/setup_intents>
+
+  seed x-www-form-urlencoded, loan post-setup-intents-body
+
+  loot 200
+    seed json, like setup-intent
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

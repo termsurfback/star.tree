@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/access-point-not-found-exception
+  take form access-point-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/attach-load-balancer-to-subnets-output
+  take form attach-load-balancer-to-subnets-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/invalid-configuration-request-exception
+  take form invalid-configuration-request-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/invalid-subnet-exception
+  take form invalid-subnet-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/subnet-id
+  take form subnet-id
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/subnet-not-found-exception
+  take form subnet-not-found-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-attach-load-balancer-to-subnets, name <GET_AttachLoadBalancerToSubnets>
+  note <Adds one or more subnets to the set of configured subnets for the specified load balancer.
+
+The load balancer evenly distributes requests across all registered subnets. For more information, see [Add or Remove Subnets for Your Load Balancer in a VPC](https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/elb-manage-subnets.html) in the _Classic Load Balancers Guide_.>
+
+  take load-balancer-name
+    like native-string
+    note <The name of the load balancer.>
+  take subnets
+    like list
+      like subnet-id
+    note <The IDs of the subnets to add. You can add only one subnet per Availability Zone.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=AttachLoadBalancerToSubnets>
+
+  find <LoadBalancerName>, loan load-balancer-name
+  find <Subnets>, loan subnets
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like attach-load-balancer-to-subnets-output
+    note <Success>
+  loot 480
+    seed xml, like access-point-not-found-exception
+    note <AccessPointNotFoundException>
+  loot 481
+    seed xml, like invalid-configuration-request-exception
+    note <InvalidConfigurationRequestException>
+  loot 482
+    seed xml, like subnet-not-found-exception
+    note <SubnetNotFoundException>
+  loot 483
+    seed xml, like invalid-subnet-exception
+    note <InvalidSubnetException>

@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/get-inventory-schema-result
+  take form get-inventory-schema-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-type-name-exception
+  take form invalid-type-name-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-inventory-schema, name <GetInventorySchema>
+  note <Return a list of inventory type names for the account, or return a list of attribute names for a specific Inventory item type.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-inventory-schema-request, like get-inventory-schema-request
+
+  line </#X-Amz-Target=AmazonSSM.GetInventorySchema>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan get-inventory-schema-request
+
+  loot 200
+    seed json, like get-inventory-schema-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like invalid-type-name-exception
+    note <InvalidTypeNameException>
+  loot 482
+    seed json, like invalid-next-token
+    note <InvalidNextToken>

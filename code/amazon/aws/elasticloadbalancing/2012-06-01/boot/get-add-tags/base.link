@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/access-point-name
+  take form access-point-name
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/access-point-not-found-exception
+  take form access-point-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/add-tags-output
+  take form add-tags-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/duplicate-tag-keys-exception
+  take form duplicate-tag-keys-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/tag
+  take form tag
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/too-many-tags-exception
+  take form too-many-tags-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-add-tags, name <GET_AddTags>
+  note <Adds the specified tags to the specified load balancer. Each load balancer can have a maximum of 10 tags.
+
+Each tag consists of a key and an optional value. If a tag with the same key is already associated with the load balancer, `AddTags` updates its value.
+
+For more information, see [Tag Your Classic Load Balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/add-remove-tags.html) in the _Classic Load Balancers Guide_.>
+
+  take load-balancer-names
+    like list
+      like access-point-name
+    note <The name of the load balancer. You can specify one load balancer only.>
+  take tags
+    like list
+      like tag
+    note <The tags.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=AddTags>
+
+  find <LoadBalancerNames>, loan load-balancer-names
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like add-tags-output
+    note <Success>
+  loot 480
+    seed xml, like access-point-not-found-exception
+    note <AccessPointNotFoundException>
+  loot 481
+    seed xml, like too-many-tags-exception
+    note <TooManyTagsException>
+  loot 482
+    seed xml, like duplicate-tag-keys-exception
+    note <DuplicateTagKeysException>

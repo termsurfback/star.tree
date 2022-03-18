@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/account-limit-exceeded-exception
+  take form account-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/import-source-credentials-output
+  take form import-source-credentials-output
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/resource-already-exists-exception
+  take form resource-already-exists-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot import-source-credentials, name <ImportSourceCredentials>
+  note <Imports the source repository credentials for an CodeBuild project that has its source code stored in a GitHub, GitHub Enterprise, or Bitbucket repository.>
+
+  take x-amz-target
+    like native-string
+  take import-source-credentials-input, like import-source-credentials-input
+
+  line </#X-Amz-Target=CodeBuild_20161006.ImportSourceCredentials>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan import-source-credentials-input
+
+  loot 200
+    seed json, like import-source-credentials-output
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like account-limit-exceeded-exception
+    note <AccountLimitExceededException>
+  loot 482
+    seed json, like resource-already-exists-exception
+    note <ResourceAlreadyExistsException>

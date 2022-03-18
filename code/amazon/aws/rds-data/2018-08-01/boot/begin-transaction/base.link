@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/rds-data/2018-08-01/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/rds-data/2018-08-01/base/begin-transaction-body
+  take form begin-transaction-body
+
+load @drumwork/snow/amazonaws.com/rds-data/2018-08-01/base/begin-transaction-response
+  take form begin-transaction-response
+
+load @drumwork/snow/amazonaws.com/rds-data/2018-08-01/base/forbidden-exception
+  take form forbidden-exception
+
+load @drumwork/snow/amazonaws.com/rds-data/2018-08-01/base/internal-server-error-exception
+  take form internal-server-error-exception
+
+load @drumwork/snow/amazonaws.com/rds-data/2018-08-01/base/service-unavailable-error
+  take form service-unavailable-error
+
+load @drumwork/snow/amazonaws.com/rds-data/2018-08-01/base/statement-timeout-exception
+  take form statement-timeout-exception
+
+boot begin-transaction, name <BeginTransaction>
+  note <Starts a SQL transaction.
+
+     &lt;important&gt; &lt;p&gt;A transaction can run for a maximum of 24 hours. A transaction is terminated and rolled back automatically after 24 hours.&lt;/p&gt; &lt;p&gt;A transaction times out if no calls use its transaction ID in three minutes. If a transaction times out before it's committed, it's rolled back automatically.&lt;/p&gt; &lt;p&gt;DDL statements inside a transaction cause an implicit commit. We recommend that you run each DDL statement in a separate &lt;code&gt;ExecuteStatement&lt;/code&gt; call with &lt;code&gt;continueAfterTimeout&lt;/code&gt; enabled.&lt;/p&gt; &lt;/important&gt;>
+
+  take begin-transaction-body, like begin-transaction-body
+
+  line </BeginTransaction>
+
+  seed json, loan begin-transaction-body
+
+  loot 200
+    seed json, like begin-transaction-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like statement-timeout-exception
+    note <StatementTimeoutException>
+  loot 482
+    seed json, like internal-server-error-exception
+    note <InternalServerErrorException>
+  loot 483
+    seed json, like forbidden-exception
+    note <ForbiddenException>
+  loot 484
+    seed json, like service-unavailable-error
+    note <ServiceUnavailableError>

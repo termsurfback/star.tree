@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/describe-smb-settings-output
+  take form describe-smb-settings-output
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-smb-settings, name <DescribeSMBSettings>
+  note <Gets a description of a Server Message Block (SMB) file share settings from a file gateway. This operation is only supported for file gateways.>
+
+  take x-amz-target
+    like native-string
+  take describe-smb-settings-input, like describe-smb-settings-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.DescribeSMBSettings>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-smb-settings-input
+
+  loot 200
+    seed json, like describe-smb-settings-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

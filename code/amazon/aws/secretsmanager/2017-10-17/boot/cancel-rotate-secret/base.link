@@ -1,0 +1,71 @@
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/cancel-rotate-secret-response
+  take form cancel-rotate-secret-response
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot cancel-rotate-secret, name <CancelRotateSecret>
+  note <Disables automatic scheduled rotation and cancels the rotation of a secret if currently in progress.
+
+To re-enable scheduled rotation, call RotateSecret with `AutomaticallyRotateAfterDays` set to a value greater than 0. This immediately rotates your secret and then enables the automatic schedule.
+
+If you cancel a rotation while in progress, it can leave the `VersionStage` labels in an unexpected state. Depending on the step of the rotation in progress, you might need to remove the staging label `AWSPENDING` from the partially created version, specified by the `VersionId` response value. You should also evaluate the partially rotated new version to see if it should be deleted, which you can do by removing all staging labels from the new version `VersionStage` field.
+
+To successfully start a rotation, the staging label `AWSPENDING` must be in one of the following states:
+
+- Not attached to any version at all
+
+- Attached to the same version as the staging label `AWSCURRENT`
+
+If the staging label `AWSPENDING` attached to a different version than the version with `AWSCURRENT` then the attempt to rotate fails.
+
+**Minimum permissions** To run this command, you must have the following permissions:
+
+- secretsmanager:CancelRotateSecret
+
+**Related operations** - To configure rotation for a secret or to manually trigger a rotation, use RotateSecret.
+
+- To get the rotation configuration details for a secret, use DescribeSecret.
+
+- To list all of the currently available secrets, use ListSecrets.
+
+- To list all of the versions currently associated with a secret, use ListSecretVersionIds.>
+
+  take x-amz-target
+    like native-string
+  take cancel-rotate-secret-request, like cancel-rotate-secret-request
+
+  line </#X-Amz-Target=secretsmanager.CancelRotateSecret>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan cancel-rotate-secret-request
+
+  loot 200
+    seed json, like cancel-rotate-secret-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 483
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

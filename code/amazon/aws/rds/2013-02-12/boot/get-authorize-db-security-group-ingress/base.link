@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/authorization-already-exists-fault
+  take form authorization-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/authorization-quota-exceeded-fault
+  take form authorization-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/authorize-db-security-group-ingress-result
+  take form authorize-db-security-group-ingress-result
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/db-security-group-not-found-fault
+  take form db-security-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/invalid-db-security-group-state-fault
+  take form invalid-db-security-group-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-authorize-db-security-group-ingress, name <GET_AuthorizeDBSecurityGroupIngress>
+  take db-security-group-name
+    like native-string
+  take cidrip
+    like native-string
+    void take
+  take ec2-security-group-name
+    like native-string
+    void take
+  take ec2-security-group-id
+    like native-string
+    void take
+  take ec2-security-group-owner-id
+    like native-string
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=AuthorizeDBSecurityGroupIngress>
+
+  find <DBSecurityGroupName>, loan db-security-group-name
+  find <CIDRIP>, loan cidrip
+  find <EC2SecurityGroupName>, loan ec2-security-group-name
+  find <EC2SecurityGroupId>, loan ec2-security-group-id
+  find <EC2SecurityGroupOwnerId>, loan ec2-security-group-owner-id
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like authorize-db-security-group-ingress-result
+    note <Success>
+  loot 480
+    seed xml, like db-security-group-not-found-fault
+    note <DBSecurityGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-db-security-group-state-fault
+    note <InvalidDBSecurityGroupStateFault>
+  loot 482
+    seed xml, like authorization-already-exists-fault
+    note <AuthorizationAlreadyExistsFault>
+  loot 483
+    seed xml, like authorization-quota-exceeded-fault
+    note <AuthorizationQuotaExceededFault>

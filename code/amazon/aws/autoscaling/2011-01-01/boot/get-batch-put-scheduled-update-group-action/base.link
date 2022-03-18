@@ -1,0 +1,56 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/already-exists-fault
+  take form already-exists-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/batch-put-scheduled-update-group-action-answer
+  take form batch-put-scheduled-update-group-action-answer
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/limit-exceeded-fault
+  take form limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/scheduled-update-group-action-request
+  take form scheduled-update-group-action-request
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-batch-put-scheduled-update-group-action, name <GET_BatchPutScheduledUpdateGroupAction>
+  note <Creates or updates one or more scheduled scaling actions for an Auto Scaling group.>
+
+  take auto-scaling-group-name
+    like native-string
+    note <The name of the Auto Scaling group.>
+  take scheduled-update-group-actions
+    like list
+      like scheduled-update-group-action-request
+    note <One or more scheduled actions. The maximum number allowed is 50.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=BatchPutScheduledUpdateGroupAction>
+
+  find <AutoScalingGroupName>, loan auto-scaling-group-name
+  find <ScheduledUpdateGroupActions>, loan scheduled-update-group-actions
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like batch-put-scheduled-update-group-action-answer
+    note <Success>
+  loot 480
+    seed xml, like already-exists-fault
+    note <AlreadyExistsFault>
+  loot 481
+    seed xml, like limit-exceeded-fault
+    note <LimitExceededFault>
+  loot 482
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

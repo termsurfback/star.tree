@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/retrieve-tape-recovery-point-output
+  take form retrieve-tape-recovery-point-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot retrieve-tape-recovery-point, name <RetrieveTapeRecoveryPoint>
+  note <Retrieves the recovery point for the specified virtual tape. This operation is only supported in the tape gateway type.
+
+A recovery point is a point in time view of a virtual tape at which all the data on the tape is consistent. If your gateway crashes, virtual tapes that have recovery points can be recovered to a new gateway.
+
+The virtual tape can be retrieved to only one gateway. The retrieved tape is read-only. The virtual tape can be retrieved to only a tape gateway. There is no charge for retrieving recovery points.>
+
+  take x-amz-target
+    like native-string
+  take retrieve-tape-recovery-point-input, like retrieve-tape-recovery-point-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.RetrieveTapeRecoveryPoint>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan retrieve-tape-recovery-point-input
+
+  loot 200
+    seed json, like retrieve-tape-recovery-point-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

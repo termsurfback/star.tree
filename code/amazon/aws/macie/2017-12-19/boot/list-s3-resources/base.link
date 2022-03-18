@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/macie/2017-12-19/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/macie/2017-12-19/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/macie/2017-12-19/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/macie/2017-12-19/base/list-s3-resources-result
+  take form list-s3-resources-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-s3-resources, name <ListS3Resources>
+  note <Lists all the S3 resources associated with Amazon Macie Classic. If memberAccountId isn't specified, the action lists the S3 resources associated with Macie Classic for the current Macie Classic administrator account. If memberAccountId is specified, the action lists the S3 resources associated with Macie Classic for the specified member account.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-s3-resources-request, like list-s3-resources-request
+
+  line </#X-Amz-Target=MacieService.ListS3Resources>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-s3-resources-request
+
+  loot 200
+    seed json, like list-s3-resources-result
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like internal-exception
+    note <InternalException>

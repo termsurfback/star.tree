@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/list-subscriptions-by-topic-response
+  take form list-subscriptions-by-topic-response
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-list-subscriptions-by-topic, name <GET_ListSubscriptionsByTopic>
+  note <Returns a list of the subscriptions to a specific topic. Each call returns a limited list of subscriptions, up to 100. If there are more subscriptions, a `NextToken` is also returned. Use the `NextToken` parameter in a new `ListSubscriptionsByTopic` call to get further results.
+
+This action is throttled at 30 transactions per second (TPS).>
+
+  take topic-arn
+    like native-string
+    note <The ARN of the topic for which you wish to find subscriptions.>
+  take next-token
+    like native-string
+    note <Token returned by the previous `ListSubscriptionsByTopic` request.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ListSubscriptionsByTopic>
+
+  find <TopicArn>, loan topic-arn
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like list-subscriptions-by-topic-response
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 482
+    seed xml, like not-found-exception
+    note <NotFoundException>
+  loot 483
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>

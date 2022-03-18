@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/describe-user-groups-result
+  take form describe-user-groups-result
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/user-group-not-found-fault
+  take form user-group-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-user-groups, name <POST_DescribeUserGroups>
+  note <Returns a list of user groups.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-user-groups-message, like describe-user-groups-message
+    void take
+
+  line </#Action=DescribeUserGroups>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-user-groups-message
+
+  loot 200
+    seed xml, like describe-user-groups-result
+    note <Success>
+  loot 480
+    seed xml, like user-group-not-found-fault
+    note <UserGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/inspector/2016-02-16/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/inspector/2016-02-16/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/inspector/2016-02-16/base/invalid-cross-account-role-exception
+  take form invalid-cross-account-role-exception
+
+load @drumwork/snow/amazonaws.com/inspector/2016-02-16/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/inspector/2016-02-16/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/inspector/2016-02-16/base/preview-agents-response
+  take form preview-agents-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot preview-agents, name <PreviewAgents>
+  note <Previews the agents installed on the EC2 instances that are part of the specified assessment target.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take preview-agents-request, like preview-agents-request
+
+  line </#X-Amz-Target=InspectorService.PreviewAgents>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan preview-agents-request
+
+  loot 200
+    seed json, like preview-agents-response
+    note <Success>
+  loot 480
+    seed json, like internal-exception
+    note <InternalException>
+  loot 481
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 483
+    seed json, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 484
+    seed json, like invalid-cross-account-role-exception
+    note <InvalidCrossAccountRoleException>

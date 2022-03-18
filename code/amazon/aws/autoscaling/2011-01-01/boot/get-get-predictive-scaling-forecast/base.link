@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/get-predictive-scaling-forecast-answer
+  take form get-predictive-scaling-forecast-answer
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-get-predictive-scaling-forecast, name <GET_GetPredictiveScalingForecast>
+  note <Retrieves the forecast data for a predictive scaling policy.
+
+Load forecasts are predictions of the hourly load values using historical load data from CloudWatch and an analysis of historical trends. Capacity forecasts are represented as predicted values for the minimum capacity that is needed on an hourly basis, based on the hourly load forecast.
+
+A minimum of 24 hours of data is required to create the initial forecasts. However, having a full 14 days of historical data results in more accurate forecasts.
+
+For more information, see [Predictive scaling for Amazon EC2 Auto Scaling](https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-predictive-scaling.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+
+  take auto-scaling-group-name
+    like native-string
+    note <The name of the Auto Scaling group.>
+  take policy-name
+    like native-string
+    note <The name of the policy.>
+  take start-time
+    like native-string
+    note <The inclusive start time of the time range for the forecast data to get. At most, the date and time can be one year before the current date and time.>
+  take end-time
+    like native-string
+    note <The exclusive end time of the time range for the forecast data to get. The maximum time duration between the start and end time is 30 days.
+
+Although this parameter can accept a date and time that is more than two days in the future, the availability of forecast data has limits. Amazon EC2 Auto Scaling only issues forecasts for periods of two days in advance.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=GetPredictiveScalingForecast>
+
+  find <AutoScalingGroupName>, loan auto-scaling-group-name
+  find <PolicyName>, loan policy-name
+  find <StartTime>, loan start-time
+  find <EndTime>, loan end-time
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like get-predictive-scaling-forecast-answer
+    note <Success>
+  loot 480
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

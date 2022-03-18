@@ -1,0 +1,67 @@
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/create-script-output
+  take form create-script-output
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/tagging-failed-exception
+  take form tagging-failed-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-script, name <CreateScript>
+  note <Creates a new script record for your Realtime Servers script. Realtime scripts are JavaScript that provide configuration settings and optional custom game logic for your game. The script is deployed when you create a Realtime Servers fleet to host your game sessions. Script logic is executed during an active game session.
+
+To create a new script record, specify a script name and provide the script file(s). The script files and all dependencies must be zipped into a single file. You can pull the zip file from either of these locations:
+
+- A locally available directory. Use the _ZipFile_ parameter for this option.
+
+- An Amazon Simple Storage Service (Amazon S3) bucket under your AWS account. Use the _StorageLocation_ parameter for this option. You'll need to have an Identity Access Management (IAM) role that allows the Amazon GameLift service to access your S3 bucket.
+
+If the call is successful, a new script record is created with a unique script ID. If the script file is provided as a local file, the file is uploaded to an Amazon GameLift-owned S3 bucket and the script record's storage location reflects this location. If the script file is provided as an S3 bucket, Amazon GameLift accesses the file at this storage location as needed for deployment.
+
+**Learn more** [Amazon GameLift Realtime Servers](https://docs.aws.amazon.com/gamelift/latest/developerguide/realtime-intro.html)
+
+[Set Up a Role for Amazon GameLift Access](https://docs.aws.amazon.com/gamelift/latest/developerguide/setting-up-role.html)
+
+**Related actions** CreateScript | ListScripts | DescribeScript | UpdateScript | DeleteScript | [All APIs by task](https://docs.aws.amazon.com/gamelift/latest/developerguide/reference-awssdk.html#reference-awssdk-resources-fleets)>
+
+  take x-amz-target
+    like native-string
+  take create-script-input, like create-script-input
+
+  line </#X-Amz-Target=GameLift.CreateScript>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-script-input
+
+  loot 200
+    seed json, like create-script-output
+    note <Success>
+  loot 480
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 483
+    seed json, like tagging-failed-exception
+    note <TaggingFailedException>
+  loot 484
+    seed json, like internal-service-exception
+    note <InternalServiceException>

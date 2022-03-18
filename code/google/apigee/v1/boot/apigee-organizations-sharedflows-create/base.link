@@ -1,0 +1,34 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/apigee/v1/base/google-cloud-apigee-v1-shared-flow-revision
+  take form google-cloud-apigee-v1-shared-flow-revision
+
+boot apigee-organizations-sharedflows-create, name <apigee.organizations.sharedflows.create>
+  note <Uploads a ZIP-formatted shared flow configuration bundle to an organization. If the shared flow already exists, this creates a new revision of it. If the shared flow does not exist, this creates it. Once imported, the shared flow revision must be deployed before it can be accessed at runtime. The size limit of a shared flow bundle is 15 MB.>
+
+  take parent
+    like native-string
+    note <Required. The name of the parent organization under which to create the shared flow. Must be of the form: `organizations/{organization_id}`>
+  take action
+    like native-string
+    note <Required. Must be set to either `import` or `validate`.>
+    void take
+  take name
+    like native-string
+    note <Required. The name to give the shared flow>
+    void take
+  take google-api-http-body, like google-api-http-body
+    void take
+
+  line </v1/{parent}/sharedflows>
+
+  find <action>, loan action
+  find <name>, loan name
+
+  seed json, loan google-api-http-body
+
+  loot 200
+    seed json, like google-cloud-apigee-v1-shared-flow-revision
+    note <Successful response>

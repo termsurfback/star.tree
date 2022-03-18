@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/delete-subnet-group-response
+  take form delete-subnet-group-response
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/service-linked-role-not-found-fault
+  take form service-linked-role-not-found-fault
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/subnet-group-in-use-fault
+  take form subnet-group-in-use-fault
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/subnet-group-not-found-fault
+  take form subnet-group-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-subnet-group, name <DeleteSubnetGroup>
+  note <Deletes a subnet group. You cannot delete a default subnet group or one that is associated with any clusters.>
+
+  take x-amz-target
+    like native-string
+  take delete-subnet-group-request, like delete-subnet-group-request
+
+  line </#X-Amz-Target=AmazonMemoryDB.DeleteSubnetGroup>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-subnet-group-request
+
+  loot 200
+    seed json, like delete-subnet-group-response
+    note <Success>
+  loot 480
+    seed json, like subnet-group-in-use-fault
+    note <SubnetGroupInUseFault>
+  loot 481
+    seed json, like subnet-group-not-found-fault
+    note <SubnetGroupNotFoundFault>
+  loot 482
+    seed json, like service-linked-role-not-found-fault
+    note <ServiceLinkedRoleNotFoundFault>

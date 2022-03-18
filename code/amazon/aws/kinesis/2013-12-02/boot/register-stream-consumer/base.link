@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/invalid-argument-exception
+  take form invalid-argument-exception
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/register-stream-consumer-output
+  take form register-stream-consumer-output
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot register-stream-consumer, name <RegisterStreamConsumer>
+  note <Registers a consumer with a Kinesis data stream. When you use this operation, the consumer you register can then call SubscribeToShard to receive data from the stream using enhanced fan-out, at a rate of up to 2 MiB per second for every shard you subscribe to. This rate is unaffected by the total number of consumers that read from the same stream.
+
+You can register up to 20 consumers per stream. A given consumer can only be registered with one stream at a time.
+
+For an example of how to use this operations, see [Enhanced Fan-Out Using the Kinesis Data Streams API](/streams/latest/dev/building-enhanced-consumers-api.html).
+
+The use of this operation has a limit of five transactions per second per account. Also, only 5 consumers can be created simultaneously. In other words, you cannot have more than 5 consumers in a `CREATING` status at the same time. Registering a 6th consumer while there are 5 in a `CREATING` status results in a `LimitExceededException`.>
+
+  take x-amz-target
+    like native-string
+  take register-stream-consumer-input, like register-stream-consumer-input
+
+  line </#X-Amz-Target=Kinesis_20131202.RegisterStreamConsumer>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan register-stream-consumer-input
+
+  loot 200
+    seed json, like register-stream-consumer-output
+    note <Success>
+  loot 480
+    seed json, like invalid-argument-exception
+    note <InvalidArgumentException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

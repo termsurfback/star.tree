@@ -1,0 +1,32 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/db-parameter-group-not-found-fault
+  take form db-parameter-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/invalid-db-parameter-group-state-fault
+  take form invalid-db-parameter-group-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-db-parameter-group, name <GET_DeleteDBParameterGroup>
+  take db-parameter-group-name
+    like native-string
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteDBParameterGroup>
+
+  find <DBParameterGroupName>, loan db-parameter-group-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like invalid-db-parameter-group-state-fault
+    note <InvalidDBParameterGroupStateFault>
+  loot 481
+    seed xml, like db-parameter-group-not-found-fault
+    note <DBParameterGroupNotFoundFault>

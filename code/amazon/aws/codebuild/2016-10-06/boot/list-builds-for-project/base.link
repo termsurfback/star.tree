@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/list-builds-for-project-output
+  take form list-builds-for-project-output
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-builds-for-project, name <ListBuildsForProject>
+  note <Gets a list of build identifiers for the specified build project, with each build identifier representing a single build.>
+
+  take x-amz-target
+    like native-string
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-builds-for-project-input, like list-builds-for-project-input
+
+  line </#X-Amz-Target=CodeBuild_20161006.ListBuildsForProject>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <nextToken>, loan next-token
+
+  seed json, loan list-builds-for-project-input
+
+  loot 200
+    seed json, like list-builds-for-project-output
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

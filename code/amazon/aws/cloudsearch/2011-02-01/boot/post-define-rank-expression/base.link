@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/base-exception
+  take form base-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/define-rank-expression-response
+  take form define-rank-expression-response
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-define-rank-expression, name <POST_DefineRankExpression>
+  note <Configures a `RankExpression` for the search domain. Used to create new rank expressions and modify existing ones. If the expression exists, the new configuration replaces the old one. You can configure a maximum of 50 rank expressions.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take define-rank-expression-request, like define-rank-expression-request
+    void take
+
+  line </#Action=DefineRankExpression>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan define-rank-expression-request
+
+  loot 200
+    seed xml, like define-rank-expression-response
+    note <Success>
+  loot 409
+    seed xml, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 480
+    seed xml, like base-exception
+    note <BaseException>
+  loot 500
+    seed xml, like internal-exception
+    note <InternalException>

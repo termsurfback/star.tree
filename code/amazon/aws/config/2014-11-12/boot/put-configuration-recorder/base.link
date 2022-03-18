@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-configuration-recorder-name-exception
+  take form invalid-configuration-recorder-name-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-recording-group-exception
+  take form invalid-recording-group-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-role-exception
+  take form invalid-role-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/max-number-of-configuration-recorders-exceeded-exception
+  take form max-number-of-configuration-recorders-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-configuration-recorder, name <PutConfigurationRecorder>
+  note <Creates a new configuration recorder to record the selected resource configurations.
+
+You can use this action to change the role `roleARN` or the `recordingGroup` of an existing recorder. To change the role, call the action on the existing configuration recorder and specify a role.
+
+Currently, you can specify only one configuration recorder per region in your account.
+
+If `ConfigurationRecorder` does not have the **recordingGroup** parameter specified, the default is to record all supported resource types.>
+
+  take x-amz-target
+    like native-string
+  take put-configuration-recorder-request, like put-configuration-recorder-request
+
+  line </#X-Amz-Target=StarlingDoveService.PutConfigurationRecorder>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan put-configuration-recorder-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like max-number-of-configuration-recorders-exceeded-exception
+    note <MaxNumberOfConfigurationRecordersExceededException>
+  loot 481
+    seed json, like invalid-configuration-recorder-name-exception
+    note <InvalidConfigurationRecorderNameException>
+  loot 482
+    seed json, like invalid-role-exception
+    note <InvalidRoleException>
+  loot 483
+    seed json, like invalid-recording-group-exception
+    note <InvalidRecordingGroupException>

@@ -1,0 +1,83 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/events-message
+  take form events-message
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-events, name <GET_DescribeEvents>
+  note <Returns events related to clusters, cache security groups, and cache parameter groups. You can obtain events specific to a particular cluster, cache security group, or cache parameter group by providing the name as a parameter.
+
+By default, only the events occurring within the last hour are returned; however, you can retrieve up to 14 days' worth of events if necessary.>
+
+  take source-identifier
+    like native-string
+    note <The identifier of the event source for which events are returned. If not specified, all sources are included in the response.>
+    void take
+  take source-type
+    like native-string
+    note <The event source to retrieve events for. If no value is specified, all events are returned.>
+    void take
+  take start-time
+    like native-string
+    note <The beginning of the time interval to retrieve events for, specified in ISO 8601 format.
+
+**Example:** 2017-03-30T07:03:49.555Z>
+    void take
+  take end-time
+    like native-string
+    note <The end of the time interval for which to retrieve events, specified in ISO 8601 format.
+
+**Example:** 2017-03-30T07:03:49.555Z>
+    void take
+  take duration
+    like native-integer
+    note <The number of minutes worth of events to retrieve.>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of records to include in the response. If more records exist than the specified `MaxRecords` value, a marker is included in the response so that the remaining results can be retrieved.
+
+Default: 100
+
+Constraints: minimum 20; maximum 100.>
+    void take
+  take marker
+    like native-string
+    note <An optional marker returned from a prior request. Use this marker for pagination of results from this operation. If this parameter is specified, the response includes only records beyond the marker, up to the value specified by `MaxRecords`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeEvents>
+
+  find <SourceIdentifier>, loan source-identifier
+  find <SourceType>, loan source-type
+  find <StartTime>, loan start-time
+  find <EndTime>, loan end-time
+  find <Duration>, loan duration
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like events-message
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 481
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

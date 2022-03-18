@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/file-system-not-found
+  take form file-system-not-found
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/file-system-policy-description
+  take form file-system-policy-description
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/incorrect-file-system-life-cycle-state
+  take form incorrect-file-system-life-cycle-state
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/invalid-policy-exception
+  take form invalid-policy-exception
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/put-file-system-policy-body
+  take form put-file-system-policy-body
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-file-system-policy, name <PutFileSystemPolicy>
+  note <Applies an Amazon EFS `FileSystemPolicy` to an Amazon EFS file system. A file system policy is an IAM resource-based policy and can contain multiple policy statements. A file system always has exactly one file system policy, which can be the default policy or an explicit policy set or updated using this API operation. EFS file system policies have a 20,000 character limit. When an explicit policy is set, it overrides the default policy. For more information about the default file system policy, see [Default EFS File System Policy](https://docs.aws.amazon.com/efs/latest/ug/iam-access-control-nfs-efs.html#default-filesystempolicy).
+
+EFS file system policies have a 20,000 character limit.
+
+This operation requires permissions for the `elasticfilesystem:PutFileSystemPolicy` action.>
+
+  take file-system-id
+    like native-string
+    note <The ID of the EFS file system that you want to create or update the `FileSystemPolicy` for.>
+  take put-file-system-policy-body, like put-file-system-policy-body
+
+  line </2015-02-01/file-systems/{file-system-id}/policy>
+
+  seed json, loan put-file-system-policy-body
+
+  loot 200
+    seed json, like file-system-policy-description
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like file-system-not-found
+    note <FileSystemNotFound>
+  loot 482
+    seed json, like invalid-policy-exception
+    note <InvalidPolicyException>
+  loot 483
+    seed json, like incorrect-file-system-life-cycle-state
+    note <IncorrectFileSystemLifeCycleState>

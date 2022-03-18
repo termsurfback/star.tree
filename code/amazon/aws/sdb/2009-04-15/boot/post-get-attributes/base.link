@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/sdb/2009-04-15/base/get-attributes-result
+  take form get-attributes-result
+
+load @drumwork/snow/amazonaws.com/sdb/2009-04-15/base/no-such-domain
+  take form no-such-domain
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-get-attributes, name <POST_GetAttributes>
+  note <Returns all of the attributes associated with the specified item. Optionally, the attributes returned can be limited to one or more attributes by specifying an attribute name parameter.
+
+If the item does not exist on the replica that was accessed for this operation, an empty set is returned. The system does not return an error as it cannot guarantee the item does not exist on other replicas.
+
+If GetAttributes is called without being passed any attribute names, all the attributes for the item are returned.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take get-attributes-request, like get-attributes-request
+    void take
+
+  line </#Action=GetAttributes>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan get-attributes-request
+
+  loot 200
+    seed xml, like get-attributes-result
+    note <Success>
+  loot 400
+    seed xml, like no-such-domain
+    note <NoSuchDomain>

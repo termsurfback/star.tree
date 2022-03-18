@@ -1,0 +1,43 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/customer-balance-transaction
+  take form customer-balance-transaction
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-customers-customer-balance-transactions-transaction-body
+  take form get-customers-customer-balance-transactions-transaction-body
+
+boot get-customers-customer-balance-transactions-transaction, name <GetCustomersCustomerBalanceTransactionsTransaction>
+  note <Retrieves a specific customer balance transaction that updated the customer’s [balances](/docs/billing/customer/balance).>
+
+  take customer
+    like native-string
+  take transaction
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-customers-customer-balance-transactions-transaction-body, like get-customers-customer-balance-transactions-transaction-body
+    void take
+
+  line </v1/customers/{customer}/balance_transactions/{transaction}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-customers-customer-balance-transactions-transaction-body
+
+  loot 200
+    seed json, like customer-balance-transaction
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

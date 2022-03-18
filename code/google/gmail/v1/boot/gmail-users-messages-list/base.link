@@ -1,0 +1,55 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/gmail/v1/base/list-messages-response
+  take form list-messages-response
+
+boot gmail-users-messages-list, name <gmail.users.messages.list>
+  note <Lists the messages in the user's mailbox.>
+
+  take user-id
+    like native-string
+    note <The user's email address. The special value `me` can be used to indicate the authenticated user.>
+  take include-spam-trash
+    like native-boolean
+    note <Include messages from `SPAM` and `TRASH` in the results.>
+    void take
+  take label-ids
+    like list
+      like native-string
+    note <Only return messages with labels that match all of the specified label IDs.>
+    void take
+  take max-results
+    like native-integer
+    note <Maximum number of messages to return. This field defaults to 100. The maximum allowed value for this field is 500.>
+    void take
+  take page-token
+    like native-string
+    note <Page token to retrieve a specific page of results in the list.>
+    void take
+  take q
+    like native-string
+    note <Only return messages matching the specified query. Supports the same query format as the Gmail search box. For example, `"from:someuser@example.com rfc822msgid: is:unread"`. Parameter cannot be used when accessing the api using the gmail.metadata scope.>
+    void take
+
+  line </gmail/v1/users/{user-id}/messages>
+
+  find <includeSpamTrash>, loan include-spam-trash
+  find <labelIds>, loan label-ids
+  find <maxResults>, loan max-results
+  find <pageToken>, loan page-token
+  find <q>, loan q
+
+  loot 200
+    seed json, like list-messages-response
+    note <Successful response>

@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/create-firewall-rule-group-response
+  take form create-firewall-rule-group-response
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-firewall-rule-group, name <CreateFirewallRuleGroup>
+  note <Creates an empty DNS Firewall rule group for filtering DNS network traffic in a VPC. You can add rules to the new rule group by calling CreateFirewallRule.>
+
+  take x-amz-target
+    like native-string
+  take create-firewall-rule-group-request, like create-firewall-rule-group-request
+
+  line </#X-Amz-Target=Route53Resolver.CreateFirewallRuleGroup>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-firewall-rule-group-request
+
+  loot 200
+    seed json, like create-firewall-rule-group-response
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 483
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>
+  loot 484
+    seed json, like throttling-exception
+    note <ThrottlingException>

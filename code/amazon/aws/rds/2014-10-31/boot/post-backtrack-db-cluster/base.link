@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-backtrack
+  take form db-cluster-backtrack
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-backtrack-db-cluster, name <POST_BacktrackDBCluster>
+  note <Backtracks a DB cluster to a specific time, without creating a new DB cluster.
+
+For more information on backtracking, see [Backtracking an Aurora DB Cluster](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Managing.Backtrack.html) in the _Amazon Aurora User Guide._
+
+This action only applies to Aurora MySQL DB clusters.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take backtrack-db-cluster-message, like backtrack-db-cluster-message
+    void take
+
+  line </#Action=BacktrackDBCluster>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan backtrack-db-cluster-message
+
+  loot 200
+    seed xml, like db-cluster-backtrack
+    note <Success>
+  loot 480
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>
+  loot 481
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>

@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/function-in-use
+  take form function-in-use
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/invalid-if-match-version
+  take form invalid-if-match-version
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/no-such-function-exists
+  take form no-such-function-exists
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/precondition-failed
+  take form precondition-failed
+
+load @drumwork/snow/amazonaws.com/cloudfront/2020-05-31/base/unsupported-operation
+  take form unsupported-operation
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-function2020-05-31, name <DeleteFunction2020_05_31>
+  note <Deletes a CloudFront function.
+
+You cannot delete a function if it’s associated with a cache behavior. First, update your distributions to remove the function association from all cache behaviors, then delete the function.
+
+To delete a function, you must provide the function’s name and version (`ETag` value). To get these values, you can use `ListFunctions` and `DescribeFunction`.>
+
+  take name
+    like native-string
+    note <The name of the function that you are deleting.>
+  take if-match
+    like native-string
+    note <The current version (`ETag` value) of the function that you are deleting, which you can get using `DescribeFunction`.>
+
+  line </2020-05-31/function/{name}#If-Match>
+
+  hint <If-Match>, loan if-match
+
+  loot 204
+    note <Success>
+  loot 480
+    seed xml, like invalid-if-match-version
+    note <InvalidIfMatchVersion>
+  loot 481
+    seed xml, like no-such-function-exists
+    note <NoSuchFunctionExists>
+  loot 482
+    seed xml, like function-in-use
+    note <FunctionInUse>
+  loot 483
+    seed xml, like precondition-failed
+    note <PreconditionFailed>
+  loot 484
+    seed xml, like unsupported-operation
+    note <UnsupportedOperation>

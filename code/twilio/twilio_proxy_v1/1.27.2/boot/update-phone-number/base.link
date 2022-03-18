@@ -1,0 +1,29 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_proxy_v1/1.27.2/base/proxy-v1-service-phone-number
+  take form proxy-v1-service-phone-number
+
+load @drumwork/snow/twilio.com/twilio_proxy_v1/1.27.2/base/update-phone-number-body
+  take form update-phone-number-body
+
+boot update-phone-number, name <UpdatePhoneNumber>
+  note <Update a specific Proxy Number.>
+
+  take service-sid
+    like native-string
+    note <The SID of the parent \[Service\](https://www.twilio.com/docs/proxy/api/service) of the PhoneNumber resource to update.>
+  take sid
+    like native-string
+    note <The Twilio-provided string that uniquely identifies the PhoneNumber resource to update.>
+  take update-phone-number-body, like update-phone-number-body
+    void take
+
+  line </v1/Services/{service-sid}/PhoneNumbers/{sid}>
+
+  seed x-www-form-urlencoded, loan update-phone-number-body
+
+  loot 200
+    seed json, like proxy-v1-service-phone-number
+    note <OK>

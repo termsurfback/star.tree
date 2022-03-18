@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/get-trail-status-response
+  take form get-trail-status-response
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/invalid-trail-name-exception
+  take form invalid-trail-name-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/operation-not-permitted-exception
+  take form operation-not-permitted-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/trail-not-found-exception
+  take form trail-not-found-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/unsupported-operation-exception
+  take form unsupported-operation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-trail-status, name <GetTrailStatus>
+  note <Returns a JSON-formatted list of information about the specified trail. Fields include information on delivery errors, Amazon SNS and Amazon S3 errors, and start and stop logging times for each trail. This operation returns trail status from a single region. To return trail status from all regions, you must call the operation on each region.>
+
+  take x-amz-target
+    like native-string
+  take get-trail-status-request, like get-trail-status-request
+
+  line </#X-Amz-Target=com.amazonaws.cloudtrail.v20131101.CloudTrail_20131101.GetTrailStatus>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-trail-status-request
+
+  loot 200
+    seed json, like get-trail-status-response
+    note <Success>
+  loot 480
+    seed json, like trail-not-found-exception
+    note <TrailNotFoundException>
+  loot 481
+    seed json, like invalid-trail-name-exception
+    note <InvalidTrailNameException>
+  loot 482
+    seed json, like unsupported-operation-exception
+    note <UnsupportedOperationException>
+  loot 483
+    seed json, like operation-not-permitted-exception
+    note <OperationNotPermittedException>

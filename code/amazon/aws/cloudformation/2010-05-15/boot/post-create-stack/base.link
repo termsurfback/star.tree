@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/already-exists-exception
+  take form already-exists-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/create-stack-output
+  take form create-stack-output
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/insufficient-capabilities-exception
+  take form insufficient-capabilities-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/token-already-exists-exception
+  take form token-already-exists-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-stack, name <POST_CreateStack>
+  note <Creates a stack as specified in the template. After the call completes successfully, the stack creation starts. You can check the status of the stack via the DescribeStacks API.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-stack-input, like create-stack-input
+    void take
+
+  line </#Action=CreateStack>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-stack-input
+
+  loot 200
+    seed xml, like create-stack-output
+    note <Success>
+  loot 480
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed xml, like already-exists-exception
+    note <AlreadyExistsException>
+  loot 482
+    seed xml, like token-already-exists-exception
+    note <TokenAlreadyExistsException>
+  loot 483
+    seed xml, like insufficient-capabilities-exception
+    note <InsufficientCapabilitiesException>

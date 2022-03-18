@@ -1,0 +1,42 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/delete-change-set-output
+  take form delete-change-set-output
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/invalid-change-set-status-exception
+  take form invalid-change-set-status-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-change-set, name <GET_DeleteChangeSet>
+  note <Deletes the specified change set. Deleting change sets ensures that no one executes the wrong change set.
+
+If the call successfully completes, CloudFormation successfully deleted the change set.
+
+If `IncludeNestedStacks` specifies `True` during the creation of the nested change set, then `DeleteChangeSet` will delete all change sets that belong to the stacks hierarchy and will also delete all change sets for nested stacks with the status of `REVIEW_IN_PROGRESS`.>
+
+  take change-set-name
+    like native-string
+    note <The name or Amazon Resource Name (ARN) of the change set that you want to delete.>
+  take stack-name
+    like native-string
+    note <If you specified the name of a change set to delete, specify the stack name or ID (ARN) that is associated with it.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteChangeSet>
+
+  find <ChangeSetName>, loan change-set-name
+  find <StackName>, loan stack-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-change-set-output
+    note <Success>
+  loot 480
+    seed xml, like invalid-change-set-status-exception
+    note <InvalidChangeSetStatusException>

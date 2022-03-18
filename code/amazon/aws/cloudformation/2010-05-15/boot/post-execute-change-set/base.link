@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/change-set-not-found-exception
+  take form change-set-not-found-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/execute-change-set-output
+  take form execute-change-set-output
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/insufficient-capabilities-exception
+  take form insufficient-capabilities-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/invalid-change-set-status-exception
+  take form invalid-change-set-status-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/token-already-exists-exception
+  take form token-already-exists-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-execute-change-set, name <POST_ExecuteChangeSet>
+  note <Updates a stack using the input information that was provided when the specified change set was created. After the call successfully completes, CloudFormation starts updating the stack. Use the DescribeStacks action to view the status of the update.
+
+When you execute a change set, CloudFormation deletes all other change sets associated with the stack because they aren't valid for the updated stack.
+
+If a stack policy is associated with the stack, CloudFormation enforces the policy during the update. You can't specify a temporary stack policy that overrides the current policy.
+
+To create a change set for the entire stack hierachy, `IncludeNestedStacks` must have been set to `True`.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take execute-change-set-input, like execute-change-set-input
+    void take
+
+  line </#Action=ExecuteChangeSet>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan execute-change-set-input
+
+  loot 200
+    seed xml, like execute-change-set-output
+    note <Success>
+  loot 480
+    seed xml, like invalid-change-set-status-exception
+    note <InvalidChangeSetStatusException>
+  loot 481
+    seed xml, like change-set-not-found-exception
+    note <ChangeSetNotFoundException>
+  loot 482
+    seed xml, like insufficient-capabilities-exception
+    note <InsufficientCapabilitiesException>
+  loot 483
+    seed xml, like token-already-exists-exception
+    note <TokenAlreadyExistsException>

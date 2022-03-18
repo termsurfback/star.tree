@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/list-dataset-groups-response
+  take form list-dataset-groups-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-dataset-groups, name <ListDatasetGroups>
+  note <Returns a list of dataset groups. The response provides the properties for each dataset group, including the Amazon Resource Name (ARN). For more information on dataset groups, see CreateDatasetGroup.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-dataset-groups-request, like list-dataset-groups-request
+
+  line </#X-Amz-Target=AmazonPersonalize.ListDatasetGroups>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-dataset-groups-request
+
+  loot 200
+    seed json, like list-dataset-groups-response
+    note <Success>
+  loot 480
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>

@@ -1,0 +1,116 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-cluster-not-found-fault
+  take form cache-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/create-snapshot-result
+  take form create-snapshot-result
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-cache-cluster-state-fault
+  take form invalid-cache-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-replication-group-state-fault
+  take form invalid-replication-group-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/replication-group-not-found-fault
+  take form replication-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/snapshot-already-exists-fault
+  take form snapshot-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/snapshot-feature-not-supported-fault
+  take form snapshot-feature-not-supported-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/snapshot-quota-exceeded-fault
+  take form snapshot-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/tag
+  take form tag
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/tag-quota-per-resource-exceeded
+  take form tag-quota-per-resource-exceeded
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-snapshot, name <GET_CreateSnapshot>
+  note <Creates a copy of an entire cluster or replication group at a specific moment in time.
+
+This operation is valid for Redis only.>
+
+  take replication-group-id
+    like native-string
+    note <The identifier of an existing replication group. The snapshot is created from this replication group.>
+    void take
+  take cache-cluster-id
+    like native-string
+    note <The identifier of an existing cluster. The snapshot is created from this cluster.>
+    void take
+  take snapshot-name
+    like native-string
+    note <A name for the snapshot being created.>
+  take kms-key-id
+    like native-string
+    note <The ID of the KMS key used to encrypt the snapshot.>
+    void take
+  take tags
+    like list
+      like tag
+    note <A list of tags to be added to this resource. A tag is a key-value pair. A tag key must be accompanied by a tag value, although null is accepted.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateSnapshot>
+
+  find <ReplicationGroupId>, loan replication-group-id
+  find <CacheClusterId>, loan cache-cluster-id
+  find <SnapshotName>, loan snapshot-name
+  find <KmsKeyId>, loan kms-key-id
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-snapshot-result
+    note <Success>
+  loot 480
+    seed xml, like snapshot-already-exists-fault
+    note <SnapshotAlreadyExistsFault>
+  loot 481
+    seed xml, like cache-cluster-not-found-fault
+    note <CacheClusterNotFoundFault>
+  loot 482
+    seed xml, like replication-group-not-found-fault
+    note <ReplicationGroupNotFoundFault>
+  loot 483
+    seed xml, like invalid-cache-cluster-state-fault
+    note <InvalidCacheClusterStateFault>
+  loot 484
+    seed xml, like invalid-replication-group-state-fault
+    note <InvalidReplicationGroupStateFault>
+  loot 485
+    seed xml, like snapshot-quota-exceeded-fault
+    note <SnapshotQuotaExceededFault>
+  loot 486
+    seed xml, like snapshot-feature-not-supported-fault
+    note <SnapshotFeatureNotSupportedFault>
+  loot 487
+    seed xml, like tag-quota-per-resource-exceeded
+    note <TagQuotaPerResourceExceeded>
+  loot 488
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>
+  loot 489
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>

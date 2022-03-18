@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/describe-events-response
+  take form describe-events-response
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/service-linked-role-not-found-fault
+  take form service-linked-role-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-events, name <DescribeEvents>
+  note <Returns events related to DAX clusters and parameter groups. You can obtain events specific to a particular DAX cluster or parameter group by providing the name as a parameter.
+
+By default, only the events occurring within the last 24 hours are returned; however, you can retrieve up to 14 days' worth of events if necessary.>
+
+  take x-amz-target
+    like native-string
+  take describe-events-request, like describe-events-request
+
+  line </#X-Amz-Target=AmazonDAXV3.DescribeEvents>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-events-request
+
+  loot 200
+    seed json, like describe-events-response
+    note <Success>
+  loot 480
+    seed json, like service-linked-role-not-found-fault
+    note <ServiceLinkedRoleNotFoundFault>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed json, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

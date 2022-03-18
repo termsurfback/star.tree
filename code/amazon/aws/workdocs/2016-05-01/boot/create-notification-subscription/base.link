@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/create-notification-subscription-body
+  take form create-notification-subscription-body
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/create-notification-subscription-response
+  take form create-notification-subscription-response
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/too-many-subscriptions-exception
+  take form too-many-subscriptions-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/unauthorized-resource-access-exception
+  take form unauthorized-resource-access-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-notification-subscription, name <CreateNotificationSubscription>
+  note <Configure Amazon WorkDocs to use Amazon SNS notifications. The endpoint receives a confirmation message, and must confirm the subscription.
+
+For more information, see [Subscribe to Notifications](https://docs.aws.amazon.com/workdocs/latest/developerguide/subscribe-notifications.html) in the _Amazon WorkDocs Developer Guide_.>
+
+  take organization-id
+    like native-string
+    note <The ID of the organization.>
+  take create-notification-subscription-body, like create-notification-subscription-body
+
+  line </api/v1/organizations/{organization-id}/subscriptions>
+
+  seed json, loan create-notification-subscription-body
+
+  loot 200
+    seed json, like create-notification-subscription-response
+    note <Success>
+  loot 480
+    seed json, like unauthorized-resource-access-exception
+    note <UnauthorizedResourceAccessException>
+  loot 481
+    seed json, like too-many-subscriptions-exception
+    note <TooManySubscriptionsException>
+  loot 482
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

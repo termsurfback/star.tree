@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-parameter-group-details
+  take form cache-parameter-group-details
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-parameter-group-not-found-fault
+  take form cache-parameter-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-cache-parameters, name <GET_DescribeCacheParameters>
+  note <Returns the detailed parameter list for a particular cache parameter group.>
+
+  take cache-parameter-group-name
+    like native-string
+    note <The name of a specific cache parameter group to return details for.>
+  take source
+    like native-string
+    note <The parameter types to return.
+
+Valid values: `user` | `system` | `engine-default`>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of records to include in the response. If more records exist than the specified `MaxRecords` value, a marker is included in the response so that the remaining results can be retrieved.
+
+Default: 100
+
+Constraints: minimum 20; maximum 100.>
+    void take
+  take marker
+    like native-string
+    note <An optional marker returned from a prior request. Use this marker for pagination of results from this operation. If this parameter is specified, the response includes only records beyond the marker, up to the value specified by `MaxRecords`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeCacheParameters>
+
+  find <CacheParameterGroupName>, loan cache-parameter-group-name
+  find <Source>, loan source
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like cache-parameter-group-details
+    note <Success>
+  loot 480
+    seed xml, like cache-parameter-group-not-found-fault
+    note <CacheParameterGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

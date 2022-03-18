@@ -1,0 +1,71 @@
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/client-token
+  take form client-token
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/export-format
+  take form export-format
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/export-time
+  take form export-time
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/s3-bucket
+  take form s3-bucket
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/s3-bucket-owner
+  take form s3-bucket-owner
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/s3-prefix
+  take form s3-prefix
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/s3-sse-algorithm
+  take form s3-sse-algorithm
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/s3-sse-kms-key-id
+  take form s3-sse-kms-key-id
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/table-arn
+  take form table-arn
+
+form export-table-to-point-in-time-input, name <ExportTableToPointInTimeInput>
+  take table-arn, name <TableArn>
+    like table-arn
+    note <The Amazon Resource Name (ARN) associated with the table to export.>
+  take export-time, name <ExportTime>
+    like export-time
+    void take
+    note <Time in the past from which to export table data. The table export will be a snapshot of the table's state at this point in time.>
+  take client-token, name <ClientToken>
+    like client-token
+    void take
+    note <Providing a `ClientToken` makes the call to `ExportTableToPointInTimeInput` idempotent, meaning that multiple identical calls have the same effect as one single call.
+
+A client token is valid for 8 hours after the first request that uses it is completed. After 8 hours, any request with the same client token is treated as a new request. Do not resubmit the same request with the same client token for more than 8 hours, or the result might not be idempotent.
+
+If you submit a request with the same client token but a change in other parameters within the 8-hour idempotency window, DynamoDB returns an `IdempotentParameterMismatch` exception.>
+  take s3-bucket, name <S3Bucket>
+    like s3-bucket
+    note <The name of the Amazon S3 bucket to export the snapshot to.>
+  take s3-bucket-owner, name <S3BucketOwner>
+    like s3-bucket-owner
+    void take
+    note <The ID of the AWS account that owns the bucket the export will be stored in.>
+  take s3-prefix, name <S3Prefix>
+    like s3-prefix
+    void take
+    note <The Amazon S3 bucket prefix to use as the file name and path of the exported snapshot.>
+  take s3-sse-algorithm, name <S3SseAlgorithm>
+    like s3-sse-algorithm
+    void take
+    note <Type of encryption used on the bucket where export data will be stored. Valid values for `S3SseAlgorithm` are:
+
+- `AES256` - server-side encryption with Amazon S3 managed keys
+
+- `KMS` - server-side encryption with AWS KMS managed keys>
+  take s3-sse-kms-key-id, name <S3SseKmsKeyId>
+    like s3-sse-kms-key-id
+    void take
+    note <The ID of the AWS KMS managed key used to encrypt the S3 bucket where export data will be stored (if applicable).>
+  take export-format, name <ExportFormat>
+    like export-format
+    void take
+    note <The format for the exported data. Valid values for `ExportFormat` are `DYNAMODB_JSON` or `ION`.>

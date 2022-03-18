@@ -1,0 +1,37 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/pubsublite/v1/base/subscription
+  take form subscription
+
+boot pubsublite-admin-projects-locations-subscriptions-create, name <pubsublite.admin.projects.locations.subscriptions.create>
+  note <Creates a new subscription.>
+
+  take parent
+    like native-string
+    note <Required. The parent location in which to create the subscription. Structured like `projects/{project_number}/locations/{location}`.>
+  take skip-backlog
+    like native-boolean
+    note <If true, the newly created subscription will only receive messages published after the subscription was created. Otherwise, the entire message backlog will be received on the subscription. Defaults to false.>
+    void take
+  take subscription-id
+    like native-string
+    note <Required. The ID to use for the subscription, which will become the final component of the subscription's name. This value is structured like: `my-sub-name`.>
+    void take
+  take subscription, like subscription
+    void take
+
+  line </v1/admin/{parent}/subscriptions>
+
+  find <skipBacklog>, loan skip-backlog
+  find <subscriptionId>, loan subscription-id
+
+  seed json, loan subscription
+
+  loot 200
+    seed json, like subscription
+    note <Successful response>

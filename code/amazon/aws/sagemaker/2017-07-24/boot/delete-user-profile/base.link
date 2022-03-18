@@ -1,0 +1,31 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-in-use
+  take form resource-in-use
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-not-found
+  take form resource-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-user-profile, name <DeleteUserProfile>
+  note <Deletes a user profile. When a user profile is deleted, the user loses access to their EFS volume, including data, notebooks, and other artifacts.>
+
+  take x-amz-target
+    like native-string
+  take delete-user-profile-request, like delete-user-profile-request
+
+  line </#X-Amz-Target=SageMaker.DeleteUserProfile>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-user-profile-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like resource-in-use
+    note <ResourceInUse>
+  loot 481
+    seed json, like resource-not-found
+    note <ResourceNotFound>

@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/create-safety-rule-body
+  take form create-safety-rule-body
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/create-safety-rule-response
+  take form create-safety-rule-response
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/validation-exception
+  take form validation-exception
+
+boot create-safety-rule, name <CreateSafetyRule>
+  note <Creates a safety rule in a control panel. Safety rules let you add safeguards around enabling and disabling routing controls, to help prevent unexpected outcomes.
+
+There are two types of safety rules: assertion rules and gating rules.
+
+Assertion rule: An assertion rule enforces that, when a routing control state is changed, the criteria set by the rule configuration is met. Otherwise, the change to the routing control is not accepted.
+
+Gating rule: A gating rule verifies that a set of gating controls evaluates as true, based on a rule configuration that you specify. If the gating rule evaluates to true, Amazon Route 53 Application Recovery Controller allows a set of routing control state changes to run and complete against the set of target controls.>
+
+  take create-safety-rule-body, like create-safety-rule-body
+
+  line </safetyrule>
+
+  seed json, loan create-safety-rule-body
+
+  loot 200
+    seed json, like create-safety-rule-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>

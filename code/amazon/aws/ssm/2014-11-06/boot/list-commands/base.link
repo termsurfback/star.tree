@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-command-id
+  take form invalid-command-id
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-filter-key
+  take form invalid-filter-key
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-instance-id
+  take form invalid-instance-id
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/list-commands-result
+  take form list-commands-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-commands, name <ListCommands>
+  note <Lists the commands requested by users of the Amazon Web Services account.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-commands-request, like list-commands-request
+
+  line </#X-Amz-Target=AmazonSSM.ListCommands>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-commands-request
+
+  loot 200
+    seed json, like list-commands-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like invalid-command-id
+    note <InvalidCommandId>
+  loot 482
+    seed json, like invalid-instance-id
+    note <InvalidInstanceId>
+  loot 483
+    seed json, like invalid-filter-key
+    note <InvalidFilterKey>
+  loot 484
+    seed json, like invalid-next-token
+    note <InvalidNextToken>

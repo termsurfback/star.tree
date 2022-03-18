@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/invalid-rendering-parameter-exception
+  take form invalid-rendering-parameter-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/missing-rendering-attribute-exception
+  take form missing-rendering-attribute-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/template-does-not-exist-exception
+  take form template-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/test-render-template-response
+  take form test-render-template-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-test-render-template, name <POST_TestRenderTemplate>
+  note <Creates a preview of the MIME content of an email when provided with a template and a set of replacement data.
+
+You can execute this operation no more than once per second.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take test-render-template-request, like test-render-template-request
+    void take
+
+  line </#Action=TestRenderTemplate>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan test-render-template-request
+
+  loot 200
+    seed xml, like test-render-template-response
+    note <Success>
+  loot 480
+    seed xml, like template-does-not-exist-exception
+    note <TemplateDoesNotExistException>
+  loot 481
+    seed xml, like invalid-rendering-parameter-exception
+    note <InvalidRenderingParameterException>
+  loot 482
+    seed xml, like missing-rendering-attribute-exception
+    note <MissingRenderingAttributeException>

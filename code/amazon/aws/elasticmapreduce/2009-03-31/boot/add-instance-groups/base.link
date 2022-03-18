@@ -1,0 +1,29 @@
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/add-instance-groups-output
+  take form add-instance-groups-output
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot add-instance-groups, name <AddInstanceGroups>
+  note <Adds one or more instance groups to a running cluster.>
+
+  take x-amz-target
+    like native-string
+  take add-instance-groups-input, like add-instance-groups-input
+
+  line </#X-Amz-Target=ElasticMapReduce.AddInstanceGroups>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan add-instance-groups-input
+
+  loot 200
+    seed json, like add-instance-groups-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>

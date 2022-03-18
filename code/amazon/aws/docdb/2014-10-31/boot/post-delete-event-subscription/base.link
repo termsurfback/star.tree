@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/delete-event-subscription-result
+  take form delete-event-subscription-result
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/invalid-event-subscription-state-fault
+  take form invalid-event-subscription-state-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/subscription-not-found-fault
+  take form subscription-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-event-subscription, name <POST_DeleteEventSubscription>
+  note <Deletes an Amazon DocumentDB event notification subscription.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-event-subscription-message, like delete-event-subscription-message
+    void take
+
+  line </#Action=DeleteEventSubscription>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-event-subscription-message
+
+  loot 200
+    seed xml, like delete-event-subscription-result
+    note <Success>
+  loot 480
+    seed xml, like subscription-not-found-fault
+    note <SubscriptionNotFoundFault>
+  loot 481
+    seed xml, like invalid-event-subscription-state-fault
+    note <InvalidEventSubscriptionStateFault>

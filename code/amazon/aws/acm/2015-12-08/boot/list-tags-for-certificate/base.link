@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/invalid-arn-exception
+  take form invalid-arn-exception
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/list-tags-for-certificate-response
+  take form list-tags-for-certificate-response
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-tags-for-certificate, name <ListTagsForCertificate>
+  note <Lists the tags that have been applied to the ACM certificate. Use the certificate's Amazon Resource Name (ARN) to specify the certificate. To add a tag to an ACM certificate, use the AddTagsToCertificate action. To delete a tag, use the RemoveTagsFromCertificate action.>
+
+  take x-amz-target
+    like native-string
+  take list-tags-for-certificate-request, like list-tags-for-certificate-request
+
+  line </#X-Amz-Target=CertificateManager.ListTagsForCertificate>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-tags-for-certificate-request
+
+  loot 200
+    seed json, like list-tags-for-certificate-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-arn-exception
+    note <InvalidArnException>

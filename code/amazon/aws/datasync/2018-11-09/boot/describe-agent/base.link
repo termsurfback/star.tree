@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/datasync/2018-11-09/base/describe-agent-response
+  take form describe-agent-response
+
+load @drumwork/snow/amazonaws.com/datasync/2018-11-09/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/datasync/2018-11-09/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-agent, name <DescribeAgent>
+  note <Returns metadata such as the name, the network interfaces, and the status (that is, whether the agent is running or not) for an agent. To specify which agent to describe, use the Amazon Resource Name (ARN) of the agent in your request.>
+
+  take x-amz-target
+    like native-string
+  take describe-agent-request, like describe-agent-request
+
+  line </#X-Amz-Target=FmrsService.DescribeAgent>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-agent-request
+
+  loot 200
+    seed json, like describe-agent-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like internal-exception
+    note <InternalException>

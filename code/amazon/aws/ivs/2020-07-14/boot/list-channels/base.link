@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/list-channels-body
+  take form list-channels-body
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/list-channels-response
+  take form list-channels-response
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-channels, name <ListChannels>
+  note <Gets summary information about all channels in your account, in the AWS region where the API request is processed. This list can be filtered to match a specified name or recording-configuration ARN. Filters are mutually exclusive and cannot be used together. If you try to use both filters, you will get an error (409 ConflictException).>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-channels-body, like list-channels-body
+
+  line </ListChannels>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-channels-body
+
+  loot 200
+    seed json, like list-channels-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like conflict-exception
+    note <ConflictException>

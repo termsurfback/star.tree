@@ -1,0 +1,172 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/client-vpn-authentication-request
+  take form client-vpn-authentication-request
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/create-client-vpn-endpoint-result
+  take form create-client-vpn-endpoint-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/security-group-id
+  take form security-group-id
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/tag-specification
+  take form tag-specification
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-create-client-vpn-endpoint, name <GET_CreateClientVpnEndpoint>
+  note <Creates a Client VPN endpoint. A Client VPN endpoint is the resource you create and configure to enable and manage client VPN sessions. It is the destination endpoint at which all client VPN sessions are terminated.>
+
+  take client-cidr-block
+    like native-string
+    note <The IPv4 address range, in CIDR notation, from which to assign client IP addresses. The address range cannot overlap with the local CIDR of the VPC in which the associated subnet is located, or the routes that you add manually. The address range cannot be changed after the Client VPN endpoint has been created. The CIDR block should be /22 or greater.>
+  take server-certificate-arn
+    like native-string
+    note <The ARN of the server certificate. For more information, see the [AWS Certificate Manager User Guide](https://docs.aws.amazon.com/acm/latest/userguide/).>
+  take authentication
+    like list
+      like client-vpn-authentication-request
+    note <Information about the authentication method to be used to authenticate clients.>
+  take connection-log-options
+    like form
+      take enabled, name <Enabled>
+        like boolean
+        void take
+        note <Indicates whether connection logging is enabled.>
+      take cloudwatch-log-group, name <CloudwatchLogGroup>
+        like string
+        void take
+        note <The name of the CloudWatch Logs log group. Required if connection logging is enabled.>
+      take cloudwatch-log-stream, name <CloudwatchLogStream>
+        like string
+        void take
+        note <The name of the CloudWatch Logs log stream to which the connection data is published.>
+    note <Information about the client connection logging options.
+
+If you enable client connection logging, data about client connections is sent to a Cloudwatch Logs log stream. The following information is logged:
+
+- Client connection requests
+
+- Client connection results (successful and unsuccessful)
+
+- Reasons for unsuccessful client connection requests
+
+- Client connection termination time>
+  take dns-servers
+    like list
+      like string
+    note <Information about the DNS servers to be used for DNS resolution. A Client VPN endpoint can have up to two DNS servers. If no DNS server is specified, the DNS address configured on the device is used for the DNS server.>
+    void take
+  take transport-protocol
+    like native-string
+    note <The transport protocol to be used by the VPN session.
+
+Default value: `udp`>
+    void take
+  take vpn-port
+    like native-integer
+    note <The port number to assign to the Client VPN endpoint for TCP and UDP traffic.
+
+Valid Values: `443` | `1194`
+
+Default Value: `443`>
+    void take
+  take description
+    like native-string
+    note <A brief description of the Client VPN endpoint.>
+    void take
+  take split-tunnel
+    like native-boolean
+    note <Indicates whether split-tunnel is enabled on the AWS Client VPN endpoint.
+
+By default, split-tunnel on a VPN endpoint is disabled.
+
+For information about split-tunnel VPN endpoints, see [Split-Tunnel AWS Client VPN Endpoint](https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/split-tunnel-vpn.html) in the _AWS Client VPN Administrator Guide_.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take client-token
+    like native-string
+    note <Unique, case-sensitive identifier that you provide to ensure the idempotency of the request. For more information, see [How to Ensure Idempotency](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/Run_Instance_Idempotency.html).>
+    void take
+  take tag-specification
+    like list
+      like tag-specification
+    note <The tags to apply to the Client VPN endpoint during creation.>
+    void take
+  take security-group-id
+    like list
+      like security-group-id
+    note <The IDs of one or more security groups to apply to the target network. You must also specify the ID of the VPC that contains the security groups.>
+    void take
+  take vpc-id
+    like native-string
+    note <The ID of the VPC to associate with the Client VPN endpoint. If no security group IDs are specified in the request, the default security group for the VPC is applied.>
+    void take
+  take self-service-portal
+    like native-string
+    note <Specify whether to enable the self-service portal for the Client VPN endpoint.
+
+Default Value: `enabled`>
+    void take
+  take client-connect-options
+    like form
+      take enabled, name <Enabled>
+        like boolean
+        void take
+        note <Indicates whether client connect options are enabled. The default is `false` (not enabled).>
+      take lambda-function-arn, name <LambdaFunctionArn>
+        like string
+        void take
+        note <The Amazon Resource Name (ARN) of the AWS Lambda function used for connection authorization.>
+    note <The options for managing connection authorization for new client connections.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateClientVpnEndpoint>
+
+  find <ClientCidrBlock>, loan client-cidr-block
+  find <ServerCertificateArn>, loan server-certificate-arn
+  find <Authentication>, loan authentication
+  find <ConnectionLogOptions>, loan connection-log-options
+  find <DnsServers>, loan dns-servers
+  find <TransportProtocol>, loan transport-protocol
+  find <VpnPort>, loan vpn-port
+  find <Description>, loan description
+  find <SplitTunnel>, loan split-tunnel
+  find <DryRun>, loan dry-run
+  find <ClientToken>, loan client-token
+  find <TagSpecification>, loan tag-specification
+  find <SecurityGroupId>, loan security-group-id
+  find <VpcId>, loan vpc-id
+  find <SelfServicePortal>, loan self-service-portal
+  find <ClientConnectOptions>, loan client-connect-options
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-client-vpn-endpoint-result
+    note <Success>

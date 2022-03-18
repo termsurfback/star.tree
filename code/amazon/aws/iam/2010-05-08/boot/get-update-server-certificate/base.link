@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/entity-already-exists-exception
+  take form entity-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-update-server-certificate, name <GET_UpdateServerCertificate>
+  note <Updates the name and/or the path of the specified server certificate stored in IAM.
+
+For more information about working with server certificates, see [Working with server certificates](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_server-certs.html) in the _IAM User Guide_. This topic also includes a list of Amazon Web Services services that can use the server certificates that you manage with IAM.
+
+You should understand the implications of changing a server certificate's path or name. For more information, see [Renaming a server certificate](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_server-certs_manage.html#RenamingServerCerts) in the _IAM User Guide_.
+
+The person making the request (the principal), must have permission to change the server certificate with the old name and the new name. For example, to change the certificate named `ProductionCert` to `ProdCert`, the principal must have a policy that allows them to update both certificates. If the principal has permission to update the `ProductionCert` group, but not the `ProdCert` certificate, then the update fails. For more information about permissions, see [Access management](https://docs.aws.amazon.com/IAM/latest/UserGuide/access.html) in the _IAM User Guide_.>
+
+  take server-certificate-name
+    like native-string
+    note <The name of the server certificate that you want to update.
+
+This parameter allows (through its [regex pattern](http://wikipedia.org/wiki/regex)) a string of characters consisting of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: _+=,.@->
+  take new-path
+    like native-string
+    note <The new path for the server certificate. Include this only if you are updating the server certificate's path.
+
+This parameter allows (through its [regex pattern](http://wikipedia.org/wiki/regex)) a string of characters consisting of either a forward slash (/) by itself or a string that must begin and end with forward slashes. In addition, it can contain any ASCII character from the ! (`\u0021`) through the DEL character (`\u007F`), including most punctuation characters, digits, and upper and lowercased letters.>
+    void take
+  take new-server-certificate-name
+    like native-string
+    note <The new name for the server certificate. Include this only if you are updating the server certificate's name. The name of the certificate cannot contain any spaces.
+
+This parameter allows (through its [regex pattern](http://wikipedia.org/wiki/regex)) a string of characters consisting of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: _+=,.@->
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=UpdateServerCertificate>
+
+  find <ServerCertificateName>, loan server-certificate-name
+  find <NewPath>, loan new-path
+  find <NewServerCertificateName>, loan new-server-certificate-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like entity-already-exists-exception
+    note <EntityAlreadyExistsException>
+  loot 482
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 483
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/invalid-state-exception
+  take form invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/operation-disabled-exception
+  take form operation-disabled-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot deactivate-event-source, name <DeactivateEventSource>
+  note <You can use this operation to temporarily stop receiving events from the specified partner event source. The matching event bus is not deleted.
+
+When you deactivate a partner event source, the source goes into PENDING state. If it remains in PENDING state for more than two weeks, it is deleted.
+
+To activate a deactivated partner event source, use [ActivateEventSource](https://docs.aws.amazon.com/eventbridge/latest/APIReference/API_ActivateEventSource.html).>
+
+  take x-amz-target
+    like native-string
+  take deactivate-event-source-request, like deactivate-event-source-request
+
+  line </#X-Amz-Target=AWSEvents.DeactivateEventSource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan deactivate-event-source-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>
+  loot 482
+    seed json, like invalid-state-exception
+    note <InvalidStateException>
+  loot 483
+    seed json, like internal-exception
+    note <InternalException>
+  loot 484
+    seed json, like operation-disabled-exception
+    note <OperationDisabledException>

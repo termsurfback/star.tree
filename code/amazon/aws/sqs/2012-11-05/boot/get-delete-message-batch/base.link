@@ -1,0 +1,75 @@
+
+load @drumwork/snow/amazonaws.com/sqs/2012-11-05/base/batch-entry-ids-not-distinct
+  take form batch-entry-ids-not-distinct
+
+load @drumwork/snow/amazonaws.com/sqs/2012-11-05/base/delete-message-batch-request-entry
+  take form delete-message-batch-request-entry
+
+load @drumwork/snow/amazonaws.com/sqs/2012-11-05/base/delete-message-batch-result
+  take form delete-message-batch-result
+
+load @drumwork/snow/amazonaws.com/sqs/2012-11-05/base/empty-batch-request
+  take form empty-batch-request
+
+load @drumwork/snow/amazonaws.com/sqs/2012-11-05/base/invalid-batch-entry-id
+  take form invalid-batch-entry-id
+
+load @drumwork/snow/amazonaws.com/sqs/2012-11-05/base/too-many-entries-in-batch-request
+  take form too-many-entries-in-batch-request
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-message-batch, name <GET_DeleteMessageBatch>
+  note <Deletes up to ten messages from the specified queue. This is a batch version of `DeleteMessage.` The result of the action on each message is reported individually in the response.
+
+Because the batch request can result in a combination of successful and unsuccessful actions, you should check for batch errors even when the call returns an HTTP status code of `200`.
+
+Some actions take lists of parameters. These lists are specified using the `param.n` notation. Values of `n` are integers starting from 1. For example, a parameter list with two elements looks like this:
+
+`&AttributeName.1=first`
+
+`&AttributeName.2=second`>
+
+  take account-number
+    like native-integer
+    note <The AWS account number>
+  take queue-name
+    like native-string
+    note <The name of the queue>
+  take entries
+    like list
+      like delete-message-batch-request-entry
+    note <A list of receipt handles for the messages to be deleted.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </{account-number}/{queue-name}/#Action=DeleteMessageBatch>
+
+  find <Entries>, loan entries
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-message-batch-result
+    note <Success>
+  loot 480
+    seed xml, like too-many-entries-in-batch-request
+    note <TooManyEntriesInBatchRequest>
+  loot 481
+    seed xml, like empty-batch-request
+    note <EmptyBatchRequest>
+  loot 482
+    seed xml, like batch-entry-ids-not-distinct
+    note <BatchEntryIdsNotDistinct>
+  loot 483
+    seed xml, like invalid-batch-entry-id
+    note <InvalidBatchEntryId>

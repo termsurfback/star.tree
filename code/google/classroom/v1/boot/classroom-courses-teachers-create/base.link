@@ -1,0 +1,23 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/classroom/v1/base/teacher
+  take form teacher
+
+boot classroom-courses-teachers-create, name <classroom.courses.teachers.create>
+  note <Creates a teacher of a course. Domain administrators are permitted to [directly add](https://developers.google.com/classroom/guides/manage-users) users within their domain as teachers to courses within their domain. Non-admin users should send an Invitation instead. This method returns the following error codes: * `PERMISSION_DENIED` if the requesting user is not permitted to create teachers in this course or for access errors. * `NOT_FOUND` if the requested course ID does not exist. * `FAILED_PRECONDITION` if the requested user's account is disabled, for the following request errors: * CourseMemberLimitReached * CourseNotModifiable * CourseTeacherLimitReached * UserGroupsMembershipLimitReached * `ALREADY_EXISTS` if the user is already a teacher or student in the course.>
+
+  take course-id
+    like native-string
+    note <Identifier of the course. This identifier can be either the Classroom-assigned identifier or an alias.>
+  take teacher, like teacher
+    void take
+
+  line </v1/courses/{course-id}/teachers>
+
+  seed json, loan teacher
+
+  loot 200
+    seed json, like teacher
+    note <Successful response>

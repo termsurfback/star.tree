@@ -1,0 +1,136 @@
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/dns-name
+  take form dns-name
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/fleet-arn
+  take form fleet-arn
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/fleet-id
+  take form fleet-id
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/game-property-list
+  take form game-property-list
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/game-session-status
+  take form game-session-status
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/game-session-status-reason
+  take form game-session-status-reason
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/ip-address
+  take form ip-address
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/large-game-session-data
+  take form large-game-session-data
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/location-string-model
+  take form location-string-model
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/matchmaker-data
+  take form matchmaker-data
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/non-zero-and-max-string
+  take form non-zero-and-max-string
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/player-session-creation-policy
+  take form player-session-creation-policy
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/port-number
+  take form port-number
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/timestamp
+  take form timestamp
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/whole-number
+  take form whole-number
+
+form game-session, name <GameSession>
+  note <Properties describing a game session.
+
+A game session in ACTIVE status can host players. When a game session ends, its status is set to `TERMINATED`.
+
+Once the session ends, the game session object is retained for 30 days. This means you can reuse idempotency token values after this time. Game session logs are retained for 14 days.
+
+**Related actions** CreateGameSession | DescribeGameSessions | DescribeGameSessionDetails | SearchGameSessions | UpdateGameSession | GetGameSessionLogUrl | StartGameSessionPlacement | DescribeGameSessionPlacement | StopGameSessionPlacement | [All APIs by task](https://docs.aws.amazon.com/gamelift/latest/developerguide/reference-awssdk.html#reference-awssdk-resources-fleets)>
+  take game-session-id, name <GameSessionId>
+    like non-zero-and-max-string
+    void take
+    note <A unique identifier for the game session. A game session ARN has the following format: `arn:aws:gamelift:&lt;region&gt;::gamesession/&lt;fleet ID&gt;/&lt;custom ID string or idempotency token&gt;`.>
+  take name, name <Name>
+    like non-zero-and-max-string
+    void take
+    note <A descriptive label that is associated with a game session. Session names do not need to be unique.>
+  take fleet-id, name <FleetId>
+    like fleet-id
+    void take
+    note <A unique identifier for the fleet that the game session is running on.>
+  take fleet-arn, name <FleetArn>
+    like fleet-arn
+    void take
+    note <The Amazon Resource Name ([ARN](https://docs.aws.amazon.com/AmazonS3/latest/dev/s3-arn-format.html)) associated with the GameLift fleet that this game session is running on.>
+  take creation-time, name <CreationTime>
+    like timestamp
+    void take
+    note <A time stamp indicating when this data object was created. Format is a number expressed in Unix time as milliseconds (for example `"1469498468.057"`).>
+  take termination-time, name <TerminationTime>
+    like timestamp
+    void take
+    note <A time stamp indicating when this data object was terminated. Format is a number expressed in Unix time as milliseconds (for example `"1469498468.057"`).>
+  take current-player-session-count, name <CurrentPlayerSessionCount>
+    like whole-number
+    void take
+    note <Number of players currently in the game session.>
+  take maximum-player-session-count, name <MaximumPlayerSessionCount>
+    like whole-number
+    void take
+    note <The maximum number of players that can be connected simultaneously to the game session.>
+  take status, name <Status>
+    like game-session-status
+    void take
+    note <Current status of the game session. A game session must have an `ACTIVE` status to have player sessions.>
+  take status-reason, name <StatusReason>
+    like game-session-status-reason
+    void take
+    note <Provides additional information about game session status. `INTERRUPTED` indicates that the game session was hosted on a spot instance that was reclaimed, causing the active game session to be terminated.>
+  take game-properties, name <GameProperties>
+    like game-property-list
+    void take
+    note <A set of custom properties for a game session, formatted as key:value pairs. These properties are passed to a game server process in the GameSession object with a request to start a new game session. You can search for active game sessions based on this custom data with SearchGameSessions.>
+  take ip-address, name <IpAddress>
+    like ip-address
+    void take
+    note <The IP address of the game session. To connect to a GameLift game server, an app needs both the IP address and port number.>
+  take dns-name, name <DnsName>
+    like dns-name
+    void take
+    note <The DNS identifier assigned to the instance that is running the game session. Values have the following format:
+
+- TLS-enabled fleets: `&lt;unique identifier&gt;.&lt;region identifier&gt;.amazongamelift.com`.
+
+- Non-TLS-enabled fleets: `ec2-&lt;unique identifier&gt;.compute.amazonaws.com`. (See [Amazon EC2 Instance IP Addressing](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-instance-addressing.html#concepts-public-addresses).)
+
+When connecting to a game session that is running on a TLS-enabled fleet, you must use the DNS name, not the IP address.>
+  take port, name <Port>
+    like port-number
+    void take
+    note <The port number for the game session. To connect to a GameLift game server, an app needs both the IP address and port number.>
+  take player-session-creation-policy, name <PlayerSessionCreationPolicy>
+    like player-session-creation-policy
+    void take
+    note <Indicates whether or not the game session is accepting new players.>
+  take creator-id, name <CreatorId>
+    like non-zero-and-max-string
+    void take
+    note <A unique identifier for a player. This ID is used to enforce a resource protection policy (if one exists), that limits the number of game sessions a player can create.>
+  take game-session-data, name <GameSessionData>
+    like large-game-session-data
+    void take
+    note <A set of custom game session properties, formatted as a single string value. This data is passed to a game server process in the GameSession object with a request to start a new game session.>
+  take matchmaker-data, name <MatchmakerData>
+    like matchmaker-data
+    void take
+    note <Information about the matchmaking process that was used to create the game session. It is in JSON syntax, formatted as a string. In addition the matchmaking configuration used, it contains data on all players assigned to the match, including player attributes and team assignments. For more details on matchmaker data, see [Match Data](https://docs.aws.amazon.com/gamelift/latest/flexmatchguide/match-server.html#match-server-data). Matchmaker data is useful when requesting match backfills, and is updated whenever new players are added during a successful backfill (see StartMatchBackfill).>
+  take location, name <Location>
+    like location-string-model
+    void take
+    note <The fleet location where the game session is running. This value might specify the fleet's home Region or a remote location. Location is expressed as an AWS Region code such as `us-west-2`.>

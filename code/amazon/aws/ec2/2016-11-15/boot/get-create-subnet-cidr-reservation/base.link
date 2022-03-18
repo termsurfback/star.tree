@@ -1,0 +1,66 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/create-subnet-cidr-reservation-result
+  take form create-subnet-cidr-reservation-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/tag-specification
+  take form tag-specification
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-subnet-cidr-reservation, name <GET_CreateSubnetCidrReservation>
+  note <Creates a subnet CIDR reservation. For information about subnet CIDR reservations, see [Subnet CIDR reservations](https://docs.aws.amazon.com/vpc/latest/userguide/subnet-cidr-reservation.html) in the _Amazon Virtual Private Cloud User Guide_.>
+
+  take tag-specification
+    like list
+      like tag-specification
+    note <The tags to assign to the subnet CIDR reservation.>
+    void take
+  take subnet-id
+    like native-string
+    note <The ID of the subnet.>
+  take cidr
+    like native-string
+    note <The IPv4 or IPV6 CIDR range to reserve.>
+  take reservation-type
+    like native-string
+    note <The type of reservation.
+
+The following are valid values:
+
+- `prefix`: The Amazon EC2 Prefix Delegation feature assigns the IP addresses to network interfaces that are associated with an instance. For information about Prefix Delegation, see [Prefix Delegation for Amazon EC2 network interfaces](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-prefix-delegation.html) in the _Amazon Elastic Compute Cloud User Guide_.
+
+- `explicit`: You manually assign the IP addresses to resources that reside in your subnet.>
+  take description
+    like native-string
+    note <The description to assign to the subnet CIDR reservation.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateSubnetCidrReservation>
+
+  find <TagSpecification>, loan tag-specification
+  find <SubnetId>, loan subnet-id
+  find <Cidr>, loan cidr
+  find <ReservationType>, loan reservation-type
+  find <Description>, loan description
+  find <DryRun>, loan dry-run
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-subnet-cidr-reservation-result
+    note <Success>

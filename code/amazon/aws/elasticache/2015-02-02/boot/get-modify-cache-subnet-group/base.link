@@ -1,0 +1,78 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-subnet-group-not-found-fault
+  take form cache-subnet-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-subnet-quota-exceeded-fault
+  take form cache-subnet-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-subnet
+  take form invalid-subnet
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/modify-cache-subnet-group-result
+  take form modify-cache-subnet-group-result
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/subnet-in-use
+  take form subnet-in-use
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/subnet-not-allowed-fault
+  take form subnet-not-allowed-fault
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-modify-cache-subnet-group, name <GET_ModifyCacheSubnetGroup>
+  note <Modifies an existing cache subnet group.>
+
+  take cache-subnet-group-name
+    like native-string
+    note <The name for the cache subnet group. This value is stored as a lowercase string.
+
+Constraints: Must contain no more than 255 alphanumeric characters or hyphens.
+
+Example: `mysubnetgroup`>
+  take cache-subnet-group-description
+    like native-string
+    note <A description of the cache subnet group.>
+    void take
+  take subnet-ids
+    like list
+      like string
+    note <The EC2 subnet IDs for the cache subnet group.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyCacheSubnetGroup>
+
+  find <CacheSubnetGroupName>, loan cache-subnet-group-name
+  find <CacheSubnetGroupDescription>, loan cache-subnet-group-description
+  find <SubnetIds>, loan subnet-ids
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-cache-subnet-group-result
+    note <Success>
+  loot 480
+    seed xml, like cache-subnet-group-not-found-fault
+    note <CacheSubnetGroupNotFoundFault>
+  loot 481
+    seed xml, like cache-subnet-quota-exceeded-fault
+    note <CacheSubnetQuotaExceededFault>
+  loot 482
+    seed xml, like subnet-in-use
+    note <SubnetInUse>
+  loot 483
+    seed xml, like invalid-subnet
+    note <InvalidSubnet>
+  loot 484
+    seed xml, like subnet-not-allowed-fault
+    note <SubnetNotAllowedFault>

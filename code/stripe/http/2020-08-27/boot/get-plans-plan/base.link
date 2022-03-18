@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-plans-plan-body
+  take form get-plans-plan-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/plan
+  take form plan
+
+boot get-plans-plan, name <GetPlansPlan>
+  note <Retrieves the plan with the given ID.>
+
+  take plan
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-plans-plan-body, like get-plans-plan-body
+    void take
+
+  line </v1/plans/{plan}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-plans-plan-body
+
+  loot 200
+    seed json, like plan
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

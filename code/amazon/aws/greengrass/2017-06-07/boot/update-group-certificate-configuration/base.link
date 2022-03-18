@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/internal-server-error-exception
+  take form internal-server-error-exception
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/update-group-certificate-configuration-body
+  take form update-group-certificate-configuration-body
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/update-group-certificate-configuration-response
+  take form update-group-certificate-configuration-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-group-certificate-configuration, name <UpdateGroupCertificateConfiguration>
+  note <Updates the Certificate expiry time for a group.>
+
+  take group-id
+    like native-string
+    note <The ID of the Greengrass group.>
+  take update-group-certificate-configuration-body, like update-group-certificate-configuration-body
+
+  line </greengrass/groups/{group-id}/certificateauthorities/configuration/expiry>
+
+  seed json, loan update-group-certificate-configuration-body
+
+  loot 200
+    seed json, like update-group-certificate-configuration-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like internal-server-error-exception
+    note <InternalServerErrorException>

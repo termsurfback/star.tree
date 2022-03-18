@@ -1,0 +1,56 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+boot admin-conversations-get-conversation-prefs, name <admin_conversations_getConversationPrefs>
+  note <Get conversation preferences for a public or private channel.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `admin.conversations:read`>
+  take channel-id
+    like native-string
+    note <The channel to get preferences for.>
+
+  line </admin.conversations.getConversationPrefs>
+
+  hint <token>, loan token
+
+  find <channel_id>, loan channel-id
+
+  loot 200
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-true
+        take prefs, name <prefs>
+          like form
+            take can-thread, name <can_thread>
+              like form
+                take type, name <type>
+                  void take
+                take user, name <user>
+                  void take
+              void take
+            take who-can-post, name <who_can_post>
+              like form
+                take type, name <type>
+                  void take
+                take user, name <user>
+                  void take
+              void take
+          void take
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take error, name <error>
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response>

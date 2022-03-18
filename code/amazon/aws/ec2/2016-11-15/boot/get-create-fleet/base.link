@@ -1,0 +1,230 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/capacity-reservation-options-request
+  take form capacity-reservation-options-request
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/create-fleet-result
+  take form create-fleet-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/default-target-capacity-type
+  take form default-target-capacity-type
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/fleet-launch-template-config-request
+  take form fleet-launch-template-config-request
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/fleet-on-demand-allocation-strategy
+  take form fleet-on-demand-allocation-strategy
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/fleet-spot-maintenance-strategies-request
+  take form fleet-spot-maintenance-strategies-request
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/spot-allocation-strategy
+  take form spot-allocation-strategy
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/spot-instance-interruption-behavior
+  take form spot-instance-interruption-behavior
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/tag-specification
+  take form tag-specification
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/integer
+  take form integer
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-create-fleet, name <GET_CreateFleet>
+  note <Launches an EC2 Fleet.
+
+You can create a single EC2 Fleet that includes multiple launch specifications that vary by instance type, AMI, Availability Zone, or subnet.
+
+For more information, see [Launching an EC2 Fleet](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-fleet.html) in the _Amazon EC2 User Guide_.>
+
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take client-token
+    like native-string
+    note <Unique, case-sensitive identifier that you provide to ensure the idempotency of the request. For more information, see [Ensuring Idempotency](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/Run_Instance_Idempotency.html).>
+    void take
+  take spot-options
+    like form
+      take allocation-strategy, name <AllocationStrategy>
+        like spot-allocation-strategy
+        void take
+        note <Indicates how to allocate the target Spot Instance capacity across the Spot Instance pools specified by the EC2 Fleet.
+
+If the allocation strategy is `lowest-price`, EC2 Fleet launches instances from the Spot Instance pools with the lowest price. This is the default allocation strategy.
+
+If the allocation strategy is `diversified`, EC2 Fleet launches instances from all of the Spot Instance pools that you specify.
+
+If the allocation strategy is `capacity-optimized` (recommended), EC2 Fleet launches instances from Spot Instance pools with optimal capacity for the number of instances that are launching. To give certain instance types a higher chance of launching first, use `capacity-optimized-prioritized`. Set a priority for each instance type by using the `Priority` parameter for `LaunchTemplateOverrides`. You can assign the same priority to different `LaunchTemplateOverrides`. EC2 implements the priorities on a best-effort basis, but optimizes for capacity first. `capacity-optimized-prioritized` is supported only if your fleet uses a launch template. Note that if the On-Demand `AllocationStrategy` is set to `prioritized`, the same priority is applied when fulfilling On-Demand capacity.>
+      take maintenance-strategies, name <MaintenanceStrategies>
+        like fleet-spot-maintenance-strategies-request
+        void take
+        note <The strategies for managing your Spot Instances that are at an elevated risk of being interrupted.>
+      take instance-interruption-behavior, name <InstanceInterruptionBehavior>
+        like spot-instance-interruption-behavior
+        void take
+        note <The behavior when a Spot Instance is interrupted. The default is `terminate`.>
+      take instance-pools-to-use-count, name <InstancePoolsToUseCount>
+        like integer
+        void take
+        note <The number of Spot pools across which to allocate your target Spot capacity. Valid only when Spot **AllocationStrategy** is set to `lowest-price`. EC2 Fleet selects the cheapest Spot pools and evenly allocates your target Spot capacity across the number of Spot pools that you specify.
+
+Note that EC2 Fleet attempts to draw Spot Instances from the number of pools that you specify on a best effort basis. If a pool runs out of Spot capacity before fulfilling your target capacity, EC2 Fleet will continue to fulfill your request by drawing from the next cheapest pool. To ensure that your target capacity is met, you might receive Spot Instances from more than the number of pools that you specified. Similarly, if most of the pools have no Spot capacity, you might receive your full target capacity from fewer than the number of pools that you specified.>
+      take single-instance-type, name <SingleInstanceType>
+        like boolean
+        void take
+        note <Indicates that the fleet uses a single instance type to launch all Spot Instances in the fleet. Supported only for fleets of type `instant`.>
+      take single-availability-zone, name <SingleAvailabilityZone>
+        like boolean
+        void take
+        note <Indicates that the fleet launches all Spot Instances into a single Availability Zone. Supported only for fleets of type `instant`.>
+      take min-target-capacity, name <MinTargetCapacity>
+        like integer
+        void take
+        note <The minimum target capacity for Spot Instances in the fleet. If the minimum target capacity is not reached, the fleet launches no instances.>
+      take max-total-price, name <MaxTotalPrice>
+        like string
+        void take
+        note <The maximum amount per hour for Spot Instances that you're willing to pay.>
+    note <Describes the configuration of Spot Instances in an EC2 Fleet.>
+    void take
+  take on-demand-options
+    like form
+      take allocation-strategy, name <AllocationStrategy>
+        like fleet-on-demand-allocation-strategy
+        void take
+        note <The order of the launch template overrides to use in fulfilling On-Demand capacity. If you specify `lowest-price`, EC2 Fleet uses price to determine the order, launching the lowest price first. If you specify `prioritized`, EC2 Fleet uses the priority that you assigned to each launch template override, launching the highest priority first. If you do not specify a value, EC2 Fleet defaults to `lowest-price`.>
+      take capacity-reservation-options, name <CapacityReservationOptions>
+        like capacity-reservation-options-request
+        void take
+        note <The strategy for using unused Capacity Reservations for fulfilling On-Demand capacity. Supported only for fleets of type `instant`.>
+      take single-instance-type, name <SingleInstanceType>
+        like boolean
+        void take
+        note <Indicates that the fleet uses a single instance type to launch all On-Demand Instances in the fleet. Supported only for fleets of type `instant`.>
+      take single-availability-zone, name <SingleAvailabilityZone>
+        like boolean
+        void take
+        note <Indicates that the fleet launches all On-Demand Instances into a single Availability Zone. Supported only for fleets of type `instant`.>
+      take min-target-capacity, name <MinTargetCapacity>
+        like integer
+        void take
+        note <The minimum target capacity for On-Demand Instances in the fleet. If the minimum target capacity is not reached, the fleet launches no instances.>
+      take max-total-price, name <MaxTotalPrice>
+        like string
+        void take
+        note <The maximum amount per hour for On-Demand Instances that you're willing to pay.>
+    note <Describes the configuration of On-Demand Instances in an EC2 Fleet.>
+    void take
+  take excess-capacity-termination-policy
+    like native-string
+    note <Indicates whether running instances should be terminated if the total target capacity of the EC2 Fleet is decreased below the current size of the EC2 Fleet.>
+    void take
+  take launch-template-configs
+    like list
+      like fleet-launch-template-config-request
+    note <The configuration for the EC2 Fleet.>
+  take target-capacity-specification
+    like form
+      take total-target-capacity, name <TotalTargetCapacity>
+        like integer
+        note <The number of units to request, filled using `DefaultTargetCapacityType`.>
+      take on-demand-target-capacity, name <OnDemandTargetCapacity>
+        like integer
+        void take
+        note <The number of On-Demand units to request.>
+      take spot-target-capacity, name <SpotTargetCapacity>
+        like integer
+        void take
+        note <The number of Spot units to request.>
+      take default-target-capacity-type, name <DefaultTargetCapacityType>
+        like default-target-capacity-type
+        void take
+        note <The default `TotalTargetCapacity`, which is either `Spot` or `On-Demand`.>
+    note <The number of units to request.>
+  take terminate-instances-with-expiration
+    like native-boolean
+    note <Indicates whether running instances should be terminated when the EC2 Fleet expires.>
+    void take
+  take type
+    like native-string
+    note <The fleet type. The default value is `maintain`.
+
+- `maintain` - The EC2 Fleet places an asynchronous request for your desired capacity, and continues to maintain your desired Spot capacity by replenishing interrupted Spot Instances.
+
+- `request` - The EC2 Fleet places an asynchronous one-time request for your desired capacity, but does submit Spot requests in alternative capacity pools if Spot capacity is unavailable, and does not maintain Spot capacity if Spot Instances are interrupted.
+
+- `instant` - The EC2 Fleet places a synchronous one-time request for your desired capacity, and returns errors for any instances that could not be launched.
+
+For more information, see [EC2 Fleet request types](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-fleet-configuration-strategies.html#ec2-fleet-request-type) in the _Amazon EC2 User Guide_.>
+    void take
+  take valid-from
+    like native-string
+    note <The start date and time of the request, in UTC format (for example, _YYYY_-_MM_-_DD_T_HH_:_MM_:_SS_Z). The default is to start fulfilling the request immediately.>
+    void take
+  take valid-until
+    like native-string
+    note <The end date and time of the request, in UTC format (for example, _YYYY_-_MM_-_DD_T_HH_:_MM_:_SS_Z). At this point, no new EC2 Fleet requests are placed or able to fulfill the request. If no value is specified, the request remains until you cancel it.>
+    void take
+  take replace-unhealthy-instances
+    like native-boolean
+    note <Indicates whether EC2 Fleet should replace unhealthy Spot Instances. Supported only for fleets of type `maintain`. For more information, see [EC2 Fleet health checks](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/manage-ec2-fleet.html#ec2-fleet-health-checks) in the _Amazon EC2 User Guide_.>
+    void take
+  take tag-specification
+    like list
+      like tag-specification
+    note <The key-value pair for tagging the EC2 Fleet request on creation. For more information, see [Tagging your resources](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html#tag-resources).
+
+If the fleet type is `instant`, specify a resource type of `fleet` to tag the fleet or `instance` to tag the instances at launch.
+
+If the fleet type is `maintain` or `request`, specify a resource type of `fleet` to tag the fleet. You cannot specify a resource type of `instance`. To tag instances at launch, specify the tags in a [launch template](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-launch-templates.html#create-launch-template).>
+    void take
+  take context
+    like native-string
+    note <Reserved.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateFleet>
+
+  find <DryRun>, loan dry-run
+  find <ClientToken>, loan client-token
+  find <SpotOptions>, loan spot-options
+  find <OnDemandOptions>, loan on-demand-options
+  find <ExcessCapacityTerminationPolicy>, loan excess-capacity-termination-policy
+  find <LaunchTemplateConfigs>, loan launch-template-configs
+  find <TargetCapacitySpecification>, loan target-capacity-specification
+  find <TerminateInstancesWithExpiration>, loan terminate-instances-with-expiration
+  find <Type>, loan type
+  find <ValidFrom>, loan valid-from
+  find <ValidUntil>, loan valid-until
+  find <ReplaceUnhealthyInstances>, loan replace-unhealthy-instances
+  find <TagSpecification>, loan tag-specification
+  find <Context>, loan context
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-fleet-result
+    note <Success>

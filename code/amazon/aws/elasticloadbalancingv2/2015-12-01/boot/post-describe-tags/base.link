@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/describe-tags-output
+  take form describe-tags-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/listener-not-found-exception
+  take form listener-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/load-balancer-not-found-exception
+  take form load-balancer-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/rule-not-found-exception
+  take form rule-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/target-group-not-found-exception
+  take form target-group-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-tags, name <POST_DescribeTags>
+  note <Describes the tags for the specified Elastic Load Balancing resources. You can describe the tags for one or more Application Load Balancers, Network Load Balancers, Gateway Load Balancers, target groups, listeners, or rules.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-tags-input, like describe-tags-input
+    void take
+
+  line </#Action=DescribeTags>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-tags-input
+
+  loot 200
+    seed xml, like describe-tags-output
+    note <Success>
+  loot 480
+    seed xml, like load-balancer-not-found-exception
+    note <LoadBalancerNotFoundException>
+  loot 481
+    seed xml, like target-group-not-found-exception
+    note <TargetGroupNotFoundException>
+  loot 482
+    seed xml, like listener-not-found-exception
+    note <ListenerNotFoundException>
+  loot 483
+    seed xml, like rule-not-found-exception
+    note <RuleNotFoundException>

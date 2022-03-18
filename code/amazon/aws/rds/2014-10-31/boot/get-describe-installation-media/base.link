@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/installation-media-message
+  take form installation-media-message
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/installation-media-not-found-fault
+  take form installation-media-not-found-fault
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-installation-media, name <GET_DescribeInstallationMedia>
+  note <Describes the available installation media for a DB engine that requires an on-premises customer provided license, such as Microsoft SQL Server.>
+
+  take installation-media-id
+    like native-string
+    note <The installation medium ID.>
+    void take
+  take filters
+    like list
+      like filter
+    note <A filter that specifies one or more installation media to describe. Supported filters include the following:
+
+- `custom-availability-zone-id` - Accepts custom Availability Zone (AZ) identifiers. The results list includes information about only the custom AZs identified by these identifiers.
+
+- `engine` - Accepts database engines. The results list includes information about only the database engines identified by these identifiers.
+
+  For more information about the valid engines for installation media, see ImportInstallationMedia.>
+    void take
+  take max-records
+    like native-integer
+    note <An optional pagination token provided by a previous DescribeInstallationMedia request. If this parameter is specified, the response includes only records beyond the marker, up to the value specified by `MaxRecords`.>
+    void take
+  take marker
+    like native-string
+    note <An optional pagination token provided by a previous request. If this parameter is specified, the response includes only records beyond the marker, up to the value specified by `MaxRecords`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeInstallationMedia>
+
+  find <InstallationMediaId>, loan installation-media-id
+  find <Filters>, loan filters
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like installation-media-message
+    note <Success>
+  loot 480
+    seed xml, like installation-media-not-found-fault
+    note <InstallationMediaNotFoundFault>

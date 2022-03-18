@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/create-profiling-group-body
+  take form create-profiling-group-body
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/create-profiling-group-response
+  take form create-profiling-group-response
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/service-quota-exceeded-exception
+  take form service-quota-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/codeguruprofiler/2019-07-18/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-profiling-group, name <CreateProfilingGroup>
+  note <Creates a profiling group.>
+
+  take client-token
+    like native-string
+    note <Amazon CodeGuru Profiler uses this universally unique identifier (UUID) to prevent the accidental creation of duplicate profiling groups if there are failures and retries.>
+  take create-profiling-group-body, like create-profiling-group-body
+
+  line </profilingGroups#clientToken>
+
+  find <clientToken>, loan client-token
+
+  seed json, loan create-profiling-group-body
+
+  loot 201
+    seed json, like create-profiling-group-response
+    note <Success>
+  loot 480
+    seed json, like service-quota-exceeded-exception
+    note <ServiceQuotaExceededException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 483
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 484
+    seed json, like throttling-exception
+    note <ThrottlingException>

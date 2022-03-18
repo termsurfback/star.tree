@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/jobs/v4/base/list-tenants-response
+  take form list-tenants-response
+
+boot jobs-projects-tenants-list, name <jobs.projects.tenants.list>
+  note <Lists all tenants associated with the project.>
+
+  take parent
+    like native-string
+    note <Required. Resource name of the project under which the tenant is created. The format is "projects/{project_id}", for example, "projects/foo".>
+  take page-size
+    like native-integer
+    note <The maximum number of tenants to be returned, at most 100. Default is 100 if a non-positive number is provided.>
+    void take
+  take page-token
+    like native-string
+    note <The starting indicator from which to return results.>
+    void take
+
+  line </v4/{parent}/tenants>
+
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-tenants-response
+    note <Successful response>

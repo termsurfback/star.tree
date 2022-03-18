@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/disassociate-node-response
+  take form disassociate-node-response
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/invalid-state-exception
+  take form invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot disassociate-node, name <DisassociateNode>
+  note <Disassociates a node from an AWS OpsWorks CM server, and removes the node from the server's managed nodes. After a node is disassociated, the node key pair is no longer valid for accessing the configuration manager's API. For more information about how to associate a node, see AssociateNode.
+
+A node can can only be disassociated from a server that is in a `HEALTHY` state. Otherwise, an `InvalidStateException` is thrown. A `ResourceNotFoundException` is thrown when the server does not exist. A `ValidationException` is raised when parameters of the request are not valid.>
+
+  take x-amz-target
+    like native-string
+  take disassociate-node-request, like disassociate-node-request
+
+  line </#X-Amz-Target=OpsWorksCM_V2016_11_01.DisassociateNode>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan disassociate-node-request
+
+  loot 200
+    seed json, like disassociate-node-response
+    note <Success>
+  loot 480
+    seed json, like invalid-state-exception
+    note <InvalidStateException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>

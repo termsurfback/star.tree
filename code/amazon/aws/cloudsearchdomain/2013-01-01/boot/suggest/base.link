@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/cloudsearchdomain/2013-01-01/base/search-exception
+  take form search-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearchdomain/2013-01-01/base/suggest-response
+  take form suggest-response
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot suggest, name <Suggest>
+  note <Retrieves autocomplete suggestions for a partial query string. You can use suggestions enable you to display likely matches before users finish typing. In Amazon CloudSearch, suggestions are based on the contents of a particular text field. When you request suggestions, Amazon CloudSearch finds all of the documents whose values in the suggester field start with the specified query string. The beginning of the field must match the query string to be considered a match.
+
+For more information about configuring suggesters and retrieving suggestions, see [Getting Suggestions](http://docs.aws.amazon.com/cloudsearch/latest/developerguide/getting-suggestions.html) in the _Amazon CloudSearch Developer Guide_.
+
+The endpoint for submitting `Suggest` requests is domain-specific. You submit suggest requests to a domain's search endpoint. To get the search endpoint for your domain, use the Amazon CloudSearch configuration service `DescribeDomains` action. A domain's endpoints are also displayed on the domain dashboard in the Amazon CloudSearch console.>
+
+  take q
+    like native-string
+    note <Specifies the string for which you want to get suggestions.>
+  take suggester
+    like native-string
+    note <Specifies the name of the suggester to use to find suggested matches.>
+  take size
+    like native-integer
+    note <Specifies the maximum number of suggestions to return.>
+    void take
+  take format
+    like native-string
+  take pretty
+    like native-string
+
+  line </2013-01-01/suggest#format=sdk&pretty=true&q&suggester>
+
+  find <q>, loan q
+  find <suggester>, loan suggester
+  find <size>, loan size
+  find <format>, loan format
+  find <pretty>, loan pretty
+
+  loot 200
+    seed json, like suggest-response
+    note <Success>
+  loot 480
+    seed json, like search-exception
+    note <SearchException>

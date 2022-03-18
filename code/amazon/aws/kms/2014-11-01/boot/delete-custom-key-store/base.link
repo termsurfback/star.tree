@@ -1,0 +1,71 @@
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/custom-key-store-has-cm-ks-exception
+  take form custom-key-store-has-cm-ks-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/custom-key-store-invalid-state-exception
+  take form custom-key-store-invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/custom-key-store-not-found-exception
+  take form custom-key-store-not-found-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/delete-custom-key-store-response
+  take form delete-custom-key-store-response
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-internal-exception
+  take form kms-internal-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-custom-key-store, name <DeleteCustomKeyStore>
+  note <Deletes a [custom key store](https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html). This operation does not delete the CloudHSM cluster that is associated with the custom key store, or affect any users or keys in the cluster.
+
+The custom key store that you delete cannot contain any KMS [KMS keys](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#kms_keys). Before deleting the key store, verify that you will never need to use any of the KMS keys in the key store for any [cryptographic operations](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#cryptographic-operations). Then, use ScheduleKeyDeletion to delete the KMS keys from the key store. When the scheduled waiting period expires, the `ScheduleKeyDeletion` operation deletes the KMS keys. Then it makes a best effort to delete the key material from the associated cluster. However, you might need to manually [delete the orphaned key material](https://docs.aws.amazon.com/kms/latest/developerguide/fix-keystore.html#fix-keystore-orphaned-key) from the cluster and its backups.
+
+After all KMS keys are deleted from KMS, use DisconnectCustomKeyStore to disconnect the key store from KMS. Then, you can delete the custom key store.
+
+Instead of deleting the custom key store, consider using DisconnectCustomKeyStore to disconnect it from KMS. While the key store is disconnected, you cannot create or use the KMS keys in the key store. But, you do not need to delete KMS keys and you can reconnect a disconnected custom key store at any time.
+
+If the operation succeeds, it returns a JSON object with no properties.
+
+This operation is part of the [Custom Key Store feature](https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html) feature in KMS, which combines the convenience and extensive integration of KMS with the isolation and control of a single-tenant key store.
+
+**Cross-account use**: No. You cannot perform this operation on a custom key store in a different Amazon Web Services account.
+
+**Required permissions**: [kms:DeleteCustomKeyStore](https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html) (IAM policy)
+
+**Related operations:** - ConnectCustomKeyStore
+
+- CreateCustomKeyStore
+
+- DescribeCustomKeyStores
+
+- DisconnectCustomKeyStore
+
+- UpdateCustomKeyStore>
+
+  take x-amz-target
+    like native-string
+  take delete-custom-key-store-request, like delete-custom-key-store-request
+
+  line </#X-Amz-Target=TrentService.DeleteCustomKeyStore>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-custom-key-store-request
+
+  loot 200
+    seed json, like delete-custom-key-store-response
+    note <Success>
+  loot 480
+    seed json, like custom-key-store-has-cm-ks-exception
+    note <CustomKeyStoreHasCMKsException>
+  loot 481
+    seed json, like custom-key-store-invalid-state-exception
+    note <CustomKeyStoreInvalidStateException>
+  loot 482
+    seed json, like custom-key-store-not-found-exception
+    note <CustomKeyStoreNotFoundException>
+  loot 483
+    seed json, like kms-internal-exception
+    note <KMSInternalException>

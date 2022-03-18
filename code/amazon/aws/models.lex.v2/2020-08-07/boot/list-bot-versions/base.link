@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/list-bot-versions-body
+  take form list-bot-versions-body
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/list-bot-versions-response
+  take form list-bot-versions-response
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/service-quota-exceeded-exception
+  take form service-quota-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-bot-versions, name <ListBotVersions>
+  note <Gets information about all of the versions of a bot.
+
+The `ListBotVersions` operation returns a summary of each version of a bot. For example, if a bot has three numbered versions, the `ListBotVersions` operation returns for summaries, one for each numbered version and one for the `DRAFT` version.
+
+The `ListBotVersions` operation always returns at least one version, the `DRAFT` version.>
+
+  take bot-id
+    like native-string
+    note <The identifier of the bot to list versions for.>
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-bot-versions-body, like list-bot-versions-body
+
+  line </bots/{bot-id}/botversions/>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-bot-versions-body
+
+  loot 200
+    seed json, like list-bot-versions-response
+    note <Success>
+  loot 480
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 481
+    seed json, like service-quota-exceeded-exception
+    note <ServiceQuotaExceededException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like internal-server-exception
+    note <InternalServerException>

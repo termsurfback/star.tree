@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/create-slot-type-body
+  take form create-slot-type-body
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/create-slot-type-response
+  take form create-slot-type-response
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/precondition-failed-exception
+  take form precondition-failed-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/service-quota-exceeded-exception
+  take form service-quota-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-slot-type, name <CreateSlotType>
+  note <Creates a custom slot type
+
+To create a custom slot type, specify a name for the slot type and a set of enumeration values, the values that a slot of this type can assume.>
+
+  take bot-id
+    like native-string
+    note <The identifier of the bot associated with this slot type.>
+  take bot-version
+    like native-string
+    note <The identifier of the bot version associated with this slot type.>
+  take locale-id
+    like native-string
+    note <The identifier of the language and locale that the slot type will be used in. The string must match one of the supported locales. All of the bots, intents, and slots used by the slot type must have the same locale. For more information, see [Supported languages](https://docs.aws.amazon.com/lexv2/latest/dg/how-languages.html).>
+  take create-slot-type-body, like create-slot-type-body
+
+  line </bots/{bot-id}/botversions/{bot-version}/botlocales/{locale-id}/slottypes/>
+
+  seed json, loan create-slot-type-body
+
+  loot 200
+    seed json, like create-slot-type-response
+    note <Success>
+  loot 480
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 481
+    seed json, like service-quota-exceeded-exception
+    note <ServiceQuotaExceededException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like precondition-failed-exception
+    note <PreconditionFailedException>
+  loot 484
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 485
+    seed json, like internal-server-exception
+    note <InternalServerException>

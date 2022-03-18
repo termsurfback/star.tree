@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/get-parameters-result
+  take form get-parameters-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-key-id
+  take form invalid-key-id
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-parameters, name <GetParameters>
+  note <Get information about one or more parameters by specifying multiple parameter names.
+
+To get information about a single parameter, you can use the GetParameter operation instead.>
+
+  take x-amz-target
+    like native-string
+  take get-parameters-request, like get-parameters-request
+
+  line </#X-Amz-Target=AmazonSSM.GetParameters>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-parameters-request
+
+  loot 200
+    seed json, like get-parameters-result
+    note <Success>
+  loot 480
+    seed json, like invalid-key-id
+    note <InvalidKeyId>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

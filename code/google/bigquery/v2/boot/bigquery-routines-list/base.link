@@ -1,0 +1,46 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/bigquery/v2/base/list-routines-response
+  take form list-routines-response
+
+boot bigquery-routines-list, name <bigquery.routines.list>
+  note <Lists all routines in the specified dataset. Requires the READER dataset role.>
+
+  take project-id
+    like native-string
+    note <Required. Project ID of the routines to list>
+  take dataset-id
+    like native-string
+    note <Required. Dataset ID of the routines to list>
+  take filter
+    like native-string
+    note <If set, then only the Routines matching this filter are returned. The current supported form is either "routine_type:" or "routineType:", where is a RoutineType enum. Example: "routineType:SCALAR_FUNCTION".>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return in a single response page. Leverage the page tokens to iterate through the entire collection.>
+    void take
+  take page-token
+    like native-string
+    note <Page token, returned by a previous call, to request the next page of results>
+    void take
+  take read-mask
+    like native-string
+    note <If set, then only the Routine fields in the field mask, as well as project_id, dataset_id and routine_id, are returned in the response. If unset, then the following Routine fields are returned: etag, project_id, dataset_id, routine_id, routine_type, creation_time, last_modified_time, and language.>
+    void take
+
+  line </projects/{project-id}/datasets/{dataset-id}/routines>
+
+  find <filter>, loan filter
+  find <maxResults>, loan max-results
+  find <pageToken>, loan page-token
+  find <readMask>, loan read-mask
+
+  loot 200
+    seed json, like list-routines-response
+    note <Successful response>

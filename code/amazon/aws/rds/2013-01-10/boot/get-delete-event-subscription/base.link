@@ -1,0 +1,36 @@
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/delete-event-subscription-result
+  take form delete-event-subscription-result
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/invalid-event-subscription-state-fault
+  take form invalid-event-subscription-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/subscription-not-found-fault
+  take form subscription-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-event-subscription, name <GET_DeleteEventSubscription>
+  take subscription-name
+    like native-string
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteEventSubscription>
+
+  find <SubscriptionName>, loan subscription-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-event-subscription-result
+    note <Success>
+  loot 480
+    seed xml, like subscription-not-found-fault
+    note <SubscriptionNotFoundFault>
+  loot 481
+    seed xml, like invalid-event-subscription-state-fault
+    note <InvalidEventSubscriptionStateFault>

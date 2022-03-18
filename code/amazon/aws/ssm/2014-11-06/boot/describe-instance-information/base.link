@@ -1,0 +1,68 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/describe-instance-information-result
+  take form describe-instance-information-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-filter-key
+  take form invalid-filter-key
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-instance-id
+  take form invalid-instance-id
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-instance-information-filter-value
+  take form invalid-instance-information-filter-value
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-instance-information, name <DescribeInstanceInformation>
+  note <Describes one or more of your instances, including information about the operating system platform, the version of SSM Agent installed on the instance, instance status, and so on.
+
+If you specify one or more instance IDs, it returns information for those instances. If you don't specify instance IDs, it returns information for all your instances. If you specify an instance ID that isn't valid or an instance that you don't own, you receive an error.
+
+The `IamRole` field for this API operation is the Identity and Access Management (IAM) role assigned to on-premises instances. This call doesn't return the IAM role for EC2 instances.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-instance-information-request, like describe-instance-information-request
+
+  line </#X-Amz-Target=AmazonSSM.DescribeInstanceInformation>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-instance-information-request
+
+  loot 200
+    seed json, like describe-instance-information-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like invalid-instance-id
+    note <InvalidInstanceId>
+  loot 482
+    seed json, like invalid-next-token
+    note <InvalidNextToken>
+  loot 483
+    seed json, like invalid-instance-information-filter-value
+    note <InvalidInstanceInformationFilterValue>
+  loot 484
+    seed json, like invalid-filter-key
+    note <InvalidFilterKey>

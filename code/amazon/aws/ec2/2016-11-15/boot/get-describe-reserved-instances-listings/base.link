@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-reserved-instances-listings-result
+  take form describe-reserved-instances-listings-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-reserved-instances-listings, name <GET_DescribeReservedInstancesListings>
+  note <Describes your account's Reserved Instance listings in the Reserved Instance Marketplace.
+
+The Reserved Instance Marketplace matches sellers who want to resell Reserved Instance capacity that they no longer need with buyers who want to purchase additional capacity. Reserved Instances bought and sold through the Reserved Instance Marketplace work like any other Reserved Instances.
+
+As a seller, you choose to list some or all of your Reserved Instances, and you specify the upfront price to receive for them. Your Reserved Instances are then listed in the Reserved Instance Marketplace and are available for purchase.
+
+As a buyer, you specify the configuration of the Reserved Instance to purchase, and the Marketplace matches what you're searching for with what's available. The Marketplace first sells the lowest priced Reserved Instances to you, and continues to sell available Reserved Instance listings to you until your demand is met. You are charged based on the total price of all of the listings that you purchase.
+
+For more information, see [Reserved Instance Marketplace](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ri-market-general.html) in the _Amazon EC2 User Guide_.>
+
+  take filter
+    like list
+      like filter
+    note <One or more filters.
+
+- `reserved-instances-id` - The ID of the Reserved Instances.
+
+- `reserved-instances-listing-id` - The ID of the Reserved Instances listing.
+
+- `status` - The status of the Reserved Instance listing (`pending` | `active` | `cancelled` | `closed`).
+
+- `status-message` - The reason for the status.>
+    void take
+  take reserved-instances-id
+    like native-string
+    note <One or more Reserved Instance IDs.>
+    void take
+  take reserved-instances-listing-id
+    like native-string
+    note <One or more Reserved Instance listing IDs.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeReservedInstancesListings>
+
+  find <Filter>, loan filter
+  find <ReservedInstancesId>, loan reserved-instances-id
+  find <ReservedInstancesListingId>, loan reserved-instances-listing-id
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-reserved-instances-listings-result
+    note <Success>

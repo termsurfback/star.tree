@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/list-job-executions-for-job-response
+  take form list-job-executions-for-job-response
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-job-executions-for-job, name <ListJobExecutionsForJob>
+  note <Lists the job executions for a job.
+
+Requires permission to access the [ListJobExecutionsForJob](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiot.html#awsiot-actions-as-permissions) action.>
+
+  take job-id
+    like native-string
+    note <The unique identifier you assigned to this job when it was created.>
+  take status
+    like native-string
+    note <The status of the job.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to be returned per request.>
+    void take
+  take next-token
+    like native-string
+    note <The token to retrieve the next set of results.>
+    void take
+
+  line </jobs/{job-id}/things>
+
+  find <status>, loan status
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  loot 200
+    seed json, like list-job-executions-for-job-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

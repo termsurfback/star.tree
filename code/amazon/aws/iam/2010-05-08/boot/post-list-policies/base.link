@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/list-policies-response
+  take form list-policies-response
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-list-policies, name <POST_ListPolicies>
+  note <Lists all the managed policies that are available in your account, including your own customer-defined managed policies and all Amazon Web Services managed policies.
+
+You can filter the list of policies that is returned using the optional `OnlyAttached`, `Scope`, and `PathPrefix` parameters. For example, to list only the customer managed policies in your Amazon Web Services account, set `Scope` to `Local`. To list only Amazon Web Services managed policies, set `Scope` to `AWS`.
+
+You can paginate the results using the `MaxItems` and `Marker` parameters.
+
+For more information about managed policies, see [Managed policies and inline policies](https://docs.aws.amazon.com/IAM/latest/UserGuide/policies-managed-vs-inline.html) in the _IAM User Guide_.
+
+IAM resource-listing operations return a subset of the available attributes for the resource. For example, this operation does not return tags, even though they are an attribute of the returned object. To view all of the information for a customer manged policy, see GetPolicy.>
+
+  take max-items
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take list-policies-request, like list-policies-request
+    void take
+
+  line </#Action=ListPolicies>
+
+  find <MaxItems>, loan max-items
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan list-policies-request
+
+  loot 200
+    seed xml, like list-policies-response
+    note <Success>
+  loot 480
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

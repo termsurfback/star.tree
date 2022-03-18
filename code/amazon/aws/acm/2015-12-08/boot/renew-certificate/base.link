@@ -1,0 +1,31 @@
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/invalid-arn-exception
+  take form invalid-arn-exception
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot renew-certificate, name <RenewCertificate>
+  note <Renews an eligible ACM certificate. At this time, only exported private certificates can be renewed with this operation. In order to renew your ACM PCA certificates with ACM, you must first [grant the ACM service principal permission to do so](https://docs.aws.amazon.com/acm-pca/latest/userguide/PcaPermissions.html). For more information, see [Testing Managed Renewal](https://docs.aws.amazon.com/acm/latest/userguide/manual-renewal.html) in the ACM User Guide.>
+
+  take x-amz-target
+    like native-string
+  take renew-certificate-request, like renew-certificate-request
+
+  line </#X-Amz-Target=CertificateManager.RenewCertificate>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan renew-certificate-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-arn-exception
+    note <InvalidArnException>

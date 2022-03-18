@@ -1,0 +1,48 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker-featurestore-runtime/2020-07-01/base/access-forbidden
+  take form access-forbidden
+
+load @drumwork/snow/amazonaws.com/sagemaker-featurestore-runtime/2020-07-01/base/internal-failure
+  take form internal-failure
+
+load @drumwork/snow/amazonaws.com/sagemaker-featurestore-runtime/2020-07-01/base/service-unavailable
+  take form service-unavailable
+
+load @drumwork/snow/amazonaws.com/sagemaker-featurestore-runtime/2020-07-01/base/validation-error
+  take form validation-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-record, name <DeleteRecord>
+  note <Deletes a `Record` from a `FeatureGroup`. A new record will show up in the `OfflineStore` when the `DeleteRecord` API is called. This record will have a value of `True` in the `is_deleted` column.>
+
+  take feature-group-name
+    like native-string
+    note <The name of the feature group to delete the record from.>
+  take record-identifier-value-as-string
+    like native-string
+    note <The value for the `RecordIdentifier` that uniquely identifies the record, in string format.>
+  take event-time
+    like native-string
+    note <Timestamp indicating when the deletion event occurred. `EventTime` can be used to query data at a certain point in time.>
+
+  line </FeatureGroup/{feature-group-name}#RecordIdentifierValueAsString&EventTime>
+
+  find <RecordIdentifierValueAsString>, loan record-identifier-value-as-string
+  find <EventTime>, loan event-time
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like validation-error
+    note <ValidationError>
+  loot 481
+    seed json, like internal-failure
+    note <InternalFailure>
+  loot 482
+    seed json, like service-unavailable
+    note <ServiceUnavailable>
+  loot 483
+    seed json, like access-forbidden
+    note <AccessForbidden>

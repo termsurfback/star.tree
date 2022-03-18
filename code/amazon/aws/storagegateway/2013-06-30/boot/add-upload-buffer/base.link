@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/add-upload-buffer-output
+  take form add-upload-buffer-output
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot add-upload-buffer, name <AddUploadBuffer>
+  note <Configures one or more gateway local disks as upload buffer for a specified gateway. This operation is supported for the stored volume, cached volume, and tape gateway types.
+
+In the request, you specify the gateway Amazon Resource Name (ARN) to which you want to add upload buffer, and one or more disk IDs that you want to configure as upload buffer.>
+
+  take x-amz-target
+    like native-string
+  take add-upload-buffer-input, like add-upload-buffer-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.AddUploadBuffer>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan add-upload-buffer-input
+
+  loot 200
+    seed json, like add-upload-buffer-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

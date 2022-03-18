@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/auditmanager/2017-07-25/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/auditmanager/2017-07-25/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/auditmanager/2017-07-25/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/auditmanager/2017-07-25/base/update-assessment-control-set-status-body
+  take form update-assessment-control-set-status-body
+
+load @drumwork/snow/amazonaws.com/auditmanager/2017-07-25/base/update-assessment-control-set-status-response
+  take form update-assessment-control-set-status-response
+
+load @drumwork/snow/amazonaws.com/auditmanager/2017-07-25/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-assessment-control-set-status, name <UpdateAssessmentControlSetStatus>
+  note <Updates the status of a control set in an Audit Manager assessment.>
+
+  take assessment-id
+    like native-string
+    note <The identifier for the specified assessment.>
+  take control-set-id
+    like native-string
+    note <The identifier for the specified control set.>
+  take update-assessment-control-set-status-body, like update-assessment-control-set-status-body
+
+  line </assessments/{assessment-id}/controlSets/{control-set-id}/status>
+
+  seed json, loan update-assessment-control-set-status-body
+
+  loot 200
+    seed json, like update-assessment-control-set-status-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 483
+    seed json, like internal-server-exception
+    note <InternalServerException>

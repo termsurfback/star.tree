@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/operation-not-permitted-fault
+  take form operation-not-permitted-fault
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/type-already-exists-fault
+  take form type-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/unknown-resource-fault
+  take form unknown-resource-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot undeprecate-activity-type, name <UndeprecateActivityType>
+  note <Undeprecates a previously deprecated _activity type_. After an activity type has been undeprecated, you can create new tasks of that activity type.
+
+This operation is eventually consistent. The results are best effort and may not exactly reflect recent updates and changes.
+
+**Access Control** You can use IAM policies to control this action's access to Amazon SWF resources as follows:
+
+- Use a `Resource` element with the domain name to limit the action to only specified domains.
+
+- Use an `Action` element to allow or deny permission to call this action.
+
+- Constrain the following parameters by using a `Condition` element with the appropriate keys.
+
+  - `activityType.name`: String constraint. The key is `swf:activityType.name`.
+
+  - `activityType.version`: String constraint. The key is `swf:activityType.version`.
+
+If the caller doesn't have sufficient permissions to invoke the action, or the parameter values fall outside the specified constraints, the action fails. The associated event attribute's `cause` parameter is set to `OPERATION_NOT_PERMITTED`. For details and example IAM policies, see [Using IAM to Manage Access to Amazon SWF Workflows](https://docs.aws.amazon.com/amazonswf/latest/developerguide/swf-dev-iam.html) in the _Amazon SWF Developer Guide_.>
+
+  take x-amz-target
+    like native-string
+  take undeprecate-activity-type-input, like undeprecate-activity-type-input
+
+  line </#X-Amz-Target=SimpleWorkflowService.UndeprecateActivityType>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan undeprecate-activity-type-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like unknown-resource-fault
+    note <UnknownResourceFault>
+  loot 481
+    seed json, like type-already-exists-fault
+    note <TypeAlreadyExistsFault>
+  loot 482
+    seed json, like operation-not-permitted-fault
+    note <OperationNotPermittedFault>

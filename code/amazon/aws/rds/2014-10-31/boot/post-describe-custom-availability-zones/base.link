@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/custom-availability-zone-message
+  take form custom-availability-zone-message
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/custom-availability-zone-not-found-fault
+  take form custom-availability-zone-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-custom-availability-zones, name <POST_DescribeCustomAvailabilityZones>
+  note <Returns information about custom Availability Zones (AZs).
+
+A custom AZ is an on-premises AZ that is integrated with a VMware vSphere cluster.
+
+For more information about RDS on VMware, see the [RDS on VMware User Guide.](https://docs.aws.amazon.com/AmazonRDS/latest/RDSonVMwareUserGuide/rds-on-vmware.html)>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-custom-availability-zones-message, like describe-custom-availability-zones-message
+    void take
+
+  line </#Action=DescribeCustomAvailabilityZones>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-custom-availability-zones-message
+
+  loot 200
+    seed xml, like custom-availability-zone-message
+    note <Success>
+  loot 480
+    seed xml, like custom-availability-zone-not-found-fault
+    note <CustomAvailabilityZoneNotFoundFault>

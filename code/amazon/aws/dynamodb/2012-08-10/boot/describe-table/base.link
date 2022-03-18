@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/describe-table-output
+  take form describe-table-output
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-table, name <DescribeTable>
+  note <Returns information about the table, including the current status of the table, when it was created, the primary key schema, and any indexes on the table.
+
+If you issue a `DescribeTable` request immediately after a `CreateTable` request, DynamoDB might return a `ResourceNotFoundException`. This is because `DescribeTable` uses an eventually consistent query, and the metadata for your table might not be available at that moment. Wait for a few seconds, and then try the `DescribeTable` request again.>
+
+  take x-amz-target
+    like native-string
+  take describe-table-input, like describe-table-input
+
+  line </#X-Amz-Target=DynamoDB_20120810.DescribeTable>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-table-input
+
+  loot 200
+    seed json, like describe-table-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

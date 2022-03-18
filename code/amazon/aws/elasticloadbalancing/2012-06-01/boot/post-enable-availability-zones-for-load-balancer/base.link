@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/access-point-not-found-exception
+  take form access-point-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/add-availability-zones-output
+  take form add-availability-zones-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-enable-availability-zones-for-load-balancer, name <POST_EnableAvailabilityZonesForLoadBalancer>
+  note <Adds the specified Availability Zones to the set of Availability Zones for the specified load balancer in EC2-Classic or a default VPC.
+
+For load balancers in a non-default VPC, use AttachLoadBalancerToSubnets.
+
+The load balancer evenly distributes requests across all its registered Availability Zones that contain instances. For more information, see [Add or Remove Availability Zones](https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/enable-disable-az.html) in the _Classic Load Balancers Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take add-availability-zones-input, like add-availability-zones-input
+    void take
+
+  line </#Action=EnableAvailabilityZonesForLoadBalancer>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan add-availability-zones-input
+
+  loot 200
+    seed xml, like add-availability-zones-output
+    note <Success>
+  loot 480
+    seed xml, like access-point-not-found-exception
+    note <AccessPointNotFoundException>

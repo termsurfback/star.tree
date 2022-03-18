@@ -1,0 +1,114 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/cfn-registry-exception
+  take form cfn-registry-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/log-group-name
+  take form log-group-name
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/register-type-output
+  take form register-type-output
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/role-arn
+  take form role-arn
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-register-type, name <GET_RegisterType>
+  note <Registers an extension with the CloudFormation service. Registering an extension makes it available for use in CloudFormation templates in your Amazon Web Services account, and includes:
+
+- Validating the extension schema
+
+- Determining which handlers, if any, have been specified for the extension
+
+- Making the extension available for use in your account
+
+For more information on how to develop extensions and ready them for registeration, see [Creating Resource Providers](https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-types.html) in the _CloudFormation CLI User Guide_.
+
+You can have a maximum of 50 resource extension versions registered at a time. This maximum is per account and per region. Use [DeregisterType](AWSCloudFormation/latest/APIReference/API_DeregisterType.html) to deregister specific extension versions if necessary.
+
+Once you have initiated a registration request using `RegisterType` , you can use `DescribeTypeRegistration` to monitor the progress of the registration request.
+
+Once you have registered a private extension in your account and region, use [SetTypeConfiguration](AWSCloudFormation/latest/APIReference/API_SetTypeConfiguration.html) to specify configuration properties for the extension. For more information, see [Configuring extensions at the account level](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/registry-register.html#registry-set-configuration) in the _CloudFormation User Guide_.>
+
+  take type
+    like native-string
+    note <The kind of extension.>
+    void take
+  take type-name
+    like native-string
+    note <The name of the extension being registered.
+
+We recommend that extension names adhere to the following patterns:
+
+- For resource types, _company_or_organization_::_service_::_type_.
+
+- For modules, _company_or_organization_::_service_::_type_::MODULE.
+
+The following organization namespaces are reserved and cannot be used in your extension names:
+
+- `Alexa`
+
+- `AMZN`
+
+- `Amazon`
+
+- `AWS`
+
+- `Custom`
+
+- `Dev`>
+  take schema-handler-package
+    like native-string
+    note <A url to the S3 bucket containing the extension project package that contains the neccessary files for the extension you want to register.
+
+For information on generating a schema handler package for the extension you want to register, see [submit](https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-cli-submit.html) in the _CloudFormation CLI User Guide_.
+
+The user registering the extension must be able to access the package in the S3 bucket. That is, the user needs to have [GetObject](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html) permissions for the schema handler package. For more information, see [Actions, Resources, and Condition Keys for Amazon S3](https://docs.aws.amazon.com/IAM/latest/UserGuide/list_amazons3.html) in the _Identity and Access Management User Guide_.>
+  take logging-config
+    like form
+      take log-role-arn, name <LogRoleArn>
+        like role-arn
+        note <The ARN of the role that CloudFormation should assume when sending log entries to CloudWatch logs.>
+      take log-group-name, name <LogGroupName>
+        like log-group-name
+        note <The Amazon CloudWatch log group to which CloudFormation sends error logging information when invoking the extension's handlers.>
+    note <Specifies logging configuration information for an extension.>
+    void take
+  take execution-role-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the IAM role for CloudFormation to assume when invoking the extension.
+
+For CloudFormation to assume the specified execution role, the role must contain a trust relationship with the CloudFormation service principle (`resources.cloudformation.amazonaws.com`). For more information on adding trust relationships, see [Modifying a role trust policy](IAM/latest/UserGuide/roles-managingrole-editing-console.html#roles-managingrole_edit-trust-policy) in the _Identity and Access Management User Guide_.
+
+If your extension calls Amazon Web Services APIs in any of its handlers, you must create an _[IAM execution role](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html)_ that includes the necessary permissions to call those Amazon Web Services APIs, and provision that execution role in your account. When CloudFormation needs to invoke the resource type handler, CloudFormation assumes this execution role to create a temporary session token, which it then passes to the resource type handler, thereby supplying your resource type with the appropriate credentials.>
+    void take
+  take client-request-token
+    like native-string
+    note <A unique identifier that acts as an idempotency key for this registration request. Specifying a client request token prevents CloudFormation from generating more than one version of an extension from the same registeration request, even if the request is submitted multiple times.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=RegisterType>
+
+  find <Type>, loan type
+  find <TypeName>, loan type-name
+  find <SchemaHandlerPackage>, loan schema-handler-package
+  find <LoggingConfig>, loan logging-config
+  find <ExecutionRoleArn>, loan execution-role-arn
+  find <ClientRequestToken>, loan client-request-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like register-type-output
+    note <Success>
+  loot 480
+    seed xml, like cfn-registry-exception
+    note <CFNRegistryException>

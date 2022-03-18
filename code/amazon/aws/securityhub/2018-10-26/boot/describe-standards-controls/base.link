@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/describe-standards-controls-response
+  take form describe-standards-controls-response
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/invalid-access-exception
+  take form invalid-access-exception
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-standards-controls, name <DescribeStandardsControls>
+  note <Returns a list of security standards controls.
+
+For each control, the results include information about whether it is currently enabled, the severity, and a link to remediation information.>
+
+  take standards-subscription-arn
+    like native-string
+    note <The ARN of a resource that represents your subscription to a supported standard. To get the subscription ARNs of the standards you have enabled, use the `GetEnabledStandards` operation.>
+  take next-token
+    like native-string
+    note <The token that is required for pagination. On your first call to the `DescribeStandardsControls` operation, set the value of this parameter to `NULL`.
+
+For subsequent calls to the operation, to continue listing data, set the value of this parameter to the value returned from the previous response.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of security standard controls to return.>
+    void take
+
+  line </standards/controls/{standards-subscription-arn}>
+
+  find <NextToken>, loan next-token
+  find <MaxResults>, loan max-results
+
+  loot 200
+    seed json, like describe-standards-controls-response
+    note <Success>
+  loot 480
+    seed json, like internal-exception
+    note <InternalException>
+  loot 481
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 482
+    seed json, like invalid-access-exception
+    note <InvalidAccessException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

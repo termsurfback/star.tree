@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/describe-receipt-rule-response
+  take form describe-receipt-rule-response
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/rule-does-not-exist-exception
+  take form rule-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/rule-set-does-not-exist-exception
+  take form rule-set-does-not-exist-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-receipt-rule, name <POST_DescribeReceiptRule>
+  note <Returns the details of the specified receipt rule.
+
+For information about setting up receipt rules, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-receipt-rules.html).
+
+You can execute this operation no more than once per second.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-receipt-rule-request, like describe-receipt-rule-request
+    void take
+
+  line </#Action=DescribeReceiptRule>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-receipt-rule-request
+
+  loot 200
+    seed xml, like describe-receipt-rule-response
+    note <Success>
+  loot 480
+    seed xml, like rule-does-not-exist-exception
+    note <RuleDoesNotExistException>
+  loot 481
+    seed xml, like rule-set-does-not-exist-exception
+    note <RuleSetDoesNotExistException>

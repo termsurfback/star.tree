@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/get-password-data-result
+  take form get-password-data-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-get-password-data, name <POST_GetPasswordData>
+  note <Retrieves the encrypted administrator password for a running Windows instance.
+
+The Windows password is generated at boot by the `EC2Config` service or `EC2Launch` scripts (Windows Server 2016 and later). This usually only happens the first time an instance is launched. For more information, see [EC2Config](https://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/UsingConfig_WinAMI.html) and [EC2Launch](https://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/ec2launch.html) in the _Amazon EC2 User Guide_.
+
+For the `EC2Config` service, the password is not generated for rebundled AMIs unless `Ec2SetPassword` is enabled before bundling.
+
+The password is encrypted using the key pair that you specified when you launched the instance. You must provide the corresponding key pair file.
+
+When you launch an instance, password generation and encryption may take a few minutes. If you try to retrieve the password before it's available, the output returns an empty string. We recommend that you wait up to 15 minutes after launching an instance before trying to retrieve the generated password.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take get-password-data-request, like get-password-data-request
+    void take
+
+  line </#Action=GetPasswordData>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan get-password-data-request
+
+  loot 200
+    seed xml, like get-password-data-result
+    note <Success>

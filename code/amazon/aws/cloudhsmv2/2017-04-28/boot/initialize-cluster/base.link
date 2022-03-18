@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/cloudhsmv2/2017-04-28/base/cloud-hsm-access-denied-exception
+  take form cloud-hsm-access-denied-exception
+
+load @drumwork/snow/amazonaws.com/cloudhsmv2/2017-04-28/base/cloud-hsm-internal-failure-exception
+  take form cloud-hsm-internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/cloudhsmv2/2017-04-28/base/cloud-hsm-invalid-request-exception
+  take form cloud-hsm-invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/cloudhsmv2/2017-04-28/base/cloud-hsm-resource-not-found-exception
+  take form cloud-hsm-resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/cloudhsmv2/2017-04-28/base/cloud-hsm-service-exception
+  take form cloud-hsm-service-exception
+
+load @drumwork/snow/amazonaws.com/cloudhsmv2/2017-04-28/base/initialize-cluster-response
+  take form initialize-cluster-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot initialize-cluster, name <InitializeCluster>
+  note <Claims an AWS CloudHSM cluster by submitting the cluster certificate issued by your issuing certificate authority (CA) and the CA's root certificate. Before you can claim a cluster, you must sign the cluster's certificate signing request (CSR) with your issuing CA. To get the cluster's CSR, use DescribeClusters.>
+
+  take x-amz-target
+    like native-string
+  take initialize-cluster-request, like initialize-cluster-request
+
+  line </#X-Amz-Target=BaldrApiService.InitializeCluster>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan initialize-cluster-request
+
+  loot 200
+    seed json, like initialize-cluster-response
+    note <Success>
+  loot 480
+    seed json, like cloud-hsm-access-denied-exception
+    note <CloudHsmAccessDeniedException>
+  loot 481
+    seed json, like cloud-hsm-internal-failure-exception
+    note <CloudHsmInternalFailureException>
+  loot 482
+    seed json, like cloud-hsm-invalid-request-exception
+    note <CloudHsmInvalidRequestException>
+  loot 483
+    seed json, like cloud-hsm-resource-not-found-exception
+    note <CloudHsmResourceNotFoundException>
+  loot 484
+    seed json, like cloud-hsm-service-exception
+    note <CloudHsmServiceException>

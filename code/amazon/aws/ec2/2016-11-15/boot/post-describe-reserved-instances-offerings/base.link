@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-reserved-instances-offerings-result
+  take form describe-reserved-instances-offerings-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-reserved-instances-offerings, name <POST_DescribeReservedInstancesOfferings>
+  note <Describes Reserved Instance offerings that are available for purchase. With Reserved Instances, you purchase the right to launch instances for a period of time. During that time period, you do not receive insufficient capacity errors, and you pay a lower usage rate than the rate charged for On-Demand instances for the actual time used.
+
+If you have listed your own Reserved Instances for sale in the Reserved Instance Marketplace, they will be excluded from these results. This is to ensure that you do not purchase your own Reserved Instances.
+
+For more information, see [Reserved Instance Marketplace](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ri-market-general.html) in the _Amazon EC2 User Guide_.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-reserved-instances-offerings-request, like describe-reserved-instances-offerings-request
+    void take
+
+  line </#Action=DescribeReservedInstancesOfferings>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-reserved-instances-offerings-request
+
+  loot 200
+    seed xml, like describe-reserved-instances-offerings-result
+    note <Success>

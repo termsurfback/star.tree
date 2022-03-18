@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/send-project-session-action-body
+  take form send-project-session-action-body
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/send-project-session-action-response
+  take form send-project-session-action-response
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot send-project-session-action, name <SendProjectSessionAction>
+  note <Performs a recipe step within an interactive DataBrew session that's currently open.>
+
+  take name
+    like native-string
+    note <The name of the project to apply the action to.>
+  take send-project-session-action-body, like send-project-session-action-body
+
+  line </projects/{name}/sendProjectSessionAction>
+
+  seed json, loan send-project-session-action-body
+
+  loot 200
+    seed json, like send-project-session-action-response
+    note <Success>
+  loot 480
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>

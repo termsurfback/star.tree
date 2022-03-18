@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/configuration-set-already-exists-exception
+  take form configuration-set-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/create-configuration-set-response
+  take form create-configuration-set-response
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/invalid-configuration-set-exception
+  take form invalid-configuration-set-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-configuration-set, name <POST_CreateConfigurationSet>
+  note <Creates a configuration set.
+
+Configuration sets enable you to publish email sending events. For information about using configuration sets, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/monitor-sending-activity.html).
+
+You can execute this operation no more than once per second.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-configuration-set-request, like create-configuration-set-request
+    void take
+
+  line </#Action=CreateConfigurationSet>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-configuration-set-request
+
+  loot 200
+    seed xml, like create-configuration-set-response
+    note <Success>
+  loot 480
+    seed xml, like configuration-set-already-exists-exception
+    note <ConfigurationSetAlreadyExistsException>
+  loot 481
+    seed xml, like invalid-configuration-set-exception
+    note <InvalidConfigurationSetException>
+  loot 482
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>

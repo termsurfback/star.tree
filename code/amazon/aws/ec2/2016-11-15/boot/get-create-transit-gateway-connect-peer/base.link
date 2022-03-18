@@ -1,0 +1,83 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/create-transit-gateway-connect-peer-result
+  take form create-transit-gateway-connect-peer-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/long
+  take form long
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/tag-specification
+  take form tag-specification
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-create-transit-gateway-connect-peer, name <GET_CreateTransitGatewayConnectPeer>
+  note <Creates a Connect peer for a specified transit gateway Connect attachment between a transit gateway and an appliance.
+
+The peer address and transit gateway address must be the same IP address family (IPv4 or IPv6).
+
+For more information, see [Connect peers](https://docs.aws.amazon.com/vpc/latest/tgw/tgw-connect.html#tgw-connect-peer) in the _Transit Gateways Guide_.>
+
+  take transit-gateway-attachment-id
+    like native-string
+    note <The ID of the Connect attachment.>
+  take transit-gateway-address
+    like native-string
+    note <The peer IP address (GRE outer IP address) on the transit gateway side of the Connect peer, which must be specified from a transit gateway CIDR block. If not specified, Amazon automatically assigns the first available IP address from the transit gateway CIDR block.>
+    void take
+  take peer-address
+    like native-string
+    note <The peer IP address (GRE outer IP address) on the appliance side of the Connect peer.>
+  take bgp-options
+    like form
+      take peer-asn, name <PeerAsn>
+        like long
+        void take
+        note <The peer Autonomous System Number (ASN).>
+    note <The BGP options for the Connect peer.>
+    void take
+  take inside-cidr-blocks
+    like list
+      like string
+    note <The range of inside IP addresses that are used for BGP peering. You must specify a size /29 IPv4 CIDR block from the `169.254.0.0/16` range. The first address from the range must be configured on the appliance as the BGP IP address. You can also optionally specify a size /125 IPv6 CIDR block from the `fd00::/8` range.>
+  take tag-specification
+    like list
+      like tag-specification
+    note <The tags to apply to the Connect peer.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateTransitGatewayConnectPeer>
+
+  find <TransitGatewayAttachmentId>, loan transit-gateway-attachment-id
+  find <TransitGatewayAddress>, loan transit-gateway-address
+  find <PeerAddress>, loan peer-address
+  find <BgpOptions>, loan bgp-options
+  find <InsideCidrBlocks>, loan inside-cidr-blocks
+  find <TagSpecification>, loan tag-specification
+  find <DryRun>, loan dry-run
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-transit-gateway-connect-peer-result
+    note <Success>

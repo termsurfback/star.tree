@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/global-table-not-found-exception
+  take form global-table-not-found-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/replica-already-exists-exception
+  take form replica-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/replica-not-found-exception
+  take form replica-not-found-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/table-not-found-exception
+  take form table-not-found-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/update-global-table-output
+  take form update-global-table-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-global-table, name <UpdateGlobalTable>
+  note <Adds or removes replicas in the specified global table. The global table must already exist to be able to use this operation. Any replica to be added must be empty, have the same name as the global table, have the same key schema, have DynamoDB Streams enabled, and have the same provisioned and maximum write capacity units.
+
+Although you can use `UpdateGlobalTable` to add replicas and remove replicas in a single request, for simplicity we recommend that you issue separate requests for adding or removing replicas.
+
+If global secondary indexes are specified, then the following conditions must also be met:
+
+- The global secondary indexes must have the same name.
+
+- The global secondary indexes must have the same hash key and sort key (if present).
+
+- The global secondary indexes must have the same provisioned and maximum write capacity units.>
+
+  take x-amz-target
+    like native-string
+  take update-global-table-input, like update-global-table-input
+
+  line </#X-Amz-Target=DynamoDB_20120810.UpdateGlobalTable>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-global-table-input
+
+  loot 200
+    seed json, like update-global-table-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like global-table-not-found-exception
+    note <GlobalTableNotFoundException>
+  loot 482
+    seed json, like replica-already-exists-exception
+    note <ReplicaAlreadyExistsException>
+  loot 483
+    seed json, like replica-not-found-exception
+    note <ReplicaNotFoundException>
+  loot 484
+    seed json, like table-not-found-exception
+    note <TableNotFoundException>

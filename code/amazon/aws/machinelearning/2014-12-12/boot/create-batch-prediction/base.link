@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/create-batch-prediction-output
+  take form create-batch-prediction-output
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/idempotent-parameter-mismatch-exception
+  take form idempotent-parameter-mismatch-exception
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-batch-prediction, name <CreateBatchPrediction>
+  note <Generates predictions for a group of observations. The observations to process exist in one or more data files referenced by a `DataSource`. This operation creates a new `BatchPrediction`, and uses an `MLModel` and the data files referenced by the `DataSource` as information sources.
+
+`CreateBatchPrediction` is an asynchronous operation. In response to `CreateBatchPrediction`, Amazon Machine Learning (Amazon ML) immediately returns and sets the `BatchPrediction` status to `PENDING`. After the `BatchPrediction` completes, Amazon ML sets the status to `COMPLETED`.
+
+You can poll for status updates by using the GetBatchPrediction operation and checking the `Status` parameter of the result. After the `COMPLETED` status appears, the results are available in the location specified by the `OutputUri` parameter.>
+
+  take x-amz-target
+    like native-string
+  take create-batch-prediction-input, like create-batch-prediction-input
+
+  line </#X-Amz-Target=AmazonML_20141212.CreateBatchPrediction>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-batch-prediction-input
+
+  loot 200
+    seed json, like create-batch-prediction-output
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like idempotent-parameter-mismatch-exception
+    note <IdempotentParameterMismatchException>

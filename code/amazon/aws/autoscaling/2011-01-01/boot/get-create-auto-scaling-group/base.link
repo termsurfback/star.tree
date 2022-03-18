@@ -1,0 +1,248 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/already-exists-fault
+  take form already-exists-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/instances-distribution
+  take form instances-distribution
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/launch-template
+  take form launch-template
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/launch-template-name
+  take form launch-template-name
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/lifecycle-hook-specification
+  take form lifecycle-hook-specification
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/limit-exceeded-fault
+  take form limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/service-linked-role-failure
+  take form service-linked-role-failure
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/tag
+  take form tag
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/xml-string-max-len1600
+  take form xml-string-max-len1600
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/xml-string-max-len255
+  take form xml-string-max-len255
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/xml-string-max-len511
+  take form xml-string-max-len511
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-auto-scaling-group, name <GET_CreateAutoScalingGroup>
+  note <**We strongly recommend using a launch template when calling this operation to ensure full functionality for Amazon EC2 Auto Scaling and Amazon EC2.** Creates an Auto Scaling group with the specified name and attributes.
+
+If you exceed your maximum limit of Auto Scaling groups, the call fails. To query this limit, call the DescribeAccountLimits API. For information about updating this limit, see [Amazon EC2 Auto Scaling service quotas](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-account-limits.html) in the _Amazon EC2 Auto Scaling User Guide_.
+
+For introductory exercises for creating an Auto Scaling group, see [Getting started with Amazon EC2 Auto Scaling](https://docs.aws.amazon.com/autoscaling/ec2/userguide/GettingStartedTutorial.html) and [Tutorial: Set up a scaled and load-balanced application](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-register-lbs-with-asg.html) in the _Amazon EC2 Auto Scaling User Guide_. For more information, see [Auto Scaling groups](https://docs.aws.amazon.com/autoscaling/ec2/userguide/AutoScalingGroup.html) in the _Amazon EC2 Auto Scaling User Guide_.
+
+Every Auto Scaling group has three size parameters (`DesiredCapacity`, `MaxSize`, and `MinSize`). Usually, you set these sizes based on a specific number of instances. However, if you configure a mixed instances policy that defines weights for the instance types, you must specify these sizes with the same units that you use for weighting instances.>
+
+  take auto-scaling-group-name
+    like native-string
+    note <The name of the Auto Scaling group. This name must be unique per Region per account.>
+  take launch-configuration-name
+    like native-string
+    note <The name of the launch configuration to use to launch instances.
+
+Conditional: You must specify either a launch template (`LaunchTemplate` or `MixedInstancesPolicy`) or a launch configuration (`LaunchConfigurationName` or `InstanceId`).>
+    void take
+  take launch-template
+    like form
+      take launch-template-id, name <LaunchTemplateId>
+        like xml-string-max-len255
+        void take
+        note <The ID of the launch template. To get the template ID, use the Amazon EC2 [DescribeLaunchTemplates](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeLaunchTemplates.html) API operation. New launch templates can be created using the Amazon EC2 [CreateLaunchTemplate](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateLaunchTemplate.html) API.
+
+Conditional: You must specify either a `LaunchTemplateId` or a `LaunchTemplateName`.>
+      take launch-template-name, name <LaunchTemplateName>
+        like launch-template-name
+        void take
+        note <The name of the launch template. To get the template name, use the Amazon EC2 [DescribeLaunchTemplates](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeLaunchTemplates.html) API operation. New launch templates can be created using the Amazon EC2 [CreateLaunchTemplate](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateLaunchTemplate.html) API.
+
+Conditional: You must specify either a `LaunchTemplateId` or a `LaunchTemplateName`.>
+      take version, name <Version>
+        like xml-string-max-len255
+        void take
+        note <The version number, `$Latest`, or `$Default`. To get the version number, use the Amazon EC2 [DescribeLaunchTemplateVersions](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeLaunchTemplateVersions.html) API operation. New launch template versions can be created using the Amazon EC2 [CreateLaunchTemplateVersion](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateLaunchTemplateVersion.html) API. If the value is `$Latest`, Amazon EC2 Auto Scaling selects the latest version of the launch template when launching instances. If the value is `$Default`, Amazon EC2 Auto Scaling selects the default version of the launch template when launching instances. The default value is `$Default`.>
+    note <Parameters used to specify the launch template and version to use to launch instances.
+
+Conditional: You must specify either a launch template (`LaunchTemplate` or `MixedInstancesPolicy`) or a launch configuration (`LaunchConfigurationName` or `InstanceId`).
+
+The launch template that is specified must be configured for use with an Auto Scaling group. For more information, see [Creating a launch template for an Auto Scaling group](https://docs.aws.amazon.com/autoscaling/ec2/userguide/create-launch-template.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+    void take
+  take mixed-instances-policy
+    like form
+      take launch-template, name <LaunchTemplate>
+        like launch-template
+        void take
+        note <Specifies the launch template to use and the instance types (overrides) that are used to provision EC2 instances to fulfill On-Demand and Spot capacities. Required when creating a mixed instances policy.>
+      take instances-distribution, name <InstancesDistribution>
+        like instances-distribution
+        void take
+        note <Specifies the instances distribution. If not provided, the value for each property in `InstancesDistribution` uses a default value.>
+    note <An embedded object that specifies a mixed instances policy. The required properties must be specified. If optional properties are unspecified, their default values are used.
+
+The policy includes properties that not only define the distribution of On-Demand Instances and Spot Instances, the maximum price to pay for Spot Instances, and how the Auto Scaling group allocates instance types to fulfill On-Demand and Spot capacities, but also the properties that specify the instance configuration information—the launch template and instance types. The policy can also include a weight for each instance type and different launch templates for individual instance types. For more information, see [Auto Scaling groups with multiple instance types and purchase options](https://docs.aws.amazon.com/autoscaling/ec2/userguide/asg-purchase-options.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+    void take
+  take instance-id
+    like native-string
+    note <The ID of the instance used to base the launch configuration on. If specified, Amazon EC2 Auto Scaling uses the configuration values from the specified instance to create a new launch configuration. To get the instance ID, use the Amazon EC2 [DescribeInstances](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeInstances.html) API operation. For more information, see [Creating an Auto Scaling group using an EC2 instance](https://docs.aws.amazon.com/autoscaling/ec2/userguide/create-asg-from-instance.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+    void take
+  take min-size
+    like native-integer
+    note <The minimum size of the group.>
+  take max-size
+    like native-integer
+    note <The maximum size of the group.
+
+With a mixed instances policy that uses instance weighting, Amazon EC2 Auto Scaling may need to go above `MaxSize` to meet your capacity requirements. In this event, Amazon EC2 Auto Scaling will never go above `MaxSize` by more than your largest instance weight (weights that define how many units each instance contributes to the desired capacity of the group).>
+  take desired-capacity
+    like native-integer
+    note <The desired capacity is the initial capacity of the Auto Scaling group at the time of its creation and the capacity it attempts to maintain. It can scale beyond this capacity if you configure auto scaling. This number must be greater than or equal to the minimum size of the group and less than or equal to the maximum size of the group. If you do not specify a desired capacity, the default is the minimum size of the group.>
+    void take
+  take default-cooldown
+    like native-integer
+    note <The amount of time, in seconds, after a scaling activity completes before another scaling activity can start. The default value is `300`. This setting applies when using simple scaling policies, but not when using other scaling policies or scheduled scaling. For more information, see [Scaling cooldowns for Amazon EC2 Auto Scaling](https://docs.aws.amazon.com/autoscaling/ec2/userguide/Cooldown.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+    void take
+  take availability-zones
+    like list
+      like xml-string-max-len255
+    note <A list of Availability Zones where instances in the Auto Scaling group can be created. This parameter is optional if you specify one or more subnets for `VPCZoneIdentifier`.
+
+Conditional: If your account supports EC2-Classic and VPC, this parameter is required to launch instances into EC2-Classic.>
+    void take
+  take load-balancer-names
+    like list
+      like xml-string-max-len255
+    note <A list of Classic Load Balancers associated with this Auto Scaling group. For Application Load Balancers, Network Load Balancers, and Gateway Load Balancers, specify the `TargetGroupARNs` property instead.>
+    void take
+  take target-group-ar-ns
+    like list
+      like xml-string-max-len511
+    note <The Amazon Resource Names (ARN) of the target groups to associate with the Auto Scaling group. Instances are registered as targets in a target group, and traffic is routed to the target group. For more information, see [Elastic Load Balancing and Amazon EC2 Auto Scaling](https://docs.aws.amazon.com/autoscaling/ec2/userguide/autoscaling-load-balancer.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+    void take
+  take health-check-type
+    like native-string
+    note <The service to use for the health checks. The valid values are `EC2` (default) and `ELB`. If you configure an Auto Scaling group to use load balancer (ELB) health checks, it considers the instance unhealthy if it fails either the EC2 status checks or the load balancer health checks. For more information, see [Health checks for Auto Scaling instances](https://docs.aws.amazon.com/autoscaling/ec2/userguide/healthcheck.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+    void take
+  take health-check-grace-period
+    like native-integer
+    note <The amount of time, in seconds, that Amazon EC2 Auto Scaling waits before checking the health status of an EC2 instance that has come into service. During this time, any health check failures for the instance are ignored. The default value is `0`. For more information, see [Health check grace period](https://docs.aws.amazon.com/autoscaling/ec2/userguide/healthcheck.html#health-check-grace-period) in the _Amazon EC2 Auto Scaling User Guide_.
+
+Conditional: Required if you are adding an `ELB` health check.>
+    void take
+  take placement-group
+    like native-string
+    note <The name of an existing placement group into which to launch your instances, if any. A placement group is a logical grouping of instances within a single Availability Zone. You cannot specify multiple Availability Zones and a placement group. For more information, see [Placement Groups](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html) in the _Amazon EC2 User Guide for Linux Instances_.>
+    void take
+  take vpc-zone-identifier
+    like native-string
+    note <A comma-separated list of subnet IDs for a virtual private cloud (VPC) where instances in the Auto Scaling group can be created. If you specify `VPCZoneIdentifier` with `AvailabilityZones`, the subnets that you specify for this parameter must reside in those Availability Zones.
+
+Conditional: If your account supports EC2-Classic and VPC, this parameter is required to launch instances into a VPC.>
+    void take
+  take termination-policies
+    like list
+      like xml-string-max-len1600
+    note <A policy or a list of policies that are used to select the instance to terminate. These policies are executed in the order that you list them. For more information, see [Controlling which Auto Scaling instances terminate during scale in](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-instance-termination.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+    void take
+  take new-instances-protected-from-scale-in
+    like native-boolean
+    note <Indicates whether newly launched instances are protected from termination by Amazon EC2 Auto Scaling when scaling in. For more information about preventing instances from terminating on scale in, see [Instance scale-in protection](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-instance-termination.html#instance-protection) in the _Amazon EC2 Auto Scaling User Guide_.>
+    void take
+  take capacity-rebalance
+    like native-boolean
+    note <Indicates whether Capacity Rebalancing is enabled. Otherwise, Capacity Rebalancing is disabled. When you turn on Capacity Rebalancing, Amazon EC2 Auto Scaling attempts to launch a Spot Instance whenever Amazon EC2 notifies that a Spot Instance is at an elevated risk of interruption. After launching a new instance, it then terminates an old instance. For more information, see [Amazon EC2 Auto Scaling Capacity Rebalancing](https://docs.aws.amazon.com/autoscaling/ec2/userguide/capacity-rebalance.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+    void take
+  take lifecycle-hook-specification-list
+    like list
+      like lifecycle-hook-specification
+    note <One or more lifecycle hooks for the group, which specify actions to perform when Amazon EC2 Auto Scaling launches or terminates instances.>
+    void take
+  take tags
+    like list
+      like tag
+    note <One or more tags. You can tag your Auto Scaling group and propagate the tags to the Amazon EC2 instances it launches. Tags are not propagated to Amazon EBS volumes. To add tags to Amazon EBS volumes, specify the tags in a launch template but use caution. If the launch template specifies an instance tag with a key that is also specified for the Auto Scaling group, Amazon EC2 Auto Scaling overrides the value of that instance tag with the value specified by the Auto Scaling group. For more information, see [Tagging Auto Scaling groups and instances](https://docs.aws.amazon.com/autoscaling/ec2/userguide/autoscaling-tagging.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+    void take
+  take service-linked-role-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the service-linked role that the Auto Scaling group uses to call other Amazon Web Services on your behalf. By default, Amazon EC2 Auto Scaling uses a service-linked role named `AWSServiceRoleForAutoScaling`, which it creates if it does not exist. For more information, see [Service-linked roles](https://docs.aws.amazon.com/autoscaling/ec2/userguide/autoscaling-service-linked-role.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+    void take
+  take max-instance-lifetime
+    like native-integer
+    note <The maximum amount of time, in seconds, that an instance can be in service. The default is null. If specified, the value must be either 0 or a number equal to or greater than 86,400 seconds (1 day). For more information, see [Replacing Auto Scaling instances based on maximum instance lifetime](https://docs.aws.amazon.com/autoscaling/ec2/userguide/asg-max-instance-lifetime.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+    void take
+  take context
+    like native-string
+    note <Reserved.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateAutoScalingGroup>
+
+  find <AutoScalingGroupName>, loan auto-scaling-group-name
+  find <LaunchConfigurationName>, loan launch-configuration-name
+  find <LaunchTemplate>, loan launch-template
+  find <MixedInstancesPolicy>, loan mixed-instances-policy
+  find <InstanceId>, loan instance-id
+  find <MinSize>, loan min-size
+  find <MaxSize>, loan max-size
+  find <DesiredCapacity>, loan desired-capacity
+  find <DefaultCooldown>, loan default-cooldown
+  find <AvailabilityZones>, loan availability-zones
+  find <LoadBalancerNames>, loan load-balancer-names
+  find <TargetGroupARNs>, loan target-group-ar-ns
+  find <HealthCheckType>, loan health-check-type
+  find <HealthCheckGracePeriod>, loan health-check-grace-period
+  find <PlacementGroup>, loan placement-group
+  find <VPCZoneIdentifier>, loan vpc-zone-identifier
+  find <TerminationPolicies>, loan termination-policies
+  find <NewInstancesProtectedFromScaleIn>, loan new-instances-protected-from-scale-in
+  find <CapacityRebalance>, loan capacity-rebalance
+  find <LifecycleHookSpecificationList>, loan lifecycle-hook-specification-list
+  find <Tags>, loan tags
+  find <ServiceLinkedRoleARN>, loan service-linked-role-arn
+  find <MaxInstanceLifetime>, loan max-instance-lifetime
+  find <Context>, loan context
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like already-exists-fault
+    note <AlreadyExistsFault>
+  loot 481
+    seed xml, like limit-exceeded-fault
+    note <LimitExceededFault>
+  loot 482
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>
+  loot 483
+    seed xml, like service-linked-role-failure
+    note <ServiceLinkedRoleFailure>

@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/rule-does-not-exist-exception
+  take form rule-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/rule-set-does-not-exist-exception
+  take form rule-set-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/set-receipt-rule-position-response
+  take form set-receipt-rule-position-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-set-receipt-rule-position, name <POST_SetReceiptRulePosition>
+  note <Sets the position of the specified receipt rule in the receipt rule set.
+
+For information about managing receipt rules, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-managing-receipt-rules.html).
+
+You can execute this operation no more than once per second.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take set-receipt-rule-position-request, like set-receipt-rule-position-request
+    void take
+
+  line </#Action=SetReceiptRulePosition>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan set-receipt-rule-position-request
+
+  loot 200
+    seed xml, like set-receipt-rule-position-response
+    note <Success>
+  loot 480
+    seed xml, like rule-set-does-not-exist-exception
+    note <RuleSetDoesNotExistException>
+  loot 481
+    seed xml, like rule-does-not-exist-exception
+    note <RuleDoesNotExistException>

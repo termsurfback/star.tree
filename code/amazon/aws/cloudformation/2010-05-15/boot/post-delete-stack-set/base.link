@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/delete-stack-set-output
+  take form delete-stack-set-output
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/operation-in-progress-exception
+  take form operation-in-progress-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/stack-set-not-empty-exception
+  take form stack-set-not-empty-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-stack-set, name <POST_DeleteStackSet>
+  note <Deletes a stack set. Before you can delete a stack set, all of its member stack instances must be deleted. For more information about how to do this, see DeleteStackInstances.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-stack-set-input, like delete-stack-set-input
+    void take
+
+  line </#Action=DeleteStackSet>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-stack-set-input
+
+  loot 200
+    seed xml, like delete-stack-set-output
+    note <Success>
+  loot 480
+    seed xml, like stack-set-not-empty-exception
+    note <StackSetNotEmptyException>
+  loot 481
+    seed xml, like operation-in-progress-exception
+    note <OperationInProgressException>

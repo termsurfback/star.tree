@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/start-contact-recording-body
+  take form start-contact-recording-body
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/start-contact-recording-response
+  take form start-contact-recording-response
+
+boot start-contact-recording, name <StartContactRecording>
+  note <Starts recording the contact when the agent joins the call. StartContactRecording is a one-time action. For example, if you use StopContactRecording to stop recording an ongoing call, you can't use StartContactRecording to restart it. For scenarios where the recording has started and you want to suspend and resume it, such as when collecting sensitive information (for example, a credit card number), use SuspendContactRecording and ResumeContactRecording.
+
+You can use this API to override the recording behavior configured in the [Set recording behavior](https://docs.aws.amazon.com/connect/latest/adminguide/set-recording-behavior.html) block.
+
+Only voice recordings are supported at this time.>
+
+  take start-contact-recording-body, like start-contact-recording-body
+
+  line </contact/start-recording>
+
+  seed json, loan start-contact-recording-body
+
+  loot 200
+    seed json, like start-contact-recording-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like internal-service-exception
+    note <InternalServiceException>

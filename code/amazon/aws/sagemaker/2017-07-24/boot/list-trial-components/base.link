@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/list-trial-components-response
+  take form list-trial-components-response
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-not-found
+  take form resource-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-trial-components, name <ListTrialComponents>
+  note <Lists the trial components in your account. You can sort the list by trial component name or creation time. You can filter the list to show only components that were created in a specific time range. You can also filter on one of the following:
+
+- `ExperimentName`
+
+- `SourceArn`
+
+- `TrialName`>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-trial-components-request, like list-trial-components-request
+
+  line </#X-Amz-Target=SageMaker.ListTrialComponents>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-trial-components-request
+
+  loot 200
+    seed json, like list-trial-components-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found
+    note <ResourceNotFound>

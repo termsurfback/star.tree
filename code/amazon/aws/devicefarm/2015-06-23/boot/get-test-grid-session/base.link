@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/argument-exception
+  take form argument-exception
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/get-test-grid-session-result
+  take form get-test-grid-session-result
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-test-grid-session, name <GetTestGridSession>
+  note <A session is an instance of a browser created through a `RemoteWebDriver` with the URL from CreateTestGridUrlResult$url. You can use the following to look up sessions:
+
+- The session ARN (GetTestGridSessionRequest$sessionArn).
+
+- The project ARN and a session ID (GetTestGridSessionRequest$projectArn and GetTestGridSessionRequest$sessionId).>
+
+  take x-amz-target
+    like native-string
+  take get-test-grid-session-request, like get-test-grid-session-request
+
+  line </#X-Amz-Target=DeviceFarm_20150623.GetTestGridSession>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-test-grid-session-request
+
+  loot 200
+    seed json, like get-test-grid-session-result
+    note <Success>
+  loot 480
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 481
+    seed json, like argument-exception
+    note <ArgumentException>
+  loot 482
+    seed json, like internal-service-exception
+    note <InternalServiceException>

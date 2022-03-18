@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/associated-instances
+  take form associated-instances
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/delete-document-result
+  take form delete-document-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-document
+  take form invalid-document
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-document-operation
+  take form invalid-document-operation
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-document, name <DeleteDocument>
+  note <Deletes the Amazon Web Services Systems Manager document (SSM document) and all instance associations to the document.
+
+Before you delete the document, we recommend that you use DeleteAssociation to disassociate all instances that are associated with the document.>
+
+  take x-amz-target
+    like native-string
+  take delete-document-request, like delete-document-request
+
+  line </#X-Amz-Target=AmazonSSM.DeleteDocument>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-document-request
+
+  loot 200
+    seed json, like delete-document-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like invalid-document
+    note <InvalidDocument>
+  loot 482
+    seed json, like invalid-document-operation
+    note <InvalidDocumentOperation>
+  loot 483
+    seed json, like associated-instances
+    note <AssociatedInstances>

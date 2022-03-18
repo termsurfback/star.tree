@@ -1,0 +1,73 @@
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/create-event-tracker-response
+  take form create-event-tracker-response
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/resource-already-exists-exception
+  take form resource-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-event-tracker, name <CreateEventTracker>
+  note <Creates an event tracker that you use when adding event data to a specified dataset group using the [PutEvents](https://docs.aws.amazon.com/personalize/latest/dg/API_UBS_PutEvents.html) API.
+
+Only one event tracker can be associated with a dataset group. You will get an error if you call `CreateEventTracker` using the same dataset group as an existing event tracker.
+
+When you create an event tracker, the response includes a tracking ID, which you pass as a parameter when you use the [PutEvents](https://docs.aws.amazon.com/personalize/latest/dg/API_UBS_PutEvents.html) operation. Amazon Personalize then appends the event data to the Interactions dataset of the dataset group you specify in your event tracker.
+
+The event tracker can be in one of the following states:
+
+- CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED
+
+- DELETE PENDING &gt; DELETE IN_PROGRESS
+
+To get the status of the event tracker, call DescribeEventTracker.
+
+The event tracker must be in the ACTIVE state before using the tracking ID.
+
+**Related APIs** - ListEventTrackers
+
+- DescribeEventTracker
+
+- DeleteEventTracker>
+
+  take x-amz-target
+    like native-string
+  take create-event-tracker-request, like create-event-tracker-request
+
+  line </#X-Amz-Target=AmazonPersonalize.CreateEventTracker>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-event-tracker-request
+
+  loot 200
+    seed json, like create-event-tracker-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like resource-already-exists-exception
+    note <ResourceAlreadyExistsException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 484
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>

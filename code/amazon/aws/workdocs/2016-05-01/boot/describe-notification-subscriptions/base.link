@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/describe-notification-subscriptions-response
+  take form describe-notification-subscriptions-response
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/entity-not-exists-exception
+  take form entity-not-exists-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/unauthorized-resource-access-exception
+  take form unauthorized-resource-access-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-notification-subscriptions, name <DescribeNotificationSubscriptions>
+  note <Lists the specified notification subscriptions.>
+
+  take organization-id
+    like native-string
+    note <The ID of the organization.>
+  take marker
+    like native-string
+    note <The marker for the next set of results. (You received this marker from a previous call.)>
+    void take
+  take limit
+    like native-integer
+    note <The maximum number of items to return with this call.>
+    void take
+
+  line </api/v1/organizations/{organization-id}/subscriptions>
+
+  find <marker>, loan marker
+  find <limit>, loan limit
+
+  loot 200
+    seed json, like describe-notification-subscriptions-response
+    note <Success>
+  loot 480
+    seed json, like unauthorized-resource-access-exception
+    note <UnauthorizedResourceAccessException>
+  loot 481
+    seed json, like entity-not-exists-exception
+    note <EntityNotExistsException>
+  loot 482
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

@@ -1,0 +1,80 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/copy-db-parameter-group-result
+  take form copy-db-parameter-group-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-parameter-group-already-exists-fault
+  take form db-parameter-group-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-parameter-group-not-found-fault
+  take form db-parameter-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-parameter-group-quota-exceeded-fault
+  take form db-parameter-group-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/tag
+  take form tag
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-copy-db-parameter-group, name <GET_CopyDBParameterGroup>
+  note <Copies the specified DB parameter group.>
+
+  take source-db-parameter-group-identifier
+    like native-string
+    note <The identifier or ARN for the source DB parameter group. For information about creating an ARN, see [Constructing an ARN for Amazon RDS](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_Tagging.ARN.html#USER_Tagging.ARN.Constructing) in the _Amazon RDS User Guide_.
+
+Constraints:
+
+- Must specify a valid DB parameter group.>
+  take target-db-parameter-group-identifier
+    like native-string
+    note <The identifier for the copied DB parameter group.
+
+Constraints:
+
+- Can't be null, empty, or blank
+
+- Must contain from 1 to 255 letters, numbers, or hyphens
+
+- First character must be a letter
+
+- Can't end with a hyphen or contain two consecutive hyphens
+
+Example: `my-db-parameter-group`>
+  take target-db-parameter-group-description
+    like native-string
+    note <A description for the copied DB parameter group.>
+  take tags
+    like list
+      like tag
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CopyDBParameterGroup>
+
+  find <SourceDBParameterGroupIdentifier>, loan source-db-parameter-group-identifier
+  find <TargetDBParameterGroupIdentifier>, loan target-db-parameter-group-identifier
+  find <TargetDBParameterGroupDescription>, loan target-db-parameter-group-description
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like copy-db-parameter-group-result
+    note <Success>
+  loot 480
+    seed xml, like db-parameter-group-not-found-fault
+    note <DBParameterGroupNotFoundFault>
+  loot 481
+    seed xml, like db-parameter-group-already-exists-fault
+    note <DBParameterGroupAlreadyExistsFault>
+  loot 482
+    seed xml, like db-parameter-group-quota-exceeded-fault
+    note <DBParameterGroupQuotaExceededFault>

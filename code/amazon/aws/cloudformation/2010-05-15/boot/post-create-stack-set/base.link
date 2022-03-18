@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/create-stack-set-output
+  take form create-stack-set-output
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/created-but-modified-exception
+  take form created-but-modified-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/name-already-exists-exception
+  take form name-already-exists-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-stack-set, name <POST_CreateStackSet>
+  note <Creates a stack set.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-stack-set-input, like create-stack-set-input
+    void take
+
+  line </#Action=CreateStackSet>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-stack-set-input
+
+  loot 200
+    seed xml, like create-stack-set-output
+    note <Success>
+  loot 480
+    seed xml, like name-already-exists-exception
+    note <NameAlreadyExistsException>
+  loot 481
+    seed xml, like created-but-modified-exception
+    note <CreatedButModifiedException>
+  loot 482
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>

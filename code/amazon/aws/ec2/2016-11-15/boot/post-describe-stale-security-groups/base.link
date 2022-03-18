@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-stale-security-groups-result
+  take form describe-stale-security-groups-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-stale-security-groups, name <POST_DescribeStaleSecurityGroups>
+  note <[VPC only] Describes the stale security group rules for security groups in a specified VPC. Rules are stale when they reference a deleted security group in a peer VPC, or a security group in a peer VPC for which the VPC peering connection has been deleted.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-stale-security-groups-request, like describe-stale-security-groups-request
+    void take
+
+  line </#Action=DescribeStaleSecurityGroups>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-stale-security-groups-request
+
+  loot 200
+    seed xml, like describe-stale-security-groups-result
+    note <Success>

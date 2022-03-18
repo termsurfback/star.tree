@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/list-traffic-policy-instances-response
+  take form list-traffic-policy-instances-response
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/no-such-traffic-policy-instance
+  take form no-such-traffic-policy-instance
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-traffic-policy-instances, name <ListTrafficPolicyInstances>
+  note <Gets information about the traffic policy instances that you created by using the current Amazon Web Services account.
+
+After you submit an `UpdateTrafficPolicyInstance` request, there's a brief delay while Amazon Route 53 creates the resource record sets that are specified in the traffic policy definition. For more information, see the `State` response element.
+
+Route 53 returns a maximum of 100 items in each response. If you have a lot of traffic policy instances, you can use the `MaxItems` parameter to list them in groups of up to 100.>
+
+  take hostedzoneid
+    like native-string
+    note <If the value of `IsTruncated` in the previous response was `true`, you have more traffic policy instances. To get more traffic policy instances, submit another `ListTrafficPolicyInstances` request. For the value of `HostedZoneId`, specify the value of `HostedZoneIdMarker` from the previous response, which is the hosted zone ID of the first traffic policy instance in the next group of traffic policy instances.
+
+If the value of `IsTruncated` in the previous response was `false`, there are no more traffic policy instances to get.>
+    void take
+  take trafficpolicyinstancename
+    like native-string
+    note <If the value of `IsTruncated` in the previous response was `true`, you have more traffic policy instances. To get more traffic policy instances, submit another `ListTrafficPolicyInstances` request. For the value of `trafficpolicyinstancename`, specify the value of `TrafficPolicyInstanceNameMarker` from the previous response, which is the name of the first traffic policy instance in the next group of traffic policy instances.
+
+If the value of `IsTruncated` in the previous response was `false`, there are no more traffic policy instances to get.>
+    void take
+  take trafficpolicyinstancetype
+    like native-string
+    note <If the value of `IsTruncated` in the previous response was `true`, you have more traffic policy instances. To get more traffic policy instances, submit another `ListTrafficPolicyInstances` request. For the value of `trafficpolicyinstancetype`, specify the value of `TrafficPolicyInstanceTypeMarker` from the previous response, which is the type of the first traffic policy instance in the next group of traffic policy instances.
+
+If the value of `IsTruncated` in the previous response was `false`, there are no more traffic policy instances to get.>
+    void take
+  take maxitems
+    like native-string
+    note <The maximum number of traffic policy instances that you want Amazon Route 53 to return in response to a `ListTrafficPolicyInstances` request. If you have more than `MaxItems` traffic policy instances, the value of the `IsTruncated` element in the response is `true`, and the values of `HostedZoneIdMarker`, `TrafficPolicyInstanceNameMarker`, and `TrafficPolicyInstanceTypeMarker` represent the first traffic policy instance in the next group of `MaxItems` traffic policy instances.>
+    void take
+
+  line </2013-04-01/trafficpolicyinstances>
+
+  find <hostedzoneid>, loan hostedzoneid
+  find <trafficpolicyinstancename>, loan trafficpolicyinstancename
+  find <trafficpolicyinstancetype>, loan trafficpolicyinstancetype
+  find <maxitems>, loan maxitems
+
+  loot 200
+    seed xml, like list-traffic-policy-instances-response
+    note <Success>
+  loot 480
+    seed xml, like invalid-input
+    note <InvalidInput>
+  loot 481
+    seed xml, like no-such-traffic-policy-instance
+    note <NoSuchTrafficPolicyInstance>

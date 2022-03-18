@@ -1,0 +1,23 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/realtimebidding/v1/base/watch-creatives-response
+  take form watch-creatives-response
+
+boot realtimebidding-bidders-creatives-watch, name <realtimebidding.bidders.creatives.watch>
+  note <Watches all creatives pertaining to a bidder. It is sufficient to invoke this endpoint once per bidder. A Pub/Sub topic will be created and notifications will be pushed to the topic when any of the bidder's creatives change status. All of the bidder's service accounts will have access to read from the topic. Subsequent invocations of this method will return the existing Pub/Sub configuration.>
+
+  take parent
+    like native-string
+    note <Required. To watch all creatives pertaining to the bidder and all its child seat accounts, the bidder must follow the pattern `bidders/{bidderAccountId}`.>
+  take watch-creatives-request, like watch-creatives-request
+    void take
+
+  line </v1/{parent}/creatives:watch>
+
+  seed json, loan watch-creatives-request
+
+  loot 200
+    seed json, like watch-creatives-response
+    note <Successful response>

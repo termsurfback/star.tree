@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/global-cluster-not-found-fault
+  take form global-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-global-cluster-state-fault
+  take form invalid-global-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/remove-from-global-cluster-result
+  take form remove-from-global-cluster-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-remove-from-global-cluster, name <POST_RemoveFromGlobalCluster>
+  note <Detaches an Aurora secondary cluster from an Aurora global database cluster. The cluster becomes a standalone cluster with read-write capability instead of being read-only and receiving data from a primary cluster in a different region.
+
+This action only applies to Aurora DB clusters.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take remove-from-global-cluster-message, like remove-from-global-cluster-message
+    void take
+
+  line </#Action=RemoveFromGlobalCluster>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan remove-from-global-cluster-message
+
+  loot 200
+    seed xml, like remove-from-global-cluster-result
+    note <Success>
+  loot 480
+    seed xml, like global-cluster-not-found-fault
+    note <GlobalClusterNotFoundFault>
+  loot 481
+    seed xml, like invalid-global-cluster-state-fault
+    note <InvalidGlobalClusterStateFault>
+  loot 482
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>

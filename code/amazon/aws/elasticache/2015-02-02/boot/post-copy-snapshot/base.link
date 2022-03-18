@@ -1,0 +1,107 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/copy-snapshot-result
+  take form copy-snapshot-result
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-snapshot-state-fault
+  take form invalid-snapshot-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/snapshot-already-exists-fault
+  take form snapshot-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/snapshot-not-found-fault
+  take form snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/snapshot-quota-exceeded-fault
+  take form snapshot-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/tag-quota-per-resource-exceeded
+  take form tag-quota-per-resource-exceeded
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-copy-snapshot, name <POST_CopySnapshot>
+  note <Makes a copy of an existing snapshot.
+
+This operation is valid for Redis only.
+
+Users or groups that have permissions to use the `CopySnapshot` operation can create their own Amazon S3 buckets and copy snapshots to it. To control access to your snapshots, use an IAM policy to control who has the ability to use the `CopySnapshot` operation. For more information about using IAM to control the use of ElastiCache operations, see [Exporting Snapshots](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/backups-exporting.html) and [Authentication & Access Control](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/IAM.html).
+
+You could receive the following error messages.
+
+**Error Messages** - **Error Message:** The S3 bucket %s is outside of the region.
+
+  **Solution:** Create an Amazon S3 bucket in the same region as your snapshot. For more information, see [Step 1: Create an Amazon S3 Bucket](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/backups-exporting.html#backups-exporting-create-s3-bucket) in the ElastiCache User Guide.
+
+- **Error Message:** The S3 bucket %s does not exist.
+
+  **Solution:** Create an Amazon S3 bucket in the same region as your snapshot. For more information, see [Step 1: Create an Amazon S3 Bucket](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/backups-exporting.html#backups-exporting-create-s3-bucket) in the ElastiCache User Guide.
+
+- **Error Message:** The S3 bucket %s is not owned by the authenticated user.
+
+  **Solution:** Create an Amazon S3 bucket in the same region as your snapshot. For more information, see [Step 1: Create an Amazon S3 Bucket](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/backups-exporting.html#backups-exporting-create-s3-bucket) in the ElastiCache User Guide.
+
+- **Error Message:** The authenticated user does not have sufficient permissions to perform the desired activity.
+
+  **Solution:** Contact your system administrator to get the needed permissions.
+
+- **Error Message:** The S3 bucket %s already contains an object with key %s.
+
+  **Solution:** Give the `TargetSnapshotName` a new and unique value. If exporting a snapshot, you could alternatively create a new Amazon S3 bucket and use this same value for `TargetSnapshotName`.
+
+- **Error Message:** ElastiCache has not been granted READ permissions %s on the S3 Bucket.
+
+  **Solution:** Add List and Read permissions on the bucket. For more information, see [Step 2: Grant ElastiCache Access to Your Amazon S3 Bucket](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/backups-exporting.html#backups-exporting-grant-access) in the ElastiCache User Guide.
+
+- **Error Message:** ElastiCache has not been granted WRITE permissions %s on the S3 Bucket.
+
+  **Solution:** Add Upload/Delete permissions on the bucket. For more information, see [Step 2: Grant ElastiCache Access to Your Amazon S3 Bucket](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/backups-exporting.html#backups-exporting-grant-access) in the ElastiCache User Guide.
+
+- **Error Message:** ElastiCache has not been granted READ_ACP permissions %s on the S3 Bucket.
+
+  **Solution:** Add View Permissions on the bucket. For more information, see [Step 2: Grant ElastiCache Access to Your Amazon S3 Bucket](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/backups-exporting.html#backups-exporting-grant-access) in the ElastiCache User Guide.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take copy-snapshot-message, like copy-snapshot-message
+    void take
+
+  line </#Action=CopySnapshot>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan copy-snapshot-message
+
+  loot 200
+    seed xml, like copy-snapshot-result
+    note <Success>
+  loot 480
+    seed xml, like snapshot-already-exists-fault
+    note <SnapshotAlreadyExistsFault>
+  loot 481
+    seed xml, like snapshot-not-found-fault
+    note <SnapshotNotFoundFault>
+  loot 482
+    seed xml, like snapshot-quota-exceeded-fault
+    note <SnapshotQuotaExceededFault>
+  loot 483
+    seed xml, like invalid-snapshot-state-fault
+    note <InvalidSnapshotStateFault>
+  loot 484
+    seed xml, like tag-quota-per-resource-exceeded
+    note <TagQuotaPerResourceExceeded>
+  loot 485
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 486
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

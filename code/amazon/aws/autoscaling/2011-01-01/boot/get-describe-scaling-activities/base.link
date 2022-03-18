@@ -1,0 +1,79 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/activities-type
+  take form activities-type
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/xml-string
+  take form xml-string
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-scaling-activities, name <GET_DescribeScalingActivities>
+  note <Gets information about the scaling activities in the account and Region.
+
+When scaling events occur, you see a record of the scaling activity in the scaling activities. For more information, see [Verifying a scaling activity for an Auto Scaling group](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-verify-scaling-activity.html) in the _Amazon EC2 Auto Scaling User Guide_.
+
+If the scaling event succeeds, the value of the `StatusCode` element in the response is `Successful`. If an attempt to launch instances failed, the `StatusCode` value is `Failed` or `Cancelled` and the `StatusMessage` element in the response indicates the cause of the failure. For help interpreting the `StatusMessage`, see [Troubleshooting Amazon EC2 Auto Scaling](https://docs.aws.amazon.com/autoscaling/ec2/userguide/CHAP_Troubleshooting.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+
+  take activity-ids
+    like list
+      like xml-string
+    note <The activity IDs of the desired scaling activities. If you omit this parameter, all activities for the past six weeks are described. If unknown activities are requested, they are ignored with no error. If you specify an Auto Scaling group, the results are limited to that group.
+
+Array Members: Maximum number of 50 IDs.>
+    void take
+  take auto-scaling-group-name
+    like native-string
+    note <The name of the Auto Scaling group.>
+    void take
+  take include-deleted-groups
+    like native-boolean
+    note <Indicates whether to include scaling activity from deleted Auto Scaling groups.>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of items to return with this call. The default value is `100` and the maximum value is `100`.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next set of items to return. (You received this token from a previous call.)>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeScalingActivities>
+
+  find <ActivityIds>, loan activity-ids
+  find <AutoScalingGroupName>, loan auto-scaling-group-name
+  find <IncludeDeletedGroups>, loan include-deleted-groups
+  find <MaxRecords>, loan max-records
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like activities-type
+    note <Success>
+  loot 480
+    seed xml, like invalid-next-token
+    note <InvalidNextToken>
+  loot 481
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

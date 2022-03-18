@@ -1,0 +1,50 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/node-groups-to-remove-list
+  take form node-groups-to-remove-list
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/node-groups-to-retain-list
+  take form node-groups-to-retain-list
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/resharding-configuration-list
+  take form resharding-configuration-list
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+load @drumwork/snow/base/integer
+  take form integer
+
+load @drumwork/snow/base/string
+  take form string
+
+form modify-replication-group-shard-configuration-message, name <ModifyReplicationGroupShardConfigurationMessage>
+  note <Represents the input for a `ModifyReplicationGroupShardConfiguration` operation.>
+  take replication-group-id, name <ReplicationGroupId>
+    like string
+    note <The name of the Redis (cluster mode enabled) cluster (replication group) on which the shards are to be configured.>
+  take node-group-count, name <NodeGroupCount>
+    like integer
+    note <The number of node groups (shards) that results from the modification of the shard configuration.>
+  take apply-immediately, name <ApplyImmediately>
+    like boolean
+    note <Indicates that the shard reconfiguration process begins immediately. At present, the only permitted value for this parameter is `true`.
+
+Value: true>
+  take resharding-configuration, name <ReshardingConfiguration>
+    like resharding-configuration-list
+    void take
+    note <Specifies the preferred availability zones for each node group in the cluster. If the value of `NodeGroupCount` is greater than the current number of node groups (shards), you can use this parameter to specify the preferred availability zones of the cluster's shards. If you omit this parameter ElastiCache selects availability zones for you.
+
+You can specify this parameter only if the value of `NodeGroupCount` is greater than the current number of node groups (shards).>
+  take node-groups-to-remove, name <NodeGroupsToRemove>
+    like node-groups-to-remove-list
+    void take
+    note <If the value of `NodeGroupCount` is less than the current number of node groups (shards), then either `NodeGroupsToRemove` or `NodeGroupsToRetain` is required. `NodeGroupsToRemove` is a list of `NodeGroupId`s to remove from the cluster.
+
+ElastiCache for Redis will attempt to remove all node groups listed by `NodeGroupsToRemove` from the cluster.>
+  take node-groups-to-retain, name <NodeGroupsToRetain>
+    like node-groups-to-retain-list
+    void take
+    note <If the value of `NodeGroupCount` is less than the current number of node groups (shards), then either `NodeGroupsToRemove` or `NodeGroupsToRetain` is required. `NodeGroupsToRetain` is a list of `NodeGroupId`s to retain in the cluster.
+
+ElastiCache for Redis will attempt to remove all node groups except those listed by `NodeGroupsToRetain` from the cluster.>

@@ -1,0 +1,50 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/certificate
+  take form certificate
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/listener-not-found-exception
+  take form listener-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/operation-not-permitted-exception
+  take form operation-not-permitted-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/remove-listener-certificates-output
+  take form remove-listener-certificates-output
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-remove-listener-certificates, name <GET_RemoveListenerCertificates>
+  note <Removes the specified certificate from the certificate list for the specified HTTPS or TLS listener.>
+
+  take listener-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the listener.>
+  take certificates
+    like list
+      like certificate
+    note <The certificate to remove. You can specify one certificate per call. Set `CertificateArn` to the certificate ARN but do not set `IsDefault`.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=RemoveListenerCertificates>
+
+  find <ListenerArn>, loan listener-arn
+  find <Certificates>, loan certificates
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like remove-listener-certificates-output
+    note <Success>
+  loot 480
+    seed xml, like listener-not-found-exception
+    note <ListenerNotFoundException>
+  loot 481
+    seed xml, like operation-not-permitted-exception
+    note <OperationNotPermittedException>

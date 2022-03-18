@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/start-job-run-body
+  take form start-job-run-body
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/start-job-run-response
+  take form start-job-run-response
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-job-run, name <StartJobRun>
+  note <Starts a job run. A job run is a unit of work, such as a Spark jar, PySpark script, or SparkSQL query, that you submit to Amazon EMR on EKS.>
+
+  take virtual-cluster-id
+    like native-string
+    note <The virtual cluster ID for which the job run request is submitted.>
+  take start-job-run-body, like start-job-run-body
+
+  line </virtualclusters/{virtual-cluster-id}/jobruns>
+
+  seed json, loan start-job-run-body
+
+  loot 200
+    seed json, like start-job-run-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

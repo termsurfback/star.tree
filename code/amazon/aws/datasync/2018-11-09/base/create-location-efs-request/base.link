@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/datasync/2018-11-09/base/ec2-config
+  take form ec2-config
+
+load @drumwork/snow/amazonaws.com/datasync/2018-11-09/base/efs-filesystem-arn
+  take form efs-filesystem-arn
+
+load @drumwork/snow/amazonaws.com/datasync/2018-11-09/base/efs-subdirectory
+  take form efs-subdirectory
+
+load @drumwork/snow/amazonaws.com/datasync/2018-11-09/base/input-tag-list
+  take form input-tag-list
+
+form create-location-efs-request, name <CreateLocationEfsRequest>
+  note <CreateLocationEfsRequest>
+  take subdirectory, name <Subdirectory>
+    like efs-subdirectory
+    void take
+    note <A subdirectory in the location’s path. This subdirectory in the EFS file system is used to read data from the EFS source location or write data to the EFS destination. By default, DataSync uses the root directory.
+
+`Subdirectory` must be specified with forward slashes. For example, `/path/to/folder`.>
+  take efs-filesystem-arn, name <EfsFilesystemArn>
+    like efs-filesystem-arn
+    note <The Amazon Resource Name (ARN) for the Amazon EFS file system.>
+  take ec2-config, name <Ec2Config>
+    like ec2-config
+    note <The subnet and security group that the Amazon EFS file system uses. The security group that you provide needs to be able to communicate with the security group on the mount target in the subnet specified.
+
+The exact relationship between security group M (of the mount target) and security group S (which you provide for DataSync to use at this stage) is as follows:
+
+- Security group M (which you associate with the mount target) must allow inbound access for the Transmission Control Protocol (TCP) on the NFS port (2049) from security group S. You can enable inbound connections either by IP address (CIDR range) or security group.
+
+- Security group S (provided to DataSync to access EFS) should have a rule that enables outbound connections to the NFS port on one of the file system’s mount targets. You can enable outbound connections either by IP address (CIDR range) or security group.
+
+  For information about security groups and mount targets, see Security Groups for Amazon EC2 Instances and Mount Targets in the _Amazon EFS User Guide._>
+  take tags, name <Tags>
+    like input-tag-list
+    void take
+    note <The key-value pair that represents a tag that you want to add to the resource. The value can be an empty string. This value helps you manage, filter, and search for your resources. We recommend that you create a name tag for your location.>

@@ -1,0 +1,80 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/entity-temporarily-unmodifiable-exception
+  take form entity-temporarily-unmodifiable-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/password-policy-violation-exception
+  take form password-policy-violation-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-update-login-profile, name <GET_UpdateLoginProfile>
+  note <Changes the password for the specified IAM user. You can use the CLI, the Amazon Web Services API, or the **Users** page in the IAM console to change the password for any IAM user. Use ChangePassword to change your own password in the **My Security Credentials** page in the Management Console.
+
+For more information about modifying passwords, see [Managing passwords](https://docs.aws.amazon.com/IAM/latest/UserGuide/Using_ManagingLogins.html) in the _IAM User Guide_.>
+
+  take user-name
+    like native-string
+    note <The name of the user whose password you want to update.
+
+This parameter allows (through its [regex pattern](http://wikipedia.org/wiki/regex)) a string of characters consisting of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: _+=,.@->
+  take password
+    like native-string
+    note <The new password for the specified IAM user.
+
+The [regex pattern](http://wikipedia.org/wiki/regex) used to validate this parameter is a string of characters consisting of the following:
+
+- Any printable ASCII character ranging from the space character (`\u0020`) through the end of the ASCII character range
+
+- The printable characters in the Basic Latin and Latin-1 Supplement character set (through `\u00FF`)
+
+- The special characters tab (`\u0009`), line feed (`\u000A`), and carriage return (`\u000D`)
+
+However, the format can be further restricted by the account administrator by setting a password policy on the account. For more information, see UpdateAccountPasswordPolicy.>
+    void take
+  take password-reset-required
+    like native-boolean
+    note <Allows this new password to be used only once by requiring the specified IAM user to set a new password on next sign-in.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=UpdateLoginProfile>
+
+  find <UserName>, loan user-name
+  find <Password>, loan password
+  find <PasswordResetRequired>, loan password-reset-required
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like entity-temporarily-unmodifiable-exception
+    note <EntityTemporarilyUnmodifiableException>
+  loot 481
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 482
+    seed xml, like password-policy-violation-exception
+    note <PasswordPolicyViolationException>
+  loot 483
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 484
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

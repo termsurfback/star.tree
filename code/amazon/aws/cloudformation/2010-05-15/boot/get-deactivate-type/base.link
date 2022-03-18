@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/cfn-registry-exception
+  take form cfn-registry-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/deactivate-type-output
+  take form deactivate-type-output
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/type-not-found-exception
+  take form type-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-deactivate-type, name <GET_DeactivateType>
+  note <Deactivates a public extension that was previously activated in this account and region.
+
+Once deactivated, an extension cannot be used in any CloudFormation operation. This includes stack update operations where the stack template includes the extension, even if no updates are being made to the extension. In addition, deactivated extensions are not automatically updated if a new version of the extension is released.>
+
+  take type-name
+    like native-string
+    note <The type name of the extension, in this account and region. If you specified a type name alias when enabling the extension, use the type name alias.
+
+Conditional: You must specify either `Arn`, or `TypeName` and `Type`.>
+    void take
+  take type
+    like native-string
+    note <The extension type.
+
+Conditional: You must specify either `Arn`, or `TypeName` and `Type`.>
+    void take
+  take arn
+    like native-string
+    note <The Amazon Resource Name (ARN) for the extension, in this account and region.
+
+Conditional: You must specify either `Arn`, or `TypeName` and `Type`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeactivateType>
+
+  find <TypeName>, loan type-name
+  find <Type>, loan type
+  find <Arn>, loan arn
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like deactivate-type-output
+    note <Success>
+  loot 480
+    seed xml, like cfn-registry-exception
+    note <CFNRegistryException>
+  loot 481
+    seed xml, like type-not-found-exception
+    note <TypeNotFoundException>

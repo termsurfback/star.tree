@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/iotevents-data/2018-10-23/base/describe-detector-response
+  take form describe-detector-response
+
+load @drumwork/snow/amazonaws.com/iotevents-data/2018-10-23/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iotevents-data/2018-10-23/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iotevents-data/2018-10-23/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iotevents-data/2018-10-23/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/iotevents-data/2018-10-23/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-detector, name <DescribeDetector>
+  note <Returns information about the specified detector (instance).>
+
+  take detector-model-name
+    like native-string
+    note <The name of the detector model whose detectors (instances) you want information about.>
+  take key-value
+    like native-string
+    note <A filter used to limit results to detectors (instances) created because of the given key ID.>
+    void take
+
+  line </detectors/{detector-model-name}/keyValues/>
+
+  find <keyValue>, loan key-value
+
+  loot 200
+    seed json, like describe-detector-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 484
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

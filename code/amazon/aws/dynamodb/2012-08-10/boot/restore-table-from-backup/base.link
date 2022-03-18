@@ -1,0 +1,75 @@
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/backup-in-use-exception
+  take form backup-in-use-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/backup-not-found-exception
+  take form backup-not-found-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/restore-table-from-backup-output
+  take form restore-table-from-backup-output
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/table-already-exists-exception
+  take form table-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/table-in-use-exception
+  take form table-in-use-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot restore-table-from-backup, name <RestoreTableFromBackup>
+  note <Creates a new table from an existing backup. Any number of users can execute up to 4 concurrent restores (any type of restore) in a given account.
+
+You can call `RestoreTableFromBackup` at a maximum rate of 10 times per second.
+
+You must manually set up the following on the restored table:
+
+- Auto scaling policies
+
+- IAM policies
+
+- Amazon CloudWatch metrics and alarms
+
+- Tags
+
+- Stream settings
+
+- Time to Live (TTL) settings>
+
+  take x-amz-target
+    like native-string
+  take restore-table-from-backup-input, like restore-table-from-backup-input
+
+  line </#X-Amz-Target=DynamoDB_20120810.RestoreTableFromBackup>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan restore-table-from-backup-input
+
+  loot 200
+    seed json, like restore-table-from-backup-output
+    note <Success>
+  loot 480
+    seed json, like table-already-exists-exception
+    note <TableAlreadyExistsException>
+  loot 481
+    seed json, like table-in-use-exception
+    note <TableInUseException>
+  loot 482
+    seed json, like backup-not-found-exception
+    note <BackupNotFoundException>
+  loot 483
+    seed json, like backup-in-use-exception
+    note <BackupInUseException>
+  loot 484
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 485
+    seed json, like internal-server-error
+    note <InternalServerError>

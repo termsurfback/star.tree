@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/environment-description
+  take form environment-description
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/insufficient-privileges-exception
+  take form insufficient-privileges-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-terminate-environment, name <POST_TerminateEnvironment>
+  note <Terminates the specified environment.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take terminate-environment-message, like terminate-environment-message
+    void take
+
+  line </#Action=TerminateEnvironment>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan terminate-environment-message
+
+  loot 200
+    seed xml, like environment-description
+    note <Success>
+  loot 480
+    seed xml, like insufficient-privileges-exception
+    note <InsufficientPrivilegesException>

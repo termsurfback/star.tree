@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/service-quotas/2019-06-24/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/service-quotas/2019-06-24/base/illegal-argument-exception
+  take form illegal-argument-exception
+
+load @drumwork/snow/amazonaws.com/service-quotas/2019-06-24/base/invalid-pagination-token-exception
+  take form invalid-pagination-token-exception
+
+load @drumwork/snow/amazonaws.com/service-quotas/2019-06-24/base/list-services-response
+  take form list-services-response
+
+load @drumwork/snow/amazonaws.com/service-quotas/2019-06-24/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/amazonaws.com/service-quotas/2019-06-24/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-services, name <ListServices>
+  note <Lists the names and codes for the services integrated with Service Quotas.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-services-request, like list-services-request
+
+  line </#X-Amz-Target=ServiceQuotasV20190624.ListServices>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-services-request
+
+  loot 200
+    seed json, like list-services-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like illegal-argument-exception
+    note <IllegalArgumentException>
+  loot 482
+    seed json, like invalid-pagination-token-exception
+    note <InvalidPaginationTokenException>
+  loot 483
+    seed json, like service-exception
+    note <ServiceException>
+  loot 484
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>

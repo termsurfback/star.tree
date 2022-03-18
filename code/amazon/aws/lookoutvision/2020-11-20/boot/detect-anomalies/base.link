@@ -1,0 +1,75 @@
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/detect-anomalies-body
+  take form detect-anomalies-body
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/detect-anomalies-response
+  take form detect-anomalies-response
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/lookoutvision/2020-11-20/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot detect-anomalies, name <DetectAnomalies>
+  note <Detects anomalies in an image that you supply.
+
+The response from `DetectAnomalies` includes a boolean prediction that the image contains one or more anomalies and a confidence value for the prediction.
+
+Before calling `DetectAnomalies`, you must first start your model with the StartModel operation. You are charged for the amount of time, in minutes, that a model runs and for the number of anomaly detection units that your model uses. If you are not using a model, use the StopModel operation to stop your model.
+
+This operation requires permissions to perform the `lookoutvision:DetectAnomalies` operation.>
+
+  take project-name
+    like native-string
+    note <The name of the project that contains the model version that you want to use.>
+  take model-version
+    like native-string
+    note <The version of the model that you want to use.>
+  take content-type
+    like native-string
+    note <The type of the image passed in `Body`. Valid values are `image/png` (PNG format images) and `image/jpeg` (JPG format images).>
+  take detect-anomalies-body, like detect-anomalies-body
+
+  line </2020-11-20/projects/{project-name}/models/{model-version}/detect#Content-Type>
+
+  hint <Content-Type>, loan content-type
+
+  seed json, loan detect-anomalies-body
+
+  loot 200
+    seed json, like detect-anomalies-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 484
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 485
+    seed json, like throttling-exception
+    note <ThrottlingException>

@@ -1,0 +1,82 @@
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/dependency-timeout-exception
+  take form dependency-timeout-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-arn-exception
+  take form invalid-arn-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-marker-exception
+  take form invalid-marker-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-internal-exception
+  take form kms-internal-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/list-aliases-response
+  take form list-aliases-response
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-aliases, name <ListAliases>
+  note <Gets a list of aliases in the caller's Amazon Web Services account and region. For more information about aliases, see CreateAlias.
+
+By default, the `ListAliases` operation returns all aliases in the account and region. To get only the aliases associated with a particular KMS key, use the `KeyId` parameter.
+
+The `ListAliases` response can include aliases that you created and associated with your customer managed keys, and aliases that Amazon Web Services created and associated with Amazon Web Services managed keys in your account. You can recognize Amazon Web Services aliases because their names have the format `aws/&lt;service-name&gt;`, such as `aws/dynamodb`.
+
+The response might also include aliases that have no `TargetKeyId` field. These are predefined aliases that Amazon Web Services has created but has not yet associated with a KMS key. Aliases that Amazon Web Services creates in your account, including predefined aliases, do not count against your [KMS aliases quota](https://docs.aws.amazon.com/kms/latest/developerguide/limits.html#aliases-limit).
+
+**Cross-account use**: No. `ListAliases` does not return aliases in other Amazon Web Services accounts.
+
+**Required permissions**: [kms:ListAliases](https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html) (IAM policy)
+
+For details, see [Controlling access to aliases](https://docs.aws.amazon.com/kms/latest/developerguide/kms-alias.html#alias-access) in the _Key Management Service Developer Guide_.
+
+**Related operations:** - CreateAlias
+
+- DeleteAlias
+
+- UpdateAlias>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take list-aliases-request, like list-aliases-request
+
+  line </#X-Amz-Target=TrentService.ListAliases>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <Limit>, loan limit
+  find <Marker>, loan marker
+
+  seed json, loan list-aliases-request
+
+  loot 200
+    seed json, like list-aliases-response
+    note <Success>
+  loot 480
+    seed json, like dependency-timeout-exception
+    note <DependencyTimeoutException>
+  loot 481
+    seed json, like invalid-marker-exception
+    note <InvalidMarkerException>
+  loot 482
+    seed json, like kms-internal-exception
+    note <KMSInternalException>
+  loot 483
+    seed json, like invalid-arn-exception
+    note <InvalidArnException>
+  loot 484
+    seed json, like not-found-exception
+    note <NotFoundException>

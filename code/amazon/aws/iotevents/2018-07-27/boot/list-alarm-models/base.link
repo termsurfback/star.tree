@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/iotevents/2018-07-27/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iotevents/2018-07-27/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iotevents/2018-07-27/base/list-alarm-models-response
+  take form list-alarm-models-response
+
+load @drumwork/snow/amazonaws.com/iotevents/2018-07-27/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/iotevents/2018-07-27/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-alarm-models, name <ListAlarmModels>
+  note <Lists the alarm models that you created. The operation returns only the metadata associated with each alarm model.>
+
+  take next-token
+    like native-string
+    note <The token that you can use to return the next set of results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to be returned per request.>
+    void take
+
+  line </alarm-models>
+
+  find <nextToken>, loan next-token
+  find <maxResults>, loan max-results
+
+  loot 200
+    seed json, like list-alarm-models-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/reserved-db-instances-offering-message
+  take form reserved-db-instances-offering-message
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/reserved-db-instances-offering-not-found-fault
+  take form reserved-db-instances-offering-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-reserved-db-instances-offerings, name <POST_DescribeReservedDBInstancesOfferings>
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-reserved-db-instances-offerings-message, like describe-reserved-db-instances-offerings-message
+    void take
+
+  line </#Action=DescribeReservedDBInstancesOfferings>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-reserved-db-instances-offerings-message
+
+  loot 200
+    seed xml, like reserved-db-instances-offering-message
+    note <Success>
+  loot 480
+    seed xml, like reserved-db-instances-offering-not-found-fault
+    note <ReservedDBInstancesOfferingNotFoundFault>

@@ -1,0 +1,30 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/customer-balance-transaction
+  take form customer-balance-transaction
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-customers-customer-balance-transactions-body
+  take form post-customers-customer-balance-transactions-body
+
+boot post-customers-customer-balance-transactions, name <PostCustomersCustomerBalanceTransactions>
+  note <Creates an immutable transaction that updates the customer’s credit [balance](/docs/billing/customer/balance).>
+
+  take customer
+    like native-string
+  take post-customers-customer-balance-transactions-body, like post-customers-customer-balance-transactions-body
+
+  line </v1/customers/{customer}/balance_transactions>
+
+  seed x-www-form-urlencoded, loan post-customers-customer-balance-transactions-body
+
+  loot 200
+    seed json, like customer-balance-transaction
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/kafka/2018-11-14/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/kafka/2018-11-14/base/forbidden-exception
+  take form forbidden-exception
+
+load @drumwork/snow/amazonaws.com/kafka/2018-11-14/base/internal-server-error-exception
+  take form internal-server-error-exception
+
+load @drumwork/snow/amazonaws.com/kafka/2018-11-14/base/list-clusters-response
+  take form list-clusters-response
+
+load @drumwork/snow/amazonaws.com/kafka/2018-11-14/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-clusters, name <ListClusters>
+  note <Returns a list of all the MSK clusters in the current Region.>
+
+  take cluster-name-filter
+    like native-string
+    note <Specify a prefix of the name of the clusters that you want to list. The service lists all the clusters whose names start with this prefix.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return in the response. If there are more results, the response includes a NextToken parameter.>
+    void take
+  take next-token
+    like native-string
+    note <The paginated results marker. When the result of the operation is truncated, the call returns NextToken in the response. To get the next batch, provide this token in your next request.>
+    void take
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+
+  line </v1/clusters>
+
+  find <clusterNameFilter>, loan cluster-name-filter
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like list-clusters-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like internal-server-error-exception
+    note <InternalServerErrorException>
+  loot 482
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 483
+    seed json, like forbidden-exception
+    note <ForbiddenException>

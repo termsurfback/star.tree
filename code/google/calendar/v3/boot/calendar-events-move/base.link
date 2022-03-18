@@ -1,0 +1,40 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/calendar/v3/base/event
+  take form event
+
+boot calendar-events-move, name <calendar.events.move>
+  note <Moves an event to another calendar, i.e. changes an event's organizer.>
+
+  take calendar-id
+    like native-string
+    note <Calendar identifier of the source calendar where the event currently is on.>
+  take event-id
+    like native-string
+    note <Event identifier.>
+  take destination
+    like native-string
+    note <Calendar identifier of the target calendar where the event is to be moved to.>
+  take send-notifications
+    like native-boolean
+    note <Deprecated. Please use sendUpdates instead. Whether to send notifications about the change of the event's organizer. Note that some emails might still be sent even if you set the value to false. The default is false.>
+    void take
+  take send-updates
+    like native-string
+    note <Guests who should receive notifications about the change of the event's organizer.>
+    void take
+
+  line </calendars/{calendar-id}/events/{event-id}/move>
+
+  find <destination>, loan destination
+  find <sendNotifications>, loan send-notifications
+  find <sendUpdates>, loan send-updates
+
+  loot 200
+    seed json, like event
+    note <Successful response>

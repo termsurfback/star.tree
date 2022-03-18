@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/already-exists-fault
+  take form already-exists-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/batch-put-scheduled-update-group-action-answer
+  take form batch-put-scheduled-update-group-action-answer
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/limit-exceeded-fault
+  take form limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-batch-put-scheduled-update-group-action, name <POST_BatchPutScheduledUpdateGroupAction>
+  note <Creates or updates one or more scheduled scaling actions for an Auto Scaling group.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take batch-put-scheduled-update-group-action-type, like batch-put-scheduled-update-group-action-type
+    void take
+
+  line </#Action=BatchPutScheduledUpdateGroupAction>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan batch-put-scheduled-update-group-action-type
+
+  loot 200
+    seed xml, like batch-put-scheduled-update-group-action-answer
+    note <Success>
+  loot 480
+    seed xml, like already-exists-fault
+    note <AlreadyExistsFault>
+  loot 481
+    seed xml, like limit-exceeded-fault
+    note <LimitExceededFault>
+  loot 482
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

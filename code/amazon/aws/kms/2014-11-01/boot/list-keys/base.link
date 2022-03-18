@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/dependency-timeout-exception
+  take form dependency-timeout-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-marker-exception
+  take form invalid-marker-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-internal-exception
+  take form kms-internal-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/list-keys-response
+  take form list-keys-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-keys, name <ListKeys>
+  note <Gets a list of all KMS keys in the caller's Amazon Web Services account and Region.
+
+**Cross-account use**: No. You cannot perform this operation on a KMS key in a different Amazon Web Services account.
+
+**Required permissions**: [kms:ListKeys](https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html) (IAM policy)
+
+**Related operations:** - CreateKey
+
+- DescribeKey
+
+- ListAliases
+
+- ListResourceTags>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take list-keys-request, like list-keys-request
+
+  line </#X-Amz-Target=TrentService.ListKeys>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <Limit>, loan limit
+  find <Marker>, loan marker
+
+  seed json, loan list-keys-request
+
+  loot 200
+    seed json, like list-keys-response
+    note <Success>
+  loot 480
+    seed json, like dependency-timeout-exception
+    note <DependencyTimeoutException>
+  loot 481
+    seed json, like kms-internal-exception
+    note <KMSInternalException>
+  loot 482
+    seed json, like invalid-marker-exception
+    note <InvalidMarkerException>

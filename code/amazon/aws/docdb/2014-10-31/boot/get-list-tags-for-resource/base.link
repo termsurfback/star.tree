@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-snapshot-not-found-fault
+  take form db-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/tag-list-message
+  take form tag-list-message
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-list-tags-for-resource, name <GET_ListTagsForResource>
+  note <Lists all tags on an Amazon DocumentDB resource.>
+
+  take resource-name
+    like native-string
+    note <The Amazon DocumentDB resource with tags to be listed. This value is an Amazon Resource Name (ARN).>
+  take filters
+    like list
+      like filter
+    note <This parameter is not currently supported.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ListTagsForResource>
+
+  find <ResourceName>, loan resource-name
+  find <Filters>, loan filters
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like tag-list-message
+    note <Success>
+  loot 480
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>
+  loot 481
+    seed xml, like db-snapshot-not-found-fault
+    note <DBSnapshotNotFoundFault>
+  loot 482
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>

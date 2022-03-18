@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/kinesisanalyticsv2/2018-05-23/base/create-application-presigned-url-response
+  take form create-application-presigned-url-response
+
+load @drumwork/snow/amazonaws.com/kinesisanalyticsv2/2018-05-23/base/invalid-argument-exception
+  take form invalid-argument-exception
+
+load @drumwork/snow/amazonaws.com/kinesisanalyticsv2/2018-05-23/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/kinesisanalyticsv2/2018-05-23/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-application-presigned-url, name <CreateApplicationPresignedUrl>
+  note <Creates and returns a URL that you can use to connect to an application's extension. Currently, the only available extension is the Apache Flink dashboard.
+
+The IAM role or user used to call this API defines the permissions to access the extension. After the presigned URL is created, no additional permission is required to access this URL. IAM authorization policies for this API are also enforced for every HTTP request that attempts to connect to the extension.
+
+You control the amount of time that the URL will be valid using the `SessionExpirationDurationInSeconds` parameter. If you do not provide this parameter, the returned URL is valid for twelve hours.
+
+The URL that you get from a call to CreateApplicationPresignedUrl must be used within 3 minutes to be valid. If you first try to use the URL after the 3-minute limit expires, the service returns an HTTP 403 Forbidden error.>
+
+  take x-amz-target
+    like native-string
+  take create-application-presigned-url-request, like create-application-presigned-url-request
+
+  line </#X-Amz-Target=KinesisAnalytics_20180523.CreateApplicationPresignedUrl>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-application-presigned-url-request
+
+  loot 200
+    seed json, like create-application-presigned-url-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>
+  loot 482
+    seed json, like invalid-argument-exception
+    note <InvalidArgumentException>

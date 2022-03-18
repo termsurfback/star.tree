@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/put-profile-object-body
+  take form put-profile-object-body
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/put-profile-object-response
+  take form put-profile-object-response
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-profile-object, name <PutProfileObject>
+  note <Adds additional objects to customer profiles of a given ObjectType.
+
+When adding a specific profile object, like a Contact Trace Record (CTR), an inferred profile can get created if it is not mapped to an existing profile. The resulting profile will only have a phone number populated in the standard ProfileObject. Any additional CTRs with the same phone number will be mapped to the same inferred profile.
+
+When a ProfileObject is created and if a ProfileObjectType already exists for the ProfileObject, it will provide data to a standard profile depending on the ProfileObjectType definition.
+
+PutProfileObject needs an ObjectType, which can be created using PutProfileObjectType.>
+
+  take domain-name
+    like native-string
+    note <The unique name of the domain.>
+  take put-profile-object-body, like put-profile-object-body
+
+  line </domains/{domain-name}/profiles/objects>
+
+  seed json, loan put-profile-object-body
+
+  loot 200
+    seed json, like put-profile-object-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like internal-server-exception
+    note <InternalServerException>

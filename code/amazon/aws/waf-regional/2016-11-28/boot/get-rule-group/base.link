@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/waf-regional/2016-11-28/base/get-rule-group-response
+  take form get-rule-group-response
+
+load @drumwork/snow/amazonaws.com/waf-regional/2016-11-28/base/waf-internal-error-exception
+  take form waf-internal-error-exception
+
+load @drumwork/snow/amazonaws.com/waf-regional/2016-11-28/base/waf-nonexistent-item-exception
+  take form waf-nonexistent-item-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-rule-group, name <GetRuleGroup>
+  note <This is **AWS WAF Classic** documentation. For more information, see [AWS WAF Classic](https://docs.aws.amazon.com/waf/latest/developerguide/classic-waf-chapter.html) in the developer guide.
+
+**For the latest version of AWS WAF**, use the AWS WAFV2 API and see the [AWS WAF Developer Guide](https://docs.aws.amazon.com/waf/latest/developerguide/waf-chapter.html). With the latest version, AWS WAF has a single set of endpoints for regional and global use.
+
+Returns the RuleGroup that is specified by the `RuleGroupId` that you included in the `GetRuleGroup` request.
+
+To view the rules in a rule group, use ListActivatedRulesInRuleGroup.>
+
+  take x-amz-target
+    like native-string
+  take get-rule-group-request, like get-rule-group-request
+
+  line </#X-Amz-Target=AWSWAF_Regional_20161128.GetRuleGroup>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-rule-group-request
+
+  loot 200
+    seed json, like get-rule-group-response
+    note <Success>
+  loot 480
+    seed json, like waf-internal-error-exception
+    note <WAFInternalErrorException>
+  loot 481
+    seed json, like waf-nonexistent-item-exception
+    note <WAFNonexistentItemException>

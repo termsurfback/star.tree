@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/list-layers-response
+  take form list-layers-response
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-layers, name <ListLayers>
+  note <Lists [Lambda layers](https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html) and shows information about the latest version of each. Specify a [runtime identifier](https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html) to list only layers that indicate that they're compatible with that runtime.>
+
+  take compatible-runtime
+    like native-string
+    note <A runtime identifier. For example, `go1.x`.>
+    void take
+  take marker
+    like native-string
+    note <A pagination token returned by a previous call.>
+    void take
+  take max-items
+    like native-integer
+    note <The maximum number of layers to return.>
+    void take
+
+  line </2018-10-31/layers>
+
+  find <CompatibleRuntime>, loan compatible-runtime
+  find <Marker>, loan marker
+  find <MaxItems>, loan max-items
+
+  loot 200
+    seed json, like list-layers-response
+    note <Success>
+  loot 480
+    seed json, like service-exception
+    note <ServiceException>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>

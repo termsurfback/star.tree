@@ -1,0 +1,77 @@
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/access-point-not-found
+  take form access-point-not-found
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/bad-request
+  take form bad-request
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/describe-mount-targets-response
+  take form describe-mount-targets-response
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/file-system-not-found
+  take form file-system-not-found
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/mount-target-not-found
+  take form mount-target-not-found
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-mount-targets, name <DescribeMountTargets>
+  note <Returns the descriptions of all the current mount targets, or a specific mount target, for a file system. When requesting all of the current mount targets, the order of mount targets returned in the response is unspecified.
+
+This operation requires permissions for the `elasticfilesystem:DescribeMountTargets` action, on either the file system ID that you specify in `FileSystemId`, or on the file system of the mount target that you specify in `MountTargetId`.>
+
+  take max-items
+    like native-integer
+    note <(Optional) Maximum number of mount targets to return in the response. Currently, this number is automatically set to 10, and other values are ignored. The response is paginated at 100 per page if you have more than 100 mount targets.>
+    void take
+  take marker
+    like native-string
+    note <(Optional) Opaque pagination token returned from a previous `DescribeMountTargets` operation (String). If present, it specifies to continue the list from where the previous returning call left off.>
+    void take
+  take file-system-id
+    like native-string
+    note <(Optional) ID of the file system whose mount targets you want to list (String). It must be included in your request if an `AccessPointId` or `MountTargetId` is not included. Accepts either a file system ID or ARN as input.>
+    void take
+  take mount-target-id
+    like native-string
+    note <(Optional) ID of the mount target that you want to have described (String). It must be included in your request if `FileSystemId` is not included. Accepts either a mount target ID or ARN as input.>
+    void take
+  take access-point-id
+    like native-string
+    note <(Optional) The ID of the access point whose mount targets that you want to list. It must be included in your request if a `FileSystemId` or `MountTargetId` is not included in your request. Accepts either an access point ID or ARN as input.>
+    void take
+
+  line </2015-02-01/mount-targets>
+
+  find <MaxItems>, loan max-items
+  find <Marker>, loan marker
+  find <FileSystemId>, loan file-system-id
+  find <MountTargetId>, loan mount-target-id
+  find <AccessPointId>, loan access-point-id
+
+  loot 200
+    seed json, like describe-mount-targets-response
+    note <Success>
+  loot 480
+    seed json, like bad-request
+    note <BadRequest>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 482
+    seed json, like file-system-not-found
+    note <FileSystemNotFound>
+  loot 483
+    seed json, like mount-target-not-found
+    note <MountTargetNotFound>
+  loot 484
+    seed json, like access-point-not-found
+    note <AccessPointNotFound>

@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-filter
+  take form invalid-filter
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/list-compliance-summaries-result
+  take form list-compliance-summaries-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-compliance-summaries, name <ListComplianceSummaries>
+  note <Returns a summary count of compliant and non-compliant resources for a compliance type. For example, this call can return State Manager associations, patches, or custom compliance types according to the filter criteria that you specify.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-compliance-summaries-request, like list-compliance-summaries-request
+
+  line </#X-Amz-Target=AmazonSSM.ListComplianceSummaries>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-compliance-summaries-request
+
+  loot 200
+    seed json, like list-compliance-summaries-result
+    note <Success>
+  loot 480
+    seed json, like invalid-filter
+    note <InvalidFilter>
+  loot 481
+    seed json, like invalid-next-token
+    note <InvalidNextToken>
+  loot 482
+    seed json, like internal-server-error
+    note <InternalServerError>

@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/update-recipe-body
+  take form update-recipe-body
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/update-recipe-response
+  take form update-recipe-response
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-recipe, name <UpdateRecipe>
+  note <Modifies the definition of the `LATEST_WORKING` version of a DataBrew recipe.>
+
+  take name
+    like native-string
+    note <The name of the recipe to be updated.>
+  take update-recipe-body, like update-recipe-body
+
+  line </recipes/{name}>
+
+  seed json, loan update-recipe-body
+
+  loot 200
+    seed json, like update-recipe-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

@@ -1,0 +1,74 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-not-found-fault
+  take form db-proxy-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-target-group-not-found-fault
+  take form db-proxy-target-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-target-not-found-fault
+  take form db-proxy-target-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/deregister-db-proxy-targets-response
+  take form deregister-db-proxy-targets-response
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-proxy-state-fault
+  take form invalid-db-proxy-state-fault
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-deregister-db-proxy-targets, name <GET_DeregisterDBProxyTargets>
+  note <Remove the association between one or more `DBProxyTarget` data structures and a `DBProxyTargetGroup`.>
+
+  take db-proxy-name
+    like native-string
+    note <The identifier of the `DBProxy` that is associated with the `DBProxyTargetGroup`.>
+  take target-group-name
+    like native-string
+    note <The identifier of the `DBProxyTargetGroup`.>
+    void take
+  take db-instance-identifiers
+    like list
+      like string
+    note <One or more DB instance identifiers.>
+    void take
+  take db-cluster-identifiers
+    like list
+      like string
+    note <One or more DB cluster identifiers.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeregisterDBProxyTargets>
+
+  find <DBProxyName>, loan db-proxy-name
+  find <TargetGroupName>, loan target-group-name
+  find <DBInstanceIdentifiers>, loan db-instance-identifiers
+  find <DBClusterIdentifiers>, loan db-cluster-identifiers
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like deregister-db-proxy-targets-response
+    note <Success>
+  loot 480
+    seed xml, like db-proxy-target-not-found-fault
+    note <DBProxyTargetNotFoundFault>
+  loot 481
+    seed xml, like db-proxy-target-group-not-found-fault
+    note <DBProxyTargetGroupNotFoundFault>
+  loot 482
+    seed xml, like db-proxy-not-found-fault
+    note <DBProxyNotFoundFault>
+  loot 483
+    seed xml, like invalid-db-proxy-state-fault
+    note <InvalidDBProxyStateFault>

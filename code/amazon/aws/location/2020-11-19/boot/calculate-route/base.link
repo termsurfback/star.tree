@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/calculate-route-body
+  take form calculate-route-body
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/calculate-route-response
+  take form calculate-route-response
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/location/2020-11-19/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot calculate-route, name <CalculateRoute>
+  note <[Calculates a route](https://docs.aws.amazon.com/location/latest/developerguide/calculate-route.html) given the following required parameters: `DeparturePostiton` and `DestinationPosition`. Requires that you first [create a route calculator resource](https://docs.aws.amazon.com/location-routes/latest/APIReference/API_CreateRouteCalculator.html)
+
+By default, a request that doesn't specify a departure time uses the best time of day to travel with the best traffic conditions when calculating the route.
+
+Additional options include:
+
+- [Specifying a departure time](https://docs.aws.amazon.com/location/latest/developerguide/calculate-route.html#departure-time) using either `DepartureTime` or `DepartureNow`. This calculates a route based on predictive traffic data at the given time.
+
+  You can't specify both `DepartureTime` and `DepartureNow` in a single request. Specifying both parameters returns an error message.
+
+- [Specifying a travel mode](https://docs.aws.amazon.com/location/latest/developerguide/calculate-route.html#travel-mode) using TravelMode. This lets you specify an additional route preference such as `CarModeOptions` if traveling by `Car`, or `TruckModeOptions` if traveling by `Truck`.>
+
+  take calculator-name
+    like native-string
+    note <The name of the route calculator resource that you want to use to calculate a route.>
+  take calculate-route-body, like calculate-route-body
+
+  line </routes/v0/calculators/{calculator-name}/calculate/route>
+
+  seed json, loan calculate-route-body
+
+  loot 200
+    seed json, like calculate-route-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 483
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 484
+    seed json, like throttling-exception
+    note <ThrottlingException>

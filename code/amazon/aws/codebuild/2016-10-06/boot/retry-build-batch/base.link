@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/retry-build-batch-output
+  take form retry-build-batch-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot retry-build-batch, name <RetryBuildBatch>
+  note <Restarts a failed batch build. Only batch builds that have failed can be retried.>
+
+  take x-amz-target
+    like native-string
+  take retry-build-batch-input, like retry-build-batch-input
+
+  line </#X-Amz-Target=CodeBuild_20161006.RetryBuildBatch>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan retry-build-batch-input
+
+  loot 200
+    seed json, like retry-build-batch-output
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

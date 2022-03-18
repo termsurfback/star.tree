@@ -1,0 +1,48 @@
+
+load @drumwork/snow/amazonaws.com/groundstation/2019-05-23/base/dependency-exception
+  take form dependency-exception
+
+load @drumwork/snow/amazonaws.com/groundstation/2019-05-23/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/groundstation/2019-05-23/base/list-configs-response
+  take form list-configs-response
+
+load @drumwork/snow/amazonaws.com/groundstation/2019-05-23/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-configs, name <ListConfigs>
+  note <Returns a list of `Config` objects.>
+
+  take max-results
+    like native-integer
+    note <Maximum number of `Configs` returned.>
+    void take
+  take next-token
+    like native-string
+    note <Next token returned in the request of a previous `ListConfigs` call. Used to get the next page of results.>
+    void take
+
+  line </config>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  loot 200
+    seed json, like list-configs-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like dependency-exception
+    note <DependencyException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

@@ -1,0 +1,83 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/decrease-node-groups-in-global-replication-group-result
+  take form decrease-node-groups-in-global-replication-group-result
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/global-replication-group-not-found-fault
+  take form global-replication-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-global-replication-group-state-fault
+  take form invalid-global-replication-group-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-decrease-node-groups-in-global-replication-group, name <GET_DecreaseNodeGroupsInGlobalReplicationGroup>
+  note <Decreases the number of node groups in a Global datastore>
+
+  take global-replication-group-id
+    like native-string
+    note <The name of the Global datastore>
+  take node-group-count
+    like native-integer
+    note <The number of node groups (shards) that results from the modification of the shard configuration>
+  take global-node-groups-to-remove
+    like list
+      like string
+    note <If the value of NodeGroupCount is less than the current number of node groups (shards), then either NodeGroupsToRemove or NodeGroupsToRetain is required. GlobalNodeGroupsToRemove is a list of NodeGroupIds to remove from the cluster. ElastiCache for Redis will attempt to remove all node groups listed by GlobalNodeGroupsToRemove from the cluster.>
+    void take
+  take global-node-groups-to-retain
+    like list
+      like string
+    note <If the value of NodeGroupCount is less than the current number of node groups (shards), then either NodeGroupsToRemove or NodeGroupsToRetain is required. GlobalNodeGroupsToRetain is a list of NodeGroupIds to retain from the cluster. ElastiCache for Redis will attempt to retain all node groups listed by GlobalNodeGroupsToRetain from the cluster.>
+    void take
+  take apply-immediately
+    like native-boolean
+    note <Indicates that the shard reconfiguration process begins immediately. At present, the only permitted value for this parameter is true.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DecreaseNodeGroupsInGlobalReplicationGroup>
+
+  find <GlobalReplicationGroupId>, loan global-replication-group-id
+  find <NodeGroupCount>, loan node-group-count
+  find <GlobalNodeGroupsToRemove>, loan global-node-groups-to-remove
+  find <GlobalNodeGroupsToRetain>, loan global-node-groups-to-retain
+  find <ApplyImmediately>, loan apply-immediately
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like decrease-node-groups-in-global-replication-group-result
+    note <Success>
+  loot 480
+    seed xml, like global-replication-group-not-found-fault
+    note <GlobalReplicationGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-global-replication-group-state-fault
+    note <InvalidGlobalReplicationGroupStateFault>
+  loot 482
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

@@ -1,0 +1,66 @@
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/delegation-set-not-reusable
+  take form delegation-set-not-reusable
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/list-hosted-zones-response
+  take form list-hosted-zones-response
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/no-such-delegation-set
+  take form no-such-delegation-set
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-hosted-zones, name <ListHostedZones>
+  note <Retrieves a list of the public and private hosted zones that are associated with the current Amazon Web Services account. The response includes a `HostedZones` child element for each hosted zone.
+
+Amazon Route 53 returns a maximum of 100 items in each response. If you have a lot of hosted zones, you can use the `maxitems` parameter to list them in groups of up to 100.>
+
+  take marker
+    like native-string
+    note <If the value of `IsTruncated` in the previous response was `true`, you have more hosted zones. To get more hosted zones, submit another `ListHostedZones` request.
+
+For the value of `marker`, specify the value of `NextMarker` from the previous response, which is the ID of the first hosted zone that Amazon Route 53 will return if you submit another request.
+
+If the value of `IsTruncated` in the previous response was `false`, there are no more hosted zones to get.>
+    void take
+  take maxitems
+    like native-string
+    note <(Optional) The maximum number of hosted zones that you want Amazon Route 53 to return. If you have more than `maxitems` hosted zones, the value of `IsTruncated` in the response is `true`, and the value of `NextMarker` is the hosted zone ID of the first hosted zone that Route 53 will return if you submit another request.>
+    void take
+  take delegationsetid
+    like native-string
+    note <If you're using reusable delegation sets and you want to list all of the hosted zones that are associated with a reusable delegation set, specify the ID of that reusable delegation set.>
+    void take
+  take max-items
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+
+  line </2013-04-01/hostedzone>
+
+  find <marker>, loan marker
+  find <maxitems>, loan maxitems
+  find <delegationsetid>, loan delegationsetid
+  find <MaxItems>, loan max-items
+  find <Marker>, loan marker
+
+  loot 200
+    seed xml, like list-hosted-zones-response
+    note <Success>
+  loot 480
+    seed xml, like invalid-input
+    note <InvalidInput>
+  loot 481
+    seed xml, like no-such-delegation-set
+    note <NoSuchDelegationSet>
+  loot 482
+    seed xml, like delegation-set-not-reusable
+    note <DelegationSetNotReusable>

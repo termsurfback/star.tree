@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/get-on-premises-instance-output
+  take form get-on-premises-instance-output
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/instance-name-required-exception
+  take form instance-name-required-exception
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/instance-not-registered-exception
+  take form instance-not-registered-exception
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/invalid-instance-name-exception
+  take form invalid-instance-name-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-on-premises-instance, name <GetOnPremisesInstance>
+  note <Gets information about an on-premises instance.>
+
+  take x-amz-target
+    like native-string
+  take get-on-premises-instance-input, like get-on-premises-instance-input
+
+  line </#X-Amz-Target=CodeDeploy_20141006.GetOnPremisesInstance>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-on-premises-instance-input
+
+  loot 200
+    seed json, like get-on-premises-instance-output
+    note <Success>
+  loot 480
+    seed json, like instance-name-required-exception
+    note <InstanceNameRequiredException>
+  loot 481
+    seed json, like instance-not-registered-exception
+    note <InstanceNotRegisteredException>
+  loot 482
+    seed json, like invalid-instance-name-exception
+    note <InvalidInstanceNameException>

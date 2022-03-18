@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/delete-work-group-output
+  take form delete-work-group-output
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-work-group, name <DeleteWorkGroup>
+  note <Deletes the workgroup with the specified name. The primary workgroup cannot be deleted.>
+
+  take x-amz-target
+    like native-string
+  take delete-work-group-input, like delete-work-group-input
+
+  line </#X-Amz-Target=AmazonAthena.DeleteWorkGroup>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-work-group-input
+
+  loot 200
+    seed json, like delete-work-group-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

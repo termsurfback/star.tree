@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-cluster-message
+  take form db-cluster-message
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-db-clusters, name <POST_DescribeDBClusters>
+  note <Returns information about provisioned Amazon DocumentDB clusters. This API operation supports pagination. For certain management features such as cluster and instance lifecycle management, Amazon DocumentDB leverages operational technology that is shared with Amazon RDS and Amazon Neptune. Use the `filterName=engine,Values=docdb` filter parameter to return only Amazon DocumentDB clusters.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-db-clusters-message, like describe-db-clusters-message
+    void take
+
+  line </#Action=DescribeDBClusters>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-db-clusters-message
+
+  loot 200
+    seed xml, like db-cluster-message
+    note <Success>
+  loot 480
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>

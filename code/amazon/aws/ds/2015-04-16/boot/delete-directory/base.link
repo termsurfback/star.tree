@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/delete-directory-result
+  take form delete-directory-result
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/entity-does-not-exist-exception
+  take form entity-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-directory, name <DeleteDirectory>
+  note <Deletes an Directory Service directory.
+
+Before you call `DeleteDirectory`, ensure that all of the required permissions have been explicitly granted through a policy. For details about what permissions are required to run the `DeleteDirectory` operation, see [Directory Service API Permissions: Actions, Resources, and Conditions Reference](http://docs.aws.amazon.com/directoryservice/latest/admin-guide/UsingWithDS_IAM_ResourcePermissions.html).>
+
+  take x-amz-target
+    like native-string
+  take delete-directory-request, like delete-directory-request
+
+  line </#X-Amz-Target=DirectoryService_20150416.DeleteDirectory>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-directory-request
+
+  loot 200
+    seed json, like delete-directory-result
+    note <Success>
+  loot 480
+    seed json, like entity-does-not-exist-exception
+    note <EntityDoesNotExistException>
+  loot 481
+    seed json, like client-exception
+    note <ClientException>
+  loot 482
+    seed json, like service-exception
+    note <ServiceException>

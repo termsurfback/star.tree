@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/create-monitoring-schedule-response
+  take form create-monitoring-schedule-response
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-in-use
+  take form resource-in-use
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-limit-exceeded
+  take form resource-limit-exceeded
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-monitoring-schedule, name <CreateMonitoringSchedule>
+  note <Creates a schedule that regularly starts Amazon SageMaker Processing Jobs to monitor the data captured for an Amazon SageMaker Endoint.>
+
+  take x-amz-target
+    like native-string
+  take create-monitoring-schedule-request, like create-monitoring-schedule-request
+
+  line </#X-Amz-Target=SageMaker.CreateMonitoringSchedule>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-monitoring-schedule-request
+
+  loot 200
+    seed json, like create-monitoring-schedule-response
+    note <Success>
+  loot 480
+    seed json, like resource-limit-exceeded
+    note <ResourceLimitExceeded>
+  loot 481
+    seed json, like resource-in-use
+    note <ResourceInUse>

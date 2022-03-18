@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/access-to-snapshot-denied-fault
+  take form access-to-snapshot-denied-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/authorization-not-found-fault
+  take form authorization-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-snapshot-not-found-fault
+  take form cluster-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/revoke-snapshot-access-result
+  take form revoke-snapshot-access-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-revoke-snapshot-access, name <POST_RevokeSnapshotAccess>
+  note <Removes the ability of the specified Amazon Web Services account to restore the specified snapshot. If the account is currently restoring the snapshot, the restore will run to completion.
+
+For more information about working with snapshots, go to [Amazon Redshift Snapshots](https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-snapshots.html) in the _Amazon Redshift Cluster Management Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take revoke-snapshot-access-message, like revoke-snapshot-access-message
+    void take
+
+  line </#Action=RevokeSnapshotAccess>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan revoke-snapshot-access-message
+
+  loot 200
+    seed xml, like revoke-snapshot-access-result
+    note <Success>
+  loot 480
+    seed xml, like access-to-snapshot-denied-fault
+    note <AccessToSnapshotDeniedFault>
+  loot 481
+    seed xml, like authorization-not-found-fault
+    note <AuthorizationNotFoundFault>
+  loot 482
+    seed xml, like cluster-snapshot-not-found-fault
+    note <ClusterSnapshotNotFoundFault>

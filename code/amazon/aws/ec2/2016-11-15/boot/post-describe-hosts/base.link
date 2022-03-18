@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-hosts-result
+  take form describe-hosts-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-hosts, name <POST_DescribeHosts>
+  note <Describes the specified Dedicated Hosts or all your Dedicated Hosts.
+
+The results describe only the Dedicated Hosts in the Region you're currently using. All listed instances consume capacity on your Dedicated Host. Dedicated Hosts that have recently been released are listed with the state `released`.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-hosts-request, like describe-hosts-request
+    void take
+
+  line </#Action=DescribeHosts>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-hosts-request
+
+  loot 200
+    seed xml, like describe-hosts-result
+    note <Success>

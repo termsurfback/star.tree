@@ -1,0 +1,94 @@
+
+load @drumwork/snow/amazonaws.com/clouddirectory/2017-01-11/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/clouddirectory/2017-01-11/base/directory-not-enabled-exception
+  take form directory-not-enabled-exception
+
+load @drumwork/snow/amazonaws.com/clouddirectory/2017-01-11/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/clouddirectory/2017-01-11/base/invalid-arn-exception
+  take form invalid-arn-exception
+
+load @drumwork/snow/amazonaws.com/clouddirectory/2017-01-11/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/clouddirectory/2017-01-11/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/clouddirectory/2017-01-11/base/list-object-parent-paths-body
+  take form list-object-parent-paths-body
+
+load @drumwork/snow/amazonaws.com/clouddirectory/2017-01-11/base/list-object-parent-paths-response
+  take form list-object-parent-paths-response
+
+load @drumwork/snow/amazonaws.com/clouddirectory/2017-01-11/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/clouddirectory/2017-01-11/base/retryable-conflict-exception
+  take form retryable-conflict-exception
+
+load @drumwork/snow/amazonaws.com/clouddirectory/2017-01-11/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-object-parent-paths, name <ListObjectParentPaths>
+  note <Retrieves all available parent paths for any object type such as node, leaf node, policy node, and index node objects. For more information about objects, see [Directory Structure](https://docs.aws.amazon.com/clouddirectory/latest/developerguide/key_concepts_directorystructure.html).
+
+Use this API to evaluate all parents for an object. The call returns all objects from the root of the directory up to the requested object. The API returns the number of paths based on user-defined `MaxResults`, in case there are multiple paths to the parent. The order of the paths and nodes returned is consistent among multiple API calls unless the objects are deleted or moved. Paths not leading to the directory root are ignored from the target object.>
+
+  take x-amz-data-partition
+    like native-string
+    note <The ARN of the directory to which the parent path applies.>
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-object-parent-paths-body, like list-object-parent-paths-body
+
+  line </amazonclouddirectory/2017-01-11/object/parentpaths#x-amz-data-partition>
+
+  hint <x-amz-data-partition>, loan x-amz-data-partition
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-object-parent-paths-body
+
+  loot 200
+    seed json, like list-object-parent-paths-response
+    note <Success>
+  loot 480
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 481
+    seed json, like invalid-arn-exception
+    note <InvalidArnException>
+  loot 482
+    seed json, like retryable-conflict-exception
+    note <RetryableConflictException>
+  loot 483
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 484
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 485
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 486
+    seed json, like directory-not-enabled-exception
+    note <DirectoryNotEnabledException>
+  loot 487
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 488
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

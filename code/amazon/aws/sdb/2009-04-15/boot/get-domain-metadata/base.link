@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/sdb/2009-04-15/base/domain-metadata-result
+  take form domain-metadata-result
+
+load @drumwork/snow/amazonaws.com/sdb/2009-04-15/base/no-such-domain
+  take form no-such-domain
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-domain-metadata, name <GET_DomainMetadata>
+  note <Returns information about the domain, including when the domain was created, the number of items and attributes in the domain, and the size of the attribute names and values.>
+
+  take domain-name
+    like native-string
+    note <The name of the domain for which to display the metadata of.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DomainMetadata>
+
+  find <DomainName>, loan domain-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like domain-metadata-result
+    note <Success>
+  loot 400
+    seed xml, like no-such-domain
+    note <NoSuchDomain>

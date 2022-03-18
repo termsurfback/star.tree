@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/create-table-output
+  take form create-table-output
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-table, name <CreateTable>
+  note <The `CreateTable` operation adds a new table to your account. In an AWS account, table names must be unique within each Region. That is, you can have two tables with same name if you create the tables in different Regions.
+
+`CreateTable` is an asynchronous operation. Upon receiving a `CreateTable` request, DynamoDB immediately returns a response with a `TableStatus` of `CREATING`. After the table is created, DynamoDB sets the `TableStatus` to `ACTIVE`. You can perform read and write operations only on an `ACTIVE` table.
+
+You can optionally define secondary indexes on the new table, as part of the `CreateTable` operation. If you want to create multiple tables with secondary indexes on them, you must create the tables sequentially. Only one table with secondary indexes can be in the `CREATING` state at any given time.
+
+You can use the `DescribeTable` action to check the table status.>
+
+  take x-amz-target
+    like native-string
+  take create-table-input, like create-table-input
+
+  line </#X-Amz-Target=DynamoDB_20120810.CreateTable>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-table-input
+
+  loot 200
+    seed json, like create-table-output
+    note <Success>
+  loot 480
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like internal-server-error
+    note <InternalServerError>

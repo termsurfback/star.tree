@@ -1,0 +1,94 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/network-interface-attachment-id
+  take form network-interface-attachment-id
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/security-group-id
+  take form security-group-id
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-modify-network-interface-attribute, name <GET_ModifyNetworkInterfaceAttribute>
+  note <Modifies the specified network interface attribute. You can specify only one attribute at a time. You can use this action to attach and detach security groups from an existing EC2 instance.>
+
+  take attachment
+    like form
+      take attachment-id, name <AttachmentId>
+        like network-interface-attachment-id
+        void take
+        note <The ID of the network interface attachment.>
+        host xml
+          host name, text <attachmentId>
+      take delete-on-termination, name <DeleteOnTermination>
+        like boolean
+        void take
+        note <Indicates whether the network interface is deleted when the instance is terminated.>
+        host xml
+          host name, text <deleteOnTermination>
+    note <Information about the interface attachment. If modifying the 'delete on termination' attribute, you must specify the ID of the interface attachment.>
+    void take
+  take description
+    like form
+      take value, name <Value>
+        like string
+        void take
+        note <The attribute value. The value is case-sensitive.>
+        host xml
+          host name, text <value>
+    note <A description for the network interface.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take security-group-id
+    like list
+      like security-group-id
+    note <Changes the security groups for the network interface. The new set of groups you specify replaces the current set. You must specify at least one group, even if it's just the default security group in the VPC. You must specify the ID of the security group, not the name.>
+    void take
+  take network-interface-id
+    like native-string
+    note <The ID of the network interface.>
+  take source-dest-check
+    like form
+      take value, name <Value>
+        like boolean
+        void take
+        note <The attribute value. The valid values are `true` or `false`.>
+        host xml
+          host name, text <value>
+    note <Enable or disable source/destination checks, which ensure that the instance is either the source or the destination of any traffic that it receives. If the value is `true`, source/destination checks are enabled; otherwise, they are disabled. The default value is `true`. You must disable source/destination checks if the instance runs services such as network address translation, routing, or firewalls.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyNetworkInterfaceAttribute>
+
+  find <Attachment>, loan attachment
+  find <Description>, loan description
+  find <DryRun>, loan dry-run
+  find <SecurityGroupId>, loan security-group-id
+  find <NetworkInterfaceId>, loan network-interface-id
+  find <SourceDestCheck>, loan source-dest-check
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>

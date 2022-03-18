@@ -1,0 +1,83 @@
+
+load @drumwork/snow/amazonaws.com/network-firewall/2020-11-12/base/description
+  take form description
+
+load @drumwork/snow/amazonaws.com/network-firewall/2020-11-12/base/resource-name
+  take form resource-name
+
+load @drumwork/snow/amazonaws.com/network-firewall/2020-11-12/base/rule-capacity
+  take form rule-capacity
+
+load @drumwork/snow/amazonaws.com/network-firewall/2020-11-12/base/rule-group
+  take form rule-group
+
+load @drumwork/snow/amazonaws.com/network-firewall/2020-11-12/base/rule-group-type
+  take form rule-group-type
+
+load @drumwork/snow/amazonaws.com/network-firewall/2020-11-12/base/rules-string
+  take form rules-string
+
+load @drumwork/snow/amazonaws.com/network-firewall/2020-11-12/base/tag-list
+  take form tag-list
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+form create-rule-group-request, name <CreateRuleGroupRequest>
+  take rule-group-name, name <RuleGroupName>
+    like resource-name
+    note <The descriptive name of the rule group. You can't change the name of a rule group after you create it.>
+  take rule-group, name <RuleGroup>
+    like rule-group
+    void take
+    note <An object that defines the rule group rules.
+
+You must provide either this rule group setting or a `Rules` setting, but not both.>
+  take rules, name <Rules>
+    like rules-string
+    void take
+    note <A string containing stateful rule group rules specifications in Suricata flat format, with one rule per line. Use this to import your existing Suricata compatible rule groups.
+
+You must provide either this rules setting or a populated `RuleGroup` setting, but not both.
+
+You can provide your rule group specification in Suricata flat format through this setting when you create or update your rule group. The call response returns a RuleGroup object that Network Firewall has populated from your string.>
+  take type, name <Type>
+    like rule-group-type
+    note <Indicates whether the rule group is stateless or stateful. If the rule group is stateless, it contains stateless rules. If it is stateful, it contains stateful rules.>
+  take description, name <Description>
+    like description
+    void take
+    note <A description of the rule group.>
+  take capacity, name <Capacity>
+    like rule-capacity
+    note <The maximum operating resources that this rule group can use. Rule group capacity is fixed at creation. When you update a rule group, you are limited to this capacity. When you reference a rule group from a firewall policy, Network Firewall reserves this capacity for the rule group.
+
+You can retrieve the capacity that would be required for a rule group before you create the rule group by calling CreateRuleGroup with `DryRun` set to `TRUE`.
+
+You can't change or exceed this capacity when you update the rule group, so leave room for your rule group to grow.
+
+**Capacity for a stateless rule group** For a stateless rule group, the capacity required is the sum of the capacity requirements of the individual rules that you expect to have in the rule group.
+
+To calculate the capacity requirement of a single rule, multiply the capacity requirement values of each of the rule's match settings:
+
+- A match setting with no criteria specified has a value of 1.
+
+- A match setting with `Any` specified has a value of 1.
+
+- All other match settings have a value equal to the number of elements provided in the setting. For example, a protocol setting ["UDP"] and a source setting ["10.0.0.0/24"] each have a value of 1. A protocol setting ["UDP","TCP"] has a value of 2. A source setting ["10.0.0.0/24","10.0.0.1/24","10.0.0.2/24"] has a value of 3.
+
+A rule with no criteria specified in any of its match settings has a capacity requirement of 1. A rule with protocol setting ["UDP","TCP"], source setting ["10.0.0.0/24","10.0.0.1/24","10.0.0.2/24"], and a single specification or no specification for each of the other match settings has a capacity requirement of 6.
+
+**Capacity for a stateful rule group** For a stateful rule group, the minimum capacity required is the number of individual rules that you expect to have in the rule group.>
+  take tags, name <Tags>
+    like tag-list
+    void take
+    note <The key:value pairs to associate with the resource.>
+  take dry-run, name <DryRun>
+    like boolean
+    void take
+    note <Indicates whether you want Network Firewall to just check the validity of the request, rather than run the request.
+
+If set to `TRUE`, Network Firewall checks whether the request can run successfully, but doesn't actually make the requested changes. The call returns the value that the request would return if you ran it with dry run set to `FALSE`, but doesn't make additions or changes to your resources. This option allows you to make sure that you have the required permissions to run the request and that your request parameters are valid.
+
+If set to `FALSE`, Network Firewall makes the requested changes to your resources.>

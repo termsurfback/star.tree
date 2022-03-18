@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/already-exists-exception
+  take form already-exists-exception
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/create-room-response
+  take form create-room-response
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-room, name <CreateRoom>
+  note <Creates a room with the specified details.>
+
+  take x-amz-target
+    like native-string
+  take create-room-request, like create-room-request
+
+  line </#X-Amz-Target=AlexaForBusiness.CreateRoom>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-room-request
+
+  loot 200
+    seed json, like create-room-response
+    note <Success>
+  loot 480
+    seed json, like already-exists-exception
+    note <AlreadyExistsException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>

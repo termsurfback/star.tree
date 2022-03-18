@@ -1,0 +1,109 @@
+
+load @drumwork/snow/amazonaws.com/s3/2006-03-01/base/list-multipart-uploads-output
+  take form list-multipart-uploads-output
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-multipart-uploads, name <ListMultipartUploads>
+  note <This action lists in-progress multipart uploads. An in-progress multipart upload is a multipart upload that has been initiated using the Initiate Multipart Upload request, but has not yet been completed or aborted.
+
+This action returns at most 1,000 multipart uploads in the response. 1,000 multipart uploads is the maximum number of uploads a response can include, which is also the default value. You can further limit the number of uploads in a response by specifying the `max-uploads` parameter in the response. If additional multipart uploads satisfy the list criteria, the response will contain an `IsTruncated` element with the value true. To list the additional multipart uploads, use the `key-marker` and `upload-id-marker` request parameters.
+
+In the response, the uploads are sorted by key. If your application has initiated more than one multipart upload using the same object key, then uploads in the response are first sorted by key. Additionally, uploads are sorted in ascending order within each key by the upload initiation time.
+
+For more information on multipart uploads, see [Uploading Objects Using Multipart Upload](https://docs.aws.amazon.com/AmazonS3/latest/dev/uploadobjusingmpu.html).
+
+For information on permissions required to use the multipart upload API, see [Multipart Upload and Permissions](https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuAndPermissions.html).
+
+The following operations are related to `ListMultipartUploads`:
+
+- [CreateMultipartUpload](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CreateMultipartUpload.html)
+
+- [UploadPart](https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html)
+
+- [CompleteMultipartUpload](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CompleteMultipartUpload.html)
+
+- [ListParts](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListParts.html)
+
+- [AbortMultipartUpload](https://docs.aws.amazon.com/AmazonS3/latest/API/API_AbortMultipartUpload.html)>
+
+  take bucket
+    like native-string
+    note <The name of the bucket to which the multipart upload was initiated.
+
+When using this action with an access point, you must direct requests to the access point hostname. The access point hostname takes the form _AccessPointName_-_AccountId_.s3-accesspoint._Region_.amazonaws.com. When using this action with an access point through the Amazon Web Services SDKs, you provide the access point ARN in place of the bucket name. For more information about access point ARNs, see [Using access points](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-access-points.html) in the _Amazon S3 User Guide_.
+
+When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form _AccessPointName_-_AccountId_._outpostID_.s3-outposts._Region_.amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see [Using S3 on Outposts](https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html) in the _Amazon S3 User Guide_.>
+  take x-amz-expected-bucket-owner
+    like native-string
+    note <The account ID of the expected bucket owner. If the bucket is owned by a different account, the request will fail with an HTTP `403 (Access Denied)` error.>
+    void take
+  take delimiter
+    like native-string
+    note <Character you use to group keys.
+
+All keys that contain the same string between the prefix, if specified, and the first occurrence of the delimiter after the prefix are grouped under a single result element, `CommonPrefixes`. If you don't specify the prefix parameter, then the substring starts at the beginning of the key. The keys that are grouped under `CommonPrefixes` result element are not returned elsewhere in the response.>
+    void take
+  take encoding-type
+    like native-string
+    void take
+  take key-marker
+    like native-string
+    note <Together with upload-id-marker, this parameter specifies the multipart upload after which listing should begin.
+
+If `upload-id-marker` is not specified, only the keys lexicographically greater than the specified `key-marker` will be included in the list.
+
+If `upload-id-marker` is specified, any multipart uploads for a key equal to the `key-marker` might also be included, provided those multipart uploads have upload IDs lexicographically greater than the specified `upload-id-marker`.>
+    void take
+  take max-uploads
+    like native-integer
+    note <Sets the maximum number of multipart uploads, from 1 to 1,000, to return in the response body. 1,000 is the maximum number of uploads that can be returned in a response.>
+    void take
+  take prefix
+    like native-string
+    note <Lists in-progress uploads only for those keys that begin with the specified prefix. You can use prefixes to separate a bucket into different grouping of keys. (You can think of using prefix to make groups in the same way you'd use a folder in a file system.)>
+    void take
+  take upload-id-marker
+    like native-string
+    note <Together with key-marker, specifies the multipart upload after which listing should begin. If key-marker is not specified, the upload-id-marker parameter is ignored. Otherwise, any multipart uploads for a key equal to the key-marker might be included in the list only if they have an upload ID lexicographically greater than the specified `upload-id-marker`.>
+    void take
+  take max-uploads
+    like native-string
+    note <Pagination limit>
+    void take
+  take key-marker
+    like native-string
+    note <Pagination token>
+    void take
+  take upload-id-marker
+    like native-string
+    note <Pagination token>
+    void take
+  take uploads
+    like native-boolean
+
+  line </{bucket}#uploads>
+
+  hint <x-amz-expected-bucket-owner>, loan x-amz-expected-bucket-owner
+
+  find <delimiter>, loan delimiter
+  find <encoding-type>, loan encoding-type
+  find <key-marker>, loan key-marker
+  find <max-uploads>, loan max-uploads
+  find <prefix>, loan prefix
+  find <upload-id-marker>, loan upload-id-marker
+  find <MaxUploads>, loan max-uploads
+  find <KeyMarker>, loan key-marker
+  find <UploadIdMarker>, loan upload-id-marker
+  find <uploads>, loan uploads
+
+  loot 200
+    seed xml, like list-multipart-uploads-output
+    note <Success>

@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/charge
+  take form charge
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-charges-charge-capture-body
+  take form post-charges-charge-capture-body
+
+boot post-charges-charge-capture, name <PostChargesChargeCapture>
+  note <Capture the payment of an existing, uncaptured, charge. This is the second half of the two-step payment flow, where first you [created a charge](#create_charge) with the capture option set to false.
+
+Uncaptured payments expire exactly seven days after they are created. If they are not captured by that point in time, they will be marked as refunded and will no longer be capturable.>
+
+  take charge
+    like native-string
+  take post-charges-charge-capture-body, like post-charges-charge-capture-body
+    void take
+
+  line </v1/charges/{charge}/capture>
+
+  seed x-www-form-urlencoded, loan post-charges-charge-capture-body
+
+  loot 200
+    seed json, like charge
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

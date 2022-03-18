@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-state-fault
+  take form invalid-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/modify-cluster-iam-roles-result
+  take form modify-cluster-iam-roles-result
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-modify-cluster-iam-roles, name <GET_ModifyClusterIamRoles>
+  note <Modifies the list of Identity and Access Management (IAM) roles that can be used by the cluster to access other Amazon Web Services services.
+
+A cluster can have up to 10 IAM roles associated at any time.>
+
+  take cluster-identifier
+    like native-string
+    note <The unique identifier of the cluster for which you want to associate or disassociate IAM roles.>
+  take add-iam-roles
+    like list
+      like string
+    note <Zero or more IAM roles to associate with the cluster. The roles must be in their Amazon Resource Name (ARN) format. You can associate up to 10 IAM roles with a single cluster in a single request.>
+    void take
+  take remove-iam-roles
+    like list
+      like string
+    note <Zero or more IAM roles in ARN format to disassociate from the cluster. You can disassociate up to 10 IAM roles from a single cluster in a single request.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyClusterIamRoles>
+
+  find <ClusterIdentifier>, loan cluster-identifier
+  find <AddIamRoles>, loan add-iam-roles
+  find <RemoveIamRoles>, loan remove-iam-roles
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-cluster-iam-roles-result
+    note <Success>
+  loot 480
+    seed xml, like invalid-cluster-state-fault
+    note <InvalidClusterStateFault>
+  loot 481
+    seed xml, like cluster-not-found-fault
+    note <ClusterNotFoundFault>

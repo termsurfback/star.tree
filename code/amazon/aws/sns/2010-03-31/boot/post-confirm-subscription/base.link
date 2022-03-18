@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/confirm-subscription-response
+  take form confirm-subscription-response
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/filter-policy-limit-exceeded-exception
+  take form filter-policy-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/subscription-limit-exceeded-exception
+  take form subscription-limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-confirm-subscription, name <POST_ConfirmSubscription>
+  note <Verifies an endpoint owner's intent to receive messages by validating the token sent to the endpoint by an earlier `Subscribe` action. If the token is valid, the action creates a new subscription and returns its Amazon Resource Name (ARN). This call requires an AWS signature only when the `AuthenticateOnUnsubscribe` flag is set to "true".>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take confirm-subscription-input, like confirm-subscription-input
+    void take
+
+  line </#Action=ConfirmSubscription>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan confirm-subscription-input
+
+  loot 200
+    seed xml, like confirm-subscription-response
+    note <Success>
+  loot 480
+    seed xml, like subscription-limit-exceeded-exception
+    note <SubscriptionLimitExceededException>
+  loot 481
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed xml, like not-found-exception
+    note <NotFoundException>
+  loot 483
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 484
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>
+  loot 485
+    seed xml, like filter-policy-limit-exceeded-exception
+    note <FilterPolicyLimitExceededException>

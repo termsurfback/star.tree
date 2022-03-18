@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/firebaserules/v1/base/list-rulesets-response
+  take form list-rulesets-response
+
+boot firebaserules-projects-rulesets-list, name <firebaserules.projects.rulesets.list>
+  note <List `Ruleset` metadata only and optionally filter the results by `Ruleset` name. The full `Source` contents of a `Ruleset` may be retrieved with GetRuleset.>
+
+  take name
+    like native-string
+    note <Required. Resource name for the project. Format: `projects/{project_id}`>
+  take filter
+    like native-string
+    note <`Ruleset` filter. The list method supports filters with restrictions on `Ruleset.name`. Filters on `Ruleset.create_time` should use the `date` function which parses strings that conform to the RFC 3339 date/time specifications. Example: `create_time &gt; date("2017-01-01T00:00:00Z") AND name=UUID-*`>
+    void take
+  take page-size
+    like native-integer
+    note <Page size to load. Maximum of 100. Defaults to 10. Note: `page_size` is just a hint and the service may choose to load less than `page_size` due to the size of the output. To traverse all of the releases, caller should iterate until the `page_token` is empty.>
+    void take
+  take page-token
+    like native-string
+    note <Next page token for loading the next batch of `Ruleset` instances.>
+    void take
+
+  line </v1/{name}/rulesets>
+
+  find <filter>, loan filter
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-rulesets-response
+    note <Successful response>

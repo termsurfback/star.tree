@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/invalid-parameters-exception
+  take form invalid-parameters-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/list-constraints-for-portfolio-output
+  take form list-constraints-for-portfolio-output
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-constraints-for-portfolio, name <ListConstraintsForPortfolio>
+  note <Lists the constraints for the specified portfolio and product.>
+
+  take x-amz-target
+    like native-string
+  take page-size
+    like native-string
+    note <Pagination limit>
+    void take
+  take page-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-constraints-for-portfolio-input, like list-constraints-for-portfolio-input
+
+  line </#X-Amz-Target=AWS242ServiceCatalogService.ListConstraintsForPortfolio>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <PageSize>, loan page-size
+  find <PageToken>, loan page-token
+
+  seed json, loan list-constraints-for-portfolio-input
+
+  loot 200
+    seed json, like list-constraints-for-portfolio-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-parameters-exception
+    note <InvalidParametersException>

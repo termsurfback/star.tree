@@ -1,0 +1,67 @@
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/execution-already-exists
+  take form execution-already-exists
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/execution-limit-exceeded
+  take form execution-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/invalid-arn
+  take form invalid-arn
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/invalid-execution-input
+  take form invalid-execution-input
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/invalid-name
+  take form invalid-name
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/start-execution-output
+  take form start-execution-output
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/state-machine-deleting
+  take form state-machine-deleting
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/state-machine-does-not-exist
+  take form state-machine-does-not-exist
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-execution, name <StartExecution>
+  note <Starts a state machine execution.
+
+`StartExecution` is idempotent. If `StartExecution` is called with the same name and input as a running execution, the call will succeed and return the same response as the original request. If the execution is closed or if the input is different, it will return a 400 `ExecutionAlreadyExists` error. Names can be reused after 90 days.>
+
+  take x-amz-target
+    like native-string
+  take start-execution-input, like start-execution-input
+
+  line </#X-Amz-Target=AWSStepFunctions.StartExecution>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan start-execution-input
+
+  loot 200
+    seed json, like start-execution-output
+    note <Success>
+  loot 480
+    seed json, like execution-limit-exceeded
+    note <ExecutionLimitExceeded>
+  loot 481
+    seed json, like execution-already-exists
+    note <ExecutionAlreadyExists>
+  loot 482
+    seed json, like invalid-arn
+    note <InvalidArn>
+  loot 483
+    seed json, like invalid-execution-input
+    note <InvalidExecutionInput>
+  loot 484
+    seed json, like invalid-name
+    note <InvalidName>
+  loot 485
+    seed json, like state-machine-does-not-exist
+    note <StateMachineDoesNotExist>
+  loot 486
+    seed json, like state-machine-deleting
+    note <StateMachineDeleting>

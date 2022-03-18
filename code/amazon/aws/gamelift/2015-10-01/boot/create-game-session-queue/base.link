@@ -1,0 +1,73 @@
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/create-game-session-queue-output
+  take form create-game-session-queue-output
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/tagging-failed-exception
+  take form tagging-failed-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-game-session-queue, name <CreateGameSessionQueue>
+  note <Creates a placement queue that processes requests for new game sessions. A queue uses FleetIQ algorithms to determine the best placement locations and find an available game server there, then prompts the game server process to start a new game session.
+
+A game session queue is configured with a set of destinations (GameLift fleets or aliases), which determine the locations where the queue can place new game sessions. These destinations can span multiple fleet types (Spot and On-Demand), instance types, and AWS Regions. If the queue includes multi-location fleets, the queue is able to place game sessions in all of a fleet's remote locations. You can opt to filter out individual locations if needed.
+
+The queue configuration also determines how FleetIQ selects the best available placement for a new game session. Before searching for an available game server, FleetIQ first prioritizes the queue's destinations and locations, with the best placement locations on top. You can set up the queue to use the FleetIQ default prioritization or provide an alternate set of priorities.
+
+To create a new queue, provide a name, timeout value, and a list of destinations. Optionally, specify a sort configuration and/or a filter, and define a set of latency cap policies. You can also include the ARN for an Amazon Simple Notification Service (SNS) topic to receive notifications of game session placement activity. Notifications using SNS or CloudWatch events is the preferred way to track placement activity.
+
+If successful, a new `GameSessionQueue` object is returned with an assigned queue ARN. New game session requests, which are submitted to the queue with StartGameSessionPlacement or StartMatchmaking, reference a queue's name or ARN.
+
+**Learn more** [Design a game session queue](https://docs.aws.amazon.com/gamelift/latest/developerguide/queues-design.html)
+
+[Create a game session queue](https://docs.aws.amazon.com/gamelift/latest/developerguide/queues-creating.html)
+
+**Related actions** CreateGameSessionQueue | DescribeGameSessionQueues | UpdateGameSessionQueue | DeleteGameSessionQueue | [All APIs by task](https://docs.aws.amazon.com/gamelift/latest/developerguide/reference-awssdk.html#reference-awssdk-resources-fleets)>
+
+  take x-amz-target
+    like native-string
+  take create-game-session-queue-input, like create-game-session-queue-input
+
+  line </#X-Amz-Target=GameLift.CreateGameSessionQueue>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-game-session-queue-input
+
+  loot 200
+    seed json, like create-game-session-queue-output
+    note <Success>
+  loot 480
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 483
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 484
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 485
+    seed json, like tagging-failed-exception
+    note <TaggingFailedException>

@@ -1,0 +1,23 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/gmail/v1/base/send-as
+  take form send-as
+
+boot gmail-users-settings-send-as-create, name <gmail.users.settings.sendAs.create>
+  note <Creates a custom "from" send-as alias. If an SMTP MSA is specified, Gmail will attempt to connect to the SMTP service to validate the configuration before creating the alias. If ownership verification is required for the alias, a message will be sent to the email address and the resource's verification status will be set to `pending`; otherwise, the resource will be created with verification status set to `accepted`. If a signature is provided, Gmail will sanitize the HTML before saving it with the alias. This method is only available to service account clients that have been delegated domain-wide authority.>
+
+  take user-id
+    like native-string
+    note <User's email address. The special value "me" can be used to indicate the authenticated user.>
+  take send-as, like send-as
+    void take
+
+  line </gmail/v1/users/{user-id}/settings/sendAs>
+
+  seed json, loan send-as
+
+  loot 200
+    seed json, like send-as
+    note <Successful response>

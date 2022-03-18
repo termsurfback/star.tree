@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/get-deployable-patch-snapshot-for-instance-result
+  take form get-deployable-patch-snapshot-for-instance-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/unsupported-feature-required-exception
+  take form unsupported-feature-required-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/unsupported-operating-system
+  take form unsupported-operating-system
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-deployable-patch-snapshot-for-instance, name <GetDeployablePatchSnapshotForInstance>
+  note <Retrieves the current snapshot for the patch baseline the instance uses. This API is primarily used by the `AWS-RunPatchBaseline` Systems Manager document (SSM document).
+
+If you run the command locally, such as with the Command Line Interface (CLI), the system attempts to use your local Amazon Web Services credentials and the operation fails. To avoid this, you can run the command in the Amazon Web Services Systems Manager console. Use Run Command, a capability of Amazon Web Services Systems Manager, with an SSM document that enables you to target an instance with a script or command. For example, run the command using the `AWS-RunShellScript` document or the `AWS-RunPowerShellScript` document.>
+
+  take x-amz-target
+    like native-string
+  take get-deployable-patch-snapshot-for-instance-request, like get-deployable-patch-snapshot-for-instance-request
+
+  line </#X-Amz-Target=AmazonSSM.GetDeployablePatchSnapshotForInstance>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-deployable-patch-snapshot-for-instance-request
+
+  loot 200
+    seed json, like get-deployable-patch-snapshot-for-instance-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like unsupported-operating-system
+    note <UnsupportedOperatingSystem>
+  loot 482
+    seed json, like unsupported-feature-required-exception
+    note <UnsupportedFeatureRequiredException>

@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-snapshot-already-exists-fault
+  take form cluster-snapshot-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-snapshot-quota-exceeded-fault
+  take form cluster-snapshot-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/delete-cluster-result
+  take form delete-cluster-result
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-state-fault
+  take form invalid-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-retention-period-fault
+  take form invalid-retention-period-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-cluster, name <POST_DeleteCluster>
+  note <Deletes a previously provisioned cluster without its final snapshot being created. A successful response from the web service indicates that the request was received correctly. Use DescribeClusters to monitor the status of the deletion. The delete operation cannot be canceled or reverted once submitted. For more information about managing clusters, go to [Amazon Redshift Clusters](https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html) in the _Amazon Redshift Cluster Management Guide_.
+
+If you want to shut down the cluster and retain it for future use, set _SkipFinalClusterSnapshot_ to `false` and specify a name for _FinalClusterSnapshotIdentifier_. You can later restore this snapshot to resume using the cluster. If a final cluster snapshot is requested, the status of the cluster will be "final-snapshot" while the snapshot is being taken, then it's "deleting" once Amazon Redshift begins deleting the cluster.
+
+For more information about managing clusters, go to [Amazon Redshift Clusters](https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html) in the _Amazon Redshift Cluster Management Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-cluster-message, like delete-cluster-message
+    void take
+
+  line </#Action=DeleteCluster>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-cluster-message
+
+  loot 200
+    seed xml, like delete-cluster-result
+    note <Success>
+  loot 480
+    seed xml, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 481
+    seed xml, like invalid-cluster-state-fault
+    note <InvalidClusterStateFault>
+  loot 482
+    seed xml, like cluster-snapshot-already-exists-fault
+    note <ClusterSnapshotAlreadyExistsFault>
+  loot 483
+    seed xml, like cluster-snapshot-quota-exceeded-fault
+    note <ClusterSnapshotQuotaExceededFault>
+  loot 484
+    seed xml, like invalid-retention-period-fault
+    note <InvalidRetentionPeriodFault>

@@ -1,0 +1,79 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-security-group-already-exists-fault
+  take form cache-security-group-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-security-group-quota-exceeded-fault
+  take form cache-security-group-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/create-cache-security-group-result
+  take form create-cache-security-group-result
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/tag
+  take form tag
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/tag-quota-per-resource-exceeded
+  take form tag-quota-per-resource-exceeded
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-cache-security-group, name <GET_CreateCacheSecurityGroup>
+  note <Creates a new cache security group. Use a cache security group to control access to one or more clusters.
+
+Cache security groups are only used when you are creating a cluster outside of an Amazon Virtual Private Cloud (Amazon VPC). If you are creating a cluster inside of a VPC, use a cache subnet group instead. For more information, see [CreateCacheSubnetGroup](https://docs.aws.amazon.com/AmazonElastiCache/latest/APIReference/API_CreateCacheSubnetGroup.html).>
+
+  take cache-security-group-name
+    like native-string
+    note <A name for the cache security group. This value is stored as a lowercase string.
+
+Constraints: Must contain no more than 255 alphanumeric characters. Cannot be the word "Default".
+
+Example: `mysecuritygroup`>
+  take description
+    like native-string
+    note <A description for the cache security group.>
+  take tags
+    like list
+      like tag
+    note <A list of tags to be added to this resource. A tag is a key-value pair. A tag key must be accompanied by a tag value, although null is accepted.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateCacheSecurityGroup>
+
+  find <CacheSecurityGroupName>, loan cache-security-group-name
+  find <Description>, loan description
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-cache-security-group-result
+    note <Success>
+  loot 480
+    seed xml, like cache-security-group-already-exists-fault
+    note <CacheSecurityGroupAlreadyExistsFault>
+  loot 481
+    seed xml, like cache-security-group-quota-exceeded-fault
+    note <CacheSecurityGroupQuotaExceededFault>
+  loot 482
+    seed xml, like tag-quota-per-resource-exceeded
+    note <TagQuotaPerResourceExceeded>
+  loot 483
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 484
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

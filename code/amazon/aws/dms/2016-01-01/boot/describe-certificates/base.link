@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/describe-certificates-response
+  take form describe-certificates-response
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/resource-not-found-fault
+  take form resource-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-certificates, name <DescribeCertificates>
+  note <Provides a description of the certificate.>
+
+  take x-amz-target
+    like native-string
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-certificates-message, like describe-certificates-message
+
+  line </#X-Amz-Target=AmazonDMSv20160101.DescribeCertificates>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+
+  seed json, loan describe-certificates-message
+
+  loot 200
+    seed json, like describe-certificates-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-fault
+    note <ResourceNotFoundFault>

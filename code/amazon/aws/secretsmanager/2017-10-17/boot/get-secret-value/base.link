@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/decryption-failure
+  take form decryption-failure
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/get-secret-value-response
+  take form get-secret-value-response
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-secret-value, name <GetSecretValue>
+  note <Retrieves the contents of the encrypted fields `SecretString` or `SecretBinary` from the specified version of a secret, whichever contains content.
+
+**Minimum permissions** To run this command, you must have the following permissions:
+
+- secretsmanager:GetSecretValue
+
+- kms:Decrypt - required only if you use a customer-managed Amazon Web Services KMS key to encrypt the secret. You do not need this permission to use the account's default Amazon Web Services managed CMK for Secrets Manager.
+
+**Related operations** - To create a new version of the secret with different encrypted information, use PutSecretValue.
+
+- To retrieve the non-encrypted details for the secret, use DescribeSecret.>
+
+  take x-amz-target
+    like native-string
+  take get-secret-value-request, like get-secret-value-request
+
+  line </#X-Amz-Target=secretsmanager.GetSecretValue>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-secret-value-request
+
+  loot 200
+    seed json, like get-secret-value-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 483
+    seed json, like decryption-failure
+    note <DecryptionFailure>
+  loot 484
+    seed json, like internal-service-error
+    note <InternalServiceError>

@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/frauddetector/2019-11-15/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/frauddetector/2019-11-15/base/list-tags-for-resource-result
+  take form list-tags-for-resource-result
+
+load @drumwork/snow/amazonaws.com/frauddetector/2019-11-15/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/frauddetector/2019-11-15/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/frauddetector/2019-11-15/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-tags-for-resource, name <ListTagsForResource>
+  note <Lists all tags associated with the resource. This is a paginated API. To get the next page results, provide the pagination token from the response as part of your request. A null pagination token fetches the records from the beginning.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-tags-for-resource-request, like list-tags-for-resource-request
+
+  line </#X-Amz-Target=AWSHawksNestServiceFacade.ListTagsForResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-tags-for-resource-request
+
+  loot 200
+    seed json, like list-tags-for-resource-result
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

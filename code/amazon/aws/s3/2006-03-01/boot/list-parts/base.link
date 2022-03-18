@@ -1,0 +1,80 @@
+
+load @drumwork/snow/amazonaws.com/s3/2006-03-01/base/list-parts-output
+  take form list-parts-output
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-parts, name <ListParts>
+  note <Lists the parts that have been uploaded for a specific multipart upload. This operation must include the upload ID, which you obtain by sending the initiate multipart upload request (see [CreateMultipartUpload](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CreateMultipartUpload.html)). This request returns a maximum of 1,000 uploaded parts. The default number of parts returned is 1,000 parts. You can restrict the number of parts returned by specifying the `max-parts` request parameter. If your multipart upload consists of more than 1,000 parts, the response returns an `IsTruncated` field with the value of true, and a `NextPartNumberMarker` element. In subsequent `ListParts` requests you can include the part-number-marker query string parameter and set its value to the `NextPartNumberMarker` field value from the previous response.
+
+For more information on multipart uploads, see [Uploading Objects Using Multipart Upload](https://docs.aws.amazon.com/AmazonS3/latest/dev/uploadobjusingmpu.html).
+
+For information on permissions required to use the multipart upload API, see [Multipart Upload and Permissions](https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuAndPermissions.html).
+
+The following operations are related to `ListParts`:
+
+- [CreateMultipartUpload](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CreateMultipartUpload.html)
+
+- [UploadPart](https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html)
+
+- [CompleteMultipartUpload](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CompleteMultipartUpload.html)
+
+- [AbortMultipartUpload](https://docs.aws.amazon.com/AmazonS3/latest/API/API_AbortMultipartUpload.html)
+
+- [ListMultipartUploads](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListMultipartUploads.html)>
+
+  take bucket
+    like native-string
+    note <The name of the bucket to which the parts are being uploaded.
+
+When using this action with an access point, you must direct requests to the access point hostname. The access point hostname takes the form _AccessPointName_-_AccountId_.s3-accesspoint._Region_.amazonaws.com. When using this action with an access point through the Amazon Web Services SDKs, you provide the access point ARN in place of the bucket name. For more information about access point ARNs, see [Using access points](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-access-points.html) in the _Amazon S3 User Guide_.
+
+When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form _AccessPointName_-_AccountId_._outpostID_.s3-outposts._Region_.amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see [Using S3 on Outposts](https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html) in the _Amazon S3 User Guide_.>
+  take key
+    like native-string
+    note <Object key for which the multipart upload was initiated.>
+  take x-amz-request-payer
+    like native-string
+    void take
+  take x-amz-expected-bucket-owner
+    like native-string
+    note <The account ID of the expected bucket owner. If the bucket is owned by a different account, the request will fail with an HTTP `403 (Access Denied)` error.>
+    void take
+  take max-parts
+    like native-integer
+    note <Sets the maximum number of parts to return.>
+    void take
+  take part-number-marker
+    like native-integer
+    note <Specifies the part after which listing should begin. Only parts with higher part numbers will be listed.>
+    void take
+  take upload-id
+    like native-string
+    note <Upload ID identifying the multipart upload whose parts are being listed.>
+  take max-parts
+    like native-string
+    note <Pagination limit>
+    void take
+  take part-number-marker
+    like native-string
+    note <Pagination token>
+    void take
+
+  line </{bucket}/{key}#uploadId>
+
+  hint <x-amz-request-payer>, loan x-amz-request-payer
+  hint <x-amz-expected-bucket-owner>, loan x-amz-expected-bucket-owner
+
+  find <max-parts>, loan max-parts
+  find <part-number-marker>, loan part-number-marker
+  find <uploadId>, loan upload-id
+  find <MaxParts>, loan max-parts
+  find <PartNumberMarker>, loan part-number-marker
+
+  loot 200
+    seed xml, like list-parts-output
+    note <Success>

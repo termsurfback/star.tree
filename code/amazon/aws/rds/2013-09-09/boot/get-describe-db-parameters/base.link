@@ -1,0 +1,56 @@
+
+load @drumwork/snow/amazonaws.com/rds/2013-09-09/base/db-parameter-group-details
+  take form db-parameter-group-details
+
+load @drumwork/snow/amazonaws.com/rds/2013-09-09/base/db-parameter-group-not-found-fault
+  take form db-parameter-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-09-09/base/filter
+  take form filter
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-db-parameters, name <GET_DescribeDBParameters>
+  take db-parameter-group-name
+    like native-string
+  take source
+    like native-string
+    void take
+  take filters
+    like list
+      like filter
+    void take
+  take max-records
+    like native-integer
+    void take
+  take marker
+    like native-string
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeDBParameters>
+
+  find <DBParameterGroupName>, loan db-parameter-group-name
+  find <Source>, loan source
+  find <Filters>, loan filters
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like db-parameter-group-details
+    note <Success>
+  loot 480
+    seed xml, like db-parameter-group-not-found-fault
+    note <DBParameterGroupNotFoundFault>

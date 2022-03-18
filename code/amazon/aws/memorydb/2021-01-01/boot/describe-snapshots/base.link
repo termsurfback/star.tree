@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/describe-snapshots-response
+  take form describe-snapshots-response
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/service-linked-role-not-found-fault
+  take form service-linked-role-not-found-fault
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/snapshot-not-found-fault
+  take form snapshot-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-snapshots, name <DescribeSnapshots>
+  note <Returns information about cluster snapshots. By default, DescribeSnapshots lists all of your snapshots; it can optionally describe a single snapshot, or just the snapshots associated with a particular cluster.>
+
+  take x-amz-target
+    like native-string
+  take describe-snapshots-request, like describe-snapshots-request
+
+  line </#X-Amz-Target=AmazonMemoryDB.DescribeSnapshots>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-snapshots-request
+
+  loot 200
+    seed json, like describe-snapshots-response
+    note <Success>
+  loot 480
+    seed json, like snapshot-not-found-fault
+    note <SnapshotNotFoundFault>
+  loot 481
+    seed json, like service-linked-role-not-found-fault
+    note <ServiceLinkedRoleNotFoundFault>
+  loot 482
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed json, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

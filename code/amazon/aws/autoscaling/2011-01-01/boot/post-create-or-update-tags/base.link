@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/already-exists-fault
+  take form already-exists-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/limit-exceeded-fault
+  take form limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-in-use-fault
+  take form resource-in-use-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-or-update-tags, name <POST_CreateOrUpdateTags>
+  note <Creates or updates tags for the specified Auto Scaling group.
+
+When you specify a tag with a key that already exists, the operation overwrites the previous tag definition, and you do not get an error message.
+
+For more information, see [Tagging Auto Scaling groups and instances](https://docs.aws.amazon.com/autoscaling/ec2/userguide/autoscaling-tagging.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-or-update-tags-type, like create-or-update-tags-type
+    void take
+
+  line </#Action=CreateOrUpdateTags>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-or-update-tags-type
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like limit-exceeded-fault
+    note <LimitExceededFault>
+  loot 481
+    seed xml, like already-exists-fault
+    note <AlreadyExistsFault>
+  loot 482
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>
+  loot 483
+    seed xml, like resource-in-use-fault
+    note <ResourceInUseFault>

@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-egress-only-internet-gateways-result
+  take form describe-egress-only-internet-gateways-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/egress-only-internet-gateway-id
+  take form egress-only-internet-gateway-id
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-egress-only-internet-gateways, name <GET_DescribeEgressOnlyInternetGateways>
+  note <Describes one or more of your egress-only internet gateways.>
+
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take egress-only-internet-gateway-id
+    like list
+      like egress-only-internet-gateway-id
+    note <One or more egress-only internet gateway IDs.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return with a single call. To retrieve the remaining results, make another call with the returned `nextToken` value.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next page of results.>
+    void take
+  take filter
+    like list
+      like filter
+    note <One or more filters.
+
+- `tag`:&lt;key&gt; - The key/value combination of a tag assigned to the resource. Use the tag key in the filter name and the tag value as the filter value. For example, to find all resources that have a tag with the key `Owner` and the value `TeamA`, specify `tag:Owner` for the filter name and `TeamA` for the filter value.
+
+- `tag-key` - The key of a tag assigned to the resource. Use this filter to find all resources assigned a tag with a specific key, regardless of the tag value.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeEgressOnlyInternetGateways>
+
+  find <DryRun>, loan dry-run
+  find <EgressOnlyInternetGatewayId>, loan egress-only-internet-gateway-id
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <Filter>, loan filter
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-egress-only-internet-gateways-result
+    note <Success>

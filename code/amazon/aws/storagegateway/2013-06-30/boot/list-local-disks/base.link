@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/list-local-disks-output
+  take form list-local-disks-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-local-disks, name <ListLocalDisks>
+  note <Returns a list of the gateway's local disks. To specify which gateway to describe, you use the Amazon Resource Name (ARN) of the gateway in the body of the request.
+
+The request returns a list of all disks, specifying which are configured as working storage, cache storage, or stored volume or not configured at all. The response includes a `DiskStatus` field. This field can have a value of present (the disk is available to use), missing (the disk is no longer connected to the gateway), or mismatch (the disk node is occupied by a disk that has incorrect metadata or the disk content is corrupted).>
+
+  take x-amz-target
+    like native-string
+  take list-local-disks-input, like list-local-disks-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.ListLocalDisks>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-local-disks-input
+
+  loot 200
+    seed json, like list-local-disks-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

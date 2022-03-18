@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/operation-not-permitted-exception
+  take form operation-not-permitted-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/priority-in-use-exception
+  take form priority-in-use-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/rule-not-found-exception
+  take form rule-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/rule-priority-pair
+  take form rule-priority-pair
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/set-rule-priorities-output
+  take form set-rule-priorities-output
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-set-rule-priorities, name <GET_SetRulePriorities>
+  note <Sets the priorities of the specified rules.
+
+You can reorder the rules as long as there are no priority conflicts in the new order. Any existing rules that you do not specify retain their current priority.>
+
+  take rule-priorities
+    like list
+      like rule-priority-pair
+    note <The rule priorities.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=SetRulePriorities>
+
+  find <RulePriorities>, loan rule-priorities
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like set-rule-priorities-output
+    note <Success>
+  loot 480
+    seed xml, like rule-not-found-exception
+    note <RuleNotFoundException>
+  loot 481
+    seed xml, like priority-in-use-exception
+    note <PriorityInUseException>
+  loot 482
+    seed xml, like operation-not-permitted-exception
+    note <OperationNotPermittedException>

@@ -1,0 +1,52 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/conversations-close-body
+  take form conversations-close-body
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+boot conversations-close, name <conversations_close>
+  note <Closes a direct message or multi-person direct message.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `conversations:write`>
+    void take
+  take conversations-close-body, like conversations-close-body
+    void take
+
+  line </conversations.close>
+
+  hint <token>, loan token
+
+  seed x-www-form-urlencoded, loan conversations-close-body
+
+  loot 200
+    seed json
+      like form
+        take already-closed, name <already_closed>
+          void take
+        take no-op, name <no_op>
+          void take
+        take ok, name <ok>
+          like defs-ok-true
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take callstack, name <callstack>
+          void take
+        take error, name <error>
+        take needed, name <needed>
+          void take
+        take ok, name <ok>
+          like defs-ok-false
+        take provided, name <provided>
+          void take
+    note <Typical error response>

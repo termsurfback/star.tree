@@ -1,0 +1,83 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/entity-already-exists-exception
+  take form entity-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/entity-temporarily-unmodifiable-exception
+  take form entity-temporarily-unmodifiable-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/invalid-authentication-code-exception
+  take form invalid-authentication-code-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-enable-mfa-device, name <GET_EnableMFADevice>
+  note <Enables the specified MFA device and associates it with the specified IAM user. When enabled, the MFA device is required for every subsequent login by the IAM user associated with the device.>
+
+  take user-name
+    like native-string
+    note <The name of the IAM user for whom you want to enable the MFA device.
+
+This parameter allows (through its [regex pattern](http://wikipedia.org/wiki/regex)) a string of characters consisting of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: _+=,.@->
+  take serial-number
+    like native-string
+    note <The serial number that uniquely identifies the MFA device. For virtual MFA devices, the serial number is the device ARN.
+
+This parameter allows (through its [regex pattern](http://wikipedia.org/wiki/regex)) a string of characters consisting of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: =,.@:/->
+  take authentication-code1
+    like native-string
+    note <An authentication code emitted by the device.
+
+The format for this parameter is a string of six digits.
+
+Submit your request immediately after generating the authentication codes. If you generate the codes and then wait too long to submit the request, the MFA device successfully associates with the user but the MFA device becomes out of sync. This happens because time-based one-time passwords (TOTP) expire after a short period of time. If this happens, you can [resync the device](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa_sync.html).>
+  take authentication-code2
+    like native-string
+    note <A subsequent authentication code emitted by the device.
+
+The format for this parameter is a string of six digits.
+
+Submit your request immediately after generating the authentication codes. If you generate the codes and then wait too long to submit the request, the MFA device successfully associates with the user but the MFA device becomes out of sync. This happens because time-based one-time passwords (TOTP) expire after a short period of time. If this happens, you can [resync the device](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa_sync.html).>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=EnableMFADevice>
+
+  find <UserName>, loan user-name
+  find <SerialNumber>, loan serial-number
+  find <AuthenticationCode1>, loan authentication-code1
+  find <AuthenticationCode2>, loan authentication-code2
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like entity-already-exists-exception
+    note <EntityAlreadyExistsException>
+  loot 481
+    seed xml, like entity-temporarily-unmodifiable-exception
+    note <EntityTemporarilyUnmodifiableException>
+  loot 482
+    seed xml, like invalid-authentication-code-exception
+    note <InvalidAuthenticationCodeException>
+  loot 483
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 484
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 485
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

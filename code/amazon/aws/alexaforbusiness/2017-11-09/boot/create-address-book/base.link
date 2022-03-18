@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/already-exists-exception
+  take form already-exists-exception
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/create-address-book-response
+  take form create-address-book-response
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-address-book, name <CreateAddressBook>
+  note <Creates an address book with the specified details.>
+
+  take x-amz-target
+    like native-string
+  take create-address-book-request, like create-address-book-request
+
+  line </#X-Amz-Target=AlexaForBusiness.CreateAddressBook>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-address-book-request
+
+  loot 200
+    seed json, like create-address-book-response
+    note <Success>
+  loot 480
+    seed json, like already-exists-exception
+    note <AlreadyExistsException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>

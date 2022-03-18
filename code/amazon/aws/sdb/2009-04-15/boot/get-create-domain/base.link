@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/sdb/2009-04-15/base/missing-parameter
+  take form missing-parameter
+
+load @drumwork/snow/amazonaws.com/sdb/2009-04-15/base/number-domains-exceeded
+  take form number-domains-exceeded
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-domain, name <GET_CreateDomain>
+  note <The `CreateDomain` operation creates a new domain. The domain name should be unique among the domains associated with the Access Key ID provided in the request. The `CreateDomain` operation may take 10 or more seconds to complete.
+
+CreateDomain is an idempotent operation; running it multiple times using the same domain name will not result in an error response.
+
+The client can create up to 100 domains per account.
+
+If the client requires additional domains, go to [http://aws.amazon.com/contact-us/simpledb-limit-request/](http://aws.amazon.com/contact-us/simpledb-limit-request/).>
+
+  take domain-name
+    like native-string
+    note <The name of the domain to create. The name can range between 3 and 255 characters and can contain the following characters: a-z, A-Z, 0-9, '_', '-', and '.'.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateDomain>
+
+  find <DomainName>, loan domain-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 400
+    seed xml, like missing-parameter
+    note <MissingParameter>
+  loot 409
+    seed xml, like number-domains-exceeded
+    note <NumberDomainsExceeded>

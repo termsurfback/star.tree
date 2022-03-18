@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/container-in-use-exception
+  take form container-in-use-exception
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/create-container-output
+  take form create-container-output
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-container, name <CreateContainer>
+  note <Creates a storage container to hold objects. A container is similar to a bucket in the Amazon S3 service.>
+
+  take x-amz-target
+    like native-string
+  take create-container-input, like create-container-input
+
+  line </#X-Amz-Target=MediaStore_20170901.CreateContainer>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-container-input
+
+  loot 200
+    seed json, like create-container-output
+    note <Success>
+  loot 480
+    seed json, like container-in-use-exception
+    note <ContainerInUseException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like internal-server-error
+    note <InternalServerError>

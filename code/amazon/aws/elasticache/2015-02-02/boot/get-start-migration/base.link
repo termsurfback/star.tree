@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/customer-node-endpoint
+  take form customer-node-endpoint
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-replication-group-state-fault
+  take form invalid-replication-group-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/replication-group-already-under-migration-fault
+  take form replication-group-already-under-migration-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/replication-group-not-found-fault
+  take form replication-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/start-migration-response
+  take form start-migration-response
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-start-migration, name <GET_StartMigration>
+  note <Start the migration of data.>
+
+  take replication-group-id
+    like native-string
+    note <The ID of the replication group to which data should be migrated.>
+  take customer-node-endpoint-list
+    like list
+      like customer-node-endpoint
+    note <List of endpoints from which data should be migrated. For Redis (cluster mode disabled), list should have only one element.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=StartMigration>
+
+  find <ReplicationGroupId>, loan replication-group-id
+  find <CustomerNodeEndpointList>, loan customer-node-endpoint-list
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like start-migration-response
+    note <Success>
+  loot 480
+    seed xml, like replication-group-not-found-fault
+    note <ReplicationGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-replication-group-state-fault
+    note <InvalidReplicationGroupStateFault>
+  loot 482
+    seed xml, like replication-group-already-under-migration-fault
+    note <ReplicationGroupAlreadyUnderMigrationFault>
+  loot 483
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>

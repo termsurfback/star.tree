@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-set-instance-health, name <GET_SetInstanceHealth>
+  note <Sets the health status of the specified instance.
+
+For more information, see [Health checks for Auto Scaling instances](https://docs.aws.amazon.com/autoscaling/ec2/userguide/healthcheck.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+
+  take instance-id
+    like native-string
+    note <The ID of the instance.>
+  take health-status
+    like native-string
+    note <The health status of the instance. Set to `Healthy` to have the instance remain in service. Set to `Unhealthy` to have the instance be out of service. Amazon EC2 Auto Scaling terminates and replaces the unhealthy instance.>
+  take should-respect-grace-period
+    like native-boolean
+    note <If the Auto Scaling group of the specified instance has a `HealthCheckGracePeriod` specified for the group, by default, this call respects the grace period. Set this to `False`, to have the call not respect the grace period associated with the group.
+
+For more information about the health check grace period, see [CreateAutoScalingGroup](https://docs.aws.amazon.com/autoscaling/ec2/APIReference/API_CreateAutoScalingGroup.html) in the _Amazon EC2 Auto Scaling API Reference_.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=SetInstanceHealth>
+
+  find <InstanceId>, loan instance-id
+  find <HealthStatus>, loan health-status
+  find <ShouldRespectGracePeriod>, loan should-respect-grace-period
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

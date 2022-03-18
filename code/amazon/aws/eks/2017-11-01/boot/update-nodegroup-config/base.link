@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/update-nodegroup-config-body
+  take form update-nodegroup-config-body
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/update-nodegroup-config-response
+  take form update-nodegroup-config-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-nodegroup-config, name <UpdateNodegroupConfig>
+  note <Updates an Amazon EKS managed node group configuration. Your node group continues to function during the update. The response output includes an update ID that you can use to track the status of your node group update with the DescribeUpdate API operation. Currently you can update the Kubernetes labels for a node group or the scaling configuration.>
+
+  take name
+    like native-string
+    note <The name of the Amazon EKS cluster that the managed node group resides in.>
+  take nodegroup-name
+    like native-string
+    note <The name of the managed node group to update.>
+  take update-nodegroup-config-body, like update-nodegroup-config-body
+
+  line </clusters/{name}/node-groups/{nodegroup-name}/update-config>
+
+  seed json, loan update-nodegroup-config-body
+
+  loot 200
+    seed json, like update-nodegroup-config-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like client-exception
+    note <ClientException>
+  loot 482
+    seed json, like server-exception
+    note <ServerException>
+  loot 483
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>
+  loot 484
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 485
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

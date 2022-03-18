@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/missing-parameter-value-exception
+  take form missing-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/update-framework-body
+  take form update-framework-body
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/update-framework-output
+  take form update-framework-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-framework, name <UpdateFramework>
+  note <Updates an existing framework identified by its `FrameworkName` with the input document in JSON format.>
+
+  take framework-name
+    like native-string
+    note <The unique name of a framework. This name is between 1 and 256 characters, starting with a letter, and consisting of letters (a-z, A-Z), numbers (0-9), and underscores (_).>
+  take update-framework-body, like update-framework-body
+
+  line </audit/frameworks/{framework-name}>
+
+  seed json, loan update-framework-body
+
+  loot 200
+    seed json, like update-framework-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed json, like missing-parameter-value-exception
+    note <MissingParameterValueException>
+  loot 484
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 485
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

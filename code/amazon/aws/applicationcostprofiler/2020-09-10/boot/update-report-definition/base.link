@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/applicationcostprofiler/2020-09-10/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/applicationcostprofiler/2020-09-10/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/applicationcostprofiler/2020-09-10/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/applicationcostprofiler/2020-09-10/base/update-report-definition-body
+  take form update-report-definition-body
+
+load @drumwork/snow/amazonaws.com/applicationcostprofiler/2020-09-10/base/update-report-definition-result
+  take form update-report-definition-result
+
+load @drumwork/snow/amazonaws.com/applicationcostprofiler/2020-09-10/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-report-definition, name <UpdateReportDefinition>
+  note <Updates existing report in AWS Application Cost Profiler.>
+
+  take report-id
+    like native-string
+    note <Required. ID of the report to update.>
+  take update-report-definition-body, like update-report-definition-body
+
+  line </reportDefinition/{report-id}>
+
+  seed json, loan update-report-definition-body
+
+  loot 200
+    seed json, like update-report-definition-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

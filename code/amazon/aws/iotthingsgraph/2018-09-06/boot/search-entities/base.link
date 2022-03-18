@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/search-entities-response
+  take form search-entities-response
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot search-entities, name <SearchEntities>
+  note <Searches for entities of the specified type. You can search for entities in your namespace and the public namespace that you're tracking.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take search-entities-request, like search-entities-request
+
+  line </#X-Amz-Target=IotThingsGraphFrontEndService.SearchEntities>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan search-entities-request
+
+  loot 200
+    seed json, like search-entities-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>

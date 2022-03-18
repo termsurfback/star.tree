@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/health-check-version-mismatch
+  take form health-check-version-mismatch
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/no-such-health-check
+  take form no-such-health-check
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/update-health-check-body
+  take form update-health-check-body
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/update-health-check-response
+  take form update-health-check-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-health-check, name <UpdateHealthCheck>
+  note <Updates an existing health check. Note that some values can't be updated.
+
+For more information about updating health checks, see [Creating, Updating, and Deleting Health Checks](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/health-checks-creating-deleting.html) in the _Amazon Route 53 Developer Guide_.>
+
+  take health-check-id
+    like native-string
+    note <The ID for the health check for which you want detailed information. When you created the health check, `CreateHealthCheck` returned the ID in the response, in the `HealthCheckId` element.>
+  take update-health-check-body, like update-health-check-body
+
+  line </2013-04-01/healthcheck/{health-check-id}>
+
+  seed xml, loan update-health-check-body
+
+  loot 200
+    seed xml, like update-health-check-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-health-check
+    note <NoSuchHealthCheck>
+  loot 481
+    seed xml, like invalid-input
+    note <InvalidInput>
+  loot 482
+    seed xml, like health-check-version-mismatch
+    note <HealthCheckVersionMismatch>

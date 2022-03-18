@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/list-functions-response
+  take form list-functions-response
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-functions, name <ListFunctions>
+  note <Returns a list of Lambda functions, with the version-specific configuration of each. Lambda returns up to 50 functions per call.
+
+Set `FunctionVersion` to `ALL` to include all published versions of each function in addition to the unpublished version.
+
+The `ListFunctions` action returns a subset of the FunctionConfiguration fields. To get the additional fields (State, StateReasonCode, StateReason, LastUpdateStatus, LastUpdateStatusReason, LastUpdateStatusReasonCode) for a function or version, use GetFunction.>
+
+  take master-region
+    like native-string
+    note <For Lambda@Edge functions, the Amazon Web Services Region of the master function. For example, `us-east-1` filters the list of functions to only include Lambda@Edge functions replicated from a master function in US East (N. Virginia). If specified, you must set `FunctionVersion` to `ALL`.>
+    void take
+  take function-version
+    like native-string
+    note <Set to `ALL` to include entries for all published versions of each function.>
+    void take
+  take marker
+    like native-string
+    note <Specify the pagination token that's returned by a previous request to retrieve the next page of results.>
+    void take
+  take max-items
+    like native-integer
+    note <The maximum number of functions to return in the response. Note that `ListFunctions` returns a maximum of 50 items in each response, even if you set the number higher.>
+    void take
+
+  line </2015-03-31/functions/>
+
+  find <MasterRegion>, loan master-region
+  find <FunctionVersion>, loan function-version
+  find <Marker>, loan marker
+  find <MaxItems>, loan max-items
+
+  loot 200
+    seed json, like list-functions-response
+    note <Success>
+  loot 480
+    seed json, like service-exception
+    note <ServiceException>
+  loot 481
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 482
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>

@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-instance-state-fault
+  take form invalid-db-instance-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/reboot-db-instance-result
+  take form reboot-db-instance-result
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-reboot-db-instance, name <GET_RebootDBInstance>
+  note <You might need to reboot your DB instance, usually for maintenance reasons. For example, if you make certain modifications, or if you change the DB parameter group associated with the DB instance, you must reboot the instance for the changes to take effect.
+
+Rebooting a DB instance restarts the database engine service. Rebooting a DB instance results in a momentary outage, during which the DB instance status is set to rebooting.
+
+For more information about rebooting, see [Rebooting a DB Instance](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_RebootInstance.html) in the _Amazon RDS User Guide._>
+
+  take db-instance-identifier
+    like native-string
+    note <The DB instance identifier. This parameter is stored as a lowercase string.
+
+Constraints:
+
+- Must match the identifier of an existing DBInstance.>
+  take force-failover
+    like native-boolean
+    note <A value that indicates whether the reboot is conducted through a Multi-AZ failover.
+
+Constraint: You can't enable force failover if the instance isn't configured for Multi-AZ.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=RebootDBInstance>
+
+  find <DBInstanceIdentifier>, loan db-instance-identifier
+  find <ForceFailover>, loan force-failover
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like reboot-db-instance-result
+    note <Success>
+  loot 480
+    seed xml, like invalid-db-instance-state-fault
+    note <InvalidDBInstanceStateFault>
+  loot 481
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>

@@ -1,0 +1,136 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/application-name
+  take form application-name
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/configuration-option-setting
+  take form configuration-option-setting
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/configuration-settings-description
+  take form configuration-settings-description
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/configuration-template-name
+  take form configuration-template-name
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/insufficient-privileges-exception
+  take form insufficient-privileges-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/tag
+  take form tag
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/too-many-buckets-exception
+  take form too-many-buckets-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/too-many-configuration-templates-exception
+  take form too-many-configuration-templates-exception
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-configuration-template, name <GET_CreateConfigurationTemplate>
+  note <Creates an AWS Elastic Beanstalk configuration template, associated with a specific Elastic Beanstalk application. You define application configuration settings in a configuration template. You can then use the configuration template to deploy different versions of the application with the same configuration settings.
+
+Templates aren't associated with any environment. The `EnvironmentName` response element is always `null`.
+
+Related Topics
+
+- DescribeConfigurationOptions
+
+- DescribeConfigurationSettings
+
+- ListAvailableSolutionStacks>
+
+  take application-name
+    like native-string
+    note <The name of the Elastic Beanstalk application to associate with this configuration template.>
+  take template-name
+    like native-string
+    note <The name of the configuration template.
+
+Constraint: This name must be unique per application.>
+  take solution-stack-name
+    like native-string
+    note <The name of an Elastic Beanstalk solution stack (platform version) that this configuration uses. For example, `64bit Amazon Linux 2013.09 running Tomcat 7 Java 7`. A solution stack specifies the operating system, runtime, and application server for a configuration template. It also determines the set of configuration options as well as the possible and default values. For more information, see [Supported Platforms](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/concepts.platforms.html) in the _AWS Elastic Beanstalk Developer Guide_.
+
+You must specify `SolutionStackName` if you don't specify `PlatformArn`, `EnvironmentId`, or `SourceConfiguration`.
+
+Use the [`ListAvailableSolutionStacks`](https://docs.aws.amazon.com/elasticbeanstalk/latest/api/API_ListAvailableSolutionStacks.html) API to obtain a list of available solution stacks.>
+    void take
+  take platform-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the custom platform. For more information, see [Custom Platforms](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/custom-platforms.html) in the _AWS Elastic Beanstalk Developer Guide_.
+
+If you specify `PlatformArn`, then don't specify `SolutionStackName`.>
+    void take
+  take source-configuration
+    like form
+      take application-name, name <ApplicationName>
+        like application-name
+        void take
+        note <The name of the application associated with the configuration.>
+      take template-name, name <TemplateName>
+        like configuration-template-name
+        void take
+        note <The name of the configuration template.>
+    note <An Elastic Beanstalk configuration template to base this one on. If specified, Elastic Beanstalk uses the configuration values from the specified configuration template to create a new configuration.
+
+Values specified in `OptionSettings` override any values obtained from the `SourceConfiguration`.
+
+You must specify `SourceConfiguration` if you don't specify `PlatformArn`, `EnvironmentId`, or `SolutionStackName`.
+
+Constraint: If both solution stack name and source configuration are specified, the solution stack of the source configuration template must match the specified solution stack name.>
+    void take
+  take environment-id
+    like native-string
+    note <The ID of an environment whose settings you want to use to create the configuration template. You must specify `EnvironmentId` if you don't specify `PlatformArn`, `SolutionStackName`, or `SourceConfiguration`.>
+    void take
+  take description
+    like native-string
+    note <An optional description for this configuration.>
+    void take
+  take option-settings
+    like list
+      like configuration-option-setting
+    note <Option values for the Elastic Beanstalk configuration, such as the instance type. If specified, these values override the values obtained from the solution stack or the source configuration template. For a complete list of Elastic Beanstalk configuration options, see [Option Values](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options.html) in the _AWS Elastic Beanstalk Developer Guide_.>
+    void take
+  take tags
+    like list
+      like tag
+    note <Specifies the tags applied to the configuration template.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateConfigurationTemplate>
+
+  find <ApplicationName>, loan application-name
+  find <TemplateName>, loan template-name
+  find <SolutionStackName>, loan solution-stack-name
+  find <PlatformArn>, loan platform-arn
+  find <SourceConfiguration>, loan source-configuration
+  find <EnvironmentId>, loan environment-id
+  find <Description>, loan description
+  find <OptionSettings>, loan option-settings
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like configuration-settings-description
+    note <Success>
+  loot 480
+    seed xml, like insufficient-privileges-exception
+    note <InsufficientPrivilegesException>
+  loot 481
+    seed xml, like too-many-buckets-exception
+    note <TooManyBucketsException>
+  loot 482
+    seed xml, like too-many-configuration-templates-exception
+    note <TooManyConfigurationTemplatesException>

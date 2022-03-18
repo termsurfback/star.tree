@@ -1,0 +1,110 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-snapshot-not-found-fault
+  take form cluster-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/in-progress-table-restore-quota-exceeded-fault
+  take form in-progress-table-restore-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-snapshot-state-fault
+  take form invalid-cluster-snapshot-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-state-fault
+  take form invalid-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-table-restore-argument-fault
+  take form invalid-table-restore-argument-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/restore-table-from-cluster-snapshot-result
+  take form restore-table-from-cluster-snapshot-result
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unsupported-operation-fault
+  take form unsupported-operation-fault
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-restore-table-from-cluster-snapshot, name <GET_RestoreTableFromClusterSnapshot>
+  note <Creates a new table from a table in an Amazon Redshift cluster snapshot. You must create the new table within the Amazon Redshift cluster that the snapshot was taken from.
+
+You cannot use `RestoreTableFromClusterSnapshot` to restore a table with the same name as an existing table in an Amazon Redshift cluster. That is, you cannot overwrite an existing table in a cluster with a restored table. If you want to replace your original table with a new, restored table, then rename or drop your original table before you call `RestoreTableFromClusterSnapshot`. When you have renamed your original table, then you can pass the original name of the table as the `NewTableName` parameter value in the call to `RestoreTableFromClusterSnapshot`. This way, you can replace the original table with the table created from the snapshot.>
+
+  take cluster-identifier
+    like native-string
+    note <The identifier of the Amazon Redshift cluster to restore the table to.>
+  take snapshot-identifier
+    like native-string
+    note <The identifier of the snapshot to restore the table from. This snapshot must have been created from the Amazon Redshift cluster specified by the `ClusterIdentifier` parameter.>
+  take source-database-name
+    like native-string
+    note <The name of the source database that contains the table to restore from.>
+  take source-schema-name
+    like native-string
+    note <The name of the source schema that contains the table to restore from. If you do not specify a `SourceSchemaName` value, the default is `public`.>
+    void take
+  take source-table-name
+    like native-string
+    note <The name of the source table to restore from.>
+  take target-database-name
+    like native-string
+    note <The name of the database to restore the table to.>
+    void take
+  take target-schema-name
+    like native-string
+    note <The name of the schema to restore the table to.>
+    void take
+  take new-table-name
+    like native-string
+    note <The name of the table to create as a result of the current request.>
+  take enable-case-sensitive-identifier
+    like native-boolean
+    note <Indicates whether name identifiers for database, schema, and table are case sensitive. If `true`, the names are case sensitive. If `false` (default), the names are not case sensitive.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=RestoreTableFromClusterSnapshot>
+
+  find <ClusterIdentifier>, loan cluster-identifier
+  find <SnapshotIdentifier>, loan snapshot-identifier
+  find <SourceDatabaseName>, loan source-database-name
+  find <SourceSchemaName>, loan source-schema-name
+  find <SourceTableName>, loan source-table-name
+  find <TargetDatabaseName>, loan target-database-name
+  find <TargetSchemaName>, loan target-schema-name
+  find <NewTableName>, loan new-table-name
+  find <EnableCaseSensitiveIdentifier>, loan enable-case-sensitive-identifier
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like restore-table-from-cluster-snapshot-result
+    note <Success>
+  loot 480
+    seed xml, like cluster-snapshot-not-found-fault
+    note <ClusterSnapshotNotFoundFault>
+  loot 481
+    seed xml, like in-progress-table-restore-quota-exceeded-fault
+    note <InProgressTableRestoreQuotaExceededFault>
+  loot 482
+    seed xml, like invalid-cluster-snapshot-state-fault
+    note <InvalidClusterSnapshotStateFault>
+  loot 483
+    seed xml, like invalid-table-restore-argument-fault
+    note <InvalidTableRestoreArgumentFault>
+  loot 484
+    seed xml, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 485
+    seed xml, like invalid-cluster-state-fault
+    note <InvalidClusterStateFault>
+  loot 486
+    seed xml, like unsupported-operation-fault
+    note <UnsupportedOperationFault>

@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/list-rule-groups-response
+  take form list-rule-groups-response
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-internal-error-exception
+  take form waf-internal-error-exception
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-invalid-operation-exception
+  take form waf-invalid-operation-exception
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-invalid-parameter-exception
+  take form waf-invalid-parameter-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-rule-groups, name <ListRuleGroups>
+  note <Retrieves an array of RuleGroupSummary objects for the rule groups that you manage.>
+
+  take x-amz-target
+    like native-string
+  take list-rule-groups-request, like list-rule-groups-request
+
+  line </#X-Amz-Target=AWSWAF_20190729.ListRuleGroups>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-rule-groups-request
+
+  loot 200
+    seed json, like list-rule-groups-response
+    note <Success>
+  loot 480
+    seed json, like waf-internal-error-exception
+    note <WAFInternalErrorException>
+  loot 481
+    seed json, like waf-invalid-parameter-exception
+    note <WAFInvalidParameterException>
+  loot 482
+    seed json, like waf-invalid-operation-exception
+    note <WAFInvalidOperationException>

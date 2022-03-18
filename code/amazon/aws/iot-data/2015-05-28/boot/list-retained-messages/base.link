@@ -1,0 +1,74 @@
+
+load @drumwork/snow/amazonaws.com/iot-data/2015-05-28/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot-data/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot-data/2015-05-28/base/list-retained-messages-response
+  take form list-retained-messages-response
+
+load @drumwork/snow/amazonaws.com/iot-data/2015-05-28/base/method-not-allowed-exception
+  take form method-not-allowed-exception
+
+load @drumwork/snow/amazonaws.com/iot-data/2015-05-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/iot-data/2015-05-28/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/iot-data/2015-05-28/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-retained-messages, name <ListRetainedMessages>
+  note <Lists summary information about the retained messages stored for the account.
+
+This action returns only the topic names of the retained messages. It doesn't return any message payloads. Although this action doesn't return a message payload, it can still incur messaging costs.
+
+To get the message payload of a retained message, call [GetRetainedMessage](https://docs.aws.amazon.com/iot/latest/developerguide/API_iotdata_GetRetainedMessage.html) with the topic name of the retained message.
+
+Requires permission to access the [ListRetainedMessages](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiotfleethubfordevicemanagement.html#awsiotfleethubfordevicemanagement-actions-as-permissions) action.
+
+For more information about messaging costs, see [IoT Core pricing - Messaging](http://aws.amazon.com/iot-core/pricing/#Messaging).>
+
+  take next-token
+    like native-string
+    note <To retrieve the next set of results, the `nextToken` value from a previous response; otherwise **null** to receive the first set of results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return at one time.>
+    void take
+
+  line </retainedMessage>
+
+  find <nextToken>, loan next-token
+  find <maxResults>, loan max-results
+
+  loot 200
+    seed json, like list-retained-messages-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 484
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 485
+    seed json, like method-not-allowed-exception
+    note <MethodNotAllowedException>

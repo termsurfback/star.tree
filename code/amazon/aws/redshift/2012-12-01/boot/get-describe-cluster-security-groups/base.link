@@ -1,0 +1,85 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-security-group-message
+  take form cluster-security-group-message
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-security-group-not-found-fault
+  take form cluster-security-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-tag-fault
+  take form invalid-tag-fault
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-describe-cluster-security-groups, name <GET_DescribeClusterSecurityGroups>
+  note <Returns information about Amazon Redshift security groups. If the name of a security group is specified, the response will contain only information about only that security group.
+
+For information about managing security groups, go to [Amazon Redshift Cluster Security Groups](https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-security-groups.html) in the _Amazon Redshift Cluster Management Guide_.
+
+If you specify both tag keys and tag values in the same request, Amazon Redshift returns all security groups that match any combination of the specified keys and values. For example, if you have `owner` and `environment` for tag keys, and `admin` and `test` for tag values, all security groups that have any combination of those values are returned.
+
+If both tag keys and values are omitted from the request, security groups are returned regardless of whether they have tag keys or values associated with them.>
+
+  take cluster-security-group-name
+    like native-string
+    note <The name of a cluster security group for which you are requesting details. You can specify either the **Marker** parameter or a **ClusterSecurityGroupName** parameter, but not both.
+
+Example: `securitygroup1`>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of response records to return in each call. If the number of remaining response records exceeds the specified `MaxRecords` value, a value is returned in a `marker` field of the response. You can retrieve the next set of records by retrying the command with the returned marker value.
+
+Default: `100`
+
+Constraints: minimum 20, maximum 100.>
+    void take
+  take marker
+    like native-string
+    note <An optional parameter that specifies the starting point to return a set of response records. When the results of a DescribeClusterSecurityGroups request exceed the value specified in `MaxRecords`, Amazon Web Services returns a value in the `Marker` field of the response. You can retrieve the next set of response records by providing the returned marker value in the `Marker` parameter and retrying the request.
+
+Constraints: You can specify either the **ClusterSecurityGroupName** parameter or the **Marker** parameter, but not both.>
+    void take
+  take tag-keys
+    like list
+      like string
+    note <A tag key or keys for which you want to return all matching cluster security groups that are associated with the specified key or keys. For example, suppose that you have security groups that are tagged with keys called `owner` and `environment`. If you specify both of these tag keys in the request, Amazon Redshift returns a response with the security groups that have either or both of these tag keys associated with them.>
+    void take
+  take tag-values
+    like list
+      like string
+    note <A tag value or values for which you want to return all matching cluster security groups that are associated with the specified tag value or values. For example, suppose that you have security groups that are tagged with values called `admin` and `test`. If you specify both of these tag values in the request, Amazon Redshift returns a response with the security groups that have either or both of these tag values associated with them.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeClusterSecurityGroups>
+
+  find <ClusterSecurityGroupName>, loan cluster-security-group-name
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <TagKeys>, loan tag-keys
+  find <TagValues>, loan tag-values
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like cluster-security-group-message
+    note <Success>
+  loot 480
+    seed xml, like cluster-security-group-not-found-fault
+    note <ClusterSecurityGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-tag-fault
+    note <InvalidTagFault>

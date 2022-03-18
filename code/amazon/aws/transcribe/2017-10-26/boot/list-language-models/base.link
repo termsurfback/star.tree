@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/transcribe/2017-10-26/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/transcribe/2017-10-26/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/transcribe/2017-10-26/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/transcribe/2017-10-26/base/list-language-models-response
+  take form list-language-models-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-language-models, name <ListLanguageModels>
+  note <Provides more information about the custom language models you've created. You can use the information in this list to find a specific custom language model. You can then use the operation to get more information about it.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-language-models-request, like list-language-models-request
+
+  line </#X-Amz-Target=Transcribe.ListLanguageModels>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-language-models-request
+
+  loot 200
+    seed json, like list-language-models-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/get-batch-prediction-output
+  take form get-batch-prediction-output
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-batch-prediction, name <GetBatchPrediction>
+  note <Returns a `BatchPrediction` that includes detailed metadata, status, and data file information for a `Batch Prediction` request.>
+
+  take x-amz-target
+    like native-string
+  take get-batch-prediction-input, like get-batch-prediction-input
+
+  line </#X-Amz-Target=AmazonML_20141212.GetBatchPrediction>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-batch-prediction-input
+
+  loot 200
+    seed json, like get-batch-prediction-output
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

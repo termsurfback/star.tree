@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/invalid-user-state-fault
+  take form invalid-user-state-fault
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/update-user-response
+  take form update-user-response
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/user-not-found-fault
+  take form user-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-user, name <UpdateUser>
+  note <Changes user password(s) and/or access string.>
+
+  take x-amz-target
+    like native-string
+  take update-user-request, like update-user-request
+
+  line </#X-Amz-Target=AmazonMemoryDB.UpdateUser>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-user-request
+
+  loot 200
+    seed json, like update-user-response
+    note <Success>
+  loot 480
+    seed json, like user-not-found-fault
+    note <UserNotFoundFault>
+  loot 481
+    seed json, like invalid-user-state-fault
+    note <InvalidUserStateFault>
+  loot 482
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed json, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/apply-pending-maintenance-action-result
+  take form apply-pending-maintenance-action-result
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/resource-not-found-fault
+  take form resource-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-apply-pending-maintenance-action, name <GET_ApplyPendingMaintenanceAction>
+  note <Applies a pending maintenance action to a resource (for example, to a DB instance).>
+
+  take resource-identifier
+    like native-string
+    note <The Amazon Resource Name (ARN) of the resource that the pending maintenance action applies to. For information about creating an ARN, see [Constructing an Amazon Resource Name (ARN)](https://docs.aws.amazon.com/neptune/latest/UserGuide/tagging.ARN.html#tagging.ARN.Constructing).>
+  take apply-action
+    like native-string
+    note <The pending maintenance action to apply to this resource.
+
+Valid values: `system-update`, `db-upgrade`>
+  take opt-in-type
+    like native-string
+    note <A value that specifies the type of opt-in request, or undoes an opt-in request. An opt-in request of type `immediate` can't be undone.
+
+Valid values:
+
+- `immediate` - Apply the maintenance action immediately.
+
+- `next-maintenance` - Apply the maintenance action during the next maintenance window for the resource.
+
+- `undo-opt-in` - Cancel any existing `next-maintenance` opt-in requests.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ApplyPendingMaintenanceAction>
+
+  find <ResourceIdentifier>, loan resource-identifier
+  find <ApplyAction>, loan apply-action
+  find <OptInType>, loan opt-in-type
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like apply-pending-maintenance-action-result
+    note <Success>
+  loot 480
+    seed xml, like resource-not-found-fault
+    note <ResourceNotFoundFault>

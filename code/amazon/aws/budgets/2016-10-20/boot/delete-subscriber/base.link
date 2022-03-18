@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/budgets/2016-10-20/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/budgets/2016-10-20/base/delete-subscriber-response
+  take form delete-subscriber-response
+
+load @drumwork/snow/amazonaws.com/budgets/2016-10-20/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/budgets/2016-10-20/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/budgets/2016-10-20/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-subscriber, name <DeleteSubscriber>
+  note <Deletes a subscriber.
+
+Deleting the last subscriber to a notification also deletes the notification.>
+
+  take x-amz-target
+    like native-string
+  take delete-subscriber-request, like delete-subscriber-request
+
+  line </#X-Amz-Target=AWSBudgetServiceGateway.DeleteSubscriber>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-subscriber-request
+
+  loot 200
+    seed json, like delete-subscriber-response
+    note <Success>
+  loot 480
+    seed json, like internal-error-exception
+    note <InternalErrorException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 483
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

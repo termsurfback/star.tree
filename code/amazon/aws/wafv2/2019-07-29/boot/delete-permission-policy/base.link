@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/delete-permission-policy-response
+  take form delete-permission-policy-response
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-internal-error-exception
+  take form waf-internal-error-exception
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-invalid-parameter-exception
+  take form waf-invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-nonexistent-item-exception
+  take form waf-nonexistent-item-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-permission-policy, name <DeletePermissionPolicy>
+  note <Permanently deletes an IAM policy from the specified rule group.
+
+You must be the owner of the rule group to perform this operation.>
+
+  take x-amz-target
+    like native-string
+  take delete-permission-policy-request, like delete-permission-policy-request
+
+  line </#X-Amz-Target=AWSWAF_20190729.DeletePermissionPolicy>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-permission-policy-request
+
+  loot 200
+    seed json, like delete-permission-policy-response
+    note <Success>
+  loot 480
+    seed json, like waf-nonexistent-item-exception
+    note <WAFNonexistentItemException>
+  loot 481
+    seed json, like waf-internal-error-exception
+    note <WAFInternalErrorException>
+  loot 482
+    seed json, like waf-invalid-parameter-exception
+    note <WAFInvalidParameterException>

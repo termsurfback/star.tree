@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/bad-request
+  take form bad-request
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/describe-storage-virtual-machines-response
+  take form describe-storage-virtual-machines-response
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/storage-virtual-machine-not-found
+  take form storage-virtual-machine-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-storage-virtual-machines, name <DescribeStorageVirtualMachines>
+  note <Describes one or more Amazon FSx for NetApp ONTAP storage virtual machines (SVMs).>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-storage-virtual-machines-request, like describe-storage-virtual-machines-request
+
+  line </#X-Amz-Target=AWSSimbaAPIService_v20180301.DescribeStorageVirtualMachines>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-storage-virtual-machines-request
+
+  loot 200
+    seed json, like describe-storage-virtual-machines-response
+    note <Success>
+  loot 480
+    seed json, like bad-request
+    note <BadRequest>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 482
+    seed json, like storage-virtual-machine-not-found
+    note <StorageVirtualMachineNotFound>

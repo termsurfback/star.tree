@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/invalid-configuration-request-exception
+  take form invalid-configuration-request-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/invalid-security-group-exception
+  take form invalid-security-group-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/load-balancer-not-found-exception
+  take form load-balancer-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/set-security-groups-output
+  take form set-security-groups-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-set-security-groups, name <POST_SetSecurityGroups>
+  note <Associates the specified security groups with the specified Application Load Balancer. The specified security groups override the previously associated security groups.
+
+You can't specify a security group for a Network Load Balancer or Gateway Load Balancer.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take set-security-groups-input, like set-security-groups-input
+    void take
+
+  line </#Action=SetSecurityGroups>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan set-security-groups-input
+
+  loot 200
+    seed xml, like set-security-groups-output
+    note <Success>
+  loot 480
+    seed xml, like load-balancer-not-found-exception
+    note <LoadBalancerNotFoundException>
+  loot 481
+    seed xml, like invalid-configuration-request-exception
+    note <InvalidConfigurationRequestException>
+  loot 482
+    seed xml, like invalid-security-group-exception
+    note <InvalidSecurityGroupException>

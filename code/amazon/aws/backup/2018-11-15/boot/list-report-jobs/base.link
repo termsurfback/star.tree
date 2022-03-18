@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/list-report-jobs-output
+  take form list-report-jobs-output
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-report-jobs, name <ListReportJobs>
+  note <Returns details about your report jobs.>
+
+  take report-plan-name
+    like native-string
+    note <Returns only report jobs with the specified report plan name.>
+    void take
+  take creation-before
+    like native-string
+    note <Returns only report jobs that were created before the date and time specified in Unix format and Coordinated Universal Time (UTC). For example, the value 1516925490 represents Friday, January 26, 2018 12:11:30 AM.>
+    void take
+  take creation-after
+    like native-string
+    note <Returns only report jobs that were created after the date and time specified in Unix format and Coordinated Universal Time (UTC). For example, the value 1516925490 represents Friday, January 26, 2018 12:11:30 AM.>
+    void take
+  take status
+    like native-string
+    note <Returns only report jobs that are in the specified status. The statuses are:
+
+`CREATED | RUNNING | COMPLETED | FAILED`>
+    void take
+  take max-results
+    like native-integer
+    note <The number of desired results from 1 to 1000. Optional. If unspecified, the query will return 1 MB of data.>
+    void take
+  take next-token
+    like native-string
+    note <An identifier that was returned from the previous call to this operation, which can be used to return the next set of items in the list.>
+    void take
+
+  line </audit/report-jobs>
+
+  find <ReportPlanName>, loan report-plan-name
+  find <CreationBefore>, loan creation-before
+  find <CreationAfter>, loan creation-after
+  find <Status>, loan status
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like list-report-jobs-output
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 481
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

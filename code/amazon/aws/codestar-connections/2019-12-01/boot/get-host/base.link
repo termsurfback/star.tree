@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/codestar-connections/2019-12-01/base/get-host-output
+  take form get-host-output
+
+load @drumwork/snow/amazonaws.com/codestar-connections/2019-12-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codestar-connections/2019-12-01/base/resource-unavailable-exception
+  take form resource-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-host, name <GetHost>
+  note <Returns the host ARN and details such as status, provider type, endpoint, and, if applicable, the VPC configuration.>
+
+  take x-amz-target
+    like native-string
+  take get-host-input, like get-host-input
+
+  line </#X-Amz-Target=com.amazonaws.codestar.connections.CodeStar_connections_20191201.GetHost>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-host-input
+
+  loot 200
+    seed json, like get-host-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like resource-unavailable-exception
+    note <ResourceUnavailableException>

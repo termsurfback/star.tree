@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-role-already-exists-fault
+  take form db-cluster-role-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-role-quota-exceeded-fault
+  take form db-cluster-role-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-add-role-to-db-cluster, name <POST_AddRoleToDBCluster>
+  note <Associates an Identity and Access Management (IAM) role from an Neptune DB cluster.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take add-role-to-db-cluster-message, like add-role-to-db-cluster-message
+    void take
+
+  line </#Action=AddRoleToDBCluster>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan add-role-to-db-cluster-message
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>
+  loot 481
+    seed xml, like db-cluster-role-already-exists-fault
+    note <DBClusterRoleAlreadyExistsFault>
+  loot 482
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>
+  loot 483
+    seed xml, like db-cluster-role-quota-exceeded-fault
+    note <DBClusterRoleQuotaExceededFault>

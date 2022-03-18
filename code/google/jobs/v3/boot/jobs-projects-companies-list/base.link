@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/jobs/v3/base/list-companies-response
+  take form list-companies-response
+
+boot jobs-projects-companies-list, name <jobs.projects.companies.list>
+  note <Lists all companies associated with the service account.>
+
+  take parent
+    like native-string
+    note <Required. Resource name of the project under which the company is created. The format is "projects/{project_id}", for example, "projects/api-test-project".>
+  take page-size
+    like native-integer
+    note <Optional. The maximum number of companies to be returned, at most 100. Default is 100 if a non-positive number is provided.>
+    void take
+  take page-token
+    like native-string
+    note <Optional. The starting indicator from which to return results.>
+    void take
+  take require-open-jobs
+    like native-boolean
+    note <Optional. Set to true if the companies requested must have open jobs. Defaults to false. If true, at most page_size of companies are fetched, among which only those with open jobs are returned.>
+    void take
+
+  line </v3/{parent}/companies>
+
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+  find <requireOpenJobs>, loan require-open-jobs
+
+  loot 200
+    seed json, like list-companies-response
+    note <Successful response>

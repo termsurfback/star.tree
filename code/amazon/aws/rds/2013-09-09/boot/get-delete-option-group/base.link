@@ -1,0 +1,32 @@
+
+load @drumwork/snow/amazonaws.com/rds/2013-09-09/base/invalid-option-group-state-fault
+  take form invalid-option-group-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-09-09/base/option-group-not-found-fault
+  take form option-group-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-option-group, name <GET_DeleteOptionGroup>
+  take option-group-name
+    like native-string
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteOptionGroup>
+
+  find <OptionGroupName>, loan option-group-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like option-group-not-found-fault
+    note <OptionGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-option-group-state-fault
+    note <InvalidOptionGroupStateFault>

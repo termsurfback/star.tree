@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/service-quota-exceeded-exception
+  take form service-quota-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/update-schedule-body
+  take form update-schedule-body
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/update-schedule-response
+  take form update-schedule-response
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-schedule, name <UpdateSchedule>
+  note <Modifies the definition of an existing DataBrew schedule.>
+
+  take name
+    like native-string
+    note <The name of the schedule to update.>
+  take update-schedule-body, like update-schedule-body
+
+  line </schedules/{name}>
+
+  seed json, loan update-schedule-body
+
+  loot 200
+    seed json, like update-schedule-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like service-quota-exceeded-exception
+    note <ServiceQuotaExceededException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>

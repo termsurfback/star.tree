@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/certificate-message
+  take form certificate-message
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/certificate-not-found-fault
+  take form certificate-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-certificates, name <POST_DescribeCertificates>
+  note <Lists the set of CA certificates provided by Amazon RDS for this Amazon Web Services account.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-certificates-message, like describe-certificates-message
+    void take
+
+  line </#Action=DescribeCertificates>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-certificates-message
+
+  loot 200
+    seed xml, like certificate-message
+    note <Success>
+  loot 480
+    seed xml, like certificate-not-found-fault
+    note <CertificateNotFoundFault>

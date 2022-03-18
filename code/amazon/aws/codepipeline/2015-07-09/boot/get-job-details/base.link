@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/get-job-details-output
+  take form get-job-details-output
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/job-not-found-exception
+  take form job-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-job-details, name <GetJobDetails>
+  note <Returns information about a job. Used for custom actions only.
+
+When this API is called, AWS CodePipeline returns temporary credentials for the S3 bucket used to store artifacts for the pipeline, if the action requires access to that S3 bucket for input or output artifacts. This API also returns any secret values defined for the action.>
+
+  take x-amz-target
+    like native-string
+  take get-job-details-input, like get-job-details-input
+
+  line </#X-Amz-Target=CodePipeline_20150709.GetJobDetails>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-job-details-input
+
+  loot 200
+    seed json, like get-job-details-output
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like job-not-found-exception
+    note <JobNotFoundException>

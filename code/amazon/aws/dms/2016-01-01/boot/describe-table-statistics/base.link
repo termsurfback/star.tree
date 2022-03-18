@@ -1,0 +1,48 @@
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/describe-table-statistics-response
+  take form describe-table-statistics-response
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/invalid-resource-state-fault
+  take form invalid-resource-state-fault
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/resource-not-found-fault
+  take form resource-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-table-statistics, name <DescribeTableStatistics>
+  note <Returns table statistics on the database migration task, including table name, rows inserted, rows updated, and rows deleted.
+
+Note that the "last updated" column the DMS console only indicates the time that DMS last updated the table statistics record for a table. It does not indicate the time of the last update to the table.>
+
+  take x-amz-target
+    like native-string
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-table-statistics-message, like describe-table-statistics-message
+
+  line </#X-Amz-Target=AmazonDMSv20160101.DescribeTableStatistics>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+
+  seed json, loan describe-table-statistics-message
+
+  loot 200
+    seed json, like describe-table-statistics-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-fault
+    note <ResourceNotFoundFault>
+  loot 481
+    seed json, like invalid-resource-state-fault
+    note <InvalidResourceStateFault>

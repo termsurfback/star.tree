@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/describe-config-rule-evaluation-status-response
+  take form describe-config-rule-evaluation-status-response
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/no-such-config-rule-exception
+  take form no-such-config-rule-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-config-rule-evaluation-status, name <DescribeConfigRuleEvaluationStatus>
+  note <Returns status information for each of your Config managed rules. The status includes information such as the last time Config invoked the rule, the last time Config failed to invoke the rule, and the related error for the last failure.>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-config-rule-evaluation-status-request, like describe-config-rule-evaluation-status-request
+
+  line </#X-Amz-Target=StarlingDoveService.DescribeConfigRuleEvaluationStatus>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <Limit>, loan limit
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-config-rule-evaluation-status-request
+
+  loot 200
+    seed json, like describe-config-rule-evaluation-status-response
+    note <Success>
+  loot 480
+    seed json, like no-such-config-rule-exception
+    note <NoSuchConfigRuleException>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>

@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/update-canary-body
+  take form update-canary-body
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/update-canary-response
+  take form update-canary-response
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-canary, name <UpdateCanary>
+  note <Use this operation to change the settings of a canary that has already been created.
+
+You can't use this operation to update the tags of an existing canary. To change the tags of an existing canary, use [TagResource](https://docs.aws.amazon.com/AmazonSynthetics/latest/APIReference/API_TagResource.html).>
+
+  take name
+    like native-string
+    note <The name of the canary that you want to update. To find the names of your canaries, use [DescribeCanaries](https://docs.aws.amazon.com/AmazonSynthetics/latest/APIReference/API_DescribeCanaries.html).
+
+You cannot change the name of a canary that has already been created.>
+  take update-canary-body, like update-canary-body
+
+  line </canary/{name}>
+
+  seed json, loan update-canary-body
+
+  loot 200
+    seed json, like update-canary-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like conflict-exception
+    note <ConflictException>

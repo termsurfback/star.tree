@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/service-quota-exceeded-exception
+  take form service-quota-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/update-cost-category-definition-response
+  take form update-cost-category-definition-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-cost-category-definition, name <UpdateCostCategoryDefinition>
+  note <Updates an existing Cost Category. Changes made to the Cost Category rules will be used to categorize the current month’s expenses and future expenses. This won’t change categorization for the previous months.>
+
+  take x-amz-target
+    like native-string
+  take update-cost-category-definition-request, like update-cost-category-definition-request
+
+  line </#X-Amz-Target=AWSInsightsIndexService.UpdateCostCategoryDefinition>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-cost-category-definition-request
+
+  loot 200
+    seed json, like update-cost-category-definition-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like service-quota-exceeded-exception
+    note <ServiceQuotaExceededException>
+  loot 482
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>

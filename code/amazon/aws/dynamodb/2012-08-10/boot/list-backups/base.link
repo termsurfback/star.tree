@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/list-backups-output
+  take form list-backups-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-backups, name <ListBackups>
+  note <List backups associated with an AWS account. To list backups for a given table, specify `TableName`. `ListBackups` returns a paginated list of results with at most 1 MB worth of items in a page. You can also specify a maximum number of entries to be returned in a page.
+
+In the request, start time is inclusive, but end time is exclusive. Note that these boundaries are for the time at which the original backup was requested.
+
+You can call `ListBackups` a maximum of five times per second.>
+
+  take x-amz-target
+    like native-string
+  take list-backups-input, like list-backups-input
+
+  line </#X-Amz-Target=DynamoDB_20120810.ListBackups>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-backups-input
+
+  loot 200
+    seed json, like list-backups-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>

@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-products-id-body
+  take form get-products-id-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/product
+  take form product
+
+boot get-products-id, name <GetProductsId>
+  note <Retrieves the details of an existing product. Supply the unique product ID from either a product creation request or the product list, and Stripe will return the corresponding product information.>
+
+  take id
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-products-id-body, like get-products-id-body
+    void take
+
+  line </v1/products/{id}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-products-id-body
+
+  loot 200
+    seed json, like product
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

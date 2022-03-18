@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/credential-report-expired-exception
+  take form credential-report-expired-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/credential-report-not-present-exception
+  take form credential-report-not-present-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/credential-report-not-ready-exception
+  take form credential-report-not-ready-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/get-credential-report-response
+  take form get-credential-report-response
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-get-credential-report, name <POST_GetCredentialReport>
+  note <Retrieves a credential report for the account. For more information about the credential report, see [Getting credential reports](https://docs.aws.amazon.com/IAM/latest/UserGuide/credential-reports.html) in the _IAM User Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=GetCredentialReport>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like get-credential-report-response
+    note <Success>
+  loot 480
+    seed xml, like credential-report-not-present-exception
+    note <CredentialReportNotPresentException>
+  loot 481
+    seed xml, like credential-report-expired-exception
+    note <CredentialReportExpiredException>
+  loot 482
+    seed xml, like credential-report-not-ready-exception
+    note <CredentialReportNotReadyException>
+  loot 483
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

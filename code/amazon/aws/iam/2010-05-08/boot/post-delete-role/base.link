@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/delete-conflict-exception
+  take form delete-conflict-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/unmodifiable-entity-exception
+  take form unmodifiable-entity-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-role, name <POST_DeleteRole>
+  note <Deletes the specified role. The role must not have any policies attached. For more information about roles, see [Working with roles](https://docs.aws.amazon.com/IAM/latest/UserGuide/WorkingWithRoles.html).
+
+Make sure that you do not have any Amazon EC2 instances running with the role you are about to delete. Deleting a role or instance profile that is associated with a running instance will break any applications running on the instance.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-role-request, like delete-role-request
+    void take
+
+  line </#Action=DeleteRole>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-role-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like delete-conflict-exception
+    note <DeleteConflictException>
+  loot 482
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 483
+    seed xml, like unmodifiable-entity-exception
+    note <UnmodifiableEntityException>
+  loot 484
+    seed xml, like concurrent-modification-exception
+    note <ConcurrentModificationException>
+  loot 485
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

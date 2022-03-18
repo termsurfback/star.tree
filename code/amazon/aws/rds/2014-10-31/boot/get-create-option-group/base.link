@@ -1,0 +1,97 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/create-option-group-result
+  take form create-option-group-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/option-group-already-exists-fault
+  take form option-group-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/option-group-quota-exceeded-fault
+  take form option-group-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/tag
+  take form tag
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-option-group, name <GET_CreateOptionGroup>
+  note <Creates a new option group. You can create up to 20 option groups.>
+
+  take option-group-name
+    like native-string
+    note <Specifies the name of the option group to be created.
+
+Constraints:
+
+- Must be 1 to 255 letters, numbers, or hyphens
+
+- First character must be a letter
+
+- Can't end with a hyphen or contain two consecutive hyphens
+
+Example: `myoptiongroup`>
+  take engine-name
+    like native-string
+    note <Specifies the name of the engine that this option group should be associated with.
+
+Valid Values:
+
+- `mariadb`
+
+- `mysql`
+
+- `oracle-ee`
+
+- `oracle-ee-cdb`
+
+- `oracle-se2`
+
+- `oracle-se2-cdb`
+
+- `postgres`
+
+- `sqlserver-ee`
+
+- `sqlserver-se`
+
+- `sqlserver-ex`
+
+- `sqlserver-web`>
+  take major-engine-version
+    like native-string
+    note <Specifies the major version of the engine that this option group should be associated with.>
+  take option-group-description
+    like native-string
+    note <The description of the option group.>
+  take tags
+    like list
+      like tag
+    note <Tags to assign to the option group.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateOptionGroup>
+
+  find <OptionGroupName>, loan option-group-name
+  find <EngineName>, loan engine-name
+  find <MajorEngineVersion>, loan major-engine-version
+  find <OptionGroupDescription>, loan option-group-description
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-option-group-result
+    note <Success>
+  loot 480
+    seed xml, like option-group-already-exists-fault
+    note <OptionGroupAlreadyExistsFault>
+  loot 481
+    seed xml, like option-group-quota-exceeded-fault
+    note <OptionGroupQuotaExceededFault>

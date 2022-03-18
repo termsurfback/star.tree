@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/kinesisvideo/2017-09-30/base/client-limit-exceeded-exception
+  take form client-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/kinesisvideo/2017-09-30/base/invalid-argument-exception
+  take form invalid-argument-exception
+
+load @drumwork/snow/amazonaws.com/kinesisvideo/2017-09-30/base/list-streams-body
+  take form list-streams-body
+
+load @drumwork/snow/amazonaws.com/kinesisvideo/2017-09-30/base/list-streams-output
+  take form list-streams-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-streams, name <ListStreams>
+  note <Returns an array of `StreamInfo` objects. Each object describes a stream. To retrieve only streams that satisfy a specific condition, you can specify a `StreamNameCondition`.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-streams-body, like list-streams-body
+
+  line </listStreams>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-streams-body
+
+  loot 200
+    seed json, like list-streams-output
+    note <Success>
+  loot 480
+    seed json, like client-limit-exceeded-exception
+    note <ClientLimitExceededException>
+  loot 481
+    seed json, like invalid-argument-exception
+    note <InvalidArgumentException>

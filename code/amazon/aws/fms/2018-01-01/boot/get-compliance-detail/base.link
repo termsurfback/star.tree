@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/fms/2018-01-01/base/get-compliance-detail-response
+  take form get-compliance-detail-response
+
+load @drumwork/snow/amazonaws.com/fms/2018-01-01/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/fms/2018-01-01/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/fms/2018-01-01/base/invalid-operation-exception
+  take form invalid-operation-exception
+
+load @drumwork/snow/amazonaws.com/fms/2018-01-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-compliance-detail, name <GetComplianceDetail>
+  note <Returns detailed compliance information about the specified member account. Details include resources that are in and out of compliance with the specified policy.
+
+- Resources are considered noncompliant for WAF and Shield Advanced policies if the specified policy has not been applied to them.
+
+- Resources are considered noncompliant for security group policies if they are in scope of the policy, they violate one or more of the policy rules, and remediation is disabled or not possible.
+
+- Resources are considered noncompliant for Network Firewall policies if a firewall is missing in the VPC, if the firewall endpoint isn't set up in an expected Availability Zone and subnet, if a subnet created by the Firewall Manager doesn't have the expected route table, and for modifications to a firewall policy that violate the Firewall Manager policy's rules.
+
+- Resources are considered noncompliant for DNS Firewall policies if a DNS Firewall rule group is missing from the rule group associations for the VPC.>
+
+  take x-amz-target
+    like native-string
+  take get-compliance-detail-request, like get-compliance-detail-request
+
+  line </#X-Amz-Target=AWSFMS_20180101.GetComplianceDetail>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-compliance-detail-request
+
+  loot 200
+    seed json, like get-compliance-detail-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like internal-error-exception
+    note <InternalErrorException>
+  loot 482
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 483
+    seed json, like invalid-operation-exception
+    note <InvalidOperationException>

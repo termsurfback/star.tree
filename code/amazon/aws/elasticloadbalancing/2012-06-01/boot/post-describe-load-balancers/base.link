@@ -1,0 +1,44 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/access-point-not-found-exception
+  take form access-point-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/dependency-throttle-exception
+  take form dependency-throttle-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/describe-access-points-output
+  take form describe-access-points-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-load-balancers, name <POST_DescribeLoadBalancers>
+  note <Describes the specified the load balancers. If no load balancers are specified, the call describes all of your load balancers.>
+
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-access-points-input, like describe-access-points-input
+    void take
+
+  line </#Action=DescribeLoadBalancers>
+
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-access-points-input
+
+  loot 200
+    seed xml, like describe-access-points-output
+    note <Success>
+  loot 480
+    seed xml, like access-point-not-found-exception
+    note <AccessPointNotFoundException>
+  loot 481
+    seed xml, like dependency-throttle-exception
+    note <DependencyThrottleException>

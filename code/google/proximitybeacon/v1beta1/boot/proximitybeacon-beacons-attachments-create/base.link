@@ -1,0 +1,29 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/proximitybeacon/v1beta1/base/beacon-attachment
+  take form beacon-attachment
+
+boot proximitybeacon-beacons-attachments-create, name <proximitybeacon.beacons.attachments.create>
+  note <Associates the given data with the specified beacon. Attachment data must contain two parts: - A namespaced type. - The actual attachment data itself. The namespaced type consists of two parts, the namespace and the type. The namespace must be one of the values returned by the `namespaces` endpoint, while the type can be a string of any characters except for the forward slash (`/`) up to 100 characters in length. Attachment data can be up to 1024 bytes long. Authenticate using an [OAuth access token](https://developers.google.com/identity/protocols/OAuth2) from a signed-in user with **Is owner** or **Can edit** permissions in the Google Developers Console project.>
+
+  take beacon-name
+    like native-string
+    note <Beacon on which the attachment should be created. A beacon name has the format "beacons/N!beaconId" where the beaconId is the base16 ID broadcast by the beacon and N is a code for the beacon's type. Possible values are `3` for Eddystone-UID, `4` for Eddystone-EID, `1` for iBeacon, or `5` for AltBeacon. For Eddystone-EID beacons, you may use either the current EID or the beacon's "stable" UID. Required.>
+  take project-id
+    like native-string
+    note <The project id of the project the attachment will belong to. If the project id is not specified then the project making the request is used. Optional.>
+    void take
+  take beacon-attachment, like beacon-attachment
+    void take
+
+  line </v1beta1/{beacon-name}/attachments>
+
+  find <projectId>, loan project-id
+
+  seed json, loan beacon-attachment
+
+  loot 200
+    seed json, like beacon-attachment
+    note <Successful response>

@@ -1,0 +1,70 @@
+
+load @drumwork/snow/amazonaws.com/AWSMigrationHub/2017-05-31/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/AWSMigrationHub/2017-05-31/base/home-region-not-set-exception
+  take form home-region-not-set-exception
+
+load @drumwork/snow/amazonaws.com/AWSMigrationHub/2017-05-31/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/AWSMigrationHub/2017-05-31/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/AWSMigrationHub/2017-05-31/base/list-application-states-result
+  take form list-application-states-result
+
+load @drumwork/snow/amazonaws.com/AWSMigrationHub/2017-05-31/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/AWSMigrationHub/2017-05-31/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-application-states, name <ListApplicationStates>
+  note <Lists all the migration statuses for your applications. If you use the optional `ApplicationIds` parameter, only the migration statuses for those applications will be returned.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-application-states-request, like list-application-states-request
+
+  line </#X-Amz-Target=AWSMigrationHub.ListApplicationStates>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-application-states-request
+
+  loot 200
+    seed json, like list-application-states-result
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 484
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 485
+    seed json, like home-region-not-set-exception
+    note <HomeRegionNotSetException>

@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/create-archive-response
+  take form create-archive-response
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/invalid-event-pattern-exception
+  take form invalid-event-pattern-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/resource-already-exists-exception
+  take form resource-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-archive, name <CreateArchive>
+  note <Creates an archive of events with the specified settings. When you create an archive, incoming events might not immediately start being sent to the archive. Allow a short period of time for changes to take effect. If you do not specify a pattern to filter events sent to the archive, all events are sent to the archive except replayed events. Replayed events are not sent to an archive.>
+
+  take x-amz-target
+    like native-string
+  take create-archive-request, like create-archive-request
+
+  line </#X-Amz-Target=AWSEvents.CreateArchive>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-archive-request
+
+  loot 200
+    seed json, like create-archive-response
+    note <Success>
+  loot 480
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>
+  loot 481
+    seed json, like resource-already-exists-exception
+    note <ResourceAlreadyExistsException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like internal-exception
+    note <InternalException>
+  loot 484
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 485
+    seed json, like invalid-event-pattern-exception
+    note <InvalidEventPatternException>

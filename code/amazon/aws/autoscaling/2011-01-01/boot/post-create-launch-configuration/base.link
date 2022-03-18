@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/already-exists-fault
+  take form already-exists-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/limit-exceeded-fault
+  take form limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-launch-configuration, name <POST_CreateLaunchConfiguration>
+  note <Creates a launch configuration.
+
+If you exceed your maximum limit of launch configurations, the call fails. To query this limit, call the DescribeAccountLimits API. For information about updating this limit, see [Amazon EC2 Auto Scaling service quotas](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-account-limits.html) in the _Amazon EC2 Auto Scaling User Guide_.
+
+For more information, see [Launch configurations](https://docs.aws.amazon.com/autoscaling/ec2/userguide/LaunchConfiguration.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-launch-configuration-type, like create-launch-configuration-type
+    void take
+
+  line </#Action=CreateLaunchConfiguration>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-launch-configuration-type
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like already-exists-fault
+    note <AlreadyExistsFault>
+  loot 481
+    seed xml, like limit-exceeded-fault
+    note <LimitExceededFault>
+  loot 482
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/insufficient-privileges-exception
+  take form insufficient-privileges-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/resource-tags-description-message
+  take form resource-tags-description-message
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/resource-type-not-supported-exception
+  take form resource-type-not-supported-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-list-tags-for-resource, name <GET_ListTagsForResource>
+  note <Return the tags applied to an AWS Elastic Beanstalk resource. The response contains a list of tag key-value pairs.
+
+Elastic Beanstalk supports tagging of all of its resources. For details about resource tagging, see [Tagging Application Resources](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/applications-tagging-resources.html).>
+
+  take resource-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the resouce for which a tag list is requested.
+
+Must be the ARN of an Elastic Beanstalk resource.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ListTagsForResource>
+
+  find <ResourceArn>, loan resource-arn
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like resource-tags-description-message
+    note <Success>
+  loot 480
+    seed xml, like insufficient-privileges-exception
+    note <InsufficientPrivilegesException>
+  loot 481
+    seed xml, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed xml, like resource-type-not-supported-exception
+    note <ResourceTypeNotSupportedException>

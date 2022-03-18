@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/describe-dataset-group-response
+  take form describe-dataset-group-response
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-dataset-group, name <DescribeDatasetGroup>
+  note <Describes the given dataset group. For more information on dataset groups, see CreateDatasetGroup.>
+
+  take x-amz-target
+    like native-string
+  take describe-dataset-group-request, like describe-dataset-group-request
+
+  line </#X-Amz-Target=AmazonPersonalize.DescribeDatasetGroup>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-dataset-group-request
+
+  loot 200
+    seed json, like describe-dataset-group-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

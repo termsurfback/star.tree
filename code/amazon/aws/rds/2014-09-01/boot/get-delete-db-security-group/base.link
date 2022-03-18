@@ -1,0 +1,32 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/db-security-group-not-found-fault
+  take form db-security-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/invalid-db-security-group-state-fault
+  take form invalid-db-security-group-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-db-security-group, name <GET_DeleteDBSecurityGroup>
+  take db-security-group-name
+    like native-string
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteDBSecurityGroup>
+
+  find <DBSecurityGroupName>, loan db-security-group-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like invalid-db-security-group-state-fault
+    note <InvalidDBSecurityGroupStateFault>
+  loot 481
+    seed xml, like db-security-group-not-found-fault
+    note <DBSecurityGroupNotFoundFault>

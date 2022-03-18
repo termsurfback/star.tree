@@ -1,0 +1,49 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+load @drumwork/snow/slack.com/1.7.0/base/files-revoke-public-url-body
+  take form files-revoke-public-url-body
+
+load @drumwork/snow/slack.com/1.7.0/base/objs-file
+  take form objs-file
+
+boot files-revoke-public-url, name <files_revokePublicURL>
+  note <Revokes public/external sharing access for a file>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `files:write:user`>
+    void take
+  take files-revoke-public-url-body, like files-revoke-public-url-body
+    void take
+
+  line </files.revokePublicURL>
+
+  hint <token>, loan token
+
+  seed x-www-form-urlencoded, loan files-revoke-public-url-body
+
+  loot 200
+    seed json
+      like form
+        take file, name <file>
+          like objs-file
+        take ok, name <ok>
+          like defs-ok-true
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take callstack, name <callstack>
+          void take
+        take error, name <error>
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response>

@@ -1,0 +1,48 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/list-topics-response
+  take form list-topics-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-list-topics, name <GET_ListTopics>
+  note <Returns a list of the requester's topics. Each call returns a limited list of topics, up to 100. If there are more topics, a `NextToken` is also returned. Use the `NextToken` parameter in a new `ListTopics` call to get further results.
+
+This action is throttled at 30 transactions per second (TPS).>
+
+  take next-token
+    like native-string
+    note <Token returned by the previous `ListTopics` request.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ListTopics>
+
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like list-topics-response
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 482
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>

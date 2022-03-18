@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/invalid-event-pattern-exception
+  take form invalid-event-pattern-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/resource-already-exists-exception
+  take form resource-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/start-replay-response
+  take form start-replay-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-replay, name <StartReplay>
+  note <Starts the specified replay. Events are not necessarily replayed in the exact same order that they were added to the archive. A replay processes events to replay based on the time in the event, and replays them using 1 minute intervals. If you specify an `EventStartTime` and an `EventEndTime` that covers a 20 minute time range, the events are replayed from the first minute of that 20 minute range first. Then the events from the second minute are replayed. You can use `DescribeReplay` to determine the progress of a replay. The value returned for `EventLastReplayedTime` indicates the time within the specified time range associated with the last event replayed.>
+
+  take x-amz-target
+    like native-string
+  take start-replay-request, like start-replay-request
+
+  line </#X-Amz-Target=AWSEvents.StartReplay>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan start-replay-request
+
+  loot 200
+    seed json, like start-replay-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like resource-already-exists-exception
+    note <ResourceAlreadyExistsException>
+  loot 482
+    seed json, like invalid-event-pattern-exception
+    note <InvalidEventPatternException>
+  loot 483
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 484
+    seed json, like internal-exception
+    note <InternalException>

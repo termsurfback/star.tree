@@ -1,0 +1,48 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/cloudidentity/v1/base/google-apps-cloudidentity-devices-v1-lookup-self-device-users-response
+  take form google-apps-cloudidentity-devices-v1-lookup-self-device-users-response
+
+boot cloudidentity-devices-device-users-lookup, name <cloudidentity.devices.deviceUsers.lookup>
+  note <Looks up resource names of the DeviceUsers associated with the caller's credentials, as well as the properties provided in the request. This method must be called with end-user credentials with the scope: https://www.googleapis.com/auth/cloud-identity.devices.lookup If multiple properties are provided, only DeviceUsers having all of these properties are considered as matches - i.e. the query behaves like an AND. Different platforms require different amounts of information from the caller to ensure that the DeviceUser is uniquely identified. - iOS: No properties need to be passed, the caller's credentials are sufficient to identify the corresponding DeviceUser. - Android: Specifying the 'android_id' field is required. - Desktop: Specifying the 'raw_resource_id' field is required.>
+
+  take parent
+    like native-string
+    note <Must be set to "devices/-/deviceUsers" to search across all DeviceUser belonging to the user.>
+  take android-id
+    like native-string
+    note <Android Id returned by [Settings.Secure#ANDROID_ID](https://developer.android.com/reference/android/provider/Settings.Secure.html#ANDROID_ID).>
+    void take
+  take page-size
+    like native-integer
+    note <The maximum number of DeviceUsers to return. If unspecified, at most 20 DeviceUsers will be returned. The maximum value is 20; values above 20 will be coerced to 20.>
+    void take
+  take page-token
+    like native-string
+    note <A page token, received from a previous `LookupDeviceUsers` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `LookupDeviceUsers` must match the call that provided the page token.>
+    void take
+  take raw-resource-id
+    like native-string
+    note <Raw Resource Id used by Google Endpoint Verification. If the user is enrolled into Google Endpoint Verification, this id will be saved as the 'device_resource_id' field in the following platform dependent files. Mac: ~/.secureConnect/context_aware_config.json Windows: C:\Users\%USERPROFILE%\.secureConnect\context_aware_config.json Linux: ~/.secureConnect/context_aware_config.json>
+    void take
+  take user-id
+    like native-string
+    note <The user whose DeviceUser's resource name will be fetched. Must be set to 'me' to fetch the DeviceUser's resource name for the calling user.>
+    void take
+
+  line </v1/{parent}:lookup>
+
+  find <androidId>, loan android-id
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+  find <rawResourceId>, loan raw-resource-id
+  find <userId>, loan user-id
+
+  loot 200
+    seed json, like google-apps-cloudidentity-devices-v1-lookup-self-device-users-response
+    note <Successful response>

@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/forecast/2018-06-26/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/forecast/2018-06-26/base/list-datasets-response
+  take form list-datasets-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-datasets, name <ListDatasets>
+  note <Returns a list of datasets created using the CreateDataset operation. For each dataset, a summary of its properties, including its Amazon Resource Name (ARN), is returned. To retrieve the complete set of properties, use the ARN with the DescribeDataset operation.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-datasets-request, like list-datasets-request
+
+  line </#X-Amz-Target=AmazonForecast.ListDatasets>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-datasets-request
+
+  loot 200
+    seed json, like list-datasets-response
+    note <Success>
+  loot 480
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>

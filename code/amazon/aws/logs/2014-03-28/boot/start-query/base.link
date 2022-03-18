@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/malformed-query-exception
+  take form malformed-query-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/start-query-response
+  take form start-query-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-query, name <StartQuery>
+  note <Schedules a query of a log group using CloudWatch Logs Insights. You specify the log group and time range to query and the query string to use.
+
+For more information, see [CloudWatch Logs Insights Query Syntax](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_QuerySyntax.html).
+
+Queries time out after 15 minutes of execution. If your queries are timing out, reduce the time range being searched or partition your query into a number of queries.>
+
+  take x-amz-target
+    like native-string
+  take start-query-request, like start-query-request
+
+  line </#X-Amz-Target=Logs_20140328.StartQuery>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan start-query-request
+
+  loot 200
+    seed json, like start-query-response
+    note <Success>
+  loot 480
+    seed json, like malformed-query-exception
+    note <MalformedQueryException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 484
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

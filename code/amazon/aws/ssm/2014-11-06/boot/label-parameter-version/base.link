@@ -1,0 +1,71 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/label-parameter-version-result
+  take form label-parameter-version-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/parameter-not-found
+  take form parameter-not-found
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/parameter-version-label-limit-exceeded
+  take form parameter-version-label-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/parameter-version-not-found
+  take form parameter-version-not-found
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/too-many-updates
+  take form too-many-updates
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot label-parameter-version, name <LabelParameterVersion>
+  note <A parameter label is a user-defined alias to help you manage different versions of a parameter. When you modify a parameter, Amazon Web Services Systems Manager automatically saves a new version and increments the version number by one. A label can help you remember the purpose of a parameter when there are multiple versions.
+
+Parameter labels have the following requirements and restrictions.
+
+- A version of a parameter can have a maximum of 10 labels.
+
+- You can't attach the same label to different versions of the same parameter. For example, if version 1 has the label Production, then you can't attach Production to version 2.
+
+- You can move a label from one version of a parameter to another.
+
+- You can't create a label when you create a new parameter. You must attach a label to a specific version of a parameter.
+
+- If you no longer want to use a parameter label, then you can either delete it or move it to a different version of a parameter.
+
+- A label can have a maximum of 100 characters.
+
+- Labels can contain letters (case sensitive), numbers, periods (.), hyphens (-), or underscores (_).
+
+- Labels can't begin with a number, "`aws`" or "`ssm`" (not case sensitive). If a label fails to meet these requirements, then the label isn't associated with a parameter and the system displays it in the list of InvalidLabels.>
+
+  take x-amz-target
+    like native-string
+  take label-parameter-version-request, like label-parameter-version-request
+
+  line </#X-Amz-Target=AmazonSSM.LabelParameterVersion>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan label-parameter-version-request
+
+  loot 200
+    seed json, like label-parameter-version-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like too-many-updates
+    note <TooManyUpdates>
+  loot 482
+    seed json, like parameter-not-found
+    note <ParameterNotFound>
+  loot 483
+    seed json, like parameter-version-not-found
+    note <ParameterVersionNotFound>
+  loot 484
+    seed json, like parameter-version-label-limit-exceeded
+    note <ParameterVersionLabelLimitExceeded>

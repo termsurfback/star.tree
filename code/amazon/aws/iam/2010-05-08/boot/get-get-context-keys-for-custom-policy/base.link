@@ -1,0 +1,50 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/get-context-keys-for-policy-response
+  take form get-context-keys-for-policy-response
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/policy-document-type
+  take form policy-document-type
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-get-context-keys-for-custom-policy, name <GET_GetContextKeysForCustomPolicy>
+  note <Gets a list of all of the context keys referenced in the input policies. The policies are supplied as a list of one or more strings. To get the context keys from policies associated with an IAM user, group, or role, use GetContextKeysForPrincipalPolicy.
+
+Context keys are variables maintained by Amazon Web Services and its services that provide details about the context of an API query request. Context keys can be evaluated by testing against a value specified in an IAM policy. Use `GetContextKeysForCustomPolicy` to understand what key names and values you must supply when you call SimulateCustomPolicy. Note that all parameters are shown in unencoded form here for clarity but must be URL encoded to be included as a part of a real HTML request.>
+
+  take policy-input-list
+    like list
+      like policy-document-type
+    note <A list of policies for which you want the list of context keys referenced in those policies. Each document is specified as a string containing the complete, valid JSON text of an IAM policy.
+
+The [regex pattern](http://wikipedia.org/wiki/regex) used to validate this parameter is a string of characters consisting of the following:
+
+- Any printable ASCII character ranging from the space character (`\u0020`) through the end of the ASCII character range
+
+- The printable characters in the Basic Latin and Latin-1 Supplement character set (through `\u00FF`)
+
+- The special characters tab (`\u0009`), line feed (`\u000A`), and carriage return (`\u000D`)>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=GetContextKeysForCustomPolicy>
+
+  find <PolicyInputList>, loan policy-input-list
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like get-context-keys-for-policy-response
+    note <Success>
+  loot 480
+    seed xml, like invalid-input-exception
+    note <InvalidInputException>

@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/create-public-dns-namespace-response
+  take form create-public-dns-namespace-response
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/duplicate-request
+  take form duplicate-request
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/namespace-already-exists
+  take form namespace-already-exists
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/resource-limit-exceeded
+  take form resource-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/too-many-tags-exception
+  take form too-many-tags-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-public-dns-namespace, name <CreatePublicDnsNamespace>
+  note <Creates a public namespace based on DNS, which is visible on the internet. The namespace defines your service naming scheme. For example, if you name your namespace `example.com` and name your service `backend`, the resulting DNS name for the service is `backend.example.com`. You can discover instances that were registered with a public DNS namespace by using either a `DiscoverInstances` request or using DNS. For the current quota on the number of namespaces that you can create using the same account, see [Cloud Map quotas](https://docs.aws.amazon.com/cloud-map/latest/dg/cloud-map-limits.html) in the _Cloud Map Developer Guide_.>
+
+  take x-amz-target
+    like native-string
+  take create-public-dns-namespace-request, like create-public-dns-namespace-request
+
+  line </#X-Amz-Target=Route53AutoNaming_v20170314.CreatePublicDnsNamespace>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-public-dns-namespace-request
+
+  loot 200
+    seed json, like create-public-dns-namespace-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input
+    note <InvalidInput>
+  loot 481
+    seed json, like namespace-already-exists
+    note <NamespaceAlreadyExists>
+  loot 482
+    seed json, like resource-limit-exceeded
+    note <ResourceLimitExceeded>
+  loot 483
+    seed json, like duplicate-request
+    note <DuplicateRequest>
+  loot 484
+    seed json, like too-many-tags-exception
+    note <TooManyTagsException>

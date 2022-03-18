@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/iot1click-projects/2018-05-14/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot1click-projects/2018-05-14/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot1click-projects/2018-05-14/base/list-placements-response
+  take form list-placements-response
+
+load @drumwork/snow/amazonaws.com/iot1click-projects/2018-05-14/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-placements, name <ListPlacements>
+  note <Lists the placement(s) of a project.>
+
+  take project-name
+    like native-string
+    note <The project containing the placements to be listed.>
+  take next-token
+    like native-string
+    note <The token to retrieve the next set of results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return per request. If not set, a default value of 100 is used.>
+    void take
+
+  line </projects/{project-name}/placements>
+
+  find <nextToken>, loan next-token
+  find <maxResults>, loan max-results
+
+  loot 200
+    seed json, like list-placements-response
+    note <Success>
+  loot 480
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

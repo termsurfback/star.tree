@@ -1,0 +1,47 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/customer
+  take form customer
+
+load @drumwork/snow/stripe.com/2020-08-27/base/deleted-customer
+  take form deleted-customer
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-customers-customer-body
+  take form get-customers-customer-body
+
+boot get-customers-customer, name <GetCustomersCustomer>
+  note <Retrieves the details of an existing customer. You need only supply the unique customer identifier that was returned upon customer creation.>
+
+  take customer
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-customers-customer-body, like get-customers-customer-body
+    void take
+
+  line </v1/customers/{customer}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-customers-customer-body
+
+  loot 200
+    seed json
+      like sink
+        like customer
+        like deleted-customer
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

@@ -1,0 +1,71 @@
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/precondition-failed-exception
+  take form precondition-failed-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/service-quota-exceeded-exception
+  take form service-quota-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/models.lex.v2/2020-08-07/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-slot-type, name <DeleteSlotType>
+  note <Deletes a slot type from a bot locale.
+
+If a slot is using the slot type, Amazon Lex throws a `ResourceInUseException` exception. To avoid the exception, set the `skipResourceInUseCheck` parameter to `true`.>
+
+  take slot-type-id
+    like native-string
+    note <The identifier of the slot type to delete.>
+  take bot-id
+    like native-string
+    note <The identifier of the bot associated with the slot type.>
+  take bot-version
+    like native-string
+    note <The version of the bot associated with the slot type.>
+  take locale-id
+    like native-string
+    note <The identifier of the language and locale that the slot type will be deleted from. The string must match one of the supported locales. For more information, see [Supported languages](https://docs.aws.amazon.com/lexv2/latest/dg/how-languages.html).>
+  take skip-resource-in-use-check
+    like native-boolean
+    note <By default, the `DeleteSlotType` operations throws a `ResourceInUseException` exception if you try to delete a slot type used by a slot. Set the `skipResourceInUseCheck` parameter to `true` to skip this check and remove the slot type even if a slot uses it.>
+    void take
+
+  line </bots/{bot-id}/botversions/{bot-version}/botlocales/{locale-id}/slottypes/{slot-type-id}/>
+
+  find <skipResourceInUseCheck>, loan skip-resource-in-use-check
+
+  loot 204
+    note <Success>
+  loot 480
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 481
+    seed json, like service-quota-exceeded-exception
+    note <ServiceQuotaExceededException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 484
+    seed json, like precondition-failed-exception
+    note <PreconditionFailedException>
+  loot 485
+    seed json, like internal-server-exception
+    note <InternalServerException>

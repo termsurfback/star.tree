@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/get-parameter-result
+  take form get-parameter-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-key-id
+  take form invalid-key-id
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/parameter-not-found
+  take form parameter-not-found
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/parameter-version-not-found
+  take form parameter-version-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-parameter, name <GetParameter>
+  note <Get information about a single parameter by specifying the parameter name.
+
+To get information about more than one parameter at a time, use the GetParameters operation.>
+
+  take x-amz-target
+    like native-string
+  take get-parameter-request, like get-parameter-request
+
+  line </#X-Amz-Target=AmazonSSM.GetParameter>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-parameter-request
+
+  loot 200
+    seed json, like get-parameter-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like invalid-key-id
+    note <InvalidKeyId>
+  loot 482
+    seed json, like parameter-not-found
+    note <ParameterNotFound>
+  loot 483
+    seed json, like parameter-version-not-found
+    note <ParameterVersionNotFound>

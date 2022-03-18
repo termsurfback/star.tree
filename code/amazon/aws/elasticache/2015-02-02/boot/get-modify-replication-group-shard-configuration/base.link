@@ -1,0 +1,136 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/allowed-node-group-id
+  take form allowed-node-group-id
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/insufficient-cache-cluster-capacity-fault
+  take form insufficient-cache-cluster-capacity-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-cache-cluster-state-fault
+  take form invalid-cache-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-kms-key-fault
+  take form invalid-kms-key-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-replication-group-state-fault
+  take form invalid-replication-group-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-vpc-network-state-fault
+  take form invalid-vpc-network-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/modify-replication-group-shard-configuration-result
+  take form modify-replication-group-shard-configuration-result
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/node-groups-per-replication-group-quota-exceeded-fault
+  take form node-groups-per-replication-group-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/node-quota-for-customer-exceeded-fault
+  take form node-quota-for-customer-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/replication-group-not-found-fault
+  take form replication-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/resharding-configuration
+  take form resharding-configuration
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-modify-replication-group-shard-configuration, name <GET_ModifyReplicationGroupShardConfiguration>
+  note <Modifies a replication group's shards (node groups) by allowing you to add shards, remove shards, or rebalance the keyspaces among existing shards.>
+
+  take replication-group-id
+    like native-string
+    note <The name of the Redis (cluster mode enabled) cluster (replication group) on which the shards are to be configured.>
+  take node-group-count
+    like native-integer
+    note <The number of node groups (shards) that results from the modification of the shard configuration.>
+  take apply-immediately
+    like native-boolean
+    note <Indicates that the shard reconfiguration process begins immediately. At present, the only permitted value for this parameter is `true`.
+
+Value: true>
+  take resharding-configuration
+    like list
+      like resharding-configuration
+    note <Specifies the preferred availability zones for each node group in the cluster. If the value of `NodeGroupCount` is greater than the current number of node groups (shards), you can use this parameter to specify the preferred availability zones of the cluster's shards. If you omit this parameter ElastiCache selects availability zones for you.
+
+You can specify this parameter only if the value of `NodeGroupCount` is greater than the current number of node groups (shards).>
+    void take
+  take node-groups-to-remove
+    like list
+      like allowed-node-group-id
+    note <If the value of `NodeGroupCount` is less than the current number of node groups (shards), then either `NodeGroupsToRemove` or `NodeGroupsToRetain` is required. `NodeGroupsToRemove` is a list of `NodeGroupId`s to remove from the cluster.
+
+ElastiCache for Redis will attempt to remove all node groups listed by `NodeGroupsToRemove` from the cluster.>
+    void take
+  take node-groups-to-retain
+    like list
+      like allowed-node-group-id
+    note <If the value of `NodeGroupCount` is less than the current number of node groups (shards), then either `NodeGroupsToRemove` or `NodeGroupsToRetain` is required. `NodeGroupsToRetain` is a list of `NodeGroupId`s to retain in the cluster.
+
+ElastiCache for Redis will attempt to remove all node groups except those listed by `NodeGroupsToRetain` from the cluster.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyReplicationGroupShardConfiguration>
+
+  find <ReplicationGroupId>, loan replication-group-id
+  find <NodeGroupCount>, loan node-group-count
+  find <ApplyImmediately>, loan apply-immediately
+  find <ReshardingConfiguration>, loan resharding-configuration
+  find <NodeGroupsToRemove>, loan node-groups-to-remove
+  find <NodeGroupsToRetain>, loan node-groups-to-retain
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-replication-group-shard-configuration-result
+    note <Success>
+  loot 480
+    seed xml, like replication-group-not-found-fault
+    note <ReplicationGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-replication-group-state-fault
+    note <InvalidReplicationGroupStateFault>
+  loot 482
+    seed xml, like invalid-cache-cluster-state-fault
+    note <InvalidCacheClusterStateFault>
+  loot 483
+    seed xml, like invalid-vpc-network-state-fault
+    note <InvalidVPCNetworkStateFault>
+  loot 484
+    seed xml, like insufficient-cache-cluster-capacity-fault
+    note <InsufficientCacheClusterCapacityFault>
+  loot 485
+    seed xml, like node-groups-per-replication-group-quota-exceeded-fault
+    note <NodeGroupsPerReplicationGroupQuotaExceededFault>
+  loot 486
+    seed xml, like node-quota-for-customer-exceeded-fault
+    note <NodeQuotaForCustomerExceededFault>
+  loot 487
+    seed xml, like invalid-kms-key-fault
+    note <InvalidKMSKeyFault>
+  loot 488
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 489
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

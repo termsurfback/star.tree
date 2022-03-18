@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/list-server-certificates-response
+  take form list-server-certificates-response
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-list-server-certificates, name <POST_ListServerCertificates>
+  note <Lists the server certificates stored in IAM that have the specified path prefix. If none exist, the operation returns an empty list.
+
+You can paginate the results using the `MaxItems` and `Marker` parameters.
+
+For more information about working with server certificates, see [Working with server certificates](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_server-certs.html) in the _IAM User Guide_. This topic also includes a list of Amazon Web Services services that can use the server certificates that you manage with IAM.
+
+IAM resource-listing operations return a subset of the available attributes for the resource. For example, this operation does not return tags, even though they are an attribute of the returned object. To view all of the information for a servercertificate, see GetServerCertificate.>
+
+  take max-items
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take list-server-certificates-request, like list-server-certificates-request
+    void take
+
+  line </#Action=ListServerCertificates>
+
+  find <MaxItems>, loan max-items
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan list-server-certificates-request
+
+  loot 200
+    seed xml, like list-server-certificates-response
+    note <Success>
+  loot 480
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

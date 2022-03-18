@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-subnet-group-not-found-fault
+  take form cluster-subnet-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-subnet-quota-exceeded-fault
+  take form cluster-subnet-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/dependent-service-request-throttling-fault
+  take form dependent-service-request-throttling-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-subnet
+  take form invalid-subnet
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/modify-cluster-subnet-group-result
+  take form modify-cluster-subnet-group-result
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/subnet-already-in-use
+  take form subnet-already-in-use
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unauthorized-operation
+  take form unauthorized-operation
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-modify-cluster-subnet-group, name <POST_ModifyClusterSubnetGroup>
+  note <Modifies a cluster subnet group to include the specified list of VPC subnets. The operation replaces the existing list of subnets with the new list of subnets.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take modify-cluster-subnet-group-message, like modify-cluster-subnet-group-message
+    void take
+
+  line </#Action=ModifyClusterSubnetGroup>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan modify-cluster-subnet-group-message
+
+  loot 200
+    seed xml, like modify-cluster-subnet-group-result
+    note <Success>
+  loot 480
+    seed xml, like cluster-subnet-group-not-found-fault
+    note <ClusterSubnetGroupNotFoundFault>
+  loot 481
+    seed xml, like cluster-subnet-quota-exceeded-fault
+    note <ClusterSubnetQuotaExceededFault>
+  loot 482
+    seed xml, like subnet-already-in-use
+    note <SubnetAlreadyInUse>
+  loot 483
+    seed xml, like invalid-subnet
+    note <InvalidSubnet>
+  loot 484
+    seed xml, like unauthorized-operation
+    note <UnauthorizedOperation>
+  loot 485
+    seed xml, like dependent-service-request-throttling-fault
+    note <DependentServiceRequestThrottlingFault>

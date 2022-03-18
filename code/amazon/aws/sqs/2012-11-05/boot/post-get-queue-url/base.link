@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/sqs/2012-11-05/base/get-queue-url-result
+  take form get-queue-url-result
+
+load @drumwork/snow/amazonaws.com/sqs/2012-11-05/base/queue-does-not-exist
+  take form queue-does-not-exist
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-get-queue-url, name <POST_GetQueueUrl>
+  note <Returns the URL of an existing Amazon SQS queue.
+
+To access a queue that belongs to another AWS account, use the `QueueOwnerAWSAccountId` parameter to specify the account ID of the queue's owner. The queue's owner must grant you permission to access the queue. For more information about shared queue access, see `AddPermission` or see [Allow Developers to Write Messages to a Shared Queue](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-writing-an-sqs-policy.html#write-messages-to-shared-queue) in the _Amazon SQS Developer Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take get-queue-url-request, like get-queue-url-request
+    void take
+
+  line </#Action=GetQueueUrl>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan get-queue-url-request
+
+  loot 200
+    seed xml, like get-queue-url-result
+    note <Success>
+  loot 480
+    seed xml, like queue-does-not-exist
+    note <QueueDoesNotExist>

@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/delete-webhook-output
+  take form delete-webhook-output
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-webhook, name <DeleteWebhook>
+  note <Deletes a previously created webhook by name. Deleting the webhook stops AWS CodePipeline from starting a pipeline every time an external event occurs. The API returns successfully when trying to delete a webhook that is already deleted. If a deleted webhook is re-created by calling PutWebhook with the same name, it will have a different URL.>
+
+  take x-amz-target
+    like native-string
+  take delete-webhook-input, like delete-webhook-input
+
+  line </#X-Amz-Target=CodePipeline_20150709.DeleteWebhook>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-webhook-input
+
+  loot 200
+    seed json, like delete-webhook-output
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>

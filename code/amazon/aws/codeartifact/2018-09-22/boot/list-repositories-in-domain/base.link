@@ -1,0 +1,89 @@
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/list-repositories-in-domain-result
+  take form list-repositories-in-domain-result
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-repositories-in-domain, name <ListRepositoriesInDomain>
+  note <Returns a list of [RepositorySummary](https://docs.aws.amazon.com/codeartifact/latest/APIReference/API_RepositorySummary.html) objects. Each `RepositorySummary` contains information about a repository in the specified domain and that matches the input parameters.>
+
+  take domain
+    like native-string
+    note <The name of the domain that contains the returned list of repositories.>
+  take domain-owner
+    like native-string
+    note <The 12-digit account number of the AWS account that owns the domain. It does not include dashes or spaces.>
+    void take
+  take administrator-account
+    like native-string
+    note <Filter the list of repositories to only include those that are managed by the AWS account ID.>
+    void take
+  take repository-prefix
+    like native-string
+    note <A prefix used to filter returned repositories. Only repositories with names that start with `repositoryPrefix` are returned.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return per page.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next set of results. Use the value returned in the previous response in the next request to retrieve the next set of results.>
+    void take
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+
+  line </v1/domain/repositories#domain>
+
+  find <domain>, loan domain
+  find <domain-owner>, loan domain-owner
+  find <administrator-account>, loan administrator-account
+  find <repository-prefix>, loan repository-prefix
+  find <max-results>, loan max-results
+  find <next-token>, loan next-token
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  loot 200
+    seed json, like list-repositories-in-domain-result
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like validation-exception
+    note <ValidationException>

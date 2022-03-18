@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/describe-subscription-response
+  take form describe-subscription-response
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-subscription, name <DescribeSubscription>
+  note <Provides details about the Shield Advanced subscription for an account.>
+
+  take x-amz-target
+    like native-string
+  take describe-subscription-request, like describe-subscription-request
+
+  line </#X-Amz-Target=AWSShield_20160616.DescribeSubscription>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-subscription-request
+
+  loot 200
+    seed json, like describe-subscription-response
+    note <Success>
+  loot 480
+    seed json, like internal-error-exception
+    note <InternalErrorException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

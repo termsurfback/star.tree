@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/deploy-system-instance-response
+  take form deploy-system-instance-response
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot deploy-system-instance, name <DeploySystemInstance>
+  note <**Greengrass and Cloud Deployments** Deploys the system instance to the target specified in `CreateSystemInstance`.
+
+**Greengrass Deployments** If the system or any workflows and entities have been updated before this action is called, then the deployment will create a new Amazon Simple Storage Service resource file and then deploy it.
+
+Since this action creates a Greengrass deployment on the caller's behalf, the calling identity must have write permissions to the specified Greengrass group. Otherwise, the call will fail with an authorization error.
+
+For information about the artifacts that get added to your Greengrass core device when you use this API, see [AWS IoT Things Graph and AWS IoT Greengrass](https://docs.aws.amazon.com/thingsgraph/latest/ug/iot-tg-greengrass.html).>
+
+  take x-amz-target
+    like native-string
+  take deploy-system-instance-request, like deploy-system-instance-request
+
+  line </#X-Amz-Target=IotThingsGraphFrontEndService.DeploySystemInstance>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan deploy-system-instance-request
+
+  loot 200
+    seed json, like deploy-system-instance-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 484
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>

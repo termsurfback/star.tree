@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/list-simulation-applications-body
+  take form list-simulation-applications-body
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/list-simulation-applications-response
+  take form list-simulation-applications-response
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-simulation-applications, name <ListSimulationApplications>
+  note <Returns a list of simulation applications. You can optionally provide filters to retrieve specific simulation applications.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-simulation-applications-body, like list-simulation-applications-body
+
+  line </listSimulationApplications>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-simulation-applications-body
+
+  loot 200
+    seed json, like list-simulation-applications-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

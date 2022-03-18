@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/codestar/2017-04-19/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/codestar/2017-04-19/base/disassociate-team-member-result
+  take form disassociate-team-member-result
+
+load @drumwork/snow/amazonaws.com/codestar/2017-04-19/base/invalid-service-role-exception
+  take form invalid-service-role-exception
+
+load @drumwork/snow/amazonaws.com/codestar/2017-04-19/base/project-not-found-exception
+  take form project-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codestar/2017-04-19/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot disassociate-team-member, name <DisassociateTeamMember>
+  note <Removes a user from a project. Removing a user from a project also removes the IAM policies from that user that allowed access to the project and its resources. Disassociating a team member does not remove that user's profile from AWS CodeStar. It does not remove the user from IAM.>
+
+  take x-amz-target
+    like native-string
+  take disassociate-team-member-request, like disassociate-team-member-request
+
+  line </#X-Amz-Target=CodeStar_20170419.DisassociateTeamMember>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan disassociate-team-member-request
+
+  loot 200
+    seed json, like disassociate-team-member-result
+    note <Success>
+  loot 480
+    seed json, like project-not-found-exception
+    note <ProjectNotFoundException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like invalid-service-role-exception
+    note <InvalidServiceRoleException>
+  loot 483
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>

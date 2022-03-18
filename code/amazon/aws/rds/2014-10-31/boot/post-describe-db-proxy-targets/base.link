@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-not-found-fault
+  take form db-proxy-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-target-group-not-found-fault
+  take form db-proxy-target-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-target-not-found-fault
+  take form db-proxy-target-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/describe-db-proxy-targets-response
+  take form describe-db-proxy-targets-response
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-proxy-state-fault
+  take form invalid-db-proxy-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-db-proxy-targets, name <POST_DescribeDBProxyTargets>
+  note <Returns information about `DBProxyTarget` objects. This API supports pagination.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-db-proxy-targets-request, like describe-db-proxy-targets-request
+    void take
+
+  line </#Action=DescribeDBProxyTargets>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-db-proxy-targets-request
+
+  loot 200
+    seed xml, like describe-db-proxy-targets-response
+    note <Success>
+  loot 480
+    seed xml, like db-proxy-not-found-fault
+    note <DBProxyNotFoundFault>
+  loot 481
+    seed xml, like db-proxy-target-not-found-fault
+    note <DBProxyTargetNotFoundFault>
+  loot 482
+    seed xml, like db-proxy-target-group-not-found-fault
+    note <DBProxyTargetGroupNotFoundFault>
+  loot 483
+    seed xml, like invalid-db-proxy-state-fault
+    note <InvalidDBProxyStateFault>

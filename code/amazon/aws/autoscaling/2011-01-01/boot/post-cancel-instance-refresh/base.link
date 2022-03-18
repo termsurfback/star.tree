@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/active-instance-refresh-not-found-fault
+  take form active-instance-refresh-not-found-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/cancel-instance-refresh-answer
+  take form cancel-instance-refresh-answer
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/limit-exceeded-fault
+  take form limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-cancel-instance-refresh, name <POST_CancelInstanceRefresh>
+  note <Cancels an instance refresh operation in progress. Cancellation does not roll back any replacements that have already been completed, but it prevents new replacements from being started.
+
+This operation is part of the [instance refresh feature](https://docs.aws.amazon.com/autoscaling/ec2/userguide/asg-instance-refresh.html) in Amazon EC2 Auto Scaling, which helps you update instances in your Auto Scaling group after you make configuration changes.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take cancel-instance-refresh-type, like cancel-instance-refresh-type
+    void take
+
+  line </#Action=CancelInstanceRefresh>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan cancel-instance-refresh-type
+
+  loot 200
+    seed xml, like cancel-instance-refresh-answer
+    note <Success>
+  loot 480
+    seed xml, like limit-exceeded-fault
+    note <LimitExceededFault>
+  loot 481
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>
+  loot 482
+    seed xml, like active-instance-refresh-not-found-fault
+    note <ActiveInstanceRefreshNotFoundFault>

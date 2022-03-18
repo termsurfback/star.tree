@@ -1,0 +1,75 @@
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/already-exists-exception
+  take form already-exists-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/create-backup-selection-body
+  take form create-backup-selection-body
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/create-backup-selection-output
+  take form create-backup-selection-output
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/missing-parameter-value-exception
+  take form missing-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-backup-selection, name <CreateBackupSelection>
+  note <Creates a JSON document that specifies a set of resources to assign to a backup plan. Resources can be included by specifying patterns for a `ListOfTags` and selected `Resources`.
+
+For example, consider the following patterns:
+
+- `Resources: "arn:aws:ec2:region:account-id:volume/volume-id"`
+
+- `ConditionKey:"department"`
+
+  `ConditionValue:"finance"`
+
+  `ConditionType:"StringEquals"`
+
+- `ConditionKey:"importance"`
+
+  `ConditionValue:"critical"`
+
+  `ConditionType:"StringEquals"`
+
+Using these patterns would back up all Amazon Elastic Block Store (Amazon EBS) volumes that are tagged as `"department=finance"`, `"importance=critical"`, in addition to an EBS volume with the specified volume ID.
+
+Resources and conditions are additive in that all resources that match the pattern are selected. This shouldn't be confused with a logical AND, where all conditions must match. The matching patterns are logically put together using the OR operator. In other words, all patterns that match are selected for backup.>
+
+  take backup-plan-id
+    like native-string
+    note <Uniquely identifies the backup plan to be associated with the selection of resources.>
+  take create-backup-selection-body, like create-backup-selection-body
+
+  line </backup/plans/{backup-plan-id}/selections/>
+
+  seed json, loan create-backup-selection-body
+
+  loot 200
+    seed json, like create-backup-selection-output
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed json, like already-exists-exception
+    note <AlreadyExistsException>
+  loot 482
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed json, like missing-parameter-value-exception
+    note <MissingParameterValueException>
+  loot 484
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

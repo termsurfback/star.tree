@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/refresh-trusted-advisor-check-response
+  take form refresh-trusted-advisor-check-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot refresh-trusted-advisor-check, name <RefreshTrustedAdvisorCheck>
+  note <Refreshes the AWS Trusted Advisor check that you specify using the check ID. You can get the check IDs by calling the DescribeTrustedAdvisorChecks operation.
+
+Some checks are refreshed automatically. If you call the `RefreshTrustedAdvisorCheck` operation to refresh them, you might see the `InvalidParameterValue` error.
+
+The response contains a TrustedAdvisorCheckRefreshStatus object.
+
+- You must have a Business or Enterprise Support plan to use the AWS Support API.
+
+- If you call the AWS Support API from an account that does not have a Business or Enterprise Support plan, the `SubscriptionRequiredException` error message appears. For information about changing your support plan, see [AWS Support](http://aws.amazon.com/premiumsupport/).>
+
+  take x-amz-target
+    like native-string
+  take refresh-trusted-advisor-check-request, like refresh-trusted-advisor-check-request
+
+  line </#X-Amz-Target=AWSSupport_20130415.RefreshTrustedAdvisorCheck>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan refresh-trusted-advisor-check-request
+
+  loot 200
+    seed json, like refresh-trusted-advisor-check-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>

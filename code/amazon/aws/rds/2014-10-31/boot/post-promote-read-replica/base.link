@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-instance-state-fault
+  take form invalid-db-instance-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/promote-read-replica-result
+  take form promote-read-replica-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-promote-read-replica, name <POST_PromoteReadReplica>
+  note <Promotes a read replica DB instance to a standalone DB instance.
+
+- Backup duration is a function of the amount of changes to the database since the previous backup. If you plan to promote a read replica to a standalone instance, we recommend that you enable backups and complete at least one backup prior to promotion. In addition, a read replica cannot be promoted to a standalone instance when it is in the `backing-up` status. If you have enabled backups on your read replica, configure the automated backup window so that daily backups do not interfere with read replica promotion.
+
+- This command doesn't apply to Aurora MySQL and Aurora PostgreSQL.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take promote-read-replica-message, like promote-read-replica-message
+    void take
+
+  line </#Action=PromoteReadReplica>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan promote-read-replica-message
+
+  loot 200
+    seed xml, like promote-read-replica-result
+    note <Success>
+  loot 480
+    seed xml, like invalid-db-instance-state-fault
+    note <InvalidDBInstanceStateFault>
+  loot 481
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>

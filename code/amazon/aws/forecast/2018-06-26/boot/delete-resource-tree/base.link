@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/forecast/2018-06-26/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/forecast/2018-06-26/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/forecast/2018-06-26/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-resource-tree, name <DeleteResourceTree>
+  note <Deletes an entire resource tree. This operation will delete the parent resource and its child resources.
+
+Child resources are resources that were created from another resource. For example, when a forecast is generated from a predictor, the forecast is the child resource and the predictor is the parent resource.
+
+Amazon Forecast resources possess the following parent-child resource hierarchies:
+
+- **Dataset**: dataset import jobs
+
+- **Dataset Group**: predictors, predictor backtest export jobs, forecasts, forecast export jobs
+
+- **Predictor**: predictor backtest export jobs, forecasts, forecast export jobs
+
+- **Forecast**: forecast export jobs
+
+`DeleteResourceTree` will only delete Amazon Forecast resources, and will not delete datasets or exported files stored in Amazon S3.>
+
+  take x-amz-target
+    like native-string
+  take delete-resource-tree-request, like delete-resource-tree-request
+
+  line </#X-Amz-Target=AmazonForecast.DeleteResourceTree>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-resource-tree-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>

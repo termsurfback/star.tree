@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/list-tags-for-resource-response
+  take form list-tags-for-resource-response
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-tags-for-resource, name <ListTagsForResource>
+  note <Displays the tags associated with a canary.>
+
+  take resource-arn
+    like native-string
+    note <The ARN of the canary that you want to view tags for.
+
+The ARN format of a canary is `arn:aws:synthetics:_Region_:_account-id_:canary:_canary-name_` .>
+
+  line </tags/{resource-arn}>
+
+  loot 200
+    seed json, like list-tags-for-resource-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>

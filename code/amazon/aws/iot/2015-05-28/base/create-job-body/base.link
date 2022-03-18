@@ -1,0 +1,71 @@
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/abort-criteria-list
+  take form abort-criteria-list
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/expires-in-sec
+  take form expires-in-sec
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/exponential-rollout-rate
+  take form exponential-rollout-rate
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/in-progress-timeout-in-minutes
+  take form in-progress-timeout-in-minutes
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/max-job-executions-per-min
+  take form max-job-executions-per-min
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/role-arn
+  take form role-arn
+
+form create-job-body
+  take targets, name <targets>
+  take document-source, name <documentSource>
+    void take
+  take document, name <document>
+    void take
+  take description, name <description>
+    void take
+  take presigned-url-config, name <presignedUrlConfig>
+    like form
+      take role-arn, name <roleArn>
+        like role-arn
+        void take
+        note <The ARN of an IAM role that grants grants permission to download files from the S3 bucket where the job data/updates are stored. The role must also grant permission for IoT to download the files.>
+      take expires-in-sec, name <expiresInSec>
+        like expires-in-sec
+        void take
+        note <How long (in seconds) pre-signed URLs are valid. Valid values are 60 - 3600, the default value is 3600 seconds. Pre-signed URLs are generated when Jobs receives an MQTT request for the job document.>
+    void take
+  take target-selection, name <targetSelection>
+    void take
+  take job-executions-rollout-config, name <jobExecutionsRolloutConfig>
+    like form
+      take maximum-per-minute, name <maximumPerMinute>
+        like max-job-executions-per-min
+        void take
+        note <The maximum number of things that will be notified of a pending job, per minute. This parameter allows you to create a staged rollout.>
+      take exponential-rate, name <exponentialRate>
+        like exponential-rollout-rate
+        void take
+        note <The rate of increase for a job rollout. This parameter allows you to define an exponential rate for a job rollout.>
+    void take
+  take abort-config, name <abortConfig>
+    like form
+      take criteria-list, name <criteriaList>
+        like abort-criteria-list
+        void take
+        note <The list of criteria that determine when and how to abort the job.>
+    void take
+  take timeout-config, name <timeoutConfig>
+    like form
+      take in-progress-timeout-in-minutes, name <inProgressTimeoutInMinutes>
+        like in-progress-timeout-in-minutes
+        void take
+        note <Specifies the amount of time, in minutes, this device has to finish execution of this job. The timeout interval can be anywhere between 1 minute and 7 days (1 to 10080 minutes). The in progress timer can't be updated and will apply to all job executions for the job. Whenever a job execution remains in the IN_PROGRESS status for longer than this interval, the job execution will fail and switch to the terminal `TIMED_OUT` status.>
+    void take
+  take tags, name <tags>
+    void take
+  take namespace-id, name <namespaceId>
+    void take
+  take job-template-arn, name <jobTemplateArn>
+    void take

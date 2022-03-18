@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/does-not-exist-exception
+  take form does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/resume-session-response
+  take form resume-session-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot resume-session, name <ResumeSession>
+  note <Reconnects a session to an instance after it has been disconnected. Connections can be resumed for disconnected sessions, but not terminated sessions.
+
+This command is primarily for use by client machines to automatically reconnect during intermittent network issues. It isn't intended for any other use.>
+
+  take x-amz-target
+    like native-string
+  take resume-session-request, like resume-session-request
+
+  line </#X-Amz-Target=AmazonSSM.ResumeSession>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan resume-session-request
+
+  loot 200
+    seed json, like resume-session-response
+    note <Success>
+  loot 480
+    seed json, like does-not-exist-exception
+    note <DoesNotExistException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

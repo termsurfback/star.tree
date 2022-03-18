@@ -1,0 +1,53 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/chat-update-body
+  take form chat-update-body
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+boot chat-update, name <chat_update>
+  note <Updates a message.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `chat:write`>
+  take chat-update-body, like chat-update-body
+    void take
+
+  line </chat.update>
+
+  hint <token>, loan token
+
+  seed x-www-form-urlencoded, loan chat-update-body
+
+  loot 200
+    seed json
+      like form
+        take channel, name <channel>
+        take message, name <message>
+          like form
+            take attachments, name <attachments>
+              void take
+            take blocks, name <blocks>
+              void take
+            take text, name <text>
+        take ok, name <ok>
+          like defs-ok-true
+        take text, name <text>
+        take ts, name <ts>
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take callstack, name <callstack>
+          void take
+        take error, name <error>
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response>

@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/list-stored-queries-response
+  take form list-stored-queries-response
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-stored-queries, name <ListStoredQueries>
+  note <Lists the stored queries for a single Amazon Web Services account and a single Amazon Web Services Region. The default is 100.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-stored-queries-request, like list-stored-queries-request
+
+  line </#X-Amz-Target=StarlingDoveService.ListStoredQueries>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-stored-queries-request
+
+  loot 200
+    seed json, like list-stored-queries-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>

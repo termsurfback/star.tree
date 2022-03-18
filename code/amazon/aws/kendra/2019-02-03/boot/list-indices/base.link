@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/kendra/2019-02-03/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/kendra/2019-02-03/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/kendra/2019-02-03/base/list-indices-response
+  take form list-indices-response
+
+load @drumwork/snow/amazonaws.com/kendra/2019-02-03/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/kendra/2019-02-03/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-indices, name <ListIndices>
+  note <Lists the Amazon Kendra indexes that you have created.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-indices-request, like list-indices-request
+
+  line </#X-Amz-Target=AWSKendraFrontendService.ListIndices>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-indices-request
+
+  loot 200
+    seed json, like list-indices-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 483
+    seed json, like internal-server-exception
+    note <InternalServerException>

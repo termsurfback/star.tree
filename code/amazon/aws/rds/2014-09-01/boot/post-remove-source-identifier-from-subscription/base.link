@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/remove-source-identifier-from-subscription-result
+  take form remove-source-identifier-from-subscription-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/source-not-found-fault
+  take form source-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/subscription-not-found-fault
+  take form subscription-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-remove-source-identifier-from-subscription, name <POST_RemoveSourceIdentifierFromSubscription>
+  take action
+    like native-string
+  take version
+    like native-string
+  take remove-source-identifier-from-subscription-message, like remove-source-identifier-from-subscription-message
+    void take
+
+  line </#Action=RemoveSourceIdentifierFromSubscription>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan remove-source-identifier-from-subscription-message
+
+  loot 200
+    seed xml, like remove-source-identifier-from-subscription-result
+    note <Success>
+  loot 480
+    seed xml, like subscription-not-found-fault
+    note <SubscriptionNotFoundFault>
+  loot 481
+    seed xml, like source-not-found-fault
+    note <SourceNotFoundFault>

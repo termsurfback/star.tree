@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/set-sms-attributes-response
+  take form set-sms-attributes-response
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/throttled-exception
+  take form throttled-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-set-sms-attributes, name <POST_SetSMSAttributes>
+  note <Use this request to set the default settings for sending SMS messages and receiving daily SMS usage reports.
+
+You can override some of these settings for a single message when you use the `Publish` action with the `MessageAttributes.entry.N` parameter. For more information, see [Publishing to a mobile phone](https://docs.aws.amazon.com/sns/latest/dg/sms_publish-to-phone.html) in the _Amazon SNS Developer Guide_.
+
+To use this operation, you must grant the Amazon SNS service principal (`sns.amazonaws.com`) permission to perform the `s3:ListBucket` action.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take set-sms-attributes-input, like set-sms-attributes-input
+    void take
+
+  line </#Action=SetSMSAttributes>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan set-sms-attributes-input
+
+  loot 200
+    seed xml, like set-sms-attributes-response
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed xml, like throttled-exception
+    note <ThrottledException>
+  loot 482
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 483
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>

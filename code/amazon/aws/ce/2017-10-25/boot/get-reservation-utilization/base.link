@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/data-unavailable-exception
+  take form data-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/get-reservation-utilization-response
+  take form get-reservation-utilization-response
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-reservation-utilization, name <GetReservationUtilization>
+  note <Retrieves the reservation utilization for your account. Management account in an organization have access to member accounts. You can filter data by dimensions in a time period. You can use `GetDimensionValues` to determine the possible dimension values. Currently, you can group only by `SUBSCRIPTION_ID`.>
+
+  take x-amz-target
+    like native-string
+  take get-reservation-utilization-request, like get-reservation-utilization-request
+
+  line </#X-Amz-Target=AWSInsightsIndexService.GetReservationUtilization>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-reservation-utilization-request
+
+  loot 200
+    seed json, like get-reservation-utilization-response
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed json, like data-unavailable-exception
+    note <DataUnavailableException>
+  loot 482
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>

@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/describe-execution-output
+  take form describe-execution-output
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/execution-does-not-exist
+  take form execution-does-not-exist
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/invalid-arn
+  take form invalid-arn
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-execution, name <DescribeExecution>
+  note <Describes an execution.
+
+This operation is eventually consistent. The results are best effort and may not reflect very recent updates and changes.
+
+This API action is not supported by `EXPRESS` state machines.>
+
+  take x-amz-target
+    like native-string
+  take describe-execution-input, like describe-execution-input
+
+  line </#X-Amz-Target=AWSStepFunctions.DescribeExecution>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-execution-input
+
+  loot 200
+    seed json, like describe-execution-output
+    note <Success>
+  loot 480
+    seed json, like execution-does-not-exist
+    note <ExecutionDoesNotExist>
+  loot 481
+    seed json, like invalid-arn
+    note <InvalidArn>

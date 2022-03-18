@@ -1,0 +1,30 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/storage/v1beta2/base/object-access-controls
+  take form object-access-controls
+
+boot storage-default-object-access-controls-list, name <storage.defaultObjectAccessControls.list>
+  note <Retrieves default object ACL entries on the specified bucket.>
+
+  take bucket
+    like native-string
+    note <Name of a bucket.>
+  take if-metageneration-match
+    like native-string
+    note <If present, only return default ACL listing if the bucket's current metageneration matches this value.>
+    void take
+  take if-metageneration-not-match
+    like native-string
+    note <If present, only return default ACL listing if the bucket's current metageneration does not match the given value.>
+    void take
+
+  line </b/{bucket}/defaultObjectAcl>
+
+  find <ifMetagenerationMatch>, loan if-metageneration-match
+  find <ifMetagenerationNotMatch>, loan if-metageneration-not-match
+
+  loot 200
+    seed json, like object-access-controls
+    note <Successful response>

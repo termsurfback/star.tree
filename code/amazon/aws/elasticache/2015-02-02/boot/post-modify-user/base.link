@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-user-state-fault
+  take form invalid-user-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/user
+  take form user
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/user-not-found-fault
+  take form user-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-modify-user, name <POST_ModifyUser>
+  note <Changes user password(s) and/or access string.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take modify-user-message, like modify-user-message
+    void take
+
+  line </#Action=ModifyUser>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan modify-user-message
+
+  loot 200
+    seed xml, like user
+    note <Success>
+  loot 480
+    seed xml, like user-not-found-fault
+    note <UserNotFoundFault>
+  loot 481
+    seed xml, like invalid-user-state-fault
+    note <InvalidUserStateFault>
+  loot 482
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

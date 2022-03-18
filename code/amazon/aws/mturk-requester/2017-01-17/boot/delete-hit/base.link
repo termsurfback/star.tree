@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/delete-hit-response
+  take form delete-hit-response
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/request-error
+  take form request-error
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/service-fault
+  take form service-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-hit, name <DeleteHIT>
+  note <The `DeleteHIT` operation is used to delete HIT that is no longer needed. Only the Requester who created the HIT can delete it.
+
+You can only dispose of HITs that are in the `Reviewable` state, with all of their submitted assignments already either approved or rejected. If you call the DeleteHIT operation on a HIT that is not in the `Reviewable` state (for example, that has not expired, or still has active assignments), or on a HIT that is Reviewable but without all of its submitted assignments already approved or rejected, the service will return an error.
+
+- HITs are automatically disposed of after 120 days.
+
+- After you dispose of a HIT, you can no longer approve the HIT's rejected assignments.
+
+- Disposed HITs are not returned in results for the ListHITs operation.
+
+- Disposing HITs can improve the performance of operations such as ListReviewableHITs and ListHITs.>
+
+  take x-amz-target
+    like native-string
+  take delete-hit-request, like delete-hit-request
+
+  line </#X-Amz-Target=MTurkRequesterServiceV20170117.DeleteHIT>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-hit-request
+
+  loot 200
+    seed json, like delete-hit-response
+    note <Success>
+  loot 480
+    seed json, like service-fault
+    note <ServiceFault>
+  loot 481
+    seed json, like request-error
+    note <RequestError>

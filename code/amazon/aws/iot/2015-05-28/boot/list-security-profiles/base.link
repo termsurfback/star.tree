@@ -1,0 +1,68 @@
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/list-security-profiles-response
+  take form list-security-profiles-response
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-security-profiles, name <ListSecurityProfiles>
+  note <Lists the Device Defender security profiles you've created. You can filter security profiles by dimension or custom metric.
+
+Requires permission to access the [ListSecurityProfiles](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiot.html#awsiot-actions-as-permissions) action.
+
+`dimensionName` and `metricName` cannot be used in the same request.>
+
+  take next-token
+    like native-string
+    note <The token for the next set of results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return at one time.>
+    void take
+  take dimension-name
+    like native-string
+    note <A filter to limit results to the security profiles that use the defined dimension. Cannot be used with `metricName`>
+    void take
+  take metric-name
+    like native-string
+    note <The name of the custom metric. Cannot be used with `dimensionName`.>
+    void take
+
+  line </security-profiles>
+
+  find <nextToken>, loan next-token
+  find <maxResults>, loan max-results
+  find <dimensionName>, loan dimension-name
+  find <metricName>, loan metric-name
+
+  loot 200
+    seed json, like list-security-profiles-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

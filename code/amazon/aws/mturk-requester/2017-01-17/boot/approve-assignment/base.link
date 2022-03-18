@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/approve-assignment-response
+  take form approve-assignment-response
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/request-error
+  take form request-error
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/service-fault
+  take form service-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot approve-assignment, name <ApproveAssignment>
+  note <The `ApproveAssignment` operation approves the results of a completed assignment.
+
+Approving an assignment initiates two payments from the Requester's Amazon.com account
+
+- The Worker who submitted the results is paid the reward specified in the HIT.
+
+- Amazon Mechanical Turk fees are debited.
+
+If the Requester's account does not have adequate funds for these payments, the call to ApproveAssignment returns an exception, and the approval is not processed. You can include an optional feedback message with the approval, which the Worker can see in the Status section of the web site.
+
+You can also call this operation for assignments that were previous rejected and approve them by explicitly overriding the previous rejection. This only works on rejected assignments that were submitted within the previous 30 days and only if the assignment's related HIT has not been deleted.>
+
+  take x-amz-target
+    like native-string
+  take approve-assignment-request, like approve-assignment-request
+
+  line </#X-Amz-Target=MTurkRequesterServiceV20170117.ApproveAssignment>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan approve-assignment-request
+
+  loot 200
+    seed json, like approve-assignment-response
+    note <Success>
+  loot 480
+    seed json, like service-fault
+    note <ServiceFault>
+  loot 481
+    seed json, like request-error
+    note <RequestError>

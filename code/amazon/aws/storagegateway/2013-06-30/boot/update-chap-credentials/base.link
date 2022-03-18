@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/update-chap-credentials-output
+  take form update-chap-credentials-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-chap-credentials, name <UpdateChapCredentials>
+  note <Updates the Challenge-Handshake Authentication Protocol (CHAP) credentials for a specified iSCSI target. By default, a gateway does not have CHAP enabled; however, for added security, you might use it. This operation is supported in the volume and tape gateway types.
+
+When you update CHAP credentials, all existing connections on the target are closed and initiators must reconnect with the new credentials.>
+
+  take x-amz-target
+    like native-string
+  take update-chap-credentials-input, like update-chap-credentials-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.UpdateChapCredentials>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-chap-credentials-input
+
+  loot 200
+    seed json, like update-chap-credentials-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

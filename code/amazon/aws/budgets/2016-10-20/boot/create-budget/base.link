@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/budgets/2016-10-20/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/budgets/2016-10-20/base/create-budget-response
+  take form create-budget-response
+
+load @drumwork/snow/amazonaws.com/budgets/2016-10-20/base/creation-limit-exceeded-exception
+  take form creation-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/budgets/2016-10-20/base/duplicate-record-exception
+  take form duplicate-record-exception
+
+load @drumwork/snow/amazonaws.com/budgets/2016-10-20/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/budgets/2016-10-20/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-budget, name <CreateBudget>
+  note <Creates a budget and, if included, notifications and subscribers.
+
+Only one of `BudgetLimit` or `PlannedBudgetLimits` can be present in the syntax at one time. Use the syntax that matches your case. The Request Syntax section shows the `BudgetLimit` syntax. For `PlannedBudgetLimits`, see the [Examples](https://docs.aws.amazon.com/aws-cost-management/latest/APIReference/API_budgets_CreateBudget.html#API_CreateBudget_Examples) section.>
+
+  take x-amz-target
+    like native-string
+  take create-budget-request, like create-budget-request
+
+  line </#X-Amz-Target=AWSBudgetServiceGateway.CreateBudget>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-budget-request
+
+  loot 200
+    seed json, like create-budget-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like internal-error-exception
+    note <InternalErrorException>
+  loot 482
+    seed json, like creation-limit-exceeded-exception
+    note <CreationLimitExceededException>
+  loot 483
+    seed json, like duplicate-record-exception
+    note <DuplicateRecordException>
+  loot 484
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/dependent-service-unavailable-fault
+  take form dependent-service-unavailable-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/reserved-node-offering-not-found-fault
+  take form reserved-node-offering-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/reserved-node-offerings-message
+  take form reserved-node-offerings-message
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unsupported-operation-fault
+  take form unsupported-operation-fault
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-reserved-node-offerings, name <GET_DescribeReservedNodeOfferings>
+  note <Returns a list of the available reserved node offerings by Amazon Redshift with their descriptions including the node type, the fixed and recurring costs of reserving the node and duration the node will be reserved for you. These descriptions help you determine which reserve node offering you want to purchase. You then use the unique offering ID in you call to PurchaseReservedNodeOffering to reserve one or more nodes for your Amazon Redshift cluster.
+
+For more information about reserved node offerings, go to [Purchasing Reserved Nodes](https://docs.aws.amazon.com/redshift/latest/mgmt/purchase-reserved-node-instance.html) in the _Amazon Redshift Cluster Management Guide_.>
+
+  take reserved-node-offering-id
+    like native-string
+    note <The unique identifier for the offering.>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of response records to return in each call. If the number of remaining response records exceeds the specified `MaxRecords` value, a value is returned in a `marker` field of the response. You can retrieve the next set of records by retrying the command with the returned marker value.
+
+Default: `100`
+
+Constraints: minimum 20, maximum 100.>
+    void take
+  take marker
+    like native-string
+    note <An optional parameter that specifies the starting point to return a set of response records. When the results of a DescribeReservedNodeOfferings request exceed the value specified in `MaxRecords`, Amazon Web Services returns a value in the `Marker` field of the response. You can retrieve the next set of response records by providing the returned marker value in the `Marker` parameter and retrying the request.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeReservedNodeOfferings>
+
+  find <ReservedNodeOfferingId>, loan reserved-node-offering-id
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like reserved-node-offerings-message
+    note <Success>
+  loot 480
+    seed xml, like reserved-node-offering-not-found-fault
+    note <ReservedNodeOfferingNotFoundFault>
+  loot 481
+    seed xml, like unsupported-operation-fault
+    note <UnsupportedOperationFault>
+  loot 482
+    seed xml, like dependent-service-unavailable-fault
+    note <DependentServiceUnavailableFault>

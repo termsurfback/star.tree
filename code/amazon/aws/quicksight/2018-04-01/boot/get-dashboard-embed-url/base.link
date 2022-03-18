@@ -1,0 +1,169 @@
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/domain-not-whitelisted-exception
+  take form domain-not-whitelisted-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/get-dashboard-embed-url-response
+  take form get-dashboard-embed-url-response
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/identity-type-not-supported-exception
+  take form identity-type-not-supported-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/quick-sight-user-not-found-exception
+  take form quick-sight-user-not-found-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/resource-exists-exception
+  take form resource-exists-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/restrictive-resource-id
+  take form restrictive-resource-id
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/session-lifetime-in-minutes-invalid-exception
+  take form session-lifetime-in-minutes-invalid-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/unsupported-pricing-plan-exception
+  take form unsupported-pricing-plan-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/unsupported-user-edition-exception
+  take form unsupported-user-edition-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-dashboard-embed-url, name <GetDashboardEmbedUrl>
+  note <Generates a session URL and authorization code that you can use to embed an Amazon Amazon QuickSight read-only dashboard in your web server code. Before you use this command, make sure that you have configured the dashboards and permissions.
+
+Currently, you can use `GetDashboardEmbedURL` only from the server, not from the user's browser. The following rules apply to the combination of URL and authorization code:
+
+- They must be used together.
+
+- They can be used one time only.
+
+- They are valid for 5 minutes after you run this command.
+
+- The resulting user session is valid for 10 hours.
+
+For more information, see [Embedding Analytics Using GetDashboardEmbedUrl](https://docs.aws.amazon.com/quicksight/latest/user/embedded-analytics-deprecated.html) in the _Amazon QuickSight User Guide_.
+
+For more information about the high-level steps for embedding and for an interactive demo of the ways you can customize embedding, visit the [Amazon QuickSight Developer Portal](https://docs.aws.amazon.com/quicksight/latest/user/quicksight-dev-portal.html).>
+
+  take aws-account-id
+    like native-string
+    note <The ID for the Amazon Web Services account that contains the dashboard that you're embedding.>
+  take dashboard-id
+    like native-string
+    note <The ID for the dashboard, also added to the Identity and Access Management (IAM) policy.>
+  take creds-type
+    like native-string
+    note <The authentication method that the user uses to sign in.>
+  take session-lifetime
+    like native-integer
+    note <How many minutes the session is valid. The session lifetime must be 15-600 minutes.>
+    void take
+  take undo-redo-disabled
+    like native-boolean
+    note <Remove the undo/redo button on the embedded dashboard. The default is FALSE, which enables the undo/redo button.>
+    void take
+  take reset-disabled
+    like native-boolean
+    note <Remove the reset button on the embedded dashboard. The default is FALSE, which enables the reset button.>
+    void take
+  take state-persistence-enabled
+    like native-boolean
+    note <Adds persistence of state for the user session in an embedded dashboard. Persistence applies to the sheet and the parameter settings. These are control settings that the dashboard subscriber (Amazon QuickSight reader) chooses while viewing the dashboard. If this is set to `TRUE`, the settings are the same when the subscriber reopens the same dashboard URL. The state is stored in Amazon QuickSight, not in a browser cookie. If this is set to FALSE, the state of the user session is not persisted. The default is `FALSE`.>
+    void take
+  take user-arn
+    like native-string
+    note <The Amazon QuickSight user's Amazon Resource Name (ARN), for use with `QUICKSIGHT` identity type. You can use this for any Amazon QuickSight users in your account (readers, authors, or admins) authenticated as one of the following:
+
+- Active Directory (AD) users or group members
+
+- Invited nonfederated users
+
+- IAMusers and IAMrole-based sessions authenticated through Federated Single Sign-On using SAML, OpenID Connect, or IAMfederation.
+
+Omit this parameter for users in the third group - IAMusers and IAM role-based sessions.>
+    void take
+  take namespace
+    like native-string
+    note <The Amazon QuickSight namespace that contains the dashboard IDs in this request. If you're not using a custom namespace, set `Namespace = default`.>
+    void take
+  take additional-dashboard-ids
+    like list
+      like restrictive-resource-id
+    note <A list of one or more dashboard IDs that you want to add to a session that includes anonymous users. The `IdentityType` parameter must be set to `ANONYMOUS` for this to work, because other identity types authenticate as Amazon QuickSight or IAMusers. For example, if you set "`--dashboard-id dash_id1 --dashboard-id dash_id2 dash_id3 identity-type ANONYMOUS`", the session can access all three dashboards.>
+    void take
+
+  line </accounts/{aws-account-id}/dashboards/{dashboard-id}/embed-url#creds-type>
+
+  find <creds-type>, loan creds-type
+  find <session-lifetime>, loan session-lifetime
+  find <undo-redo-disabled>, loan undo-redo-disabled
+  find <reset-disabled>, loan reset-disabled
+  find <state-persistence-enabled>, loan state-persistence-enabled
+  find <user-arn>, loan user-arn
+  find <namespace>, loan namespace
+  find <additional-dashboard-ids>, loan additional-dashboard-ids
+
+  loot 200
+    seed json, like get-dashboard-embed-url-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed json, like resource-exists-exception
+    note <ResourceExistsException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 484
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 485
+    seed json, like domain-not-whitelisted-exception
+    note <DomainNotWhitelistedException>
+  loot 486
+    seed json, like quick-sight-user-not-found-exception
+    note <QuickSightUserNotFoundException>
+  loot 487
+    seed json, like identity-type-not-supported-exception
+    note <IdentityTypeNotSupportedException>
+  loot 488
+    seed json, like session-lifetime-in-minutes-invalid-exception
+    note <SessionLifetimeInMinutesInvalidException>
+  loot 489
+    seed json, like unsupported-user-edition-exception
+    note <UnsupportedUserEditionException>
+  loot 490
+    seed json, like unsupported-pricing-plan-exception
+    note <UnsupportedPricingPlanException>
+  loot 491
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

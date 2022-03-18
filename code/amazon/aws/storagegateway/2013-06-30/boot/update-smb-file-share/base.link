@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/update-smb-file-share-output
+  take form update-smb-file-share-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-smb-file-share, name <UpdateSMBFileShare>
+  note <Updates a Server Message Block (SMB) file share. This operation is only supported for S3 File Gateways.
+
+To leave a file share field unchanged, set the corresponding input field to null.
+
+File gateways require Security Token Service (STS) to be activated to enable you to create a file share. Make sure that STS is activated in the Region you are creating your file gateway in. If STS is not activated in this Region, activate it. For information about how to activate STS, see [Activating and deactivating STS in an Region](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp_enable-regions.html) in the _Identity and Access Management User Guide_.
+
+File gateways don't support creating hard or symbolic links on a file share.>
+
+  take x-amz-target
+    like native-string
+  take update-smb-file-share-input, like update-smb-file-share-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.UpdateSMBFileShare>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-smb-file-share-input
+
+  loot 200
+    seed json, like update-smb-file-share-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

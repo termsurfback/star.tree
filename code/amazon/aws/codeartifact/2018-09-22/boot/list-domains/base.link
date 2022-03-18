@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/list-domains-body
+  take form list-domains-body
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/list-domains-result
+  take form list-domains-result
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-domains, name <ListDomains>
+  note <Returns a list of [DomainSummary](https://docs.aws.amazon.com/codeartifact/latest/APIReference/API_PackageVersionDescription.html) objects for all domains owned by the AWS account that makes this call. Each returned `DomainSummary` object contains information about a domain.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-domains-body, like list-domains-body
+
+  line </v1/domains>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-domains-body
+
+  loot 200
+    seed json, like list-domains-result
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like validation-exception
+    note <ValidationException>

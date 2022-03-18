@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/dataproc/v1/base/list-clusters-response
+  take form list-clusters-response
+
+boot dataproc-projects-regions-clusters-list, name <dataproc.projects.regions.clusters.list>
+  note <Lists all regions/{region}/clusters in a project alphabetically.>
+
+  take project-id
+    like native-string
+    note <Required. The ID of the Google Cloud Platform project that the cluster belongs to.>
+  take region
+    like native-string
+    note <Required. The Dataproc region in which to handle the request.>
+  take filter
+    like native-string
+    note <Optional. A filter constraining the clusters to list. Filters are case-sensitive and have the following syntax:field = value AND field = value ...where field is one of status.state, clusterName, or labels.[KEY], and [KEY] is a label key. value can be * to match all values. status.state can be one of the following: ACTIVE, INACTIVE, CREATING, RUNNING, ERROR, DELETING, or UPDATING. ACTIVE contains the CREATING, UPDATING, and RUNNING states. INACTIVE contains the DELETING and ERROR states. clusterName is the name of the cluster provided at creation time. Only the logical AND operator is supported; space-separated items are treated as having an implicit AND operator.Example filter:status.state = ACTIVE AND clusterName = mycluster AND labels.env = staging AND labels.starred = *>
+    void take
+  take page-size
+    like native-integer
+    note <Optional. The standard List page size.>
+    void take
+  take page-token
+    like native-string
+    note <Optional. The standard List page token.>
+    void take
+
+  line </v1/projects/{project-id}/regions/{region}/clusters>
+
+  find <filter>, loan filter
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-clusters-response
+    note <Successful response>

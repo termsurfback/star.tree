@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/delete-worker-block-response
+  take form delete-worker-block-response
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/request-error
+  take form request-error
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/service-fault
+  take form service-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-worker-block, name <DeleteWorkerBlock>
+  note <The `DeleteWorkerBlock` operation allows you to reinstate a blocked Worker to work on your HITs. This operation reverses the effects of the CreateWorkerBlock operation. You need the Worker ID to use this operation. If the Worker ID is missing or invalid, this operation fails and returns the message “WorkerId is invalid.” If the specified Worker is not blocked, this operation returns successfully.>
+
+  take x-amz-target
+    like native-string
+  take delete-worker-block-request, like delete-worker-block-request
+
+  line </#X-Amz-Target=MTurkRequesterServiceV20170117.DeleteWorkerBlock>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-worker-block-request
+
+  loot 200
+    seed json, like delete-worker-block-response
+    note <Success>
+  loot 480
+    seed json, like service-fault
+    note <ServiceFault>
+  loot 481
+    seed json, like request-error
+    note <RequestError>

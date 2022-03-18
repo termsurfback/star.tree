@@ -1,0 +1,88 @@
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/bootstrap-action-detail-list
+  take form bootstrap-action-detail-list
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/job-flow-execution-status-detail
+  take form job-flow-execution-status-detail
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/job-flow-instances-detail
+  take form job-flow-instances-detail
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/scale-down-behavior
+  take form scale-down-behavior
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/step-detail-list
+  take form step-detail-list
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/supported-products-list
+  take form supported-products-list
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/xml-string
+  take form xml-string
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/xml-string-max-len256
+  take form xml-string-max-len256
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+form job-flow-detail, name <JobFlowDetail>
+  note <A description of a cluster (job flow).>
+  take job-flow-id, name <JobFlowId>
+    like xml-string-max-len256
+    note <The job flow identifier.>
+  take name, name <Name>
+    like xml-string-max-len256
+    note <The name of the job flow.>
+  take log-uri, name <LogUri>
+    like xml-string
+    void take
+    note <The location in Amazon S3 where log files for the job are stored.>
+  take log-encryption-kms-key-id, name <LogEncryptionKmsKeyId>
+    like xml-string
+    void take
+    note <The KMS key used for encrypting log files. This attribute is only available with EMR version 5.30.0 and later, excluding EMR 6.0.0.>
+  take ami-version, name <AmiVersion>
+    like xml-string-max-len256
+    void take
+    note <Applies only to Amazon EMR AMI versions 3.x and 2.x. For Amazon EMR releases 4.0 and later, `ReleaseLabel` is used. To specify a custom AMI, use `CustomAmiID`.>
+  take execution-status-detail, name <ExecutionStatusDetail>
+    like job-flow-execution-status-detail
+    note <Describes the execution status of the job flow.>
+  take instances, name <Instances>
+    like job-flow-instances-detail
+    note <Describes the Amazon EC2 instances of the job flow.>
+  take steps, name <Steps>
+    like step-detail-list
+    void take
+    note <A list of steps run by the job flow.>
+  take bootstrap-actions, name <BootstrapActions>
+    like bootstrap-action-detail-list
+    void take
+    note <A list of the bootstrap actions run by the job flow.>
+  take supported-products, name <SupportedProducts>
+    like supported-products-list
+    void take
+    note <A list of strings set by third-party software when the job flow is launched. If you are not using third-party software to manage the job flow, this value is empty.>
+  take visible-to-all-users, name <VisibleToAllUsers>
+    like boolean
+    void take
+    note <Indicates whether the cluster is visible to IAM principals in the Amazon Web Services account associated with the cluster. When `true`, IAM principals in the Amazon Web Services account can perform EMR cluster actions that their IAM policies allow. When `false`, only the IAM principal that created the cluster and the Amazon Web Services account root user can perform EMR actions, regardless of IAM permissions policies attached to other IAM principals.
+
+The default value is `true` if a value is not provided when creating a cluster using the EMR API RunJobFlow command, the CLI [create-cluster](https://docs.aws.amazon.com/cli/latest/reference/emr/create-cluster.html) command, or the Amazon Web Services Management Console. IAM principals that are authorized to perform actions on the cluster can use the SetVisibleToAllUsers action to change the value on a running cluster. For more information, see [Understanding the EMR Cluster VisibleToAllUsers Setting](https://docs.aws.amazon.com/emr/latest/ManagementGuide/security_iam_emr-with-iam.html#security_set_visible_to_all_users) in the _Amazon EMRManagement Guide_.>
+  take job-flow-role, name <JobFlowRole>
+    like xml-string
+    void take
+    note <The IAM role that was specified when the job flow was launched. The EC2 instances of the job flow assume this role.>
+  take service-role, name <ServiceRole>
+    like xml-string
+    void take
+    note <The IAM role that is assumed by the Amazon EMR service to access Amazon Web Services resources on your behalf.>
+  take auto-scaling-role, name <AutoScalingRole>
+    like xml-string
+    void take
+    note <An IAM role for automatic scaling policies. The default role is `EMR_AutoScaling_DefaultRole`. The IAM role provides a way for the automatic scaling feature to get the required permissions it needs to launch and terminate EC2 instances in an instance group.>
+  take scale-down-behavior, name <ScaleDownBehavior>
+    like scale-down-behavior
+    void take
+    note <The way that individual Amazon EC2 instances terminate when an automatic scale-in activity occurs or an instance group is resized. `TERMINATE_AT_INSTANCE_HOUR` indicates that Amazon EMR terminates nodes at the instance-hour boundary, regardless of when the request to terminate the instance was submitted. This option is only available with Amazon EMR 5.1.0 and later and is the default for clusters created using that version. `TERMINATE_AT_TASK_COMPLETION` indicates that Amazon EMR adds nodes to a deny list and drains tasks from nodes before terminating the Amazon EC2 instances, regardless of the instance-hour boundary. With either behavior, Amazon EMR removes the least active nodes first and blocks instance termination if it could lead to HDFS corruption. `TERMINATE_AT_TASK_COMPLETION` available only in Amazon EMR version 4.1.0 and later, and is the default for versions of Amazon EMR earlier than 5.1.0.>

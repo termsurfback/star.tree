@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/lookoutequipment/2020-12-15/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/lookoutequipment/2020-12-15/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/lookoutequipment/2020-12-15/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/lookoutequipment/2020-12-15/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/lookoutequipment/2020-12-15/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-model, name <DeleteModel>
+  note <Deletes an ML model currently available for Amazon Lookout for Equipment. This will prevent it from being used with an inference scheduler, even one that is already set up.>
+
+  take x-amz-target
+    like native-string
+  take delete-model-request, like delete-model-request
+
+  line </#X-Amz-Target=AWSLookoutEquipmentFrontendService.DeleteModel>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-model-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 483
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 484
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

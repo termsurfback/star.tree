@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/update-table-output
+  take form update-table-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-table, name <UpdateTable>
+  note <Modifies the provisioned throughput settings, global secondary indexes, or DynamoDB Streams settings for a given table.
+
+You can only perform one of the following operations at once:
+
+- Modify the provisioned throughput settings of the table.
+
+- Enable or disable DynamoDB Streams on the table.
+
+- Remove a global secondary index from the table.
+
+- Create a new global secondary index on the table. After the index begins backfilling, you can use `UpdateTable` to perform other operations.
+
+`UpdateTable` is an asynchronous operation; while it is executing, the table status changes from `ACTIVE` to `UPDATING`. While it is `UPDATING`, you cannot issue another `UpdateTable` request. When the table returns to the `ACTIVE` state, the `UpdateTable` operation is complete.>
+
+  take x-amz-target
+    like native-string
+  take update-table-input, like update-table-input
+
+  line </#X-Amz-Target=DynamoDB_20120810.UpdateTable>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-table-input
+
+  loot 200
+    seed json, like update-table-output
+    note <Success>
+  loot 480
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 483
+    seed json, like internal-server-error
+    note <InternalServerError>

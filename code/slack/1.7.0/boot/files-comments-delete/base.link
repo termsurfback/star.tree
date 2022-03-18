@@ -1,0 +1,44 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+load @drumwork/snow/slack.com/1.7.0/base/files-comments-delete-body
+  take form files-comments-delete-body
+
+boot files-comments-delete, name <files_comments_delete>
+  note <Deletes an existing comment on a file.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `files:write:user`>
+    void take
+  take files-comments-delete-body, like files-comments-delete-body
+    void take
+
+  line </files.comments.delete>
+
+  hint <token>, loan token
+
+  seed x-www-form-urlencoded, loan files-comments-delete-body
+
+  loot 200
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-true
+    note <Standard success response is very simple>
+  loot fall
+    seed json
+      like form
+        take callstack, name <callstack>
+          void take
+        take error, name <error>
+        take ok, name <ok>
+          like defs-ok-false
+    note <Standard failure response when used with an invalid token>

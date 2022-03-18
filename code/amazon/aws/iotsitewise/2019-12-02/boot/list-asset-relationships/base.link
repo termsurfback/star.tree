@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/list-asset-relationships-response
+  take form list-asset-relationships-response
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-asset-relationships, name <ListAssetRelationships>
+  note <Retrieves a paginated list of asset relationships for an asset. You can use this operation to identify an asset's root asset and all associated assets between that asset and its root.>
+
+  take asset-id
+    like native-string
+    note <The ID of the asset.>
+  take traversal-type
+    like native-string
+    note <The type of traversal to use to identify asset relationships. Choose the following option:
+
+- `PATH_TO_ROOT` - Identify the asset's parent assets up to the root asset. The asset that you specify in `assetId` is the first result in the list of `assetRelationshipSummaries`, and the root asset is the last result.>
+  take next-token
+    like native-string
+    note <The token to be used for the next set of paginated results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return for each paginated request.>
+    void take
+
+  line </assets/{asset-id}/assetRelationships#traversalType>
+
+  find <traversalType>, loan traversal-type
+  find <nextToken>, loan next-token
+  find <maxResults>, loan max-results
+
+  loot 200
+    seed json, like list-asset-relationships-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>

@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/describe-maintenance-window-targets-result
+  take form describe-maintenance-window-targets-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/does-not-exist-exception
+  take form does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-maintenance-window-targets, name <DescribeMaintenanceWindowTargets>
+  note <Lists the targets registered with the maintenance window.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-maintenance-window-targets-request, like describe-maintenance-window-targets-request
+
+  line </#X-Amz-Target=AmazonSSM.DescribeMaintenanceWindowTargets>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-maintenance-window-targets-request
+
+  loot 200
+    seed json, like describe-maintenance-window-targets-result
+    note <Success>
+  loot 480
+    seed json, like does-not-exist-exception
+    note <DoesNotExistException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/create-human-task-ui-response
+  take form create-human-task-ui-response
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-in-use
+  take form resource-in-use
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-limit-exceeded
+  take form resource-limit-exceeded
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-human-task-ui, name <CreateHumanTaskUi>
+  note <Defines the settings you will use for the human review workflow user interface. Reviewers will see a three-panel interface with an instruction area, the item to review, and an input area.>
+
+  take x-amz-target
+    like native-string
+  take create-human-task-ui-request, like create-human-task-ui-request
+
+  line </#X-Amz-Target=SageMaker.CreateHumanTaskUi>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-human-task-ui-request
+
+  loot 200
+    seed json, like create-human-task-ui-response
+    note <Success>
+  loot 480
+    seed json, like resource-limit-exceeded
+    note <ResourceLimitExceeded>
+  loot 481
+    seed json, like resource-in-use
+    note <ResourceInUse>

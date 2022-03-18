@@ -1,0 +1,32 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/api/1.27.2/base/api-v2010-account-conference-participant
+  take form api-v2010-account-conference-participant
+
+load @drumwork/snow/twilio.com/api/1.27.2/base/update-participant-body
+  take form update-participant-body
+
+boot update-participant, name <UpdateParticipant>
+  note <Update the properties of the participant>
+
+  take account-sid
+    like native-string
+    note <The SID of the \[Account\](https://www.twilio.com/docs/iam/api/account) that created the Participant resources to update.>
+  take conference-sid
+    like native-string
+    note <The SID of the conference with the participant to update.>
+  take call-sid
+    like native-string
+    note <The \[Call\](https://www.twilio.com/docs/voice/api/call-resource) SID or label of the participant to update. Non URL safe characters in a label must be percent encoded, for example, a space character is represented as %20.>
+  take update-participant-body, like update-participant-body
+    void take
+
+  line </2010-04-01/Accounts/{account-sid}/Conferences/{conference-sid}/Participants/{call-sid}.json>
+
+  seed x-www-form-urlencoded, loan update-participant-body
+
+  loot 200
+    seed json, like api-v2010-account-conference-participant
+    note <OK>

@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/event-subscription-quota-exceeded-fault
+  take form event-subscription-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/modify-event-subscription-result
+  take form modify-event-subscription-result
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/sns-invalid-topic-fault
+  take form sns-invalid-topic-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/sns-no-authorization-fault
+  take form sns-no-authorization-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/sns-topic-arn-not-found-fault
+  take form sns-topic-arn-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/subscription-category-not-found-fault
+  take form subscription-category-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/subscription-not-found-fault
+  take form subscription-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-modify-event-subscription, name <POST_ModifyEventSubscription>
+  take action
+    like native-string
+  take version
+    like native-string
+  take modify-event-subscription-message, like modify-event-subscription-message
+    void take
+
+  line </#Action=ModifyEventSubscription>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan modify-event-subscription-message
+
+  loot 200
+    seed xml, like modify-event-subscription-result
+    note <Success>
+  loot 480
+    seed xml, like event-subscription-quota-exceeded-fault
+    note <EventSubscriptionQuotaExceededFault>
+  loot 481
+    seed xml, like subscription-not-found-fault
+    note <SubscriptionNotFoundFault>
+  loot 482
+    seed xml, like sns-invalid-topic-fault
+    note <SNSInvalidTopicFault>
+  loot 483
+    seed xml, like sns-no-authorization-fault
+    note <SNSNoAuthorizationFault>
+  loot 484
+    seed xml, like sns-topic-arn-not-found-fault
+    note <SNSTopicArnNotFoundFault>
+  loot 485
+    seed xml, like subscription-category-not-found-fault
+    note <SubscriptionCategoryNotFoundFault>

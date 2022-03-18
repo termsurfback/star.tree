@@ -1,0 +1,82 @@
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/create-hosted-configuration-version-body
+  take form create-hosted-configuration-version-body
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/hosted-configuration-version
+  take form hosted-configuration-version
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/payload-too-large-exception
+  take form payload-too-large-exception
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/service-quota-exceeded-exception
+  take form service-quota-exceeded-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-hosted-configuration-version, name <CreateHostedConfigurationVersion>
+  note <Create a new configuration in the AppConfig configuration store.>
+
+  take application-id
+    like native-string
+    note <The application ID.>
+  take configuration-profile-id
+    like native-string
+    note <The configuration profile ID.>
+  take description
+    like native-string
+    note <A description of the configuration.>
+    void take
+  take content-type
+    like native-string
+    note <A standard MIME type describing the format of the configuration content. For more information, see [Content-Type](https://docs.aws.amazon.com/https:/www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17).>
+  take latest-version-number
+    like native-integer
+    note <An optional locking token used to prevent race conditions from overwriting configuration updates when creating a new version. To ensure your data is not overwritten when creating multiple hosted configuration versions in rapid succession, specify the version of the latest hosted configuration version.>
+    void take
+  take create-hosted-configuration-version-body, like create-hosted-configuration-version-body
+
+  line </applications/{application-id}/configurationprofiles/{configuration-profile-id}/hostedconfigurationversions#Content-Type>
+
+  hint <Description>, loan description
+  hint <Content-Type>, loan content-type
+  hint <Latest-Version-Number>, loan latest-version-number
+
+  seed json, loan create-hosted-configuration-version-body
+
+  loot 201
+    seed json, like hosted-configuration-version
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like service-quota-exceeded-exception
+    note <ServiceQuotaExceededException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 484
+    seed json, like payload-too-large-exception
+    note <PayloadTooLargeException>
+  loot 485
+    seed json, like internal-server-exception
+    note <InternalServerException>

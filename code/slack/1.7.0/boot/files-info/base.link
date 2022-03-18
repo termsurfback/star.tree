@@ -1,0 +1,93 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-user-id
+  take form defs-user-id
+
+load @drumwork/snow/slack.com/1.7.0/base/objs-comments
+  take form objs-comments
+
+load @drumwork/snow/slack.com/1.7.0/base/objs-file
+  take form objs-file
+
+load @drumwork/snow/slack.com/1.7.0/base/objs-paging
+  take form objs-paging
+
+load @drumwork/snow/slack.com/1.7.0/base/objs-response-metadata
+  take form objs-response-metadata
+
+boot files-info, name <files_info>
+  note <Gets information about a file.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `files:read`>
+    void take
+  take file
+    like native-string
+    note <Specify a file by providing its ID.>
+    void take
+  take count
+    like native-string
+    void take
+  take page
+    like native-string
+    void take
+  take limit
+    like native-integer
+    note <The maximum number of items to return. Fewer than the requested number of items may be returned, even if the end of the list hasn&#39;t been reached.>
+    void take
+  take cursor
+    like native-string
+    note <Parameter for pagination. File comments are paginated for a single file. Set `cursor` equal to the `next_cursor` attribute returned by the previous request&#39;s `response_metadata`. This parameter is optional, but pagination is mandatory: the default value simply fetches the first &quot;page&quot; of the collection of comments. See [pagination](/docs/pagination) for more details.>
+    void take
+
+  line </files.info>
+
+  find <token>, loan token
+  find <file>, loan file
+  find <count>, loan count
+  find <page>, loan page
+  find <limit>, loan limit
+  find <cursor>, loan cursor
+
+  loot 200
+    seed json
+      like form
+        take comments, name <comments>
+          like objs-comments
+        take content-html, name <content_html>
+          void take
+        take editor, name <editor>
+          like defs-user-id
+          void take
+        take file, name <file>
+          like objs-file
+        take ok, name <ok>
+          like defs-ok-true
+        take paging, name <paging>
+          like objs-paging
+          void take
+        take response-metadata, name <response_metadata>
+          like objs-response-metadata
+          void take
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take callstack, name <callstack>
+          void take
+        take error, name <error>
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response>

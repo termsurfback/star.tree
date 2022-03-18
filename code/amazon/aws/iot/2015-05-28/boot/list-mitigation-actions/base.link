@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/list-mitigation-actions-response
+  take form list-mitigation-actions-response
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-mitigation-actions, name <ListMitigationActions>
+  note <Gets a list of all mitigation actions that match the specified filter criteria.
+
+Requires permission to access the [ListMitigationActions](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiot.html#awsiot-actions-as-permissions) action.>
+
+  take action-type
+    like native-string
+    note <Specify a value to limit the result to mitigation actions with a specific action type.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return at one time. The default is 25.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next set of results.>
+    void take
+
+  line </mitigationactions/actions>
+
+  find <actionType>, loan action-type
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  loot 200
+    seed json, like list-mitigation-actions-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/bill-expiration-exception
+  take form bill-expiration-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/data-unavailable-exception
+  take form data-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/get-cost-and-usage-response
+  take form get-cost-and-usage-response
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/request-changed-exception
+  take form request-changed-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-cost-and-usage, name <GetCostAndUsage>
+  note <Retrieves cost and usage metrics for your account. You can specify which cost and usage-related metric that you want the request to return. For example, you can specify `BlendedCosts` or `UsageQuantity`. You can also filter and group your data by various dimensions, such as `SERVICE` or `AZ`, in a specific time range. For a complete list of valid dimensions, see the [GetDimensionValues](https://docs.aws.amazon.com/aws-cost-management/latest/APIReference/API_GetDimensionValues.html) operation. Management account in an organization in Organizations have access to all member accounts.
+
+For information about filter limitations, see [Quotas and restrictions](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/billing-limits.html) in the _Billing and Cost Management User Guide_.>
+
+  take x-amz-target
+    like native-string
+  take get-cost-and-usage-request, like get-cost-and-usage-request
+
+  line </#X-Amz-Target=AWSInsightsIndexService.GetCostAndUsage>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-cost-and-usage-request
+
+  loot 200
+    seed json, like get-cost-and-usage-response
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed json, like bill-expiration-exception
+    note <BillExpirationException>
+  loot 482
+    seed json, like data-unavailable-exception
+    note <DataUnavailableException>
+  loot 483
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 484
+    seed json, like request-changed-exception
+    note <RequestChangedException>

@@ -1,0 +1,70 @@
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/invalid-access-exception
+  take form invalid-access-exception
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/list-members-response
+  take form list-members-response
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-members, name <ListMembers>
+  note <Lists details about all member accounts for the current Security Hub administrator account.
+
+The results include both member accounts that belong to an organization and member accounts that were invited manually.>
+
+  take only-associated
+    like native-boolean
+    note <Specifies which member accounts to include in the response based on their relationship status with the administrator account. The default value is `TRUE`.
+
+If `OnlyAssociated` is set to `TRUE`, the response includes member accounts whose relationship status with the administrator account is set to `ENABLED`.
+
+If `OnlyAssociated` is set to `FALSE`, the response includes all existing member accounts.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of items to return in the response.>
+    void take
+  take next-token
+    like native-string
+    note <The token that is required for pagination. On your first call to the `ListMembers` operation, set the value of this parameter to `NULL`.
+
+For subsequent calls to the operation, to continue listing data, set the value of this parameter to the value returned from the previous response.>
+    void take
+
+  line </members>
+
+  find <OnlyAssociated>, loan only-associated
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like list-members-response
+    note <Success>
+  loot 480
+    seed json, like internal-exception
+    note <InternalException>
+  loot 481
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 482
+    seed json, like invalid-access-exception
+    note <InvalidAccessException>
+  loot 483
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>

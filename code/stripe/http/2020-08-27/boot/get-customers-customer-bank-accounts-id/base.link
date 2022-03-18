@@ -1,0 +1,43 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/bank-account
+  take form bank-account
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-customers-customer-bank-accounts-id-body
+  take form get-customers-customer-bank-accounts-id-body
+
+boot get-customers-customer-bank-accounts-id, name <GetCustomersCustomerBankAccountsId>
+  note <By default, you can see the 10 most recent sources stored on a Customer directly on the object, but you can also retrieve details about a specific bank account stored on the Stripe account.>
+
+  take customer
+    like native-string
+  take id
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-customers-customer-bank-accounts-id-body, like get-customers-customer-bank-accounts-id-body
+    void take
+
+  line </v1/customers/{customer}/bank_accounts/{id}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-customers-customer-bank-accounts-id-body
+
+  loot 200
+    seed json, like bank-account
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

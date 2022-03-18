@@ -1,0 +1,34 @@
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/delete-managed-endpoint-response
+  take form delete-managed-endpoint-response
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/emr-containers/2020-10-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-managed-endpoint, name <DeleteManagedEndpoint>
+  note <Deletes a managed endpoint. A managed endpoint is a gateway that connects EMR Studio to Amazon EMR on EKS so that EMR Studio can communicate with your virtual cluster.>
+
+  take endpoint-id
+    like native-string
+    note <The ID of the managed endpoint.>
+  take virtual-cluster-id
+    like native-string
+    note <The ID of the endpoint's virtual cluster.>
+
+  line </virtualclusters/{virtual-cluster-id}/endpoints/{endpoint-id}>
+
+  loot 200
+    seed json, like delete-managed-endpoint-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>

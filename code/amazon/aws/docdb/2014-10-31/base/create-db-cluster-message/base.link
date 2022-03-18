@@ -1,0 +1,165 @@
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/availability-zones
+  take form availability-zones
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/boolean-optional
+  take form boolean-optional
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/global-cluster-identifier
+  take form global-cluster-identifier
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/integer-optional
+  take form integer-optional
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/log-type-list
+  take form log-type-list
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/tag-list
+  take form tag-list
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/vpc-security-group-id-list
+  take form vpc-security-group-id-list
+
+load @drumwork/snow/base/string
+  take form string
+
+form create-db-cluster-message, name <CreateDBClusterMessage>
+  note <Represents the input to CreateDBCluster.>
+  take availability-zones, name <AvailabilityZones>
+    like availability-zones
+    void take
+    note <A list of Amazon EC2 Availability Zones that instances in the cluster can be created in.>
+  take backup-retention-period, name <BackupRetentionPeriod>
+    like integer-optional
+    void take
+    note <The number of days for which automated backups are retained. You must specify a minimum value of 1.
+
+Default: 1
+
+Constraints:
+
+- Must be a value from 1 to 35.>
+  take db-cluster-identifier, name <DBClusterIdentifier>
+    like string
+    note <The cluster identifier. This parameter is stored as a lowercase string.
+
+Constraints:
+
+- Must contain from 1 to 63 letters, numbers, or hyphens.
+
+- The first character must be a letter.
+
+- Cannot end with a hyphen or contain two consecutive hyphens.
+
+Example: `my-cluster`>
+  take db-cluster-parameter-group-name, name <DBClusterParameterGroupName>
+    like string
+    void take
+    note <The name of the cluster parameter group to associate with this cluster.>
+  take vpc-security-group-ids, name <VpcSecurityGroupIds>
+    like vpc-security-group-id-list
+    void take
+    note <A list of EC2 VPC security groups to associate with this cluster.>
+  take db-subnet-group-name, name <DBSubnetGroupName>
+    like string
+    void take
+    note <A subnet group to associate with this cluster.
+
+Constraints: Must match the name of an existing `DBSubnetGroup`. Must not be default.
+
+Example: `mySubnetgroup`>
+  take engine, name <Engine>
+    like string
+    note <The name of the database engine to be used for this cluster.
+
+Valid values: `docdb`>
+  take engine-version, name <EngineVersion>
+    like string
+    void take
+    note <The version number of the database engine to use. The `--engine-version` will default to the latest major engine version. For production workloads, we recommend explicitly declaring this parameter with the intended major engine version.>
+  take port, name <Port>
+    like integer-optional
+    void take
+    note <The port number on which the instances in the cluster accept connections.>
+  take master-username, name <MasterUsername>
+    like string
+    void take
+    note <The name of the master user for the cluster.
+
+Constraints:
+
+- Must be from 1 to 63 letters or numbers.
+
+- The first character must be a letter.
+
+- Cannot be a reserved word for the chosen database engine.>
+  take master-user-password, name <MasterUserPassword>
+    like string
+    void take
+    note <The password for the master database user. This password can contain any printable ASCII character except forward slash (/), double quote ("), or the "at" symbol (@).
+
+Constraints: Must contain from 8 to 100 characters.>
+  take preferred-backup-window, name <PreferredBackupWindow>
+    like string
+    void take
+    note <The daily time range during which automated backups are created if automated backups are enabled using the `BackupRetentionPeriod` parameter.
+
+The default is a 30-minute window selected at random from an 8-hour block of time for each Region.
+
+Constraints:
+
+- Must be in the format `hh24:mi-hh24:mi`.
+
+- Must be in Universal Coordinated Time (UTC).
+
+- Must not conflict with the preferred maintenance window.
+
+- Must be at least 30 minutes.>
+  take preferred-maintenance-window, name <PreferredMaintenanceWindow>
+    like string
+    void take
+    note <The weekly time range during which system maintenance can occur, in Universal Coordinated Time (UTC).
+
+Format: `ddd:hh24:mi-ddd:hh24:mi`
+
+The default is a 30-minute window selected at random from an 8-hour block of time for each Region, occurring on a random day of the week.
+
+Valid days: Mon, Tue, Wed, Thu, Fri, Sat, Sun
+
+Constraints: Minimum 30-minute window.>
+  take tags, name <Tags>
+    like tag-list
+    void take
+    note <The tags to be assigned to the cluster.>
+  take storage-encrypted, name <StorageEncrypted>
+    like boolean-optional
+    void take
+    note <Specifies whether the cluster is encrypted.>
+  take kms-key-id, name <KmsKeyId>
+    like string
+    void take
+    note <The KMS key identifier for an encrypted cluster.
+
+The KMS key identifier is the Amazon Resource Name (ARN) for the KMS encryption key. If you are creating a cluster using the same account that owns the KMS encryption key that is used to encrypt the new cluster, you can use the KMS key alias instead of the ARN for the KMS encryption key.
+
+If an encryption key is not specified in `KmsKeyId`:
+
+- If the `StorageEncrypted` parameter is `true`, Amazon DocumentDB uses your default encryption key.
+
+KMS creates the default encryption key for your account. Your account has a different default encryption key for each Regions.>
+  take pre-signed-url, name <PreSignedUrl>
+    like string
+    void take
+    note <Not currently supported.>
+  take enable-cloudwatch-logs-exports, name <EnableCloudwatchLogsExports>
+    like log-type-list
+    void take
+    note <A list of log types that need to be enabled for exporting to Amazon CloudWatch Logs. You can enable audit logs or profiler logs. For more information, see [Auditing Amazon DocumentDB Events](https://docs.aws.amazon.com/documentdb/latest/developerguide/event-auditing.html) and [Profiling Amazon DocumentDB Operations](https://docs.aws.amazon.com/documentdb/latest/developerguide/profiling.html).>
+  take deletion-protection, name <DeletionProtection>
+    like boolean-optional
+    void take
+    note <Specifies whether this cluster can be deleted. If `DeletionProtection` is enabled, the cluster cannot be deleted unless it is modified and `DeletionProtection` is disabled. `DeletionProtection` protects clusters from being accidentally deleted.>
+  take global-cluster-identifier, name <GlobalClusterIdentifier>
+    like global-cluster-identifier
+    void take
+    note <The cluster identifier of the new global cluster.>

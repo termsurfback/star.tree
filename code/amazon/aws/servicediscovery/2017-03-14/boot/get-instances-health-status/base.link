@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/get-instances-health-status-response
+  take form get-instances-health-status-response
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/instance-not-found
+  take form instance-not-found
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/service-not-found
+  take form service-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-instances-health-status, name <GetInstancesHealthStatus>
+  note <Gets the current health status (`Healthy`, `Unhealthy`, or `Unknown`) of one or more instances that are associated with a specified service.
+
+There's a brief delay between when you register an instance and when the health status for the instance is available.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-instances-health-status-request, like get-instances-health-status-request
+
+  line </#X-Amz-Target=Route53AutoNaming_v20170314.GetInstancesHealthStatus>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan get-instances-health-status-request
+
+  loot 200
+    seed json, like get-instances-health-status-response
+    note <Success>
+  loot 480
+    seed json, like instance-not-found
+    note <InstanceNotFound>
+  loot 481
+    seed json, like invalid-input
+    note <InvalidInput>
+  loot 482
+    seed json, like service-not-found
+    note <ServiceNotFound>

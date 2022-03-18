@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/outposts/2019-12-03/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/outposts/2019-12-03/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/outposts/2019-12-03/base/list-sites-output
+  take form list-sites-output
+
+load @drumwork/snow/amazonaws.com/outposts/2019-12-03/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-sites, name <ListSites>
+  note <Lists the sites for the specified AWS account.>
+
+  take next-token
+    like native-string
+    void take
+  take max-results
+    like native-integer
+    void take
+
+  line </sites>
+
+  find <NextToken>, loan next-token
+  find <MaxResults>, loan max-results
+
+  loot 200
+    seed json, like list-sites-output
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

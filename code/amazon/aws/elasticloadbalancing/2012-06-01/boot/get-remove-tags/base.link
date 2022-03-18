@@ -1,0 +1,48 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/access-point-name
+  take form access-point-name
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/access-point-not-found-exception
+  take form access-point-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/remove-tags-output
+  take form remove-tags-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/tag-key-only
+  take form tag-key-only
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-remove-tags, name <GET_RemoveTags>
+  note <Removes one or more tags from the specified load balancer.>
+
+  take load-balancer-names
+    like list
+      like access-point-name
+    note <The name of the load balancer. You can specify a maximum of one load balancer name.>
+  take tags
+    like list
+      like tag-key-only
+    note <The list of tag keys to remove.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=RemoveTags>
+
+  find <LoadBalancerNames>, loan load-balancer-names
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like remove-tags-output
+    note <Success>
+  loot 480
+    seed xml, like access-point-not-found-exception
+    note <AccessPointNotFoundException>

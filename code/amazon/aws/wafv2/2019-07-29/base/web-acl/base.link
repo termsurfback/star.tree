@@ -1,0 +1,104 @@
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/consumed-capacity
+  take form consumed-capacity
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/custom-response-bodies
+  take form custom-response-bodies
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/default-action
+  take form default-action
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/entity-description
+  take form entity-description
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/entity-id
+  take form entity-id
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/entity-name
+  take form entity-name
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/firewall-manager-rule-groups
+  take form firewall-manager-rule-groups
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/label-name
+  take form label-name
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/resource-arn
+  take form resource-arn
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/rules
+  take form rules
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/visibility-config
+  take form visibility-config
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+form web-acl, name <WebACL>
+  note <A web ACL defines a collection of rules to use to inspect and control web requests. Each rule has an action defined (allow, block, or count) for requests that match the statement of the rule. In the web ACL, you assign a default action to take (allow, block) for any request that does not match any of the rules. The rules in a web ACL can be a combination of the types Rule, RuleGroup, and managed rule group. You can associate a web ACL with one or more Amazon Web Services resources to protect. The resources can be an Amazon CloudFront distribution, an Amazon API Gateway REST API, an Application Load Balancer, or an AppSync GraphQL API.>
+  take name, name <Name>
+    like entity-name
+    note <The name of the web ACL. You cannot change the name of a web ACL after you create it.>
+  take id, name <Id>
+    like entity-id
+    note <A unique identifier for the `WebACL`. This ID is returned in the responses to create and list commands. You use this ID to do things like get, update, and delete a `WebACL`.>
+  take arn, name <ARN>
+    like resource-arn
+    note <The Amazon Resource Name (ARN) of the web ACL that you want to associate with the resource.>
+  take default-action, name <DefaultAction>
+    like default-action
+    note <The action to perform if none of the `Rules` contained in the `WebACL` match.>
+  take description, name <Description>
+    like entity-description
+    void take
+    note <A description of the web ACL that helps with identification.>
+  take rules, name <Rules>
+    like rules
+    void take
+    note <The Rule statements used to identify the web requests that you want to allow, block, or count. Each rule includes one top-level statement that WAF uses to identify matching web requests, and parameters that govern how WAF handles them.>
+  take visibility-config, name <VisibilityConfig>
+    like visibility-config
+    note <Defines and enables Amazon CloudWatch metrics and web request sample collection.>
+  take capacity, name <Capacity>
+    like consumed-capacity
+    void take
+    note <The web ACL capacity units (WCUs) currently being used by this web ACL.
+
+WAF uses WCUs to calculate and control the operating resources that are used to run your rules, rule groups, and web ACLs. WAF calculates capacity differently for each rule type, to reflect the relative cost of each rule. Simple rules that cost little to run use fewer WCUs than more complex rules that use more processing power. Rule group capacity is fixed at creation, which helps users plan their web ACL WCU usage when they use a rule group. The WCU limit for web ACLs is 1,500.>
+  take pre-process-firewall-manager-rule-groups, name <PreProcessFirewallManagerRuleGroups>
+    like firewall-manager-rule-groups
+    void take
+    note <The first set of rules for WAF to process in the web ACL. This is defined in an Firewall Manager WAF policy and contains only rule group references. You can't alter these. Any rules and rule groups that you define for the web ACL are prioritized after these.
+
+In the Firewall Manager WAF policy, the Firewall Manager administrator can define a set of rule groups to run first in the web ACL and a set of rule groups to run last. Within each set, the administrator prioritizes the rule groups, to determine their relative processing order.>
+  take post-process-firewall-manager-rule-groups, name <PostProcessFirewallManagerRuleGroups>
+    like firewall-manager-rule-groups
+    void take
+    note <The last set of rules for WAF to process in the web ACL. This is defined in an Firewall Manager WAF policy and contains only rule group references. You can't alter these. Any rules and rule groups that you define for the web ACL are prioritized before these.
+
+In the Firewall Manager WAF policy, the Firewall Manager administrator can define a set of rule groups to run first in the web ACL and a set of rule groups to run last. Within each set, the administrator prioritizes the rule groups, to determine their relative processing order.>
+  take managed-by-firewall-manager, name <ManagedByFirewallManager>
+    like boolean
+    void take
+    note <Indicates whether this web ACL is managed by Firewall Manager. If true, then only Firewall Manager can delete the web ACL or any Firewall Manager rule groups in the web ACL.>
+  take label-namespace, name <LabelNamespace>
+    like label-name
+    void take
+    note <The label namespace prefix for this web ACL. All labels added by rules in this web ACL have this prefix.
+
+- The syntax for the label namespace prefix for a web ACL is the following:
+
+  `awswaf:&lt;account ID&gt;:webacl:&lt;web ACL name&gt;:`
+
+- When a rule with a label matches a web request, WAF adds the fully qualified label to the request. A fully qualified label is made up of the label namespace from the rule group or web ACL where the rule is defined and the label from the rule, separated by a colon:
+
+  `&lt;label namespace&gt;:&lt;label from rule&gt;`>
+  take custom-response-bodies, name <CustomResponseBodies>
+    like custom-response-bodies
+    void take
+    note <A map of custom response keys and content bodies. When you create a rule with a block action, you can send a custom response to the web request. You define these for the web ACL, and then use them in the rules and default actions that you define in the web ACL.
+
+For information about customizing web requests and responses, see [Customizing web requests and responses in WAF](https://docs.aws.amazon.com/waf/latest/developerguide/waf-custom-request-response.html) in the [WAF Developer Guide](https://docs.aws.amazon.com/waf/latest/developerguide/waf-chapter.html).
+
+For information about the limits on count and size for custom request and response settings, see [WAF quotas](https://docs.aws.amazon.com/waf/latest/developerguide/limits.html) in the [WAF Developer Guide](https://docs.aws.amazon.com/waf/latest/developerguide/waf-chapter.html).>

@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/get-conformance-pack-compliance-summary-response
+  take form get-conformance-pack-compliance-summary-response
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-limit-exception
+  take form invalid-limit-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/no-such-conformance-pack-exception
+  take form no-such-conformance-pack-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-conformance-pack-compliance-summary, name <GetConformancePackComplianceSummary>
+  note <Returns compliance details for the conformance pack based on the cumulative compliance results of all the rules in that conformance pack.>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-conformance-pack-compliance-summary-request, like get-conformance-pack-compliance-summary-request
+
+  line </#X-Amz-Target=StarlingDoveService.GetConformancePackComplianceSummary>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <Limit>, loan limit
+  find <NextToken>, loan next-token
+
+  seed json, loan get-conformance-pack-compliance-summary-request
+
+  loot 200
+    seed json, like get-conformance-pack-compliance-summary-response
+    note <Success>
+  loot 480
+    seed json, like no-such-conformance-pack-exception
+    note <NoSuchConformancePackException>
+  loot 481
+    seed json, like invalid-limit-exception
+    note <InvalidLimitException>
+  loot 482
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>

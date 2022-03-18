@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/get-rate-based-statement-managed-keys-response
+  take form get-rate-based-statement-managed-keys-response
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-internal-error-exception
+  take form waf-internal-error-exception
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-invalid-operation-exception
+  take form waf-invalid-operation-exception
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-invalid-parameter-exception
+  take form waf-invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-nonexistent-item-exception
+  take form waf-nonexistent-item-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-rate-based-statement-managed-keys, name <GetRateBasedStatementManagedKeys>
+  note <Retrieves the keys that are currently blocked by a rate-based rule instance. The maximum number of managed keys that can be blocked for a single rate-based rule instance is 10,000. If more than 10,000 addresses exceed the rate limit, those with the highest rates are blocked.
+
+For a rate-based rule that you've defined inside a rule group, provide the name of the rule group reference statement in your request, in addition to the rate-based rule name and the web ACL name.
+
+WAF monitors web requests and manages keys independently for each unique combination of web ACL, optional rule group, and rate-based rule. For example, if you define a rate-based rule inside a rule group, and then use the rule group in a web ACL, WAF monitors web requests and manages keys for that web ACL, rule group reference statement, and rate-based rule instance. If you use the same rule group in a second web ACL, WAF monitors web requests and manages keys for this second usage completely independent of your first.>
+
+  take x-amz-target
+    like native-string
+  take get-rate-based-statement-managed-keys-request, like get-rate-based-statement-managed-keys-request
+
+  line </#X-Amz-Target=AWSWAF_20190729.GetRateBasedStatementManagedKeys>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-rate-based-statement-managed-keys-request
+
+  loot 200
+    seed json, like get-rate-based-statement-managed-keys-response
+    note <Success>
+  loot 480
+    seed json, like waf-internal-error-exception
+    note <WAFInternalErrorException>
+  loot 481
+    seed json, like waf-invalid-parameter-exception
+    note <WAFInvalidParameterException>
+  loot 482
+    seed json, like waf-nonexistent-item-exception
+    note <WAFNonexistentItemException>
+  loot 483
+    seed json, like waf-invalid-operation-exception
+    note <WAFInvalidOperationException>

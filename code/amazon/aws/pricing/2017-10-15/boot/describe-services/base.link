@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/pricing/2017-10-15/base/describe-services-response
+  take form describe-services-response
+
+load @drumwork/snow/amazonaws.com/pricing/2017-10-15/base/expired-next-token-exception
+  take form expired-next-token-exception
+
+load @drumwork/snow/amazonaws.com/pricing/2017-10-15/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/pricing/2017-10-15/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/pricing/2017-10-15/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/pricing/2017-10-15/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-services, name <DescribeServices>
+  note <Returns the metadata for one service or a list of the metadata for all services. Use this without a service code to get the service codes for all services. Use it with a service code, such as `AmazonEC2`, to get information specific to that service, such as the attribute names available for that service. For example, some of the attribute names available for EC2 are `volumeType`, `maxIopsVolume`, `operation`, `locationType`, and `instanceCapacity10xlarge`.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-services-request, like describe-services-request
+
+  line </#X-Amz-Target=AWSPriceListService.DescribeServices>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-services-request
+
+  loot 200
+    seed json, like describe-services-response
+    note <Success>
+  loot 480
+    seed json, like internal-error-exception
+    note <InternalErrorException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 483
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 484
+    seed json, like expired-next-token-exception
+    note <ExpiredNextTokenException>

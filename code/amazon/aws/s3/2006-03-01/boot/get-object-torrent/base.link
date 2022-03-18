@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/s3/2006-03-01/base/get-object-torrent-output
+  take form get-object-torrent-output
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-object-torrent, name <GetObjectTorrent>
+  note <Returns torrent files from a bucket. BitTorrent can save you bandwidth when you're distributing large files. For more information about BitTorrent, see [Using BitTorrent with Amazon S3](https://docs.aws.amazon.com/AmazonS3/latest/dev/S3Torrent.html).
+
+You can get torrent only for objects that are less than 5 GB in size, and that are not encrypted using server-side encryption with a customer-provided encryption key.
+
+To use GET, you must have READ access to the object.
+
+This action is not supported by Amazon S3 on Outposts.
+
+The following action is related to `GetObjectTorrent`:
+
+- [GetObject](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html)>
+
+  take bucket
+    like native-string
+    note <The name of the bucket containing the object for which to get the torrent files.>
+  take key
+    like native-string
+    note <The object key for which to get the information.>
+  take x-amz-request-payer
+    like native-string
+    void take
+  take x-amz-expected-bucket-owner
+    like native-string
+    note <The account ID of the expected bucket owner. If the bucket is owned by a different account, the request will fail with an HTTP `403 (Access Denied)` error.>
+    void take
+  take torrent
+    like native-boolean
+
+  line </{bucket}/{key}#torrent>
+
+  hint <x-amz-request-payer>, loan x-amz-request-payer
+  hint <x-amz-expected-bucket-owner>, loan x-amz-expected-bucket-owner
+
+  find <torrent>, loan torrent
+
+  loot 200
+    seed xml, like get-object-torrent-output
+    note <Success>

@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/route53-recovery-readiness/2019-12-02/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-readiness/2019-12-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-readiness/2019-12-02/base/tag-resource-body
+  take form tag-resource-body
+
+load @drumwork/snow/amazonaws.com/route53-recovery-readiness/2019-12-02/base/tag-resource-response
+  take form tag-resource-response
+
+load @drumwork/snow/amazonaws.com/route53-recovery-readiness/2019-12-02/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot tag-resource, name <TagResource>
+  note <Adds tags to the specified resource. You can specify one or more tags to add.>
+
+  take resource-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) for the resource. You can get this from the response to any request to the resource.>
+  take tag-resource-body, like tag-resource-body
+
+  line </tags/{resource-arn}>
+
+  seed json, loan tag-resource-body
+
+  loot 200
+    seed json, like tag-resource-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

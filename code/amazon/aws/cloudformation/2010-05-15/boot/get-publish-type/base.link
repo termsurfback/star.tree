@@ -1,0 +1,73 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/cfn-registry-exception
+  take form cfn-registry-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/publish-type-output
+  take form publish-type-output
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/type-not-found-exception
+  take form type-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-publish-type, name <GET_PublishType>
+  note <Publishes the specified extension to the CloudFormation registry as a public extension in this region. Public extensions are available for use by all CloudFormation users. For more information on publishing extensions, see [Publishing extensions to make them available for public use](https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/publish-extension.html) in the _CloudFormation CLI User Guide_.
+
+To publish an extension, you must be registered as a publisher with CloudFormation. For more information, see [RegisterPublisher](https://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_RegisterPublisher.html).>
+
+  take type
+    like native-string
+    note <The type of the extension.
+
+Conditional: You must specify `Arn`, or `TypeName` and `Type`.>
+    void take
+  take arn
+    like native-string
+    note <The Amazon Resource Number (ARN) of the extension.
+
+Conditional: You must specify `Arn`, or `TypeName` and `Type`.>
+    void take
+  take type-name
+    like native-string
+    note <The name of the extension.
+
+Conditional: You must specify `Arn`, or `TypeName` and `Type`.>
+    void take
+  take public-version-number
+    like native-string
+    note <The version number to assign to this version of the extension.
+
+Use the following format, and adhere to semantic versioning when assigning a version number to your extension:
+
+`MAJOR.MINOR.PATCH`
+
+For more information, see [Semantic Versioning 2.0.0](https://semver.org/).
+
+If you do not specify a version number, CloudFormation increments the version number by one minor version release.
+
+The first time you publish a type, CloudFormation sets the version number to `1.0.0`, regardless of the value you specify.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=PublishType>
+
+  find <Type>, loan type
+  find <Arn>, loan arn
+  find <TypeName>, loan type-name
+  find <PublicVersionNumber>, loan public-version-number
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like publish-type-output
+    note <Success>
+  loot 480
+    seed xml, like cfn-registry-exception
+    note <CFNRegistryException>
+  loot 481
+    seed xml, like type-not-found-exception
+    note <TypeNotFoundException>

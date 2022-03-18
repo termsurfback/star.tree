@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/tag-key-type
+  take form tag-key-type
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-untag-instance-profile, name <GET_UntagInstanceProfile>
+  note <Removes the specified tags from the IAM instance profile. For more information about tagging, see [Tagging IAM resources](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_tags.html) in the _IAM User Guide_.>
+
+  take instance-profile-name
+    like native-string
+    note <The name of the IAM instance profile from which you want to remove tags.
+
+This parameter allows (through its [regex pattern](http://wikipedia.org/wiki/regex)) a string of characters consisting of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: _+=,.@->
+  take tag-keys
+    like list
+      like tag-key-type
+    note <A list of key names as a simple array of strings. The tags with matching keys are removed from the specified instance profile.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=UntagInstanceProfile>
+
+  find <InstanceProfileName>, loan instance-profile-name
+  find <TagKeys>, loan tag-keys
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like invalid-input-exception
+    note <InvalidInputException>
+  loot 482
+    seed xml, like concurrent-modification-exception
+    note <ConcurrentModificationException>
+  loot 483
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/operation-not-permitted-fault
+  take form operation-not-permitted-fault
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/unknown-resource-fault
+  take form unknown-resource-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot respond-decision-task-completed, name <RespondDecisionTaskCompleted>
+  note <Used by deciders to tell the service that the DecisionTask identified by the `taskToken` has successfully completed. The `decisions` argument specifies the list of decisions made while processing the task.
+
+A `DecisionTaskCompleted` event is added to the workflow history. The `executionContext` specified is attached to the event in the workflow execution history.
+
+**Access Control** If an IAM policy grants permission to use `RespondDecisionTaskCompleted`, it can express permissions for the list of decisions in the `decisions` parameter. Each of the decisions has one or more parameters, much like a regular API call. To allow for policies to be as readable as possible, you can express permissions on decisions as if they were actual API calls, including applying conditions to some parameters. For more information, see [Using IAM to Manage Access to Amazon SWF Workflows](https://docs.aws.amazon.com/amazonswf/latest/developerguide/swf-dev-iam.html) in the _Amazon SWF Developer Guide_.>
+
+  take x-amz-target
+    like native-string
+  take respond-decision-task-completed-input, like respond-decision-task-completed-input
+
+  line </#X-Amz-Target=SimpleWorkflowService.RespondDecisionTaskCompleted>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan respond-decision-task-completed-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like unknown-resource-fault
+    note <UnknownResourceFault>
+  loot 481
+    seed json, like operation-not-permitted-fault
+    note <OperationNotPermittedFault>

@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/sqs/2012-11-05/base/batch-entry-ids-not-distinct
+  take form batch-entry-ids-not-distinct
+
+load @drumwork/snow/amazonaws.com/sqs/2012-11-05/base/change-message-visibility-batch-result
+  take form change-message-visibility-batch-result
+
+load @drumwork/snow/amazonaws.com/sqs/2012-11-05/base/empty-batch-request
+  take form empty-batch-request
+
+load @drumwork/snow/amazonaws.com/sqs/2012-11-05/base/invalid-batch-entry-id
+  take form invalid-batch-entry-id
+
+load @drumwork/snow/amazonaws.com/sqs/2012-11-05/base/too-many-entries-in-batch-request
+  take form too-many-entries-in-batch-request
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-change-message-visibility-batch, name <POST_ChangeMessageVisibilityBatch>
+  note <Changes the visibility timeout of multiple messages. This is a batch version of `ChangeMessageVisibility.` The result of the action on each message is reported individually in the response. You can send up to 10 `ChangeMessageVisibility` requests with each `ChangeMessageVisibilityBatch` action.
+
+Because the batch request can result in a combination of successful and unsuccessful actions, you should check for batch errors even when the call returns an HTTP status code of `200`.
+
+Some actions take lists of parameters. These lists are specified using the `param.n` notation. Values of `n` are integers starting from 1. For example, a parameter list with two elements looks like this:
+
+`&AttributeName.1=first`
+
+`&AttributeName.2=second`>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take change-message-visibility-batch-request, like change-message-visibility-batch-request
+    void take
+
+  line </#Action=ChangeMessageVisibilityBatch>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan change-message-visibility-batch-request
+
+  loot 200
+    seed xml, like change-message-visibility-batch-result
+    note <Success>
+  loot 480
+    seed xml, like too-many-entries-in-batch-request
+    note <TooManyEntriesInBatchRequest>
+  loot 481
+    seed xml, like empty-batch-request
+    note <EmptyBatchRequest>
+  loot 482
+    seed xml, like batch-entry-ids-not-distinct
+    note <BatchEntryIdsNotDistinct>
+  loot 483
+    seed xml, like invalid-batch-entry-id
+    note <InvalidBatchEntryId>

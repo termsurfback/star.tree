@@ -1,0 +1,50 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/describe-listener-certificates-output
+  take form describe-listener-certificates-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/listener-not-found-exception
+  take form listener-not-found-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-listener-certificates, name <GET_DescribeListenerCertificates>
+  note <Describes the default certificate and the certificate list for the specified HTTPS or TLS listener.
+
+If the default certificate is also in the certificate list, it appears twice in the results (once with `IsDefault` set to true and once with `IsDefault` set to false).
+
+For more information, see [SSL certificates](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html#https-listener-certificates) in the _Application Load Balancers Guide_ or [Server certificates](https://docs.aws.amazon.com/elasticloadbalancing/latest/network/create-tls-listener.html#tls-listener-certificate) in the _Network Load Balancers Guide_.>
+
+  take listener-arn
+    like native-string
+    note <The Amazon Resource Names (ARN) of the listener.>
+  take marker
+    like native-string
+    note <The marker for the next set of results. (You received this marker from a previous call.)>
+    void take
+  take page-size
+    like native-integer
+    note <The maximum number of results to return with this call.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeListenerCertificates>
+
+  find <ListenerArn>, loan listener-arn
+  find <Marker>, loan marker
+  find <PageSize>, loan page-size
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-listener-certificates-output
+    note <Success>
+  loot 480
+    seed xml, like listener-not-found-exception
+    note <ListenerNotFoundException>

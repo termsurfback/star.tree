@@ -1,0 +1,94 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/insufficient-privileges-exception
+  take form insufficient-privileges-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/operation-in-progress-exception
+  take form operation-in-progress-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/resource-type-not-supported-exception
+  take form resource-type-not-supported-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/tag
+  take form tag
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/tag-key
+  take form tag-key
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/too-many-tags-exception
+  take form too-many-tags-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-update-tags-for-resource, name <GET_UpdateTagsForResource>
+  note <Update the list of tags applied to an AWS Elastic Beanstalk resource. Two lists can be passed: `TagsToAdd` for tags to add or update, and `TagsToRemove`.
+
+Elastic Beanstalk supports tagging of all of its resources. For details about resource tagging, see [Tagging Application Resources](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/applications-tagging-resources.html).
+
+If you create a custom IAM user policy to control permission to this operation, specify one of the following two virtual actions (or both) instead of the API operation name:
+
+elasticbeanstalk:AddTags
+
+Controls permission to call `UpdateTagsForResource` and pass a list of tags to add in the `TagsToAdd` parameter.
+
+elasticbeanstalk:RemoveTags
+
+Controls permission to call `UpdateTagsForResource` and pass a list of tag keys to remove in the `TagsToRemove` parameter.
+
+For details about creating a custom user policy, see [Creating a Custom User Policy](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/AWSHowTo.iam.managed-policies.html#AWSHowTo.iam.policies).>
+
+  take resource-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the resouce to be updated.
+
+Must be the ARN of an Elastic Beanstalk resource.>
+  take tags-to-add
+    like list
+      like tag
+    note <A list of tags to add or update. If a key of an existing tag is added, the tag's value is updated.
+
+Specify at least one of these parameters: `TagsToAdd`, `TagsToRemove`.>
+    void take
+  take tags-to-remove
+    like list
+      like tag-key
+    note <A list of tag keys to remove. If a tag key doesn't exist, it is silently ignored.
+
+Specify at least one of these parameters: `TagsToAdd`, `TagsToRemove`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=UpdateTagsForResource>
+
+  find <ResourceArn>, loan resource-arn
+  find <TagsToAdd>, loan tags-to-add
+  find <TagsToRemove>, loan tags-to-remove
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like insufficient-privileges-exception
+    note <InsufficientPrivilegesException>
+  loot 481
+    seed xml, like operation-in-progress-exception
+    note <OperationInProgressException>
+  loot 482
+    seed xml, like too-many-tags-exception
+    note <TooManyTagsException>
+  loot 483
+    seed xml, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 484
+    seed xml, like resource-type-not-supported-exception
+    note <ResourceTypeNotSupportedException>

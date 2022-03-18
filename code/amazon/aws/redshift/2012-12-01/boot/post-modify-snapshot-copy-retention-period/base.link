@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-state-fault
+  take form invalid-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-retention-period-fault
+  take form invalid-retention-period-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/modify-snapshot-copy-retention-period-result
+  take form modify-snapshot-copy-retention-period-result
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/snapshot-copy-disabled-fault
+  take form snapshot-copy-disabled-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unauthorized-operation
+  take form unauthorized-operation
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-modify-snapshot-copy-retention-period, name <POST_ModifySnapshotCopyRetentionPeriod>
+  note <Modifies the number of days to retain snapshots in the destination Amazon Web Services Region after they are copied from the source Amazon Web Services Region. By default, this operation only changes the retention period of copied automated snapshots. The retention periods for both new and existing copied automated snapshots are updated with the new retention period. You can set the manual option to change only the retention periods of copied manual snapshots. If you set this option, only newly copied manual snapshots have the new retention period.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take modify-snapshot-copy-retention-period-message, like modify-snapshot-copy-retention-period-message
+    void take
+
+  line </#Action=ModifySnapshotCopyRetentionPeriod>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan modify-snapshot-copy-retention-period-message
+
+  loot 200
+    seed xml, like modify-snapshot-copy-retention-period-result
+    note <Success>
+  loot 480
+    seed xml, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 481
+    seed xml, like snapshot-copy-disabled-fault
+    note <SnapshotCopyDisabledFault>
+  loot 482
+    seed xml, like unauthorized-operation
+    note <UnauthorizedOperation>
+  loot 483
+    seed xml, like invalid-cluster-state-fault
+    note <InvalidClusterStateFault>
+  loot 484
+    seed xml, like invalid-retention-period-fault
+    note <InvalidRetentionPeriodFault>

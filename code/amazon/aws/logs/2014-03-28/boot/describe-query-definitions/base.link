@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/describe-query-definitions-response
+  take form describe-query-definitions-response
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-query-definitions, name <DescribeQueryDefinitions>
+  note <This operation returns a paginated list of your saved CloudWatch Logs Insights query definitions.
+
+You can use the `queryDefinitionNamePrefix` parameter to limit the results to only the query definitions that have names that start with a certain string.>
+
+  take x-amz-target
+    like native-string
+  take describe-query-definitions-request, like describe-query-definitions-request
+
+  line </#X-Amz-Target=Logs_20140328.DescribeQueryDefinitions>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-query-definitions-request
+
+  loot 200
+    seed json, like describe-query-definitions-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

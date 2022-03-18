@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/describe-configuration-aggregator-sources-status-response
+  take form describe-configuration-aggregator-sources-status-response
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-limit-exception
+  take form invalid-limit-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/no-such-configuration-aggregator-exception
+  take form no-such-configuration-aggregator-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-configuration-aggregator-sources-status, name <DescribeConfigurationAggregatorSourcesStatus>
+  note <Returns status information for sources within an aggregator. The status includes information about the last time Config verified authorization between the source account and an aggregator account. In case of a failure, the status contains the related error code or message.>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-configuration-aggregator-sources-status-request, like describe-configuration-aggregator-sources-status-request
+
+  line </#X-Amz-Target=StarlingDoveService.DescribeConfigurationAggregatorSourcesStatus>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <Limit>, loan limit
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-configuration-aggregator-sources-status-request
+
+  loot 200
+    seed json, like describe-configuration-aggregator-sources-status-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 481
+    seed json, like no-such-configuration-aggregator-exception
+    note <NoSuchConfigurationAggregatorException>
+  loot 482
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 483
+    seed json, like invalid-limit-exception
+    note <InvalidLimitException>

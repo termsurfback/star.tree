@@ -1,0 +1,68 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/invalid-target-exception
+  take form invalid-target-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/register-targets-output
+  take form register-targets-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/target-description
+  take form target-description
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/target-group-not-found-exception
+  take form target-group-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/too-many-registrations-for-target-id-exception
+  take form too-many-registrations-for-target-id-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/too-many-targets-exception
+  take form too-many-targets-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-register-targets, name <GET_RegisterTargets>
+  note <Registers the specified targets with the specified target group.
+
+If the target is an EC2 instance, it must be in the `running` state when you register it.
+
+By default, the load balancer routes requests to registered targets using the protocol and port for the target group. Alternatively, you can override the port for a target when you register it. You can register each EC2 instance or IP address with the same target group multiple times using different ports.
+
+With a Network Load Balancer, you cannot register instances by instance ID if they have the following instance types: C1, CC1, CC2, CG1, CG2, CR1, CS1, G1, G2, HI1, HS1, M1, M2, M3, and T1. You can register instances of these types by IP address.>
+
+  take target-group-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the target group.>
+  take targets
+    like list
+      like target-description
+    note <The targets.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=RegisterTargets>
+
+  find <TargetGroupArn>, loan target-group-arn
+  find <Targets>, loan targets
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like register-targets-output
+    note <Success>
+  loot 480
+    seed xml, like target-group-not-found-exception
+    note <TargetGroupNotFoundException>
+  loot 481
+    seed xml, like too-many-targets-exception
+    note <TooManyTargetsException>
+  loot 482
+    seed xml, like invalid-target-exception
+    note <InvalidTargetException>
+  loot 483
+    seed xml, like too-many-registrations-for-target-id-exception
+    note <TooManyRegistrationsForTargetIdException>

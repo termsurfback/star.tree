@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/workspaces/2015-04-08/base/describe-workspace-bundles-result
+  take form describe-workspace-bundles-result
+
+load @drumwork/snow/amazonaws.com/workspaces/2015-04-08/base/invalid-parameter-values-exception
+  take form invalid-parameter-values-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-workspace-bundles, name <DescribeWorkspaceBundles>
+  note <Retrieves a list that describes the available WorkSpace bundles.
+
+You can filter the results using either bundle ID or owner, but not both.>
+
+  take x-amz-target
+    like native-string
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-workspace-bundles-request, like describe-workspace-bundles-request
+
+  line </#X-Amz-Target=WorkspacesService.DescribeWorkspaceBundles>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-workspace-bundles-request
+
+  loot 200
+    seed json, like describe-workspace-bundles-result
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-values-exception
+    note <InvalidParameterValuesException>

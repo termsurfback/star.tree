@@ -1,0 +1,31 @@
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-pipeline, name <DeletePipeline>
+  note <Deletes the specified pipeline.>
+
+  take x-amz-target
+    like native-string
+  take delete-pipeline-input, like delete-pipeline-input
+
+  line </#X-Amz-Target=CodePipeline_20150709.DeletePipeline>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-pipeline-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>

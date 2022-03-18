@@ -1,0 +1,82 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-usage-record, name <ListUsageRecord>
+  note <List UsageRecords>
+
+  take sim
+    like native-string
+    note <SID or unique name of a Sim resource. Only show UsageRecords representing usage incurred by this Super SIM.>
+    void take
+  take fleet
+    like native-string
+    note <SID or unique name of a Fleet resource. Only show UsageRecords representing usage for Super SIMs belonging to this Fleet resource at the time the usage occurred.>
+    void take
+  take network
+    like native-string
+    note <SID of a Network resource. Only show UsageRecords representing usage on this network.>
+    void take
+  take iso-country
+    like native-string
+    note <Alpha-2 ISO Country Code. Only show UsageRecords representing usage in this country.>
+    void take
+  take group
+    like native-string
+    note <Dimension over which to aggregate usage records. Can be: \`sim\`, \`fleet\`, \`network\`, \`isoCountry\`. Default is to not aggregate across any of these dimensions, UsageRecords will be aggregated into the time buckets described by the \`Granularity\` parameter.>
+    void take
+  take granularity
+    like native-string
+    note <Time-based grouping that UsageRecords should be aggregated by. Can be: \`hour\`, \`day\`, or \`all\`. Default is \`all\`. \`all\` returns one UsageRecord that describes the usage for the entire period.>
+    void take
+  take start-time
+    like native-string
+    note <Only include usage that occurred at or after this time, specified in \[ISO 8601\](https://en.wikipedia.org/wiki/ISO\_8601) format. Default is one month before the \`end\_time\`.>
+    void take
+  take end-time
+    like native-string
+    note <Only include usage that occurred before this time (exclusive), specified in \[ISO 8601\](https://en.wikipedia.org/wiki/ISO\_8601) format. Default is the current time.>
+    void take
+  take page-size
+    like native-integer
+    note <How many resources to return in each list page. The default is 50, and the maximum is 1000.>
+    void take
+
+  line </v1/UsageRecords>
+
+  find <Sim>, loan sim
+  find <Fleet>, loan fleet
+  find <Network>, loan network
+  find <IsoCountry>, loan iso-country
+  find <Group>, loan group
+  find <Granularity>, loan granularity
+  find <StartTime>, loan start-time
+  find <EndTime>, loan end-time
+  find <PageSize>, loan page-size
+
+  loot 200
+    seed json
+      like form
+        like take meta, name <meta>
+        like   like form
+        like     take first-page-url, name <first_page_url>
+        like       void take
+        like     take key, name <key>
+        like       void take
+        like     take next-page-url, name <next_page_url>
+        like       void take
+        like     take page, name <page>
+        like       void take
+        like     take page-size, name <page_size>
+        like       void take
+        like     take previous-page-url, name <previous_page_url>
+        like       void take
+        like     take url, name <url>
+        like       void take
+        like   void take
+        like take usage-records, name <usage_records>
+        like   void take
+    note <OK>

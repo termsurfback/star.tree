@@ -1,0 +1,75 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/dedicated-host-id
+  take form dedicated-host-id
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-hosts-result
+  take form describe-hosts-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-hosts, name <GET_DescribeHosts>
+  note <Describes the specified Dedicated Hosts or all your Dedicated Hosts.
+
+The results describe only the Dedicated Hosts in the Region you're currently using. All listed instances consume capacity on your Dedicated Host. Dedicated Hosts that have recently been released are listed with the state `released`.>
+
+  take filter
+    like list
+      like filter
+    note <The filters.
+
+- `auto-placement` - Whether auto-placement is enabled or disabled (`on` | `off`).
+
+- `availability-zone` - The Availability Zone of the host.
+
+- `client-token` - The idempotency token that you provided when you allocated the host.
+
+- `host-reservation-id` - The ID of the reservation assigned to this host.
+
+- `instance-type` - The instance type size that the Dedicated Host is configured to support.
+
+- `state` - The allocation state of the Dedicated Host (`available` | `under-assessment` | `permanent-failure` | `released` | `released-permanent-failure`).
+
+- `tag-key` - The key of a tag assigned to the resource. Use this filter to find all resources assigned a tag with a specific key, regardless of the tag value.>
+    void take
+  take host-id
+    like list
+      like dedicated-host-id
+    note <The IDs of the Dedicated Hosts. The IDs are used for targeted instance launches.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return for the request in a single page. The remaining results can be seen by sending another request with the returned `nextToken` value. This value can be between 5 and 500. If `maxResults` is given a larger value than 500, you receive an error.
+
+You cannot specify this parameter and the host IDs parameter in the same request.>
+    void take
+  take next-token
+    like native-string
+    note <The token to use to retrieve the next page of results.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeHosts>
+
+  find <Filter>, loan filter
+  find <HostId>, loan host-id
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-hosts-result
+    note <Success>

@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/validate-template-output
+  take form validate-template-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-validate-template, name <GET_ValidateTemplate>
+  note <Validates a specified template. CloudFormation first checks if the template is valid JSON. If it isn't, CloudFormation checks if the template is valid YAML. If both these checks fail, CloudFormation returns a template validation error.>
+
+  take template-body
+    like native-string
+    note <Structure containing the template body with a minimum length of 1 byte and a maximum length of 51,200 bytes. For more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the CloudFormation User Guide.
+
+Conditional: You must pass `TemplateURL` or `TemplateBody`. If both are passed, only `TemplateBody` is used.>
+    void take
+  take template-url
+    like native-string
+    note <Location of file containing the template body. The URL must point to a template (max size: 460,800 bytes) that is located in an Amazon S3 bucket or a Systems Manager document. For more information, go to [Template Anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html) in the CloudFormation User Guide.
+
+Conditional: You must pass `TemplateURL` or `TemplateBody`. If both are passed, only `TemplateBody` is used.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ValidateTemplate>
+
+  find <TemplateBody>, loan template-body
+  find <TemplateURL>, loan template-url
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like validate-template-output
+    note <Success>

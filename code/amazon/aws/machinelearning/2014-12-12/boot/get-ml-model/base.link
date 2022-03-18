@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/get-ml-model-output
+  take form get-ml-model-output
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-ml-model, name <GetMLModel>
+  note <Returns an `MLModel` that includes detailed metadata, data source information, and the current status of the `MLModel`.
+
+`GetMLModel` provides results in normal or verbose format.>
+
+  take x-amz-target
+    like native-string
+  take get-ml-model-input, like get-ml-model-input
+
+  line </#X-Amz-Target=AmazonML_20141212.GetMLModel>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-ml-model-input
+
+  loot 200
+    seed json, like get-ml-model-output
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

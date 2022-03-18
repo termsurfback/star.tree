@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/register-cluster-body
+  take form register-cluster-body
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/register-cluster-response
+  take form register-cluster-response
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/resource-limit-exceeded-exception
+  take form resource-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+boot register-cluster, name <RegisterCluster>
+  note <Connects a Kubernetes cluster to the Amazon EKS control plane.
+
+Any Kubernetes cluster can be connected to the Amazon EKS control plane to view current information about the cluster and its nodes.
+
+Cluster connection requires two steps. First, send a `RegisterClusterRequest` to add it to the Amazon EKS control plane.
+
+Second, a [Manifest](https://amazon-eks.s3.us-west-2.amazonaws.com/eks-connector/manifests/eks-connector/latest/eks-connector.yaml) containing the `activationID` and `activationCode` must be applied to the Kubernetes cluster through it's native provider to provide visibility.
+
+After the Manifest is updated and applied, then the connected cluster is visible to the Amazon EKS control plane. If the Manifest is not applied within a set amount of time, then the connected cluster will no longer be visible and must be deregistered. See DeregisterCluster.>
+
+  take register-cluster-body, like register-cluster-body
+
+  line </cluster-registrations>
+
+  seed json, loan register-cluster-body
+
+  loot 200
+    seed json, like register-cluster-response
+    note <Success>
+  loot 480
+    seed json, like resource-limit-exceeded-exception
+    note <ResourceLimitExceededException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like client-exception
+    note <ClientException>
+  loot 483
+    seed json, like server-exception
+    note <ServerException>
+  loot 484
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

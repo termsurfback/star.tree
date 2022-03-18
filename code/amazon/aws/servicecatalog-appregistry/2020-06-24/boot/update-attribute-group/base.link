@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/servicecatalog-appregistry/2020-06-24/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog-appregistry/2020-06-24/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog-appregistry/2020-06-24/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog-appregistry/2020-06-24/base/update-attribute-group-body
+  take form update-attribute-group-body
+
+load @drumwork/snow/amazonaws.com/servicecatalog-appregistry/2020-06-24/base/update-attribute-group-response
+  take form update-attribute-group-response
+
+load @drumwork/snow/amazonaws.com/servicecatalog-appregistry/2020-06-24/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-attribute-group, name <UpdateAttributeGroup>
+  note <Updates an existing attribute group with new details.>
+
+  take attribute-group
+    like native-string
+    note <The name or ID of the attribute group that holds the attributes to describe the application.>
+  take update-attribute-group-body, like update-attribute-group-body
+
+  line </attribute-groups/{attribute-group}>
+
+  seed json, loan update-attribute-group-body
+
+  loot 200
+    seed json, like update-attribute-group-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 483
+    seed json, like internal-server-exception
+    note <InternalServerException>

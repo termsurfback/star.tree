@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/set-smb-guest-password-output
+  take form set-smb-guest-password-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot set-smb-guest-password, name <SetSMBGuestPassword>
+  note <Sets the password for the guest user `smbguest`. The `smbguest` user is the user when the authentication method for the file share is set to `GuestAccess`. This operation only supported for S3 File Gateways>
+
+  take x-amz-target
+    like native-string
+  take set-smb-guest-password-input, like set-smb-guest-password-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.SetSMBGuestPassword>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan set-smb-guest-password-input
+
+  loot 200
+    seed json, like set-smb-guest-password-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

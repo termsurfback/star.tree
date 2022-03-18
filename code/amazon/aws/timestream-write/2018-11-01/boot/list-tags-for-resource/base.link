@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/invalid-endpoint-exception
+  take form invalid-endpoint-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/list-tags-for-resource-response
+  take form list-tags-for-resource-response
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-tags-for-resource, name <ListTagsForResource>
+  note <List all tags on a Timestream resource.>
+
+  take x-amz-target
+    like native-string
+  take list-tags-for-resource-request, like list-tags-for-resource-request
+
+  line </#X-Amz-Target=Timestream_20181101.ListTagsForResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-tags-for-resource-request
+
+  loot 200
+    seed json, like list-tags-for-resource-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like invalid-endpoint-exception
+    note <InvalidEndpointException>

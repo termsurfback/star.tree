@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/container-in-use-exception
+  take form container-in-use-exception
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/container-not-found-exception
+  take form container-not-found-exception
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/get-lifecycle-policy-output
+  take form get-lifecycle-policy-output
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/policy-not-found-exception
+  take form policy-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-lifecycle-policy, name <GetLifecyclePolicy>
+  note <Retrieves the object lifecycle policy that is assigned to a container.>
+
+  take x-amz-target
+    like native-string
+  take get-lifecycle-policy-input, like get-lifecycle-policy-input
+
+  line </#X-Amz-Target=MediaStore_20170901.GetLifecyclePolicy>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-lifecycle-policy-input
+
+  loot 200
+    seed json, like get-lifecycle-policy-output
+    note <Success>
+  loot 480
+    seed json, like container-in-use-exception
+    note <ContainerInUseException>
+  loot 481
+    seed json, like container-not-found-exception
+    note <ContainerNotFoundException>
+  loot 482
+    seed json, like policy-not-found-exception
+    note <PolicyNotFoundException>
+  loot 483
+    seed json, like internal-server-error
+    note <InternalServerError>

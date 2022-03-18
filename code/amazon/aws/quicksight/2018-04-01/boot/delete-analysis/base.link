@@ -1,0 +1,79 @@
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/delete-analysis-response
+  take form delete-analysis-response
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/unsupported-user-edition-exception
+  take form unsupported-user-edition-exception
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-analysis, name <DeleteAnalysis>
+  note <Deletes an analysis from Amazon QuickSight. You can optionally include a recovery window during which you can restore the analysis. If you don't specify a recovery window value, the operation defaults to 30 days. Amazon QuickSight attaches a `DeletionTime` stamp to the response that specifies the end of the recovery window. At the end of the recovery window, Amazon QuickSight deletes the analysis permanently.
+
+At any time before recovery window ends, you can use the `RestoreAnalysis` API operation to remove the `DeletionTime` stamp and cancel the deletion of the analysis. The analysis remains visible in the API until it's deleted, so you can describe it but you can't make a template from it.
+
+An analysis that's scheduled for deletion isn't accessible in the Amazon QuickSight console. To access it in the console, restore it. Deleting an analysis doesn't delete the dashboards that you publish from it.>
+
+  take aws-account-id
+    like native-string
+    note <The ID of the Amazon Web Services account where you want to delete an analysis.>
+  take analysis-id
+    like native-string
+    note <The ID of the analysis that you're deleting.>
+  take recovery-window-in-days
+    like native-integer
+    note <A value that specifies the number of days that Amazon QuickSight waits before it deletes the analysis. You can't use this parameter with the `ForceDeleteWithoutRecovery` option in the same API call. The default value is 30.>
+    void take
+  take force-delete-without-recovery
+    like native-boolean
+    note <This option defaults to the value `NoForceDeleteWithoutRecovery`. To immediately delete the analysis, add the `ForceDeleteWithoutRecovery` option. You can't restore an analysis after it's deleted.>
+    void take
+
+  line </accounts/{aws-account-id}/analyses/{analysis-id}>
+
+  find <recovery-window-in-days>, loan recovery-window-in-days
+  find <force-delete-without-recovery>, loan force-delete-without-recovery
+
+  loot 200
+    seed json, like delete-analysis-response
+    note <Success>
+  loot 480
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 484
+    seed json, like unsupported-user-edition-exception
+    note <UnsupportedUserEditionException>
+  loot 485
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

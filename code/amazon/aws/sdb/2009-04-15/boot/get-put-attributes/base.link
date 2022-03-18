@@ -1,0 +1,98 @@
+
+load @drumwork/snow/amazonaws.com/sdb/2009-04-15/base/attribute-does-not-exist
+  take form attribute-does-not-exist
+
+load @drumwork/snow/amazonaws.com/sdb/2009-04-15/base/no-such-domain
+  take form no-such-domain
+
+load @drumwork/snow/amazonaws.com/sdb/2009-04-15/base/number-item-attributes-exceeded
+  take form number-item-attributes-exceeded
+
+load @drumwork/snow/amazonaws.com/sdb/2009-04-15/base/replaceable-attribute
+  take form replaceable-attribute
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-put-attributes, name <GET_PutAttributes>
+  note <The PutAttributes operation creates or replaces attributes in an item. The client may specify new attributes using a combination of the `Attribute.X.Name` and `Attribute.X.Value` parameters. The client specifies the first attribute by the parameters `Attribute.0.Name` and `Attribute.0.Value`, the second attribute by the parameters `Attribute.1.Name` and `Attribute.1.Value`, and so on.
+
+Attributes are uniquely identified in an item by their name/value combination. For example, a single item can have the attributes `{ "first_name", "first_value" }` and `{ "first_name", second_value" }`. However, it cannot have two attribute instances where both the `Attribute.X.Name` and `Attribute.X.Value` are the same.
+
+Optionally, the requestor can supply the `Replace` parameter for each individual attribute. Setting this value to `true` causes the new attribute value to replace the existing attribute value(s). For example, if an item has the attributes `{ 'a', '1' }`, `{ 'b', '2'}` and `{ 'b', '3' }` and the requestor calls `PutAttributes` using the attributes `{ 'b', '4' }` with the `Replace` parameter set to true, the final attributes of the item are changed to `{ 'a', '1' }` and `{ 'b', '4' }`, which replaces the previous values of the 'b' attribute with the new value.
+
+Using `PutAttributes` to replace attribute values that do not exist will not result in an error response.
+
+You cannot specify an empty string as an attribute name.
+
+Because Amazon SimpleDB makes multiple copies of client data and uses an eventual consistency update model, an immediate GetAttributes or Select operation (read) immediately after a PutAttributes or DeleteAttributes operation (write) might not return the updated data.
+
+The following limitations are enforced for this operation:
+
+- 256 total attribute name-value pairs per item
+- One billion attributes per domain
+- 10 GB of total user data storage per domain>
+
+  take domain-name
+    like native-string
+    note <The name of the domain in which to perform the operation.>
+  take item-name
+    like native-string
+    note <The name of the item.>
+  take attributes
+    like list
+      like replaceable-attribute
+    note <The list of attributes.>
+  take expected
+    like form
+      take name, name <Name>
+        like string
+        void take
+        note <The name of the attribute involved in the condition.>
+      take value, name <Value>
+        like string
+        void take
+        note <The value of an attribute. This value can only be specified when the `Exists` parameter is equal to `true`.>
+      take exists, name <Exists>
+        like boolean
+        void take
+        note <A value specifying whether or not the specified attribute must exist with the specified value in order for the update condition to be satisfied. Specify `true` if the attribute must exist for the update condition to be satisfied. Specify `false` if the attribute should not exist in order for the update condition to be satisfied.>
+    note <The update condition which, if specified, determines whether the specified attributes will be updated or not. The update condition must be satisfied in order for this request to be processed and the attributes to be updated.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=PutAttributes>
+
+  find <DomainName>, loan domain-name
+  find <ItemName>, loan item-name
+  find <Attributes>, loan attributes
+  find <Expected>, loan expected
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 400
+    seed xml, like no-such-domain
+    note <NoSuchDomain>
+  loot 404
+    seed xml, like attribute-does-not-exist
+    note <AttributeDoesNotExist>
+  loot 409
+    seed xml, like number-item-attributes-exceeded
+    note <NumberItemAttributesExceeded>

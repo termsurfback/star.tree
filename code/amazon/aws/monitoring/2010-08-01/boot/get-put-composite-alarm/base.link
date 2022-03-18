@@ -1,0 +1,133 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/limit-exceeded-fault
+  take form limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/resource-name
+  take form resource-name
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/tag
+  take form tag
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-put-composite-alarm, name <GET_PutCompositeAlarm>
+  note <Creates or updates a _composite alarm_. When you create a composite alarm, you specify a rule expression for the alarm that takes into account the alarm states of other alarms that you have created. The composite alarm goes into ALARM state only if all conditions of the rule are met.
+
+The alarms specified in a composite alarm's rule expression can include metric alarms and other composite alarms.
+
+Using composite alarms can reduce alarm noise. You can create multiple metric alarms, and also create a composite alarm and set up alerts only for the composite alarm. For example, you could create a composite alarm that goes into ALARM state only when more than one of the underlying metric alarms are in ALARM state.
+
+Currently, the only alarm actions that can be taken by composite alarms are notifying SNS topics.
+
+It is possible to create a loop or cycle of composite alarms, where composite alarm A depends on composite alarm B, and composite alarm B also depends on composite alarm A. In this scenario, you can't delete any composite alarm that is part of the cycle because there is always still a composite alarm that depends on that alarm that you want to delete.
+
+To get out of such a situation, you must break the cycle by changing the rule of one of the composite alarms in the cycle to remove a dependency that creates the cycle. The simplest change to make to break a cycle is to change the `AlarmRule` of one of the alarms to `False`.
+
+Additionally, the evaluation of composite alarms stops if CloudWatch detects a cycle in the evaluation path.
+
+When this operation creates an alarm, the alarm state is immediately set to `INSUFFICIENT_DATA`. The alarm is then evaluated and its state is set appropriately. Any actions associated with the new state are then executed. For a composite alarm, this initial time after creation is the only time that the alarm can be in `INSUFFICIENT_DATA` state.
+
+When you update an existing alarm, its state is left unchanged, but the update completely overwrites the previous configuration of the alarm.
+
+If you are an IAM user, you must have `iam:CreateServiceLinkedRole` to create a composite alarm that has Systems Manager OpsItem actions.>
+
+  take actions-enabled
+    like native-boolean
+    note <Indicates whether actions should be executed during any changes to the alarm state of the composite alarm. The default is `TRUE`.>
+    void take
+  take alarm-actions
+    like list
+      like resource-name
+    note <The actions to execute when this alarm transitions to the `ALARM` state from any other state. Each action is specified as an Amazon Resource Name (ARN).
+
+Valid Values: `arn:aws:sns:_region_:_account-id_:_sns-topic-name_` | `arn:aws:ssm:_region_:_account-id_:opsitem:_severity_`>
+    void take
+  take alarm-description
+    like native-string
+    note <The description for the composite alarm.>
+    void take
+  take alarm-name
+    like native-string
+    note <The name for the composite alarm. This name must be unique within the Region.>
+  take alarm-rule
+    like native-string
+    note <An expression that specifies which other alarms are to be evaluated to determine this composite alarm's state. For each alarm that you reference, you designate a function that specifies whether that alarm needs to be in ALARM state, OK state, or INSUFFICIENT_DATA state. You can use operators (AND, OR and NOT) to combine multiple functions in a single expression. You can use parenthesis to logically group the functions in your expression.
+
+You can use either alarm names or ARNs to reference the other alarms that are to be evaluated.
+
+Functions can include the following:
+
+- `ALARM("_alarm-name_ or _alarm-ARN_")` is TRUE if the named alarm is in ALARM state.
+
+- `OK("_alarm-name_ or _alarm-ARN_")` is TRUE if the named alarm is in OK state.
+
+- `INSUFFICIENT_DATA("_alarm-name_ or _alarm-ARN_")` is TRUE if the named alarm is in INSUFFICIENT_DATA state.
+
+- `TRUE` always evaluates to TRUE.
+
+- `FALSE` always evaluates to FALSE.
+
+TRUE and FALSE are useful for testing a complex `AlarmRule` structure, and for testing your alarm actions.
+
+Alarm names specified in `AlarmRule` can be surrounded with double-quotes ("), but do not have to be.
+
+The following are some examples of `AlarmRule`:
+
+- `ALARM(CPUUtilizationTooHigh) AND ALARM(DiskReadOpsTooHigh)` specifies that the composite alarm goes into ALARM state only if both CPUUtilizationTooHigh and DiskReadOpsTooHigh alarms are in ALARM state.
+
+- `ALARM(CPUUtilizationTooHigh) AND NOT ALARM(DeploymentInProgress)` specifies that the alarm goes to ALARM state if CPUUtilizationTooHigh is in ALARM state and DeploymentInProgress is not in ALARM state. This example reduces alarm noise during a known deployment window.
+
+- `(ALARM(CPUUtilizationTooHigh) OR ALARM(DiskReadOpsTooHigh)) AND OK(NetworkOutTooHigh)` goes into ALARM state if CPUUtilizationTooHigh OR DiskReadOpsTooHigh is in ALARM state, and if NetworkOutTooHigh is in OK state. This provides another example of using a composite alarm to prevent noise. This rule ensures that you are not notified with an alarm action on high CPU or disk usage if a known network problem is also occurring.
+
+The `AlarmRule` can specify as many as 100 "children" alarms. The `AlarmRule` expression can have as many as 500 elements. Elements are child alarms, TRUE or FALSE statements, and parentheses.>
+  take insufficient-data-actions
+    like list
+      like resource-name
+    note <The actions to execute when this alarm transitions to the `INSUFFICIENT_DATA` state from any other state. Each action is specified as an Amazon Resource Name (ARN).
+
+Valid Values: `arn:aws:sns:_region_:_account-id_:_sns-topic-name_`>
+    void take
+  take ok-actions
+    like list
+      like resource-name
+    note <The actions to execute when this alarm transitions to an `OK` state from any other state. Each action is specified as an Amazon Resource Name (ARN).
+
+Valid Values: `arn:aws:sns:_region_:_account-id_:_sns-topic-name_`>
+    void take
+  take tags
+    like list
+      like tag
+    note <A list of key-value pairs to associate with the composite alarm. You can associate as many as 50 tags with an alarm.
+
+Tags can help you organize and categorize your resources. You can also use them to scope user permissions, by granting a user permission to access or change only resources with certain tag values.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=PutCompositeAlarm>
+
+  find <ActionsEnabled>, loan actions-enabled
+  find <AlarmActions>, loan alarm-actions
+  find <AlarmDescription>, loan alarm-description
+  find <AlarmName>, loan alarm-name
+  find <AlarmRule>, loan alarm-rule
+  find <InsufficientDataActions>, loan insufficient-data-actions
+  find <OKActions>, loan ok-actions
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like limit-exceeded-fault
+    note <LimitExceededFault>

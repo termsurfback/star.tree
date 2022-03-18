@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/invalid-argument-exception
+  take form invalid-argument-exception
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot merge-shards, name <MergeShards>
+  note <Merges two adjacent shards in a Kinesis data stream and combines them into a single shard to reduce the stream's capacity to ingest and transport data. Two shards are considered adjacent if the union of the hash key ranges for the two shards form a contiguous set with no gaps. For example, if you have two shards, one with a hash key range of 276...381 and the other with a hash key range of 382...454, then you could merge these two shards into a single shard that would have a hash key range of 276...454. After the merge, the single child shard receives data for all hash key values covered by the two parent shards.
+
+`MergeShards` is called when there is a need to reduce the overall capacity of a stream because of excess capacity that is not being used. You must specify the shard to be merged and the adjacent shard for a stream. For more information about merging shards, see [Merge Two Shards](https://docs.aws.amazon.com/kinesis/latest/dev/kinesis-using-sdk-java-resharding-merge.html) in the _Amazon Kinesis Data Streams Developer Guide_.
+
+If the stream is in the `ACTIVE` state, you can call `MergeShards`. If a stream is in the `CREATING`, `UPDATING`, or `DELETING` state, `MergeShards` returns a `ResourceInUseException`. If the specified stream does not exist, `MergeShards` returns a `ResourceNotFoundException`.
+
+You can use DescribeStream to check the state of the stream, which is returned in `StreamStatus`.
+
+`MergeShards` is an asynchronous operation. Upon receiving a `MergeShards` request, Amazon Kinesis Data Streams immediately returns a response and sets the `StreamStatus` to `UPDATING`. After the operation is completed, Kinesis Data Streams sets the `StreamStatus` to `ACTIVE`. Read and write operations continue to work while the stream is in the `UPDATING` state.
+
+You use DescribeStream to determine the shard IDs that are specified in the `MergeShards` request.
+
+If you try to operate on too many streams in parallel using CreateStream, DeleteStream, `MergeShards`, or SplitShard, you receive a `LimitExceededException`.
+
+`MergeShards` has a limit of five transactions per second per account.>
+
+  take x-amz-target
+    like native-string
+  take merge-shards-input, like merge-shards-input
+
+  line </#X-Amz-Target=Kinesis_20131202.MergeShards>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan merge-shards-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>
+  loot 482
+    seed json, like invalid-argument-exception
+    note <InvalidArgumentException>
+  loot 483
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>

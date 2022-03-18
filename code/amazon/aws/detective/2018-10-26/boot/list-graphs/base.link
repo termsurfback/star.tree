@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/list-graphs-body
+  take form list-graphs-body
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/list-graphs-response
+  take form list-graphs-response
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-graphs, name <ListGraphs>
+  note <Returns the list of behavior graphs that the calling account is an administrator account of. This operation can only be called by an administrator account.
+
+Because an account can currently only be the administrator of one behavior graph within a Region, the results always contain a single behavior graph.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-graphs-body, like list-graphs-body
+
+  line </graphs/list>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-graphs-body
+
+  loot 200
+    seed json, like list-graphs-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>

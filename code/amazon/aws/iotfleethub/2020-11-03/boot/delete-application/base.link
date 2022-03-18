@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/iotfleethub/2020-11-03/base/delete-application-response
+  take form delete-application-response
+
+load @drumwork/snow/amazonaws.com/iotfleethub/2020-11-03/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iotfleethub/2020-11-03/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iotfleethub/2020-11-03/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iotfleethub/2020-11-03/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-application, name <DeleteApplication>
+  note <Deletes a Fleet Hub for AWS IoT Device Management web application.
+
+Fleet Hub for AWS IoT Device Management is in public preview and is subject to change.>
+
+  take application-id
+    like native-string
+    note <The unique Id of the web application.>
+  take client-token
+    like native-string
+    note <A unique case-sensitive identifier that you can provide to ensure the idempotency of the request. Don't reuse this client token if a new idempotent request is required.>
+    void take
+
+  line </applications/{application-id}>
+
+  find <clientToken>, loan client-token
+
+  loot 204
+    seed json, like delete-application-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>

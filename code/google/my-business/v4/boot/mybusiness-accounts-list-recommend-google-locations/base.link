@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/my-business/v4/base/list-recommended-google-locations-response
+  take form list-recommended-google-locations-response
+
+boot mybusiness-accounts-list-recommend-google-locations, name <mybusiness.accounts.listRecommendGoogleLocations>
+  note <List all the GoogleLocations that have been recommended to the specified Business Profile account. Recommendations are provided for personal accounts and location groups only, requests for all other account types will result in an error. The recommendations for location groups are based on the locations in that group. The recommendations for personal accounts are based on all of the locations that the user has access to on Business Profile (which includes locations they can access through location groups), and is a superset of all recommendations generated for the user.>
+
+  take name
+    like native-string
+    note <Name of the account resource to fetch recommended Google locations for.>
+  take page-size
+    like native-integer
+    note <How many locations to fetch per page. Default is 25, minimum is 1, and maximum page size is 100.>
+    void take
+  take page-token
+    like native-string
+    note <If specified, the next page of locations is retrieved.>
+    void take
+
+  line </v4/{name}:recommendGoogleLocations>
+
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-recommended-google-locations-response
+    note <Successful response>

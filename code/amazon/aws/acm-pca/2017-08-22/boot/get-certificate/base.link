@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/get-certificate-response
+  take form get-certificate-response
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/invalid-arn-exception
+  take form invalid-arn-exception
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/invalid-state-exception
+  take form invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/request-failed-exception
+  take form request-failed-exception
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/request-in-progress-exception
+  take form request-in-progress-exception
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-certificate, name <GetCertificate>
+  note <Retrieves a certificate from your private CA or one that has been shared with you. The ARN of the certificate is returned when you call the [IssueCertificate](https://docs.aws.amazon.com/acm-pca/latest/APIReference/API_IssueCertificate.html) action. You must specify both the ARN of your private CA and the ARN of the issued certificate when calling the **GetCertificate** action. You can retrieve the certificate if it is in the **ISSUED** state. You can call the [CreateCertificateAuthorityAuditReport](https://docs.aws.amazon.com/acm-pca/latest/APIReference/API_CreateCertificateAuthorityAuditReport.html) action to create a report that contains information about all of the certificates issued and revoked by your private CA.>
+
+  take x-amz-target
+    like native-string
+  take get-certificate-request, like get-certificate-request
+
+  line </#X-Amz-Target=ACMPrivateCA.GetCertificate>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-certificate-request
+
+  loot 200
+    seed json, like get-certificate-response
+    note <Success>
+  loot 480
+    seed json, like request-in-progress-exception
+    note <RequestInProgressException>
+  loot 481
+    seed json, like request-failed-exception
+    note <RequestFailedException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like invalid-arn-exception
+    note <InvalidArnException>
+  loot 484
+    seed json, like invalid-state-exception
+    note <InvalidStateException>

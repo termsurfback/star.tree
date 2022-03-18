@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/list-layer-versions-response
+  take form list-layer-versions-response
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-layer-versions, name <ListLayerVersions>
+  note <Lists the versions of an [Lambda layer](https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html). Versions that have been deleted aren't listed. Specify a [runtime identifier](https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html) to list only versions that indicate that they're compatible with that runtime.>
+
+  take layer-name
+    like native-string
+    note <The name or Amazon Resource Name (ARN) of the layer.>
+  take compatible-runtime
+    like native-string
+    note <A runtime identifier. For example, `go1.x`.>
+    void take
+  take marker
+    like native-string
+    note <A pagination token returned by a previous call.>
+    void take
+  take max-items
+    like native-integer
+    note <The maximum number of versions to return.>
+    void take
+
+  line </2018-10-31/layers/{layer-name}/versions>
+
+  find <CompatibleRuntime>, loan compatible-runtime
+  find <Marker>, loan marker
+  find <MaxItems>, loan max-items
+
+  loot 200
+    seed json, like list-layer-versions-response
+    note <Success>
+  loot 480
+    seed json, like service-exception
+    note <ServiceException>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>

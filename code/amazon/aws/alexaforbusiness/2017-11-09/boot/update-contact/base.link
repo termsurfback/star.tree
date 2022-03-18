@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/update-contact-response
+  take form update-contact-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-contact, name <UpdateContact>
+  note <Updates the contact details by the contact ARN.>
+
+  take x-amz-target
+    like native-string
+  take update-contact-request, like update-contact-request
+
+  line </#X-Amz-Target=AlexaForBusiness.UpdateContact>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-contact-request
+
+  loot 200
+    seed json, like update-contact-response
+    note <Success>
+  loot 480
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 481
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>

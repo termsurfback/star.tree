@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/describe-server-response
+  take form describe-server-response
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-server, name <DescribeServer>
+  note <Describes a file transfer protocol-enabled server that you specify by passing the `ServerId` parameter.
+
+The response contains a description of a server's properties. When you set `EndpointType` to VPC, the response will contain the `EndpointDetails`.>
+
+  take x-amz-target
+    like native-string
+  take describe-server-request, like describe-server-request
+
+  line </#X-Amz-Target=TransferService.DescribeServer>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-server-request
+
+  loot 200
+    seed json, like describe-server-response
+    note <Success>
+  loot 480
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 481
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 482
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

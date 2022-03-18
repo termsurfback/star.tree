@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/redshift-data/2019-12-20/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/redshift-data/2019-12-20/base/list-statements-response
+  take form list-statements-response
+
+load @drumwork/snow/amazonaws.com/redshift-data/2019-12-20/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-statements, name <ListStatements>
+  note <List of SQL statements. By default, only finished statements are shown. A token is returned to page through the statement list.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-statements-request, like list-statements-request
+
+  line </#X-Amz-Target=RedshiftData.ListStatements>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-statements-request
+
+  loot 200
+    seed json, like list-statements-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>

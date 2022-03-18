@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/sdb/2009-04-15/base/get-attributes-result
+  take form get-attributes-result
+
+load @drumwork/snow/amazonaws.com/sdb/2009-04-15/base/no-such-domain
+  take form no-such-domain
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-get-attributes, name <GET_GetAttributes>
+  note <Returns all of the attributes associated with the specified item. Optionally, the attributes returned can be limited to one or more attributes by specifying an attribute name parameter.
+
+If the item does not exist on the replica that was accessed for this operation, an empty set is returned. The system does not return an error as it cannot guarantee the item does not exist on other replicas.
+
+If GetAttributes is called without being passed any attribute names, all the attributes for the item are returned.>
+
+  take domain-name
+    like native-string
+    note <The name of the domain in which to perform the operation.>
+  take item-name
+    like native-string
+    note <The name of the item.>
+  take attribute-names
+    like list
+      like string
+    note <The names of the attributes.>
+    void take
+  take consistent-read
+    like native-boolean
+    note <Determines whether or not strong consistency should be enforced when data is read from SimpleDB. If `true`, any data previously written to SimpleDB will be returned. Otherwise, results will be consistent eventually, and the client may not see data that was written immediately before your read.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=GetAttributes>
+
+  find <DomainName>, loan domain-name
+  find <ItemName>, loan item-name
+  find <AttributeNames>, loan attribute-names
+  find <ConsistentRead>, loan consistent-read
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like get-attributes-result
+    note <Success>
+  loot 400
+    seed xml, like no-such-domain
+    note <NoSuchDomain>

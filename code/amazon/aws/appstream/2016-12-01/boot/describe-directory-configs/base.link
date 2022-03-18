@@ -1,0 +1,31 @@
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/describe-directory-configs-result
+  take form describe-directory-configs-result
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-directory-configs, name <DescribeDirectoryConfigs>
+  note <Retrieves a list that describes one or more specified Directory Config objects for AppStream 2.0, if the names for these objects are provided. Otherwise, all Directory Config objects in the account are described. These objects include the configuration information required to join fleets and image builders to Microsoft Active Directory domains.
+
+Although the response syntax in this topic includes the account password, this password is not returned in the actual response.>
+
+  take x-amz-target
+    like native-string
+  take describe-directory-configs-request, like describe-directory-configs-request
+
+  line </#X-Amz-Target=PhotonAdminProxyService.DescribeDirectoryConfigs>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-directory-configs-request
+
+  loot 200
+    seed json, like describe-directory-configs-result
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

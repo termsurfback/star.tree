@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/authorization-already-exists-fault
+  take form authorization-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/authorization-quota-exceeded-fault
+  take form authorization-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/authorize-cluster-security-group-ingress-result
+  take form authorize-cluster-security-group-ingress-result
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-security-group-not-found-fault
+  take form cluster-security-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-security-group-state-fault
+  take form invalid-cluster-security-group-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-authorize-cluster-security-group-ingress, name <POST_AuthorizeClusterSecurityGroupIngress>
+  note <Adds an inbound (ingress) rule to an Amazon Redshift security group. Depending on whether the application accessing your cluster is running on the Internet or an Amazon EC2 instance, you can authorize inbound access to either a Classless Interdomain Routing (CIDR)/Internet Protocol (IP) range or to an Amazon EC2 security group. You can add as many as 20 ingress rules to an Amazon Redshift security group.
+
+If you authorize access to an Amazon EC2 security group, specify _EC2SecurityGroupName_ and _EC2SecurityGroupOwnerId_. The Amazon EC2 security group and Amazon Redshift cluster must be in the same Amazon Web Services Region.
+
+If you authorize access to a CIDR/IP address range, specify _CIDRIP_. For an overview of CIDR blocks, see the Wikipedia article on [Classless Inter-Domain Routing](http://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing).
+
+You must also associate the security group with a cluster so that clients running on these IP addresses or the EC2 instance are authorized to connect to the cluster. For information about managing security groups, go to [Working with Security Groups](https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-security-groups.html) in the _Amazon Redshift Cluster Management Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take authorize-cluster-security-group-ingress-message, like authorize-cluster-security-group-ingress-message
+    void take
+
+  line </#Action=AuthorizeClusterSecurityGroupIngress>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan authorize-cluster-security-group-ingress-message
+
+  loot 200
+    seed xml, like authorize-cluster-security-group-ingress-result
+    note <Success>
+  loot 480
+    seed xml, like cluster-security-group-not-found-fault
+    note <ClusterSecurityGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-cluster-security-group-state-fault
+    note <InvalidClusterSecurityGroupStateFault>
+  loot 482
+    seed xml, like authorization-already-exists-fault
+    note <AuthorizationAlreadyExistsFault>
+  loot 483
+    seed xml, like authorization-quota-exceeded-fault
+    note <AuthorizationQuotaExceededFault>

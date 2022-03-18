@@ -1,0 +1,67 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/replication-group-message
+  take form replication-group-message
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/replication-group-not-found-fault
+  take form replication-group-not-found-fault
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-replication-groups, name <GET_DescribeReplicationGroups>
+  note <Returns information about a particular replication group. If no identifier is specified, `DescribeReplicationGroups` returns information about all replication groups.
+
+This operation is valid for Redis only.>
+
+  take replication-group-id
+    like native-string
+    note <The identifier for the replication group to be described. This parameter is not case sensitive.
+
+If you do not specify this parameter, information about all replication groups is returned.>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of records to include in the response. If more records exist than the specified `MaxRecords` value, a marker is included in the response so that the remaining results can be retrieved.
+
+Default: 100
+
+Constraints: minimum 20; maximum 100.>
+    void take
+  take marker
+    like native-string
+    note <An optional marker returned from a prior request. Use this marker for pagination of results from this operation. If this parameter is specified, the response includes only records beyond the marker, up to the value specified by `MaxRecords`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeReplicationGroups>
+
+  find <ReplicationGroupId>, loan replication-group-id
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like replication-group-message
+    note <Success>
+  loot 480
+    seed xml, like replication-group-not-found-fault
+    note <ReplicationGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

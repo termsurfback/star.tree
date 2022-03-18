@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/associate-device-with-room-response
+  take form associate-device-with-room-response
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/device-not-registered-exception
+  take form device-not-registered-exception
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot associate-device-with-room, name <AssociateDeviceWithRoom>
+  note <Associates a device with a given room. This applies all the settings from the room profile to the device, and all the skills in any skill groups added to that room. This operation requires the device to be online, or else a manual sync is required.>
+
+  take x-amz-target
+    like native-string
+  take associate-device-with-room-request, like associate-device-with-room-request
+
+  line </#X-Amz-Target=AlexaForBusiness.AssociateDeviceWithRoom>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan associate-device-with-room-request
+
+  loot 200
+    seed json, like associate-device-with-room-response
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>
+  loot 482
+    seed json, like device-not-registered-exception
+    note <DeviceNotRegisteredException>

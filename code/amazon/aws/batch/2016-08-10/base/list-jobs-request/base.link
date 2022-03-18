@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/job-status
+  take form job-status
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/list-jobs-filter-list
+  take form list-jobs-filter-list
+
+load @drumwork/snow/base/integer
+  take form integer
+
+load @drumwork/snow/base/string
+  take form string
+
+form list-jobs-request, name <ListJobsRequest>
+  note <Contains the parameters for `ListJobs`.>
+  take job-queue, name <jobQueue>
+    like string
+    void take
+    note <The name or full Amazon Resource Name (ARN) of the job queue used to list jobs.>
+  take array-job-id, name <arrayJobId>
+    like string
+    void take
+    note <The job ID for an array job. Specifying an array job ID with this parameter lists all child jobs from within the specified array.>
+  take multi-node-job-id, name <multiNodeJobId>
+    like string
+    void take
+    note <The job ID for a multi-node parallel job. Specifying a multi-node parallel job ID with this parameter lists all nodes that are associated with the specified job.>
+  take job-status, name <jobStatus>
+    like job-status
+    void take
+    note <The job status used to filter jobs in the specified queue. If the `filters` parameter is specified, the `jobStatus` parameter is ignored and jobs with any status are returned. If you don't specify a status, only `RUNNING` jobs are returned.>
+  take max-results, name <maxResults>
+    like integer
+    void take
+    note <The maximum number of results returned by `ListJobs` in paginated output. When this parameter is used, `ListJobs` only returns `maxResults` results in a single page and a `nextToken` response element. The remaining results of the initial request can be seen by sending another `ListJobs` request with the returned `nextToken` value. This value can be between 1 and 100. If this parameter isn't used, then `ListJobs` returns up to 100 results and a `nextToken` value if applicable.>
+  take next-token, name <nextToken>
+    like string
+    void take
+    note <The `nextToken` value returned from a previous paginated `ListJobs` request where `maxResults` was used and the results exceeded the value of that parameter. Pagination continues from the end of the previous results that returned the `nextToken` value. This value is `null` when there are no more results to return.
+
+This token should be treated as an opaque identifier that's only used to retrieve the next items in a list and not for other programmatic purposes.>
+  take filters, name <filters>
+    like list-jobs-filter-list
+    void take
+    note <The filter to apply to the query. Only one filter can be used at a time. When the filter is used, `jobStatus` is ignored. The filter doesn't apply to child jobs in an array or multi-node parallel (MNP) jobs. The results are sorted by the `createdAt` field, with the most recent jobs being first.
+
+JOB_NAME
+
+The value of the filter is a case-insensitive match for the job name. If the value ends with an asterisk (*), the filter will match any job name that begins with the string before the '*'. This corresponds to the `jobName` value. For example, `test1` matches both `Test1` and `test1`, and `test1*` matches both `test1` and `Test10`. When the `JOB_NAME` filter is used, the results are grouped by the job name and version.
+
+JOB_DEFINITION
+
+The value for the filter is the name or Amazon Resource Name (ARN) of the job definition. This corresponds to the `jobDefinition` value. The value is case sensitive. When the value for the filter is the job definition name, the results include all the jobs that used any revision of that job definition name. If the value ends with an asterisk (*), the filter will match any job definition name that begins with the string before the '*'. For example, `jd1` matches only `jd1`, and `jd1*` matches both `jd1` and `jd1A`. The version of the job definition that's used doesn't affect the sort order. When the `JOB_DEFINITION` filter is used and the ARN is used (which is in the form `arn:${Partition}:batch:${Region}:${Account}:job-definition/${JobDefinitionName}:${Revision}`), the results include jobs that used the specified revision of the job definition. Asterisk (*) is not supported when the ARN is used.
+
+BEFORE_CREATED_AT
+
+The value for the filter is the time that's before the job was created. This corresponds to the `createdAt` value. The value is a string representation of the number of seconds since 00:00:00 UTC (midnight) on January 1, 1970.
+
+AFTER_CREATED_AT
+
+The value for the filter is the time that's after the job was created. This corresponds to the `createdAt` value. The value is a string representation of the number of seconds since 00:00:00 UTC (midnight) on January 1, 1970.>

@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/describe-repositories-response
+  take form describe-repositories-response
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/repository-not-found-exception
+  take form repository-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-repositories, name <DescribeRepositories>
+  note <Describes repositories in a public registry.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-repositories-request, like describe-repositories-request
+
+  line </#X-Amz-Target=SpencerFrontendService.DescribeRepositories>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan describe-repositories-request
+
+  loot 200
+    seed json, like describe-repositories-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like repository-not-found-exception
+    note <RepositoryNotFoundException>

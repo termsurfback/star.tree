@@ -1,0 +1,75 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/create-open-id-connect-provider-response
+  take form create-open-id-connect-provider-response
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/entity-already-exists-exception
+  take form entity-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-open-id-connect-provider, name <POST_CreateOpenIDConnectProvider>
+  note <Creates an IAM entity to describe an identity provider (IdP) that supports [OpenID Connect (OIDC)](http://openid.net/connect/).
+
+The OIDC provider that you create with this operation can be used as a principal in a role's trust policy. Such a policy establishes a trust relationship between Amazon Web Services and the OIDC provider.
+
+If you are using an OIDC identity provider from Google, Facebook, or Amazon Cognito, you don't need to create a separate IAM identity provider. These OIDC identity providers are already built-in to Amazon Web Services and are available for your use. Instead, you can move directly to creating new roles using your identity provider. To learn more, see [Creating a role for web identity or OpenID connect federation](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-idp_oidc.html) in the _IAM User Guide_.
+
+When you create the IAM OIDC provider, you specify the following:
+
+- The URL of the OIDC identity provider (IdP) to trust
+
+- A list of client IDs (also known as audiences) that identify the application or applications allowed to authenticate using the OIDC provider
+
+- A list of thumbprints of one or more server certificates that the IdP uses
+
+You get all of this information from the OIDC IdP that you want to use to access Amazon Web Services.
+
+Amazon Web Services secures communication with some OIDC identity providers (IdPs) through our library of trusted certificate authorities (CAs) instead of using a certificate thumbprint to verify your IdP server certificate. These OIDC IdPs include Google, and those that use an Amazon S3 bucket to host a JSON Web Key Set (JWKS) endpoint. In these cases, your legacy thumbprint remains in your configuration, but is no longer used for validation.
+
+The trust for the OIDC provider is derived from the IAM provider that this operation creates. Therefore, it is best to limit access to the CreateOpenIDConnectProvider operation to highly privileged users.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-open-id-connect-provider-request, like create-open-id-connect-provider-request
+    void take
+
+  line </#Action=CreateOpenIDConnectProvider>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-open-id-connect-provider-request
+
+  loot 200
+    seed xml, like create-open-id-connect-provider-response
+    note <Success>
+  loot 480
+    seed xml, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed xml, like entity-already-exists-exception
+    note <EntityAlreadyExistsException>
+  loot 482
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 483
+    seed xml, like concurrent-modification-exception
+    note <ConcurrentModificationException>
+  loot 484
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/limit-exceeded-fault
+  take form limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/service-linked-role-failure
+  take form service-linked-role-failure
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-put-notification-configuration, name <POST_PutNotificationConfiguration>
+  note <Configures an Auto Scaling group to send notifications when specified events take place. Subscribers to the specified topic can have messages delivered to an endpoint such as a web server or an email address.
+
+This configuration overwrites any existing configuration.
+
+For more information, see [Getting Amazon SNS notifications when your Auto Scaling group scales](https://docs.aws.amazon.com/autoscaling/ec2/userguide/ASGettingNotifications.html) in the _Amazon EC2 Auto Scaling User Guide_.
+
+If you exceed your maximum limit of SNS topics, which is 10 per Auto Scaling group, the call fails.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take put-notification-configuration-type, like put-notification-configuration-type
+    void take
+
+  line </#Action=PutNotificationConfiguration>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan put-notification-configuration-type
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like limit-exceeded-fault
+    note <LimitExceededFault>
+  loot 481
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>
+  loot 482
+    seed xml, like service-linked-role-failure
+    note <ServiceLinkedRoleFailure>

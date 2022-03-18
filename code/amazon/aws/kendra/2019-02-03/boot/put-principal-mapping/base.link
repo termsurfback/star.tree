@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/kendra/2019-02-03/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/kendra/2019-02-03/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/kendra/2019-02-03/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/kendra/2019-02-03/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/kendra/2019-02-03/base/service-quota-exceeded-exception
+  take form service-quota-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/kendra/2019-02-03/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/kendra/2019-02-03/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-principal-mapping, name <PutPrincipalMapping>
+  note <Maps users to their groups. You can also map sub groups to groups. For example, the group "Company Intellectual Property Teams" includes sub groups "Research" and "Engineering". These sub groups include their own list of users or people who work in these teams. Only users who work in research and engineering, and therefore belong in the intellectual property group, can see top-secret company documents in their search results.
+
+You map users to their groups when you want to filter search results for different users based on their group’s access to documents. For more information on filtering search results for different users, see [Filtering on user context](https://docs.aws.amazon.com/kendra/latest/dg/user-context-filter.html).
+
+If more than five `PUT` actions for a group are currently processing, a validation exception is thrown.>
+
+  take x-amz-target
+    like native-string
+  take put-principal-mapping-request, like put-principal-mapping-request
+
+  line </#X-Amz-Target=AWSKendraFrontendService.PutPrincipalMapping>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan put-principal-mapping-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 485
+    seed json, like service-quota-exceeded-exception
+    note <ServiceQuotaExceededException>
+  loot 486
+    seed json, like internal-server-exception
+    note <InternalServerException>

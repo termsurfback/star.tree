@@ -1,0 +1,48 @@
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/describe-log-groups-response
+  take form describe-log-groups-response
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-log-groups, name <DescribeLogGroups>
+  note <Lists the specified log groups. You can list all your log groups or filter the results by prefix. The results are ASCII-sorted by log group name.
+
+CloudWatch Logs doesn’t support IAM policies that control access to the `DescribeLogGroups` action by using the `aws:ResourceTag/_key-name_` condition key. Other CloudWatch Logs actions do support the use of the `aws:ResourceTag/_key-name_` condition key to control access. For more information about using tags to control access, see [Controlling access to Amazon Web Services resources using tags](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_tags.html).>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-log-groups-request, like describe-log-groups-request
+
+  line </#X-Amz-Target=Logs_20140328.DescribeLogGroups>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <limit>, loan limit
+  find <nextToken>, loan next-token
+
+  seed json, loan describe-log-groups-request
+
+  loot 200
+    seed json, like describe-log-groups-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

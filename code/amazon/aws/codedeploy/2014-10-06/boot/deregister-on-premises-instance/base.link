@@ -1,0 +1,31 @@
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/instance-name-required-exception
+  take form instance-name-required-exception
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/invalid-instance-name-exception
+  take form invalid-instance-name-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot deregister-on-premises-instance, name <DeregisterOnPremisesInstance>
+  note <Deregisters an on-premises instance.>
+
+  take x-amz-target
+    like native-string
+  take deregister-on-premises-instance-input, like deregister-on-premises-instance-input
+
+  line </#X-Amz-Target=CodeDeploy_20141006.DeregisterOnPremisesInstance>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan deregister-on-premises-instance-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like instance-name-required-exception
+    note <InstanceNameRequiredException>
+  loot 481
+    seed json, like invalid-instance-name-exception
+    note <InvalidInstanceNameException>

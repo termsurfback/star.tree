@@ -1,0 +1,43 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/jobs/v3/base/list-jobs-response
+  take form list-jobs-response
+
+boot jobs-projects-jobs-list, name <jobs.projects.jobs.list>
+  note <Lists jobs by filter.>
+
+  take parent
+    like native-string
+    note <Required. The resource name of the project under which the job is created. The format is "projects/{project_id}", for example, "projects/api-test-project".>
+  take filter
+    like native-string
+    note <Required. The filter string specifies the jobs to be enumerated. Supported operator: =, AND The fields eligible for filtering are: * `companyName` * `requisitionId` * `status` Available values: OPEN, EXPIRED, ALL. Defaults to OPEN if no value is specified. At least one of `companyName` and `requisitionId` must present or an INVALID_ARGUMENT error is thrown. Sample Query: * companyName = "projects/api-test-project/companies/123" * companyName = "projects/api-test-project/companies/123" AND requisitionId = "req-1" * companyName = "projects/api-test-project/companies/123" AND status = "EXPIRED" * requisitionId = "req-1" * requisitionId = "req-1" AND status = "EXPIRED">
+    void take
+  take job-view
+    like native-string
+    note <Optional. The desired job attributes returned for jobs in the search response. Defaults to JobView.JOB_VIEW_FULL if no value is specified.>
+    void take
+  take page-size
+    like native-integer
+    note <Optional. The maximum number of jobs to be returned per page of results. If job_view is set to JobView.JOB_VIEW_ID_ONLY, the maximum allowed page size is 1000. Otherwise, the maximum allowed page size is 100. Default is 100 if empty or a number &lt; 1 is specified.>
+    void take
+  take page-token
+    like native-string
+    note <Optional. The starting point of a query result.>
+    void take
+
+  line </v3/{parent}/jobs>
+
+  find <filter>, loan filter
+  find <jobView>, loan job-view
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-jobs-response
+    note <Successful response>

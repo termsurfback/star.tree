@@ -1,0 +1,78 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-worker, name <ListWorker>
+  take workspace-sid
+    like native-string
+    note <The SID of the Workspace with the Workers to read.>
+  take activity-name
+    like native-string
+    note <The \`activity\_name\` of the Worker resources to read.>
+    void take
+  take activity-sid
+    like native-string
+    note <The \`activity\_sid\` of the Worker resources to read.>
+    void take
+  take available
+    like native-string
+    note <Whether to return only Worker resources that are available or unavailable. Can be \`true\`, \`1\`, or \`yes\` to return Worker resources that are available, and \`false\`, or any value returns the Worker resources that are not available.>
+    void take
+  take friendly-name
+    like native-string
+    note <The \`friendly\_name\` of the Worker resources to read.>
+    void take
+  take target-workers-expression
+    like native-string
+    note <Filter by Workers that would match an expression on a TaskQueue. This is helpful for debugging which Workers would match a potential queue.>
+    void take
+  take task-queue-name
+    like native-string
+    note <The \`friendly\_name\` of the TaskQueue that the Workers to read are eligible for.>
+    void take
+  take task-queue-sid
+    like native-string
+    note <The SID of the TaskQueue that the Workers to read are eligible for.>
+    void take
+  take page-size
+    like native-integer
+    note <How many resources to return in each list page. The default is 50, and the maximum is 1000.>
+    void take
+
+  line </v1/Workspaces/{workspace-sid}/Workers>
+
+  find <ActivityName>, loan activity-name
+  find <ActivitySid>, loan activity-sid
+  find <Available>, loan available
+  find <FriendlyName>, loan friendly-name
+  find <TargetWorkersExpression>, loan target-workers-expression
+  find <TaskQueueName>, loan task-queue-name
+  find <TaskQueueSid>, loan task-queue-sid
+  find <PageSize>, loan page-size
+
+  loot 200
+    seed json
+      like form
+        like take meta, name <meta>
+        like   like form
+        like     take first-page-url, name <first_page_url>
+        like       void take
+        like     take key, name <key>
+        like       void take
+        like     take next-page-url, name <next_page_url>
+        like       void take
+        like     take page, name <page>
+        like       void take
+        like     take page-size, name <page_size>
+        like       void take
+        like     take previous-page-url, name <previous_page_url>
+        like       void take
+        like     take url, name <url>
+        like       void take
+        like   void take
+        like take workers, name <workers>
+        like   void take
+    note <OK>

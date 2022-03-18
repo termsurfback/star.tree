@@ -1,0 +1,76 @@
+
+load @drumwork/snow/amazonaws.com/codecommit/2015-04-13/base/comment-deleted-exception
+  take form comment-deleted-exception
+
+load @drumwork/snow/amazonaws.com/codecommit/2015-04-13/base/comment-does-not-exist-exception
+  take form comment-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/codecommit/2015-04-13/base/comment-id-required-exception
+  take form comment-id-required-exception
+
+load @drumwork/snow/amazonaws.com/codecommit/2015-04-13/base/get-comment-reactions-output
+  take form get-comment-reactions-output
+
+load @drumwork/snow/amazonaws.com/codecommit/2015-04-13/base/invalid-comment-id-exception
+  take form invalid-comment-id-exception
+
+load @drumwork/snow/amazonaws.com/codecommit/2015-04-13/base/invalid-continuation-token-exception
+  take form invalid-continuation-token-exception
+
+load @drumwork/snow/amazonaws.com/codecommit/2015-04-13/base/invalid-max-results-exception
+  take form invalid-max-results-exception
+
+load @drumwork/snow/amazonaws.com/codecommit/2015-04-13/base/invalid-reaction-user-arn-exception
+  take form invalid-reaction-user-arn-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-comment-reactions, name <GetCommentReactions>
+  note <Returns information about reactions to a specified comment ID. Reactions from users who have been deleted will not be included in the count.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-comment-reactions-input, like get-comment-reactions-input
+
+  line </#X-Amz-Target=CodeCommit_20150413.GetCommentReactions>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan get-comment-reactions-input
+
+  loot 200
+    seed json, like get-comment-reactions-output
+    note <Success>
+  loot 480
+    seed json, like comment-does-not-exist-exception
+    note <CommentDoesNotExistException>
+  loot 481
+    seed json, like comment-id-required-exception
+    note <CommentIdRequiredException>
+  loot 482
+    seed json, like invalid-comment-id-exception
+    note <InvalidCommentIdException>
+  loot 483
+    seed json, like invalid-reaction-user-arn-exception
+    note <InvalidReactionUserArnException>
+  loot 484
+    seed json, like invalid-max-results-exception
+    note <InvalidMaxResultsException>
+  loot 485
+    seed json, like invalid-continuation-token-exception
+    note <InvalidContinuationTokenException>
+  loot 486
+    seed json, like comment-deleted-exception
+    note <CommentDeletedException>

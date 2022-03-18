@@ -1,0 +1,44 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/describe-insight-rules-output
+  take form describe-insight-rules-output
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-insight-rules, name <GET_DescribeInsightRules>
+  note <Returns a list of all the Contributor Insights rules in your account.
+
+For more information about Contributor Insights, see [Using Contributor Insights to Analyze High-Cardinality Data](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContributorInsights.html).>
+
+  take next-token
+    like native-string
+    note <Include this value, if it was returned by the previous operation, to get the next set of rules.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return in one operation. If you omit this parameter, the default of 500 is used.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeInsightRules>
+
+  find <NextToken>, loan next-token
+  find <MaxResults>, loan max-results
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-insight-rules-output
+    note <Success>
+  loot 480
+    seed xml, like invalid-next-token
+    note <InvalidNextToken>

@@ -1,0 +1,105 @@
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/dependency-timeout-exception
+  take form dependency-timeout-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/disabled-exception
+  take form disabled-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/generate-data-key-pair-response
+  take form generate-data-key-pair-response
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-grant-token-exception
+  take form invalid-grant-token-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-key-usage-exception
+  take form invalid-key-usage-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/key-unavailable-exception
+  take form key-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-internal-exception
+  take form kms-internal-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-invalid-state-exception
+  take form kms-invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/unsupported-operation-exception
+  take form unsupported-operation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot generate-data-key-pair, name <GenerateDataKeyPair>
+  note <Generates a unique asymmetric data key pair. The `GenerateDataKeyPair` operation returns a plaintext public key, a plaintext private key, and a copy of the private key that is encrypted under the symmetric KMS key you specify. You can use the data key pair to perform asymmetric cryptography and implement digital signatures outside of KMS.
+
+You can use the public key that `GenerateDataKeyPair` returns to encrypt data or verify a signature outside of KMS. Then, store the encrypted private key with the data. When you are ready to decrypt data or sign a message, you can use the Decrypt operation to decrypt the encrypted private key.
+
+To generate a data key pair, you must specify a symmetric KMS key to encrypt the private key in a data key pair. You cannot use an asymmetric KMS key or a KMS key in a custom key store. To get the type and origin of your KMS key, use the DescribeKey operation.
+
+Use the `KeyPairSpec` parameter to choose an RSA or Elliptic Curve (ECC) data key pair. KMS recommends that your use ECC key pairs for signing, and use RSA key pairs for either encryption or signing, but not both. However, KMS cannot enforce any restrictions on the use of data key pairs outside of KMS.
+
+If you are using the data key pair to encrypt data, or for any operation where you don't immediately need a private key, consider using the GenerateDataKeyPairWithoutPlaintext operation. `GenerateDataKeyPairWithoutPlaintext` returns a plaintext public key and an encrypted private key, but omits the plaintext private key that you need only to decrypt ciphertext or sign a message. Later, when you need to decrypt the data or sign a message, use the Decrypt operation to decrypt the encrypted private key in the data key pair.
+
+`GenerateDataKeyPair` returns a unique data key pair for each request. The bytes in the keys are not related to the caller or the KMS key that is used to encrypt the private key. The public key is a DER-encoded X.509 SubjectPublicKeyInfo, as specified in [RFC 5280](https://tools.ietf.org/html/rfc5280). The private key is a DER-encoded PKCS8 PrivateKeyInfo, as specified in [RFC 5958](https://tools.ietf.org/html/rfc5958).
+
+You can use the optional encryption context to add additional security to the encryption operation. If you specify an `EncryptionContext`, you must specify the same encryption context (a case-sensitive exact match) when decrypting the encrypted data key. Otherwise, the request to decrypt fails with an `InvalidCiphertextException`. For more information, see [Encryption Context](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#encrypt_context) in the _Key Management Service Developer Guide_.
+
+The KMS key that you use for this operation must be in a compatible key state. For details, see [Key state: Effect on your KMS key](https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html) in the _Key Management Service Developer Guide_.
+
+**Cross-account use**: Yes. To perform this operation with a KMS key in a different Amazon Web Services account, specify the key ARN or alias ARN in the value of the `KeyId` parameter.
+
+**Required permissions**: [kms:GenerateDataKeyPair](https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html) (key policy)
+
+**Related operations:** - Decrypt
+
+- Encrypt
+
+- GenerateDataKey
+
+- GenerateDataKeyPairWithoutPlaintext
+
+- GenerateDataKeyWithoutPlaintext>
+
+  take x-amz-target
+    like native-string
+  take generate-data-key-pair-request, like generate-data-key-pair-request
+
+  line </#X-Amz-Target=TrentService.GenerateDataKeyPair>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan generate-data-key-pair-request
+
+  loot 200
+    seed json, like generate-data-key-pair-response
+    note <Success>
+  loot 480
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 481
+    seed json, like disabled-exception
+    note <DisabledException>
+  loot 482
+    seed json, like key-unavailable-exception
+    note <KeyUnavailableException>
+  loot 483
+    seed json, like dependency-timeout-exception
+    note <DependencyTimeoutException>
+  loot 484
+    seed json, like invalid-key-usage-exception
+    note <InvalidKeyUsageException>
+  loot 485
+    seed json, like invalid-grant-token-exception
+    note <InvalidGrantTokenException>
+  loot 486
+    seed json, like kms-internal-exception
+    note <KMSInternalException>
+  loot 487
+    seed json, like kms-invalid-state-exception
+    note <KMSInvalidStateException>
+  loot 488
+    seed json, like unsupported-operation-exception
+    note <UnsupportedOperationException>

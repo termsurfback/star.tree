@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/get-domain-permissions-policy-result
+  take form get-domain-permissions-policy-result
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-domain-permissions-policy, name <GetDomainPermissionsPolicy>
+  note <Returns the resource policy attached to the specified domain.
+
+The policy is a resource-based policy, not an identity-based policy. For more information, see [Identity-based policies and resource-based policies](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_identity-vs-resource.html) in the _AWS Identity and Access Management User Guide_.>
+
+  take domain
+    like native-string
+    note <The name of the domain to which the resource policy is attached.>
+  take domain-owner
+    like native-string
+    note <The 12-digit account number of the AWS account that owns the domain. It does not include dashes or spaces.>
+    void take
+
+  line </v1/domain/permissions/policy#domain>
+
+  find <domain>, loan domain
+  find <domain-owner>, loan domain-owner
+
+  loot 200
+    seed json, like get-domain-permissions-policy-result
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like validation-exception
+    note <ValidationException>

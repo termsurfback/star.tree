@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/update-dataset-body
+  take form update-dataset-body
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/update-dataset-response
+  take form update-dataset-response
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-dataset, name <UpdateDataset>
+  note <Modifies the definition of an existing DataBrew dataset.>
+
+  take name
+    like native-string
+    note <The name of the dataset to be updated.>
+  take update-dataset-body, like update-dataset-body
+
+  line </datasets/{name}>
+
+  seed json, loan update-dataset-body
+
+  loot 200
+    seed json, like update-dataset-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>

@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/delete-load-balancer-output
+  take form delete-load-balancer-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/load-balancer-not-found-exception
+  take form load-balancer-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/operation-not-permitted-exception
+  take form operation-not-permitted-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-load-balancer, name <GET_DeleteLoadBalancer>
+  note <Deletes the specified Application Load Balancer, Network Load Balancer, or Gateway Load Balancer. Deleting a load balancer also deletes its listeners.
+
+You can't delete a load balancer if deletion protection is enabled. If the load balancer does not exist or has already been deleted, the call succeeds.
+
+Deleting a load balancer does not affect its registered targets. For example, your EC2 instances continue to run and are still registered to their target groups. If you no longer need these EC2 instances, you can stop or terminate them.>
+
+  take load-balancer-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the load balancer.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteLoadBalancer>
+
+  find <LoadBalancerArn>, loan load-balancer-arn
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-load-balancer-output
+    note <Success>
+  loot 480
+    seed xml, like load-balancer-not-found-exception
+    note <LoadBalancerNotFoundException>
+  loot 481
+    seed xml, like operation-not-permitted-exception
+    note <OperationNotPermittedException>
+  loot 482
+    seed xml, like resource-in-use-exception
+    note <ResourceInUseException>

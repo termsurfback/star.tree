@@ -1,0 +1,25 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/adexchangebuyer/v1.4/base/get-order-notes-response
+  take form get-order-notes-response
+
+boot adexchangebuyer-marketplacenotes-list, name <adexchangebuyer.marketplacenotes.list>
+  note <Get all the notes associated with a proposal>
+
+  take proposal-id
+    like native-string
+    note <The proposalId to get notes for. To search across all proposals specify order_id = '-' as part of the URL.>
+  take pql-query
+    like native-string
+    note <Query string to retrieve specific notes. To search the text contents of notes, please use syntax like "WHERE note.note = "foo" or "WHERE note.note LIKE "%bar%">
+    void take
+
+  line </proposals/{proposal-id}/notes>
+
+  find <pqlQuery>, loan pql-query
+
+  loot 200
+    seed json, like get-order-notes-response
+    note <Successful response>

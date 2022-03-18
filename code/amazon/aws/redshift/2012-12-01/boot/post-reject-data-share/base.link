@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/data-share
+  take form data-share
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-data-share-fault
+  take form invalid-data-share-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-reject-data-share, name <POST_RejectDataShare>
+  note <From the consumer account, rejects the specified datashare.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take reject-data-share-message, like reject-data-share-message
+    void take
+
+  line </#Action=RejectDataShare>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan reject-data-share-message
+
+  loot 200
+    seed xml, like data-share
+    note <Success>
+  loot 480
+    seed xml, like invalid-data-share-fault
+    note <InvalidDataShareFault>

@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-user-group-state-fault
+  take form invalid-user-group-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/user-group
+  take form user-group
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/user-group-not-found-fault
+  take form user-group-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-user-group, name <POST_DeleteUserGroup>
+  note <For Redis engine version 6.x onwards: Deletes a user group. The user group must first be disassociated from the replication group before it can be deleted. For more information, see [Using Role Based Access Control (RBAC)](http://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/Clusters.RBAC.html).>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-user-group-message, like delete-user-group-message
+    void take
+
+  line </#Action=DeleteUserGroup>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-user-group-message
+
+  loot 200
+    seed xml, like user-group
+    note <Success>
+  loot 480
+    seed xml, like user-group-not-found-fault
+    note <UserGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-user-group-state-fault
+    note <InvalidUserGroupStateFault>
+  loot 482
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>

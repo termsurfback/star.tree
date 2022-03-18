@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/list-reports-for-report-group-output
+  take form list-reports-for-report-group-output
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-reports-for-report-group, name <ListReportsForReportGroup>
+  note <Returns a list of ARNs for the reports that belong to a `ReportGroup`.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-reports-for-report-group-input, like list-reports-for-report-group-input
+
+  line </#X-Amz-Target=CodeBuild_20161006.ListReportsForReportGroup>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-reports-for-report-group-input
+
+  loot 200
+    seed json, like list-reports-for-report-group-output
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

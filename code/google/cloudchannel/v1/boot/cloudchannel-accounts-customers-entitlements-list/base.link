@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/cloudchannel/v1/base/google-cloud-channel-v1-list-entitlements-response
+  take form google-cloud-channel-v1-list-entitlements-response
+
+boot cloudchannel-accounts-customers-entitlements-list, name <cloudchannel.accounts.customers.entitlements.list>
+  note <Lists Entitlements belonging to a customer. Possible error codes: * PERMISSION_DENIED: The customer doesn't belong to the reseller. * INVALID_ARGUMENT: Required request parameters are missing or invalid. Return value: A list of the customer's Entitlements.>
+
+  take parent
+    like native-string
+    note <Required. The resource name of the reseller's customer account to list entitlements for. Parent uses the format: accounts/{account_id}/customers/{customer_id}>
+  take page-size
+    like native-integer
+    note <Optional. Requested page size. Server might return fewer results than requested. If unspecified, return at most 50 entitlements. The maximum value is 100; the server will coerce values above 100.>
+    void take
+  take page-token
+    like native-string
+    note <Optional. A token for a page of results other than the first page. Obtained using ListEntitlementsResponse.next_page_token of the previous CloudChannelService.ListEntitlements call.>
+    void take
+
+  line </v1/{parent}/entitlements>
+
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like google-cloud-channel-v1-list-entitlements-response
+    note <Successful response>

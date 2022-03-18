@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/list-protected-resources-output
+  take form list-protected-resources-output
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-protected-resources, name <ListProtectedResources>
+  note <Returns an array of resources successfully backed up by Backup, including the time the resource was saved, an Amazon Resource Name (ARN) of the resource, and a resource type.>
+
+  take next-token
+    like native-string
+    note <The next item following a partial list of returned items. For example, if a request is made to return `maxResults` number of items, `NextToken` allows you to return more items in your list starting at the location pointed to by the next token.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of items to be returned.>
+    void take
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+
+  line </resources/>
+
+  find <nextToken>, loan next-token
+  find <maxResults>, loan max-results
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like list-protected-resources-output
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 481
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

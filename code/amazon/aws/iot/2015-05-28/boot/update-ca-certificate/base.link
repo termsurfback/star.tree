@@ -1,0 +1,72 @@
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/update-ca-certificate-body
+  take form update-ca-certificate-body
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-ca-certificate, name <UpdateCACertificate>
+  note <Updates a registered CA certificate.
+
+Requires permission to access the [UpdateCACertificate](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiot.html#awsiot-actions-as-permissions) action.>
+
+  take ca-certificate-id
+    like native-string
+    note <The CA certificate identifier.>
+  take new-status
+    like native-string
+    note <The updated status of the CA certificate.
+
+**Note:** The status value REGISTER_INACTIVE is deprecated and should not be used.>
+    void take
+  take new-auto-registration-status
+    like native-string
+    note <The new value for the auto registration status. Valid values are: "ENABLE" or "DISABLE".>
+    void take
+  take update-ca-certificate-body, like update-ca-certificate-body
+
+  line </cacertificate/{ca-certificate-id}>
+
+  find <newStatus>, loan new-status
+  find <newAutoRegistrationStatus>, loan new-auto-registration-status
+
+  seed json, loan update-ca-certificate-body
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 484
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 485
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/describe-load-balancers-response
+  take form describe-load-balancers-response
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-load-balancers, name <GET_DescribeLoadBalancers>
+  note <Gets information about the load balancers for the specified Auto Scaling group.
+
+This operation describes only Classic Load Balancers. If you have Application Load Balancers, Network Load Balancers, or Gateway Load Balancers, use the DescribeLoadBalancerTargetGroups API instead.
+
+To determine the availability of registered instances, use the `State` element in the response. When you attach a load balancer to an Auto Scaling group, the initial `State` value is `Adding`. The state transitions to `Added` after all Auto Scaling instances are registered with the load balancer. If Elastic Load Balancing health checks are enabled for the Auto Scaling group, the state transitions to `InService` after at least one Auto Scaling instance passes the health check. When the load balancer is in the `InService` state, Amazon EC2 Auto Scaling can terminate and replace any instances that are reported as unhealthy. If no registered instances pass the health checks, the load balancer doesn't enter the `InService` state.
+
+Load balancers also have an `InService` state if you attach them in the CreateAutoScalingGroup API call. If your load balancer state is `InService`, but it is not working properly, check the scaling activities by calling DescribeScalingActivities and take any corrective actions necessary.
+
+For help with failed health checks, see [Troubleshooting Amazon EC2 Auto Scaling: Health checks](https://docs.aws.amazon.com/autoscaling/ec2/userguide/ts-as-healthchecks.html) in the _Amazon EC2 Auto Scaling User Guide_. For more information, see [Elastic Load Balancing and Amazon EC2 Auto Scaling](https://docs.aws.amazon.com/autoscaling/ec2/userguide/autoscaling-load-balancer.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+
+  take auto-scaling-group-name
+    like native-string
+    note <The name of the Auto Scaling group.>
+  take next-token
+    like native-string
+    note <The token for the next set of items to return. (You received this token from a previous call.)>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of items to return with this call. The default value is `100` and the maximum value is `100`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeLoadBalancers>
+
+  find <AutoScalingGroupName>, loan auto-scaling-group-name
+  find <NextToken>, loan next-token
+  find <MaxRecords>, loan max-records
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-load-balancers-response
+    note <Success>
+  loot 480
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

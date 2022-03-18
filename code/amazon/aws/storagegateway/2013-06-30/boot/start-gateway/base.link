@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/start-gateway-output
+  take form start-gateway-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-gateway, name <StartGateway>
+  note <Starts a gateway that you previously shut down (see ShutdownGateway). After the gateway starts, you can then make other API calls, your applications can read from or write to the gateway's storage volumes and you will be able to take snapshot backups.
+
+When you make a request, you will get a 200 OK success response immediately. However, it might take some time for the gateway to be ready. You should call DescribeGatewayInformation and check the status before making any additional API calls. For more information, see ActivateGateway.
+
+To specify which gateway to start, use the Amazon Resource Name (ARN) of the gateway in your request.>
+
+  take x-amz-target
+    like native-string
+  take start-gateway-input, like start-gateway-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.StartGateway>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan start-gateway-input
+
+  loot 200
+    seed json, like start-gateway-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

@@ -1,0 +1,78 @@
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/list-iam-policy-assignments-body
+  take form list-iam-policy-assignments-body
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/list-iam-policy-assignments-response
+  take form list-iam-policy-assignments-response
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-iam-policy-assignments, name <ListIAMPolicyAssignments>
+  note <Lists IAMpolicy assignments in the current Amazon QuickSight account.>
+
+  take aws-account-id
+    like native-string
+    note <The ID of the Amazon Web Services account that contains these IAMpolicy assignments.>
+  take namespace
+    like native-string
+    note <The namespace for the assignments.>
+  take next-token
+    like native-string
+    note <The token for the next set of results, or null if there are no more results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to be returned per request.>
+    void take
+  take list-iam-policy-assignments-body, like list-iam-policy-assignments-body
+
+  line </accounts/{aws-account-id}/namespaces/{namespace}/iam-policy-assignments>
+
+  find <next-token>, loan next-token
+  find <max-results>, loan max-results
+
+  seed json, loan list-iam-policy-assignments-body
+
+  loot 200
+    seed json, like list-iam-policy-assignments-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 485
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

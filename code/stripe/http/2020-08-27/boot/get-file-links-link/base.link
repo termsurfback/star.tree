@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/file-link
+  take form file-link
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-file-links-link-body
+  take form get-file-links-link-body
+
+boot get-file-links-link, name <GetFileLinksLink>
+  note <Retrieves the file link with the given ID.>
+
+  take link
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-file-links-link-body, like get-file-links-link-body
+    void take
+
+  line </v1/file_links/{link}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-file-links-link-body
+
+  loot 200
+    seed json, like file-link
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

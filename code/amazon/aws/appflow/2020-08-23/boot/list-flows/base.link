@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/appflow/2020-08-23/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/appflow/2020-08-23/base/list-flows-body
+  take form list-flows-body
+
+load @drumwork/snow/amazonaws.com/appflow/2020-08-23/base/list-flows-response
+  take form list-flows-response
+
+load @drumwork/snow/amazonaws.com/appflow/2020-08-23/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-flows, name <ListFlows>
+  note <Lists all of the flows associated with your account.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-flows-body, like list-flows-body
+
+  line </list-flows>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-flows-body
+
+  loot 200
+    seed json, like list-flows-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>

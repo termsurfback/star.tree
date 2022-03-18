@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/bad-request
+  take form bad-request
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/describe-mount-target-security-groups-response
+  take form describe-mount-target-security-groups-response
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/incorrect-mount-target-state
+  take form incorrect-mount-target-state
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/mount-target-not-found
+  take form mount-target-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-mount-target-security-groups, name <DescribeMountTargetSecurityGroups>
+  note <Returns the security groups currently in effect for a mount target. This operation requires that the network interface of the mount target has been created and the lifecycle state of the mount target is not `deleted`.
+
+This operation requires permissions for the following actions:
+
+- `elasticfilesystem:DescribeMountTargetSecurityGroups` action on the mount target's file system.
+
+- `ec2:DescribeNetworkInterfaceAttribute` action on the mount target's network interface.>
+
+  take mount-target-id
+    like native-string
+    note <The ID of the mount target whose security groups you want to retrieve.>
+
+  line </2015-02-01/mount-targets/{mount-target-id}/security-groups>
+
+  loot 200
+    seed json, like describe-mount-target-security-groups-response
+    note <Success>
+  loot 480
+    seed json, like bad-request
+    note <BadRequest>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 482
+    seed json, like mount-target-not-found
+    note <MountTargetNotFound>
+  loot 483
+    seed json, like incorrect-mount-target-state
+    note <IncorrectMountTargetState>

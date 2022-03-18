@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/deactivate-pipeline-output
+  take form deactivate-pipeline-output
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/pipeline-deleted-exception
+  take form pipeline-deleted-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/pipeline-not-found-exception
+  take form pipeline-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot deactivate-pipeline, name <DeactivatePipeline>
+  note <Deactivates the specified running pipeline. The pipeline is set to the `DEACTIVATING` state until the deactivation process completes.
+
+To resume a deactivated pipeline, use ActivatePipeline. By default, the pipeline resumes from the last completed execution. Optionally, you can specify the date and time to resume the pipeline.>
+
+  take x-amz-target
+    like native-string
+  take deactivate-pipeline-input, like deactivate-pipeline-input
+
+  line </#X-Amz-Target=DataPipeline.DeactivatePipeline>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan deactivate-pipeline-input
+
+  loot 200
+    seed json, like deactivate-pipeline-output
+    note <Success>
+  loot 480
+    seed json, like pipeline-not-found-exception
+    note <PipelineNotFoundException>
+  loot 481
+    seed json, like pipeline-deleted-exception
+    note <PipelineDeletedException>
+  loot 482
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 483
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

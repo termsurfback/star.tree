@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2013-01-01/base/base-exception
+  take form base-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2013-01-01/base/describe-domains-response
+  take form describe-domains-response
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2013-01-01/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-domains, name <POST_DescribeDomains>
+  note <Gets information about the search domains owned by this account. Can be limited to specific domains. Shows all domains by default. To get the number of searchable documents in a domain, use the console or submit a `matchall` request to your domain's search endpoint: `q=matchall&amp;q.parser=structured&amp;size=0`. For more information, see [Getting Information about a Search Domain](http://docs.aws.amazon.com/cloudsearch/latest/developerguide/getting-domain-info.html) in the _Amazon CloudSearch Developer Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-domains-request, like describe-domains-request
+    void take
+
+  line </#Action=DescribeDomains>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-domains-request
+
+  loot 200
+    seed xml, like describe-domains-response
+    note <Success>
+  loot 480
+    seed xml, like base-exception
+    note <BaseException>
+  loot 481
+    seed xml, like internal-exception
+    note <InternalException>

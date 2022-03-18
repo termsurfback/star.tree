@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/create-platform-application-response
+  take form create-platform-application-response
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-platform-application, name <POST_CreatePlatformApplication>
+  note <Creates a platform application object for one of the supported push notification services, such as APNS and GCM (Firebase Cloud Messaging), to which devices and mobile apps may register. You must specify `PlatformPrincipal` and `PlatformCredential` attributes when using the `CreatePlatformApplication` action.
+
+`PlatformPrincipal` and `PlatformCredential` are received from the notification service.
+
+- For `ADM`, `PlatformPrincipal` is `client id` and `PlatformCredential` is `client secret`.
+
+- For `Baidu`, `PlatformPrincipal` is `API key` and `PlatformCredential` is `secret key`.
+
+- For `APNS` and `APNS_SANDBOX`, `PlatformPrincipal` is `SSL certificate` and `PlatformCredential` is `private key`.
+
+- For `GCM` (Firebase Cloud Messaging), there is no `PlatformPrincipal` and the `PlatformCredential` is `API key`.
+
+- For `MPNS`, `PlatformPrincipal` is `TLS certificate` and `PlatformCredential` is `private key`.
+
+- For `WNS`, `PlatformPrincipal` is `Package Security Identifier` and `PlatformCredential` is `secret key`.
+
+You can use the returned `PlatformApplicationArn` as an attribute for the `CreatePlatformEndpoint` action.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-platform-application-input, like create-platform-application-input
+    void take
+
+  line </#Action=CreatePlatformApplication>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-platform-application-input
+
+  loot 200
+    seed xml, like create-platform-application-response
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 482
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>

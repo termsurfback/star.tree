@@ -1,0 +1,83 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/modify-vpc-peering-connection-options-result
+  take form modify-vpc-peering-connection-options-result
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-modify-vpc-peering-connection-options, name <GET_ModifyVpcPeeringConnectionOptions>
+  note <Modifies the VPC peering connection options on one side of a VPC peering connection. You can do the following:
+
+- Enable/disable communication over the peering connection between an EC2-Classic instance that's linked to your VPC (using ClassicLink) and instances in the peer VPC.
+
+- Enable/disable communication over the peering connection between instances in your VPC and an EC2-Classic instance that's linked to the peer VPC.
+
+- Enable/disable the ability to resolve public DNS hostnames to private IP addresses when queried from instances in the peer VPC.
+
+If the peered VPCs are in the same Amazon Web Services account, you can enable DNS resolution for queries from the local VPC. This ensures that queries from the local VPC resolve to private IP addresses in the peer VPC. This option is not available if the peered VPCs are in different different Amazon Web Services accounts or different Regions. For peered VPCs in different Amazon Web Services accounts, each Amazon Web Services account owner must initiate a separate request to modify the peering connection options. For inter-region peering connections, you must use the Region for the requester VPC to modify the requester VPC peering options and the Region for the accepter VPC to modify the accepter VPC peering options. To verify which VPCs are the accepter and the requester for a VPC peering connection, use the DescribeVpcPeeringConnections command.>
+
+  take accepter-peering-connection-options
+    like form
+      take allow-dns-resolution-from-remote-vpc, name <AllowDnsResolutionFromRemoteVpc>
+        like boolean
+        void take
+        note <If true, enables a local VPC to resolve public DNS hostnames to private IP addresses when queried from instances in the peer VPC.>
+      take allow-egress-from-local-classic-link-to-remote-vpc, name <AllowEgressFromLocalClassicLinkToRemoteVpc>
+        like boolean
+        void take
+        note <If true, enables outbound communication from an EC2-Classic instance that's linked to a local VPC using ClassicLink to instances in a peer VPC.>
+      take allow-egress-from-local-vpc-to-remote-classic-link, name <AllowEgressFromLocalVpcToRemoteClassicLink>
+        like boolean
+        void take
+        note <If true, enables outbound communication from instances in a local VPC to an EC2-Classic instance that's linked to a peer VPC using ClassicLink.>
+    note <The VPC peering connection options for the accepter VPC.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take requester-peering-connection-options
+    like form
+      take allow-dns-resolution-from-remote-vpc, name <AllowDnsResolutionFromRemoteVpc>
+        like boolean
+        void take
+        note <If true, enables a local VPC to resolve public DNS hostnames to private IP addresses when queried from instances in the peer VPC.>
+      take allow-egress-from-local-classic-link-to-remote-vpc, name <AllowEgressFromLocalClassicLinkToRemoteVpc>
+        like boolean
+        void take
+        note <If true, enables outbound communication from an EC2-Classic instance that's linked to a local VPC using ClassicLink to instances in a peer VPC.>
+      take allow-egress-from-local-vpc-to-remote-classic-link, name <AllowEgressFromLocalVpcToRemoteClassicLink>
+        like boolean
+        void take
+        note <If true, enables outbound communication from instances in a local VPC to an EC2-Classic instance that's linked to a peer VPC using ClassicLink.>
+    note <The VPC peering connection options for the requester VPC.>
+    void take
+  take vpc-peering-connection-id
+    like native-string
+    note <The ID of the VPC peering connection.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyVpcPeeringConnectionOptions>
+
+  find <AccepterPeeringConnectionOptions>, loan accepter-peering-connection-options
+  find <DryRun>, loan dry-run
+  find <RequesterPeeringConnectionOptions>, loan requester-peering-connection-options
+  find <VpcPeeringConnectionId>, loan vpc-peering-connection-id
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-vpc-peering-connection-options-result
+    note <Success>

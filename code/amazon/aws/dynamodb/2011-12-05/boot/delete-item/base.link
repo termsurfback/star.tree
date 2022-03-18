@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/dynamodb/2011-12-05/base/conditional-check-failed-exception
+  take form conditional-check-failed-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2011-12-05/base/delete-item-output
+  take form delete-item-output
+
+load @drumwork/snow/amazonaws.com/dynamodb/2011-12-05/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/dynamodb/2011-12-05/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2011-12-05/base/provisioned-throughput-exceeded-exception
+  take form provisioned-throughput-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2011-12-05/base/request-limit-exceeded
+  take form request-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/dynamodb/2011-12-05/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-item, name <DeleteItem>
+  note <Deletes a single item in a table by primary key.
+
+You can perform a conditional delete operation that deletes the item if it exists, or if it has an expected attribute value.>
+
+  take x-amz-target
+    like native-string
+  take delete-item-input, like delete-item-input
+
+  line </#X-Amz-Target=DynamoDB_20111205.DeleteItem>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-item-input
+
+  loot 200
+    seed json, like delete-item-output
+    note <Success>
+  loot 480
+    seed json, like conditional-check-failed-exception
+    note <ConditionalCheckFailedException>
+  loot 481
+    seed json, like provisioned-throughput-exceeded-exception
+    note <ProvisionedThroughputExceededException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 484
+    seed json, like request-limit-exceeded
+    note <RequestLimitExceeded>
+  loot 485
+    seed json, like internal-server-error
+    note <InternalServerError>

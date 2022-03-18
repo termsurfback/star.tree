@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/describe-product-output
+  take form describe-product-output
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/invalid-parameters-exception
+  take form invalid-parameters-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-product, name <DescribeProduct>
+  note <Gets information about the specified product.>
+
+  take x-amz-target
+    like native-string
+  take describe-product-input, like describe-product-input
+
+  line </#X-Amz-Target=AWS242ServiceCatalogService.DescribeProduct>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-product-input
+
+  loot 200
+    seed json, like describe-product-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-parameters-exception
+    note <InvalidParametersException>

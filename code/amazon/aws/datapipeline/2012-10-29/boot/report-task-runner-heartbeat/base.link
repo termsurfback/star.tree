@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/report-task-runner-heartbeat-output
+  take form report-task-runner-heartbeat-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot report-task-runner-heartbeat, name <ReportTaskRunnerHeartbeat>
+  note <Task runners call `ReportTaskRunnerHeartbeat` every 15 minutes to indicate that they are operational. If the AWS Data Pipeline Task Runner is launched on a resource managed by AWS Data Pipeline, the web service can use this call to detect when the task runner application has failed and restart a new instance.>
+
+  take x-amz-target
+    like native-string
+  take report-task-runner-heartbeat-input, like report-task-runner-heartbeat-input
+
+  line </#X-Amz-Target=DataPipeline.ReportTaskRunnerHeartbeat>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan report-task-runner-heartbeat-input
+
+  loot 200
+    seed json, like report-task-runner-heartbeat-output
+    note <Success>
+  loot 480
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

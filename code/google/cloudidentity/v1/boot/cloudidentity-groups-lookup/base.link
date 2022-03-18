@@ -1,0 +1,27 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/cloudidentity/v1/base/lookup-group-name-response
+  take form lookup-group-name-response
+
+boot cloudidentity-groups-lookup, name <cloudidentity.groups.lookup>
+  note <Looks up the [resource name](https://cloud.google.com/apis/design/resource_names) of a `Group` by its `EntityKey`.>
+
+  take group-key-id
+    like native-string
+    note <The ID of the entity. For Google-managed entities, the `id` should be the email address of an existing group or user. For external-identity-mapped entities, the `id` must be a string conforming to the Identity Source's requirements. Must be unique within a `namespace`.>
+    void take
+  take group-key-namespace
+    like native-string
+    note <The namespace in which the entity exists. If not specified, the `EntityKey` represents a Google-managed entity such as a Google user or a Google Group. If specified, the `EntityKey` represents an external-identity-mapped group. The namespace must correspond to an identity source created in Admin Console and must be in the form of `identitysources/{identity_source}`.>
+    void take
+
+  line </v1/groups:lookup>
+
+  find <groupKey.id>, loan group-key-id
+  find <groupKey.namespace>, loan group-key-namespace
+
+  loot 200
+    seed json, like lookup-group-name-response
+    note <Successful response>

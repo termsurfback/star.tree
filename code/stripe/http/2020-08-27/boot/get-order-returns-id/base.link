@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-order-returns-id-body
+  take form get-order-returns-id-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/order-return
+  take form order-return
+
+boot get-order-returns-id, name <GetOrderReturnsId>
+  note <Retrieves the details of an existing order return. Supply the unique order ID from either an order return creation request or the order return list, and Stripe will return the corresponding order information.>
+
+  take id
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-order-returns-id-body, like get-order-returns-id-body
+    void take
+
+  line </v1/order_returns/{id}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-order-returns-id-body
+
+  loot 200
+    seed json, like order-return
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

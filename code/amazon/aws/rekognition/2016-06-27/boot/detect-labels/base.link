@@ -1,0 +1,107 @@
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/detect-labels-response
+  take form detect-labels-response
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/image-too-large-exception
+  take form image-too-large-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/invalid-image-format-exception
+  take form invalid-image-format-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/invalid-s3-object-exception
+  take form invalid-s3-object-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/provisioned-throughput-exceeded-exception
+  take form provisioned-throughput-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot detect-labels, name <DetectLabels>
+  note <Detects instances of real-world entities within an image (JPEG or PNG) provided as input. This includes objects like flower, tree, and table; events like wedding, graduation, and birthday party; and concepts like landscape, evening, and nature.
+
+For an example, see Analyzing Images Stored in an Amazon S3 Bucket in the Amazon Rekognition Developer Guide.
+
+`DetectLabels` does not support the detection of activities. However, activity detection is supported for label detection in videos. For more information, see StartLabelDetection in the Amazon Rekognition Developer Guide.
+
+You pass the input image as base64-encoded image bytes or as a reference to an image in an Amazon S3 bucket. If you use the AWS CLI to call Amazon Rekognition operations, passing image bytes is not supported. The image must be either a PNG or JPEG formatted file.
+
+For each object, scene, and concept the API returns one or more labels. Each label provides the object name, and the level of confidence that the image contains the object. For example, suppose the input image has a lighthouse, the sea, and a rock. The response includes all three labels, one for each object.
+
+`{Name: lighthouse, Confidence: 98.4629}`
+
+`{Name: rock,Confidence: 79.2097}`
+
+`{Name: sea,Confidence: 75.061}`
+
+In the preceding example, the operation returns one label for each of the three objects. The operation can also return multiple labels for the same object in the image. For example, if the input image shows a flower (for example, a tulip), the operation might return the following three labels.
+
+`{Name: flower,Confidence: 99.0562}`
+
+`{Name: plant,Confidence: 99.0562}`
+
+`{Name: tulip,Confidence: 99.0562}`
+
+In this example, the detection algorithm more precisely identifies the flower as a tulip.
+
+In response, the API returns an array of labels. In addition, the response also includes the orientation correction. Optionally, you can specify `MinConfidence` to control the confidence threshold for the labels returned. The default is 55%. You can also add the `MaxLabels` parameter to limit the number of labels returned.
+
+If the object detected is a person, the operation doesn't provide the same facial details that the DetectFaces operation provides.
+
+`DetectLabels` returns bounding boxes for instances of common object labels in an array of Instance objects. An `Instance` object contains a BoundingBox object, for the location of the label on the image. It also includes the confidence by which the bounding box was detected.
+
+`DetectLabels` also returns a hierarchical taxonomy of detected labels. For example, a detected car might be assigned the label _car_. The label _car_ has two parent labels: _Vehicle_ (its parent) and _Transportation_ (its grandparent). The response returns the entire list of ancestors for a label. Each ancestor is a unique label in the response. In the previous example, _Car_, _Vehicle_, and _Transportation_ are returned as unique labels in the response.
+
+This is a stateless API operation. That is, the operation does not persist any data.
+
+This operation requires permissions to perform the `rekognition:DetectLabels` action.>
+
+  take x-amz-target
+    like native-string
+  take detect-labels-request, like detect-labels-request
+
+  line </#X-Amz-Target=RekognitionService.DetectLabels>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan detect-labels-request
+
+  loot 200
+    seed json, like detect-labels-response
+    note <Success>
+  loot 480
+    seed json, like invalid-s3-object-exception
+    note <InvalidS3ObjectException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like image-too-large-exception
+    note <ImageTooLargeException>
+  loot 483
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 484
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 485
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 486
+    seed json, like provisioned-throughput-exceeded-exception
+    note <ProvisionedThroughputExceededException>
+  loot 487
+    seed json, like invalid-image-format-exception
+    note <InvalidImageFormatException>

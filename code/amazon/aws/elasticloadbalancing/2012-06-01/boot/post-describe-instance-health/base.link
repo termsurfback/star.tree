@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/access-point-not-found-exception
+  take form access-point-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/describe-end-point-state-output
+  take form describe-end-point-state-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/invalid-end-point-exception
+  take form invalid-end-point-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-instance-health, name <POST_DescribeInstanceHealth>
+  note <Describes the state of the specified instances with respect to the specified load balancer. If no instances are specified, the call describes the state of all instances that are currently registered with the load balancer. If instances are specified, their state is returned even if they are no longer registered with the load balancer. The state of terminated instances is not returned.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-end-point-state-input, like describe-end-point-state-input
+    void take
+
+  line </#Action=DescribeInstanceHealth>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-end-point-state-input
+
+  loot 200
+    seed xml, like describe-end-point-state-output
+    note <Success>
+  loot 480
+    seed xml, like access-point-not-found-exception
+    note <AccessPointNotFoundException>
+  loot 481
+    seed xml, like invalid-end-point-exception
+    note <InvalidEndPointException>

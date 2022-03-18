@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-pagination-token
+  take form invalid-pagination-token
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/list-hosted-zones-by-vpc-response
+  take form list-hosted-zones-by-vpc-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-hosted-zones-by-vpc, name <ListHostedZonesByVPC>
+  note <Lists all the private hosted zones that a specified VPC is associated with, regardless of which Amazon Web Services account or Amazon Web Services service owns the hosted zones. The `HostedZoneOwner` structure in the response contains one of the following values:
+
+- An `OwningAccount` element, which contains the account number of either the current Amazon Web Services account or another Amazon Web Services account. Some services, such as Cloud Map, create hosted zones using the current account.
+
+- An `OwningService` element, which identifies the Amazon Web Services service that created and owns the hosted zone. For example, if a hosted zone was created by Amazon Elastic File System (Amazon EFS), the value of `Owner` is `efs.amazonaws.com`.>
+
+  take vpcid
+    like native-string
+    note <The ID of the Amazon VPC that you want to list hosted zones for.>
+  take vpcregion
+    like native-string
+    note <For the Amazon VPC that you specified for `VPCId`, the Amazon Web Services Region that you created the VPC in.>
+  take maxitems
+    like native-string
+    note <(Optional) The maximum number of hosted zones that you want Amazon Route 53 to return. If the specified VPC is associated with more than `MaxItems` hosted zones, the response includes a `NextToken` element. `NextToken` contains an encrypted token that identifies the first hosted zone that Route 53 will return if you submit another request.>
+    void take
+  take nexttoken
+    like native-string
+    note <If the previous response included a `NextToken` element, the specified VPC is associated with more hosted zones. To get more hosted zones, submit another `ListHostedZonesByVPC` request.
+
+For the value of `NextToken`, specify the value of `NextToken` from the previous response.
+
+If the previous response didn't include a `NextToken` element, there are no more hosted zones to get.>
+    void take
+
+  line </2013-04-01/hostedzonesbyvpc#vpcid&vpcregion>
+
+  find <vpcid>, loan vpcid
+  find <vpcregion>, loan vpcregion
+  find <maxitems>, loan maxitems
+  find <nexttoken>, loan nexttoken
+
+  loot 200
+    seed xml, like list-hosted-zones-by-vpc-response
+    note <Success>
+  loot 480
+    seed xml, like invalid-input
+    note <InvalidInput>
+  loot 481
+    seed xml, like invalid-pagination-token
+    note <InvalidPaginationToken>

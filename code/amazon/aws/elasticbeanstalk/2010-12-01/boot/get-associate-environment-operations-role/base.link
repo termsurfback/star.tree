@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/insufficient-privileges-exception
+  take form insufficient-privileges-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-associate-environment-operations-role, name <GET_AssociateEnvironmentOperationsRole>
+  note <Add or change the operations role used by an environment. After this call is made, Elastic Beanstalk uses the associated operations role for permissions to downstream services during subsequent calls acting on this environment. For more information, see [Operations roles](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/iam-operationsrole.html) in the _AWS Elastic Beanstalk Developer Guide_.>
+
+  take environment-name
+    like native-string
+    note <The name of the environment to which to set the operations role.>
+  take operations-role
+    like native-string
+    note <The Amazon Resource Name (ARN) of an existing IAM role to be used as the environment's operations role.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=AssociateEnvironmentOperationsRole>
+
+  find <EnvironmentName>, loan environment-name
+  find <OperationsRole>, loan operations-role
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like insufficient-privileges-exception
+    note <InsufficientPrivilegesException>

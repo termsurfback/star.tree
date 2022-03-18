@@ -1,0 +1,34 @@
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/boolean-type
+  take form boolean-type
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/recovery-window-in-days-type
+  take form recovery-window-in-days-type
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/secret-id-type
+  take form secret-id-type
+
+form delete-secret-request, name <DeleteSecretRequest>
+  take secret-id, name <SecretId>
+    like secret-id-type
+    note <Specifies the secret to delete. You can specify either the Amazon Resource Name (ARN) or the friendly name of the secret.
+
+If you specify an ARN, we generally recommend that you specify a complete ARN. You can specify a partial ARN too—for example, if you don’t include the final hyphen and six random characters that Secrets Manager adds at the end of the ARN when you created the secret. A partial ARN match can work as long as it uniquely matches only one secret. However, if your secret has a name that ends in a hyphen followed by six characters (before Secrets Manager adds the hyphen and six characters to the ARN) and you try to use that as a partial ARN, then those characters cause Secrets Manager to assume that you’re specifying a complete ARN. This confusion can cause unexpected results. To avoid this situation, we recommend that you don’t create secret names ending with a hyphen followed by six characters.
+
+If you specify an incomplete ARN without the random suffix, and instead provide the 'friendly name', you _must_ not include the random suffix. If you do include the random suffix added by Secrets Manager, you receive either a _ResourceNotFoundException_ or an _AccessDeniedException_ error, depending on your permissions.>
+  take recovery-window-in-days, name <RecoveryWindowInDays>
+    like recovery-window-in-days-type
+    void take
+    note <(Optional) Specifies the number of days that Secrets Manager waits before Secrets Manager can delete the secret. You can't use both this parameter and the `ForceDeleteWithoutRecovery` parameter in the same API call.
+
+This value can range from 7 to 30 days with a default value of 30.>
+  take force-delete-without-recovery, name <ForceDeleteWithoutRecovery>
+    like boolean-type
+    void take
+    note <(Optional) Specifies that the secret is to be deleted without any recovery window. You can't use both this parameter and the `RecoveryWindowInDays` parameter in the same API call.
+
+An asynchronous background process performs the actual deletion, so there can be a short delay before the operation completes. If you write code to delete and then immediately recreate a secret with the same name, ensure that your code includes appropriate back off and retry logic.
+
+Use this parameter with caution. This parameter causes the operation to skip the normal waiting period before the permanent deletion that Amazon Web Services would normally impose with the `RecoveryWindowInDays` parameter. If you delete a secret with the `ForceDeleteWithouRecovery` parameter, then you have no opportunity to recover the secret. You lose the secret permanently.
+
+If you use this parameter and include a previously deleted or nonexistent secret, the operation does not return the error `ResourceNotFoundException` in order to correctly handle retries.>

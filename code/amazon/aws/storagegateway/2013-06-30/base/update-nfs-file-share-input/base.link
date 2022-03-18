@@ -1,0 +1,123 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/cache-attributes
+  take form cache-attributes
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/file-share-arn
+  take form file-share-arn
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/file-share-client-list
+  take form file-share-client-list
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/file-share-name
+  take form file-share-name
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/kms-key
+  take form kms-key
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/nfs-file-share-defaults
+  take form nfs-file-share-defaults
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/notification-policy
+  take form notification-policy
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/object-acl
+  take form object-acl
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/squash
+  take form squash
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/storage-class
+  take form storage-class
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+form update-nfs-file-share-input, name <UpdateNFSFileShareInput>
+  note <UpdateNFSFileShareInput>
+  take file-share-arn, name <FileShareARN>
+    like file-share-arn
+    note <The Amazon Resource Name (ARN) of the file share to be updated.>
+  take kms-encrypted, name <KMSEncrypted>
+    like boolean
+    void take
+    note <Set to `true` to use Amazon S3 server-side encryption with your own KMS key, or `false` to use a key managed by Amazon S3. Optional.
+
+Valid Values: `true` | `false`>
+  take kms-key, name <KMSKey>
+    like kms-key
+    void take
+    note <The Amazon Resource Name (ARN) of a symmetric customer master key (CMK) used for Amazon S3 server-side encryption. Storage Gateway does not support asymmetric CMKs. This value can only be set when `KMSEncrypted` is `true`. Optional.>
+  take nfs-file-share-defaults, name <NFSFileShareDefaults>
+    like nfs-file-share-defaults
+    void take
+    note <The default values for the file share. Optional.>
+  take default-storage-class, name <DefaultStorageClass>
+    like storage-class
+    void take
+    note <The default storage class for objects put into an Amazon S3 bucket by the S3 File Gateway. The default value is `S3_INTELLIGENT_TIERING`. Optional.
+
+Valid Values: `S3_STANDARD` | `S3_INTELLIGENT_TIERING` | `S3_STANDARD_IA` | `S3_ONEZONE_IA`>
+  take object-acl, name <ObjectACL>
+    like object-acl
+    void take
+    note <A value that sets the access control list (ACL) permission for objects in the S3 bucket that a S3 File Gateway puts objects into. The default value is `private`.>
+  take client-list, name <ClientList>
+    like file-share-client-list
+    void take
+    note <The list of clients that are allowed to access the S3 File Gateway. The list must contain either valid IP addresses or valid CIDR blocks.>
+  take squash, name <Squash>
+    like squash
+    void take
+    note <The user mapped to anonymous user.
+
+Valid values are the following:
+
+- `RootSquash`: Only root is mapped to anonymous user.
+
+- `NoSquash`: No one is mapped to anonymous user.
+
+- `AllSquash`: Everyone is mapped to anonymous user.>
+  take read-only, name <ReadOnly>
+    like boolean
+    void take
+    note <A value that sets the write status of a file share. Set this value to `true` to set the write status to read-only, otherwise set to `false`.
+
+Valid Values: `true` | `false`>
+  take guess-mime-type-enabled, name <GuessMIMETypeEnabled>
+    like boolean
+    void take
+    note <A value that enables guessing of the MIME type for uploaded objects based on file extensions. Set this value to `true` to enable MIME type guessing, otherwise set to `false`. The default value is `true`.
+
+Valid Values: `true` | `false`>
+  take requester-pays, name <RequesterPays>
+    like boolean
+    void take
+    note <A value that sets who pays the cost of the request and the cost associated with data download from the S3 bucket. If this value is set to `true`, the requester pays the costs; otherwise, the S3 bucket owner pays. However, the S3 bucket owner always pays the cost of storing data.
+
+`RequesterPays` is a configuration for the S3 bucket that backs the file share, so make sure that the configuration on the file share is the same as the S3 bucket configuration.
+
+Valid Values: `true` | `false`>
+  take file-share-name, name <FileShareName>
+    like file-share-name
+    void take
+    note <The name of the file share. Optional.
+
+`FileShareName` must be set if an S3 prefix name is set in `LocationARN`.>
+  take cache-attributes, name <CacheAttributes>
+    like cache-attributes
+    void take
+    note <specifies refresh cache information for the file share.>
+  take notification-policy, name <NotificationPolicy>
+    like notification-policy
+    void take
+    note <The notification policy of the file share. `SettlingTimeInSeconds` controls the number of seconds to wait after the last point in time a client wrote to a file before generating an `ObjectUploaded` notification. Because clients can make many small writes to files, it's best to set this parameter for as long as possible to avoid generating multiple notifications for the same file in a small time period.
+
+`SettlingTimeInSeconds` has no effect on the timing of the object uploading to Amazon S3, only the timing of the notification.
+
+The following example sets `NotificationPolicy` on with `SettlingTimeInSeconds` set to 60.
+
+`{\"Upload\": {\"SettlingTimeInSeconds\": 60}}`
+
+The following example sets `NotificationPolicy` off.
+
+`{}`>

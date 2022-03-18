@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/create-custom-availability-zone-result
+  take form create-custom-availability-zone-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/custom-availability-zone-already-exists-fault
+  take form custom-availability-zone-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/custom-availability-zone-quota-exceeded-fault
+  take form custom-availability-zone-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/kms-key-not-accessible-fault
+  take form kms-key-not-accessible-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-custom-availability-zone, name <POST_CreateCustomAvailabilityZone>
+  note <Creates a custom Availability Zone (AZ).
+
+A custom AZ is an on-premises AZ that is integrated with a VMware vSphere cluster.
+
+For more information about RDS on VMware, see the [RDS on VMware User Guide.](https://docs.aws.amazon.com/AmazonRDS/latest/RDSonVMwareUserGuide/rds-on-vmware.html)>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-custom-availability-zone-message, like create-custom-availability-zone-message
+    void take
+
+  line </#Action=CreateCustomAvailabilityZone>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-custom-availability-zone-message
+
+  loot 200
+    seed xml, like create-custom-availability-zone-result
+    note <Success>
+  loot 480
+    seed xml, like custom-availability-zone-already-exists-fault
+    note <CustomAvailabilityZoneAlreadyExistsFault>
+  loot 481
+    seed xml, like custom-availability-zone-quota-exceeded-fault
+    note <CustomAvailabilityZoneQuotaExceededFault>
+  loot 482
+    seed xml, like kms-key-not-accessible-fault
+    note <KMSKeyNotAccessibleFault>

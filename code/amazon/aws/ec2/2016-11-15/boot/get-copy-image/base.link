@@ -1,0 +1,92 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/copy-image-result
+  take form copy-image-result
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-copy-image, name <GET_CopyImage>
+  note <Initiates the copy of an AMI. You can copy an AMI from one Region to another, or from a Region to an Outpost. You can't copy an AMI from an Outpost to a Region, from one Outpost to another, or within the same Outpost. To copy an AMI to another partition, see [CreateStoreImageTask](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateStoreImageTask.html).
+
+To copy an AMI from one Region to another, specify the source Region using the **SourceRegion** parameter, and specify the destination Region using its endpoint. Copies of encrypted backing snapshots for the AMI are encrypted. Copies of unencrypted backing snapshots remain unencrypted, unless you set `Encrypted` during the copy operation. You cannot create an unencrypted copy of an encrypted backing snapshot.
+
+To copy an AMI from a Region to an Outpost, specify the source Region using the **SourceRegion** parameter, and specify the ARN of the destination Outpost using **DestinationOutpostArn**. Backing snapshots copied to an Outpost are encrypted by default using the default encryption key for the Region, or a different key that you specify in the request using **KmsKeyId**. Outposts do not support unencrypted snapshots. For more information, [Amazon EBS local snapshots on Outposts](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/snapshots-outposts.html#ami) in the _Amazon Elastic Compute Cloud User Guide_.
+
+For more information about the prerequisites and limits when copying an AMI, see [Copying an AMI](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/CopyingAMIs.html) in the _Amazon Elastic Compute Cloud User Guide_.>
+
+  take client-token
+    like native-string
+    note <Unique, case-sensitive identifier you provide to ensure idempotency of the request. For more information, see [Ensuring idempotency](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/Run_Instance_Idempotency.html) in the _Amazon EC2 API Reference_.>
+    void take
+  take description
+    like native-string
+    note <A description for the new AMI in the destination Region.>
+    void take
+  take encrypted
+    like native-boolean
+    note <Specifies whether the destination snapshots of the copied image should be encrypted. You can encrypt a copy of an unencrypted snapshot, but you cannot create an unencrypted copy of an encrypted snapshot. The default KMS key for Amazon EBS is used unless you specify a non-default Key Management Service (KMS) KMS key using `KmsKeyId`. For more information, see [Amazon EBS Encryption](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html) in the _Amazon Elastic Compute Cloud User Guide_.>
+    void take
+  take kms-key-id
+    like native-string
+    note <The identifier of the symmetric Key Management Service (KMS) KMS key to use when creating encrypted volumes. If this parameter is not specified, your Amazon Web Services managed KMS key for Amazon EBS is used. If you specify a KMS key, you must also set the encrypted state to `true`.
+
+You can specify a KMS key using any of the following:
+
+- Key ID. For example, 1234abcd-12ab-34cd-56ef-1234567890ab.
+
+- Key alias. For example, alias/ExampleAlias.
+
+- Key ARN. For example, arn:aws:kms:us-east-1:012345678910:key/1234abcd-12ab-34cd-56ef-1234567890ab.
+
+- Alias ARN. For example, arn:aws:kms:us-east-1:012345678910:alias/ExampleAlias.
+
+Amazon Web Services authenticates the KMS key asynchronously. Therefore, if you specify an identifier that is not valid, the action can appear to complete, but eventually fails.
+
+The specified KMS key must exist in the destination Region.
+
+Amazon EBS does not support asymmetric KMS keys.>
+    void take
+  take name
+    like native-string
+    note <The name of the new AMI in the destination Region.>
+  take source-image-id
+    like native-string
+    note <The ID of the AMI to copy.>
+  take source-region
+    like native-string
+    note <The name of the Region that contains the AMI to copy.>
+  take destination-outpost-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the Outpost to which to copy the AMI. Only specify this parameter when copying an AMI from an Amazon Web Services Region to an Outpost. The AMI must be in the Region of the destination Outpost. You cannot copy an AMI from an Outpost to a Region, from one Outpost to another, or within the same Outpost.
+
+For more information, see [Copying AMIs from an Amazon Web Services Region to an Outpost](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/snapshots-outposts.html#copy-amis) in the _Amazon Elastic Compute Cloud User Guide_.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CopyImage>
+
+  find <ClientToken>, loan client-token
+  find <Description>, loan description
+  find <Encrypted>, loan encrypted
+  find <KmsKeyId>, loan kms-key-id
+  find <Name>, loan name
+  find <SourceImageId>, loan source-image-id
+  find <SourceRegion>, loan source-region
+  find <DestinationOutpostArn>, loan destination-outpost-arn
+  find <DryRun>, loan dry-run
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like copy-image-result
+    note <Success>

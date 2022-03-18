@@ -1,0 +1,48 @@
+
+load @drumwork/snow/amazonaws.com/groundstation/2019-05-23/base/dependency-exception
+  take form dependency-exception
+
+load @drumwork/snow/amazonaws.com/groundstation/2019-05-23/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/groundstation/2019-05-23/base/list-dataflow-endpoint-groups-response
+  take form list-dataflow-endpoint-groups-response
+
+load @drumwork/snow/amazonaws.com/groundstation/2019-05-23/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-dataflow-endpoint-groups, name <ListDataflowEndpointGroups>
+  note <Returns a list of `DataflowEndpoint` groups.>
+
+  take max-results
+    like native-integer
+    note <Maximum number of dataflow endpoint groups returned.>
+    void take
+  take next-token
+    like native-string
+    note <Next token returned in the request of a previous `ListDataflowEndpointGroups` call. Used to get the next page of results.>
+    void take
+
+  line </dataflowEndpointGroup>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  loot 200
+    seed json, like list-dataflow-endpoint-groups-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like dependency-exception
+    note <DependencyException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/get-random-password-response
+  take form get-random-password-response
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-random-password, name <GetRandomPassword>
+  note <Generates a random password of the specified complexity. This operation is intended for use in the Lambda rotation function. Per best practice, we recommend that you specify the maximum length and include every character type that the system you are generating a password for can support.
+
+**Minimum permissions** To run this command, you must have the following permissions:
+
+- secretsmanager:GetRandomPassword>
+
+  take x-amz-target
+    like native-string
+  take get-random-password-request, like get-random-password-request
+
+  line </#X-Amz-Target=secretsmanager.GetRandomPassword>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-random-password-request
+
+  loot 200
+    seed json, like get-random-password-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like internal-service-error
+    note <InternalServiceError>

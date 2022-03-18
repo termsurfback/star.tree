@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/describe-storedi-scsi-volumes-output
+  take form describe-storedi-scsi-volumes-output
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-storedi-scsi-volumes, name <DescribeStorediSCSIVolumes>
+  note <Returns the description of the gateway volumes specified in the request. The list of gateway volumes in the request must be from one gateway. In the response, Storage Gateway returns volume information sorted by volume ARNs. This operation is only supported in stored volume gateway type.>
+
+  take x-amz-target
+    like native-string
+  take describe-storedi-scsi-volumes-input, like describe-storedi-scsi-volumes-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.DescribeStorediSCSIVolumes>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-storedi-scsi-volumes-input
+
+  loot 200
+    seed json, like describe-storedi-scsi-volumes-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

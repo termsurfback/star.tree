@@ -1,0 +1,31 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/option-group-not-found-fault
+  take form option-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/option-groups
+  take form option-groups
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-option-groups, name <POST_DescribeOptionGroups>
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-option-groups-message, like describe-option-groups-message
+    void take
+
+  line </#Action=DescribeOptionGroups>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-option-groups-message
+
+  loot 200
+    seed xml, like option-groups
+    note <Success>
+  loot 480
+    seed xml, like option-group-not-found-fault
+    note <OptionGroupNotFoundFault>

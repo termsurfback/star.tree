@@ -1,0 +1,28 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/vmmigration/v1/base/fetch-inventory-response
+  take form fetch-inventory-response
+
+boot vmmigration-projects-locations-sources-fetch-inventory, name <vmmigration.projects.locations.sources.fetchInventory>
+  note <List remote source's inventory of VMs. The remote source is the onprem vCenter (remote in the sense it's not in Compute Engine). The inventory describes the list of existing VMs in that source. Note that this operation lists the VMs on the remote source, as opposed to listing the MigratingVms resources in the vmmigration service.>
+
+  take source
+    like native-string
+    note <Required. The name of the Source.>
+  take force-refresh
+    like native-boolean
+    note <If this flag is set to true, the source will be queried instead of using cached results. Using this flag will make the call slower.>
+    void take
+
+  line </v1/{source}:fetchInventory>
+
+  find <forceRefresh>, loan force-refresh
+
+  loot 200
+    seed json, like fetch-inventory-response
+    note <Successful response>

@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/create-db-subnet-group-result
+  take form create-db-subnet-group-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-subnet-group-already-exists-fault
+  take form db-subnet-group-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-subnet-group-does-not-cover-enough-a-zs
+  take form db-subnet-group-does-not-cover-enough-a-zs
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-subnet-group-quota-exceeded-fault
+  take form db-subnet-group-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-subnet-quota-exceeded-fault
+  take form db-subnet-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-subnet
+  take form invalid-subnet
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-db-subnet-group, name <POST_CreateDBSubnetGroup>
+  note <Creates a new DB subnet group. DB subnet groups must contain at least one subnet in at least two AZs in the Amazon Web Services Region.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-db-subnet-group-message, like create-db-subnet-group-message
+    void take
+
+  line </#Action=CreateDBSubnetGroup>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-db-subnet-group-message
+
+  loot 200
+    seed xml, like create-db-subnet-group-result
+    note <Success>
+  loot 480
+    seed xml, like db-subnet-group-already-exists-fault
+    note <DBSubnetGroupAlreadyExistsFault>
+  loot 481
+    seed xml, like db-subnet-group-quota-exceeded-fault
+    note <DBSubnetGroupQuotaExceededFault>
+  loot 482
+    seed xml, like db-subnet-quota-exceeded-fault
+    note <DBSubnetQuotaExceededFault>
+  loot 483
+    seed xml, like db-subnet-group-does-not-cover-enough-a-zs
+    note <DBSubnetGroupDoesNotCoverEnoughAZs>
+  loot 484
+    seed xml, like invalid-subnet
+    note <InvalidSubnet>

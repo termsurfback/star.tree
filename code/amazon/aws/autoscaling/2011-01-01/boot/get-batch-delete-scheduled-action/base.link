@@ -1,0 +1,44 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/batch-delete-scheduled-action-answer
+  take form batch-delete-scheduled-action-answer
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/xml-string-max-len255
+  take form xml-string-max-len255
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-batch-delete-scheduled-action, name <GET_BatchDeleteScheduledAction>
+  note <Deletes one or more scheduled actions for the specified Auto Scaling group.>
+
+  take auto-scaling-group-name
+    like native-string
+    note <The name of the Auto Scaling group.>
+  take scheduled-action-names
+    like list
+      like xml-string-max-len255
+    note <The names of the scheduled actions to delete. The maximum number allowed is 50.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=BatchDeleteScheduledAction>
+
+  find <AutoScalingGroupName>, loan auto-scaling-group-name
+  find <ScheduledActionNames>, loan scheduled-action-names
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like batch-delete-scheduled-action-answer
+    note <Success>
+  loot 480
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

@@ -1,0 +1,76 @@
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/delete-labels-response
+  take form delete-labels-response
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/entity-not-exists-exception
+  take form entity-not-exists-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/failed-dependency-exception
+  take form failed-dependency-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/shared-label
+  take form shared-label
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/unauthorized-operation-exception
+  take form unauthorized-operation-exception
+
+load @drumwork/snow/amazonaws.com/workdocs/2016-05-01/base/unauthorized-resource-access-exception
+  take form unauthorized-resource-access-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-labels, name <DeleteLabels>
+  note <Deletes the specified list of labels from a resource.>
+
+  take resource-id
+    like native-string
+    note <The ID of the resource.>
+  take authentication
+    like native-string
+    note <Amazon WorkDocs authentication token. Not required when using AWS administrator credentials to access the API.>
+    void take
+  take labels
+    like list
+      like shared-label
+    note <List of labels to delete from the resource.>
+    void take
+  take delete-all
+    like native-boolean
+    note <Flag to request removal of all labels from the specified resource.>
+    void take
+
+  line </api/v1/resources/{resource-id}/labels>
+
+  hint <Authentication>, loan authentication
+
+  find <labels>, loan labels
+  find <deleteAll>, loan delete-all
+
+  loot 200
+    seed json, like delete-labels-response
+    note <Success>
+  loot 480
+    seed json, like entity-not-exists-exception
+    note <EntityNotExistsException>
+  loot 481
+    seed json, like unauthorized-operation-exception
+    note <UnauthorizedOperationException>
+  loot 482
+    seed json, like unauthorized-resource-access-exception
+    note <UnauthorizedResourceAccessException>
+  loot 483
+    seed json, like failed-dependency-exception
+    note <FailedDependencyException>
+  loot 484
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/xray/2016-04-12/base/get-service-graph-body
+  take form get-service-graph-body
+
+load @drumwork/snow/amazonaws.com/xray/2016-04-12/base/get-service-graph-result
+  take form get-service-graph-result
+
+load @drumwork/snow/amazonaws.com/xray/2016-04-12/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/xray/2016-04-12/base/throttled-exception
+  take form throttled-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-service-graph, name <GetServiceGraph>
+  note <Retrieves a document that describes services that process incoming requests, and downstream services that they call as a result. Root services process incoming requests and make calls to downstream services. Root services are applications that use the [Amazon Web Services X-Ray SDK](https://docs.aws.amazon.com/xray/index.html). Downstream services can be other applications, Amazon Web Services resources, HTTP web APIs, or SQL databases.>
+
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-service-graph-body, like get-service-graph-body
+
+  line </ServiceGraph>
+
+  find <NextToken>, loan next-token
+
+  seed json, loan get-service-graph-body
+
+  loot 200
+    seed json, like get-service-graph-result
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like throttled-exception
+    note <ThrottledException>

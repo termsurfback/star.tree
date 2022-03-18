@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/describe-organization-conformance-pack-statuses-response
+  take form describe-organization-conformance-pack-statuses-response
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-limit-exception
+  take form invalid-limit-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/no-such-organization-conformance-pack-exception
+  take form no-such-organization-conformance-pack-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/organization-access-denied-exception
+  take form organization-access-denied-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-organization-conformance-pack-statuses, name <DescribeOrganizationConformancePackStatuses>
+  note <Provides organization conformance pack deployment status for an organization.
+
+The status is not considered successful until organization conformance pack is successfully deployed in all the member accounts with an exception of excluded accounts.
+
+When you specify the limit and the next token, you receive a paginated response. Limit and next token are not applicable if you specify organization conformance pack names. They are only applicable, when you request all the organization conformance packs.>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-organization-conformance-pack-statuses-request, like describe-organization-conformance-pack-statuses-request
+
+  line </#X-Amz-Target=StarlingDoveService.DescribeOrganizationConformancePackStatuses>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <Limit>, loan limit
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-organization-conformance-pack-statuses-request
+
+  loot 200
+    seed json, like describe-organization-conformance-pack-statuses-response
+    note <Success>
+  loot 480
+    seed json, like no-such-organization-conformance-pack-exception
+    note <NoSuchOrganizationConformancePackException>
+  loot 481
+    seed json, like invalid-limit-exception
+    note <InvalidLimitException>
+  loot 482
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 483
+    seed json, like organization-access-denied-exception
+    note <OrganizationAccessDeniedException>

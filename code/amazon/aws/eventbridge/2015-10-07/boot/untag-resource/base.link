@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/eventbridge/2015-10-07/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/eventbridge/2015-10-07/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/eventbridge/2015-10-07/base/managed-rule-exception
+  take form managed-rule-exception
+
+load @drumwork/snow/amazonaws.com/eventbridge/2015-10-07/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/eventbridge/2015-10-07/base/untag-resource-response
+  take form untag-resource-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot untag-resource, name <UntagResource>
+  note <Removes one or more tags from the specified EventBridge resource. In Amazon EventBridge (CloudWatch Events), rules and event buses can be tagged.>
+
+  take x-amz-target
+    like native-string
+  take untag-resource-request, like untag-resource-request
+
+  line </#X-Amz-Target=AWSEvents.UntagResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan untag-resource-request
+
+  loot 200
+    seed json, like untag-resource-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like internal-exception
+    note <InternalException>
+  loot 482
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>
+  loot 483
+    seed json, like managed-rule-exception
+    note <ManagedRuleException>

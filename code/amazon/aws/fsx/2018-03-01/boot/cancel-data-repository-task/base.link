@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/bad-request
+  take form bad-request
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/cancel-data-repository-task-response
+  take form cancel-data-repository-task-response
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/data-repository-task-ended
+  take form data-repository-task-ended
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/data-repository-task-not-found
+  take form data-repository-task-not-found
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/unsupported-operation
+  take form unsupported-operation
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot cancel-data-repository-task, name <CancelDataRepositoryTask>
+  note <Cancels an existing Amazon FSx for Lustre data repository task if that task is in either the `PENDING` or `EXECUTING` state. When you cancel a task, Amazon FSx does the following.
+
+- Any files that FSx has already exported are not reverted.
+
+- FSx continues to export any files that are "in-flight" when the cancel operation is received.
+
+- FSx does not export any files that have not yet been exported.>
+
+  take x-amz-target
+    like native-string
+  take cancel-data-repository-task-request, like cancel-data-repository-task-request
+
+  line </#X-Amz-Target=AWSSimbaAPIService_v20180301.CancelDataRepositoryTask>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan cancel-data-repository-task-request
+
+  loot 200
+    seed json, like cancel-data-repository-task-response
+    note <Success>
+  loot 480
+    seed json, like bad-request
+    note <BadRequest>
+  loot 481
+    seed json, like unsupported-operation
+    note <UnsupportedOperation>
+  loot 482
+    seed json, like data-repository-task-not-found
+    note <DataRepositoryTaskNotFound>
+  loot 483
+    seed json, like data-repository-task-ended
+    note <DataRepositoryTaskEnded>
+  loot 484
+    seed json, like internal-server-error
+    note <InternalServerError>

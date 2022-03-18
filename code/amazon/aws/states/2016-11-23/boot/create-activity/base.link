@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/activity-limit-exceeded
+  take form activity-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/create-activity-output
+  take form create-activity-output
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/invalid-name
+  take form invalid-name
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/too-many-tags
+  take form too-many-tags
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-activity, name <CreateActivity>
+  note <Creates an activity. An activity is a task that you write in any programming language and host on any machine that has access to AWS Step Functions. Activities must poll Step Functions using the `GetActivityTask` API action and respond using `SendTask*` API actions. This function lets Step Functions know the existence of your activity and returns an identifier for use in a state machine and when polling from the activity.
+
+This operation is eventually consistent. The results are best effort and may not reflect very recent updates and changes.
+
+`CreateActivity` is an idempotent API. Subsequent requests won’t create a duplicate resource if it was already created. `CreateActivity`'s idempotency check is based on the activity `name`. If a following request has different `tags` values, Step Functions will ignore these differences and treat it as an idempotent request of the previous. In this case, `tags` will not be updated, even if they are different.>
+
+  take x-amz-target
+    like native-string
+  take create-activity-input, like create-activity-input
+
+  line </#X-Amz-Target=AWSStepFunctions.CreateActivity>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-activity-input
+
+  loot 200
+    seed json, like create-activity-output
+    note <Success>
+  loot 480
+    seed json, like activity-limit-exceeded
+    note <ActivityLimitExceeded>
+  loot 481
+    seed json, like invalid-name
+    note <InvalidName>
+  loot 482
+    seed json, like too-many-tags
+    note <TooManyTags>

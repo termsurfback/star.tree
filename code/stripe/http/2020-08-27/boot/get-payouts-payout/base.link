@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-payouts-payout-body
+  take form get-payouts-payout-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/payout
+  take form payout
+
+boot get-payouts-payout, name <GetPayoutsPayout>
+  note <Retrieves the details of an existing payout. Supply the unique payout ID from either a payout creation request or the payout list, and Stripe will return the corresponding payout information.>
+
+  take payout
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-payouts-payout-body, like get-payouts-payout-body
+    void take
+
+  line </v1/payouts/{payout}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-payouts-payout-body
+
+  loot 200
+    seed json, like payout
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

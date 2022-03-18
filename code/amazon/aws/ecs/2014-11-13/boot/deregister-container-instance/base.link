@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/cluster-not-found-exception
+  take form cluster-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/deregister-container-instance-response
+  take form deregister-container-instance-response
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot deregister-container-instance, name <DeregisterContainerInstance>
+  note <Deregisters an Amazon ECS container instance from the specified cluster. This instance is no longer available to run tasks.
+
+If you intend to use the container instance for some other purpose after deregistration, you should stop all of the tasks running on the container instance before deregistration. That prevents any orphaned tasks from consuming resources.
+
+Deregistering a container instance removes the instance from a cluster, but it does not terminate the EC2 instance. If you are finished using the instance, be sure to terminate it in the Amazon EC2 console to stop billing.
+
+If you terminate a running container instance, Amazon ECS automatically deregisters the instance from your cluster (stopped container instances or instances with disconnected agents are not automatically deregistered when terminated).>
+
+  take x-amz-target
+    like native-string
+  take deregister-container-instance-request, like deregister-container-instance-request
+
+  line </#X-Amz-Target=AmazonEC2ContainerServiceV20141113.DeregisterContainerInstance>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan deregister-container-instance-request
+
+  loot 200
+    seed json, like deregister-container-instance-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like client-exception
+    note <ClientException>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 483
+    seed json, like cluster-not-found-exception
+    note <ClusterNotFoundException>

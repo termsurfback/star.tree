@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/invalid-configuration-request-exception
+  take form invalid-configuration-request-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/invalid-subnet-exception
+  take form invalid-subnet-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/load-balancer-not-found-exception
+  take form load-balancer-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/set-ip-address-type-output
+  take form set-ip-address-type-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-set-ip-address-type, name <POST_SetIpAddressType>
+  note <Sets the type of IP addresses used by the subnets of the specified Application Load Balancer or Network Load Balancer.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take set-ip-address-type-input, like set-ip-address-type-input
+    void take
+
+  line </#Action=SetIpAddressType>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan set-ip-address-type-input
+
+  loot 200
+    seed xml, like set-ip-address-type-output
+    note <Success>
+  loot 480
+    seed xml, like load-balancer-not-found-exception
+    note <LoadBalancerNotFoundException>
+  loot 481
+    seed xml, like invalid-configuration-request-exception
+    note <InvalidConfigurationRequestException>
+  loot 482
+    seed xml, like invalid-subnet-exception
+    note <InvalidSubnetException>

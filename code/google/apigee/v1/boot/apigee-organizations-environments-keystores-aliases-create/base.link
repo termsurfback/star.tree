@@ -1,0 +1,52 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/apigee/v1/base/google-cloud-apigee-v1-alias
+  take form google-cloud-apigee-v1-alias
+
+boot apigee-organizations-environments-keystores-aliases-create, name <apigee.organizations.environments.keystores.aliases.create>
+  note <Creates an alias from a key/certificate pair. The structure of the request is controlled by the `format` query parameter: - `keycertfile` - Separate PEM-encoded key and certificate files are uploaded. Set `Content-Type: multipart/form-data` and include the `keyFile`, `certFile`, and `password` (if keys are encrypted) fields in the request body. If uploading to a truststore, omit `keyFile`. - `pkcs12` - A PKCS12 file is uploaded. Set `Content-Type: multipart/form-data`, provide the file in the `file` field, and include the `password` field if the file is encrypted in the request body. - `selfsignedcert` - A new private key and certificate are generated. Set `Content-Type: application/json` and include CertificateGenerationSpec in the request body.>
+
+  take parent
+    like native-string
+    note <Required. Name of the keystore. Use the following format in your request: `organizations/{org}/environments/{env}/keystores/{keystore}`.>
+  take password
+    like native-string
+    note <DEPRECATED: For improved security, specify the password in the request body instead of using the query parameter. To specify the password in the request body, set `Content-type: multipart/form-data` part with name `password`. Password for the private key file, if required.>
+    void take
+  take alias
+    like native-string
+    note <Alias for the key/certificate pair. Values must match the regular expression `[\w\s-.]{1,255}`. This must be provided for all formats except `selfsignedcert`; self-signed certs may specify the alias in either this parameter or the JSON body.>
+    void take
+  take format
+    like native-string
+    note <Required. Format of the data. Valid values include: `selfsignedcert`, `keycertfile`, or `pkcs12`>
+    void take
+  take ignore-expiry-validation
+    like native-boolean
+    note <Flag that specifies whether to ignore expiry validation. If set to `true`, no expiry validation will be performed.>
+    void take
+  take ignore-newline-validation
+    like native-boolean
+    note <Flag that specifies whether to ignore newline validation. If set to `true`, no error is thrown when the file contains a certificate chain with no newline between each certificate. Defaults to `false`.>
+    void take
+  take google-api-http-body, like google-api-http-body
+    void take
+
+  line </v1/{parent}/aliases>
+
+  find <_password>, loan password
+  find <alias>, loan alias
+  find <format>, loan format
+  find <ignoreExpiryValidation>, loan ignore-expiry-validation
+  find <ignoreNewlineValidation>, loan ignore-newline-validation
+
+  seed json, loan google-api-http-body
+
+  loot 200
+    seed json, like google-cloud-apigee-v1-alias
+    note <Successful response>

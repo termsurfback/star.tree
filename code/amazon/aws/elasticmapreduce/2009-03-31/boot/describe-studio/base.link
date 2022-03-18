@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/describe-studio-output
+  take form describe-studio-output
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-studio, name <DescribeStudio>
+  note <Returns details for the specified Amazon EMR Studio including ID, Name, VPC, Studio access URL, and so on.>
+
+  take x-amz-target
+    like native-string
+  take describe-studio-input, like describe-studio-input
+
+  line </#X-Amz-Target=ElasticMapReduce.DescribeStudio>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-studio-input
+
+  loot 200
+    seed json, like describe-studio-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

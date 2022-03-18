@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/get-analyzed-resource-response
+  take form get-analyzed-resource-response
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-analyzed-resource, name <GetAnalyzedResource>
+  note <Retrieves information about a resource that was analyzed.>
+
+  take analyzer-arn
+    like native-string
+    note <The [ARN of the analyzer](https://docs.aws.amazon.com/IAM/latest/UserGuide/access-analyzer-getting-started.html#permission-resources) to retrieve information from.>
+  take resource-arn
+    like native-string
+    note <The ARN of the resource to retrieve information about.>
+
+  line </analyzed-resource#analyzerArn&resourceArn>
+
+  find <analyzerArn>, loan analyzer-arn
+  find <resourceArn>, loan resource-arn
+
+  loot 200
+    seed json, like get-analyzed-resource-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

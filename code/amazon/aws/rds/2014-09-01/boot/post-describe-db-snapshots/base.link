@@ -1,0 +1,31 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/db-snapshot-message
+  take form db-snapshot-message
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/db-snapshot-not-found-fault
+  take form db-snapshot-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-db-snapshots, name <POST_DescribeDBSnapshots>
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-db-snapshots-message, like describe-db-snapshots-message
+    void take
+
+  line </#Action=DescribeDBSnapshots>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-db-snapshots-message
+
+  loot 200
+    seed xml, like db-snapshot-message
+    note <Success>
+  loot 480
+    seed xml, like db-snapshot-not-found-fault
+    note <DBSnapshotNotFoundFault>

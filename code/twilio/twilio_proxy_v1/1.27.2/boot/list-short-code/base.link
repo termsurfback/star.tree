@@ -1,0 +1,45 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-short-code, name <ListShortCode>
+  note <Retrieve a list of all Short Codes in the Proxy Number Pool for the Service. A maximum of 100 records will be returned per page.>
+
+  take service-sid
+    like native-string
+    note <The SID of the parent \[Service\](https://www.twilio.com/docs/proxy/api/service) to read the resources from.>
+  take page-size
+    like native-integer
+    note <How many resources to return in each list page. The default is 50, and the maximum is 1000.>
+    void take
+
+  line </v1/Services/{service-sid}/ShortCodes>
+
+  find <PageSize>, loan page-size
+
+  loot 200
+    seed json
+      like form
+        like take meta, name <meta>
+        like   like form
+        like     take first-page-url, name <first_page_url>
+        like       void take
+        like     take key, name <key>
+        like       void take
+        like     take next-page-url, name <next_page_url>
+        like       void take
+        like     take page, name <page>
+        like       void take
+        like     take page-size, name <page_size>
+        like       void take
+        like     take previous-page-url, name <previous_page_url>
+        like       void take
+        like     take url, name <url>
+        like       void take
+        like   void take
+        like take short-codes, name <short_codes>
+        like   void take
+    note <OK>

@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/backup-being-copied
+  take form backup-being-copied
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/backup-in-progress
+  take form backup-in-progress
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/backup-not-found
+  take form backup-not-found
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/backup-restoring
+  take form backup-restoring
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/bad-request
+  take form bad-request
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/delete-backup-response
+  take form delete-backup-response
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/incompatible-parameter-error
+  take form incompatible-parameter-error
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-backup, name <DeleteBackup>
+  note <Deletes an Amazon FSx backup, deleting its contents. After deletion, the backup no longer exists, and its data is gone.
+
+The `DeleteBackup` call returns instantly. The backup will not show up in later `DescribeBackups` calls.
+
+The data in a deleted backup is also deleted and can't be recovered by any means.>
+
+  take x-amz-target
+    like native-string
+  take delete-backup-request, like delete-backup-request
+
+  line </#X-Amz-Target=AWSSimbaAPIService_v20180301.DeleteBackup>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-backup-request
+
+  loot 200
+    seed json, like delete-backup-response
+    note <Success>
+  loot 480
+    seed json, like bad-request
+    note <BadRequest>
+  loot 481
+    seed json, like backup-in-progress
+    note <BackupInProgress>
+  loot 482
+    seed json, like backup-not-found
+    note <BackupNotFound>
+  loot 483
+    seed json, like backup-restoring
+    note <BackupRestoring>
+  loot 484
+    seed json, like incompatible-parameter-error
+    note <IncompatibleParameterError>
+  loot 485
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 486
+    seed json, like backup-being-copied
+    note <BackupBeingCopied>

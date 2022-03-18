@@ -1,0 +1,84 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-instance-state-fault
+  take form invalid-db-instance-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/kms-key-not-accessible-fault
+  take form kms-key-not-accessible-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/resource-not-found-fault
+  take form resource-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/start-activity-stream-response
+  take form start-activity-stream-response
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-start-activity-stream, name <GET_StartActivityStream>
+  note <Starts a database activity stream to monitor activity on the database. For more information, see [Database Activity Streams](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/DBActivityStreams.html) in the _Amazon Aurora User Guide_.>
+
+  take resource-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the DB cluster, for example, `arn:aws:rds:us-east-1:12345667890:cluster:das-cluster`.>
+  take mode
+    like native-string
+    note <Specifies the mode of the database activity stream. Database events such as a change or access generate an activity stream event. The database session can handle these events either synchronously or asynchronously.>
+  take kms-key-id
+    like native-string
+    note <The Amazon Web Services KMS key identifier for encrypting messages in the database activity stream. The Amazon Web Services KMS key identifier is the key ARN, key ID, alias ARN, or alias name for the Amazon Web Services KMS customer master key (CMK).>
+  take apply-immediately
+    like native-boolean
+    note <Specifies whether or not the database activity stream is to start as soon as possible, regardless of the maintenance window for the database.>
+    void take
+  take engine-native-audit-fields-included
+    like native-boolean
+    note <Specifies whether the database activity stream includes engine-native audit fields. This option only applies to an Oracle DB instance. By default, no engine-native audit fields are included.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=StartActivityStream>
+
+  find <ResourceArn>, loan resource-arn
+  find <Mode>, loan mode
+  find <KmsKeyId>, loan kms-key-id
+  find <ApplyImmediately>, loan apply-immediately
+  find <EngineNativeAuditFieldsIncluded>, loan engine-native-audit-fields-included
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like start-activity-stream-response
+    note <Success>
+  loot 480
+    seed xml, like invalid-db-instance-state-fault
+    note <InvalidDBInstanceStateFault>
+  loot 481
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>
+  loot 482
+    seed xml, like resource-not-found-fault
+    note <ResourceNotFoundFault>
+  loot 483
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>
+  loot 484
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>
+  loot 485
+    seed xml, like kms-key-not-accessible-fault
+    note <KMSKeyNotAccessibleFault>

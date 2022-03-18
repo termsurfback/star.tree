@@ -1,0 +1,82 @@
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/game-server-claim-status
+  take form game-server-claim-status
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/game-server-connection-info
+  take form game-server-connection-info
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/game-server-data
+  take form game-server-data
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/game-server-group-arn
+  take form game-server-group-arn
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/game-server-group-name
+  take form game-server-group-name
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/game-server-id
+  take form game-server-id
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/game-server-instance-id
+  take form game-server-instance-id
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/game-server-utilization-status
+  take form game-server-utilization-status
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/timestamp
+  take form timestamp
+
+form game-server, name <GameServer>
+  note <**This data type is used with the GameLift FleetIQ and game server groups.** Properties describing a game server that is running on an instance in a GameServerGroup.
+
+A game server is created by a successful call to `RegisterGameServer` and deleted by calling `DeregisterGameServer`. A game server is claimed to host a game session by calling `ClaimGameServer`.
+
+**Related actions** RegisterGameServer | ListGameServers | ClaimGameServer | DescribeGameServer | UpdateGameServer | DeregisterGameServer | [All APIs by task](https://docs.aws.amazon.com/gamelift/latest/fleetiqguide/reference-awssdk-fleetiq.html)>
+  take game-server-group-name, name <GameServerGroupName>
+    like game-server-group-name
+    void take
+    note <A unique identifier for the game server group where the game server is running. Use either the GameServerGroup name or ARN value.>
+  take game-server-group-arn, name <GameServerGroupArn>
+    like game-server-group-arn
+    void take
+    note <The ARN identifier for the game server group where the game server is located.>
+  take game-server-id, name <GameServerId>
+    like game-server-id
+    void take
+    note <A custom string that uniquely identifies the game server. Game server IDs are developer-defined and are unique across all game server groups in an AWS account.>
+  take instance-id, name <InstanceId>
+    like game-server-instance-id
+    void take
+    note <The unique identifier for the instance where the game server is running. This ID is available in the instance metadata. EC2 instance IDs use a 17-character format, for example: `i-1234567890abcdef0`.>
+  take connection-info, name <ConnectionInfo>
+    like game-server-connection-info
+    void take
+    note <The port and IP address that must be used to establish a client connection to the game server.>
+  take game-server-data, name <GameServerData>
+    like game-server-data
+    void take
+    note <A set of custom game server properties, formatted as a single string value. This data is passed to a game client or service when it requests information on game servers using ListGameServers or ClaimGameServer.>
+  take claim-status, name <ClaimStatus>
+    like game-server-claim-status
+    void take
+    note <Indicates when an available game server has been reserved for gameplay but has not yet started hosting a game. Once it is claimed, the game server remains in `CLAIMED` status for a maximum of one minute. During this time, game clients connect to the game server to start the game and trigger the game server to update its utilization status. After one minute, the game server claim status reverts to null.>
+  take utilization-status, name <UtilizationStatus>
+    like game-server-utilization-status
+    void take
+    note <Indicates whether the game server is currently available for new games or is busy. Possible statuses include:
+
+- `AVAILABLE` - The game server is available to be claimed. A game server that has been claimed remains in this status until it reports game hosting activity.
+
+- `UTILIZED` - The game server is currently hosting a game session with players.>
+  take registration-time, name <RegistrationTime>
+    like timestamp
+    void take
+    note <Timestamp that indicates when the game server was created with a RegisterGameServer request. The format is a number expressed in Unix time as milliseconds (for example `"1469498468.057"`).>
+  take last-claim-time, name <LastClaimTime>
+    like timestamp
+    void take
+    note <Timestamp that indicates the last time the game server was claimed with a ClaimGameServer request. The format is a number expressed in Unix time as milliseconds (for example `"1469498468.057"`). This value is used to calculate when a claimed game server's status should revert to null.>
+  take last-health-check-time, name <LastHealthCheckTime>
+    like timestamp
+    void take
+    note <Timestamp that indicates the last time the game server was updated with health status using an UpdateGameServer request. The format is a number expressed in Unix time as milliseconds (for example `"1469498468.057"`). After game server registration, this property is only changed when a game server update specifies a health check value.>

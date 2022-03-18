@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/add-source-identifier-to-subscription-result
+  take form add-source-identifier-to-subscription-result
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/source-not-found-fault
+  take form source-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/subscription-not-found-fault
+  take form subscription-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-add-source-identifier-to-subscription, name <GET_AddSourceIdentifierToSubscription>
+  note <Adds a source identifier to an existing event notification subscription.>
+
+  take subscription-name
+    like native-string
+    note <The name of the event notification subscription you want to add a source identifier to.>
+  take source-identifier
+    like native-string
+    note <The identifier of the event source to be added.
+
+Constraints:
+
+- If the source type is a DB instance, then a `DBInstanceIdentifier` must be supplied.
+
+- If the source type is a DB security group, a `DBSecurityGroupName` must be supplied.
+
+- If the source type is a DB parameter group, a `DBParameterGroupName` must be supplied.
+
+- If the source type is a DB snapshot, a `DBSnapshotIdentifier` must be supplied.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=AddSourceIdentifierToSubscription>
+
+  find <SubscriptionName>, loan subscription-name
+  find <SourceIdentifier>, loan source-identifier
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like add-source-identifier-to-subscription-result
+    note <Success>
+  loot 480
+    seed xml, like subscription-not-found-fault
+    note <SubscriptionNotFoundFault>
+  loot 481
+    seed xml, like source-not-found-fault
+    note <SourceNotFoundFault>

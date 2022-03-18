@@ -1,0 +1,85 @@
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/job-status
+  take form job-status
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/list-jobs-result
+  take form list-jobs-result
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-jobs, name <ListJobs>
+  note <Lists current S3 Batch Operations jobs and jobs that have ended within the last 30 days for the Amazon Web Services account making the request. For more information, see [S3 Batch Operations](https://docs.aws.amazon.com/AmazonS3/latest/dev/batch-ops-basics.html) in the _Amazon S3 User Guide_.
+
+Related actions include:
+
+- [CreateJob](https://docs.aws.amazon.com/AmazonS3/latest/API/API_control_CreateJob.html)
+
+- [DescribeJob](https://docs.aws.amazon.com/AmazonS3/latest/API/API_control_DescribeJob.html)
+
+- [UpdateJobPriority](https://docs.aws.amazon.com/AmazonS3/latest/API/API_control_UpdateJobPriority.html)
+
+- [UpdateJobStatus](https://docs.aws.amazon.com/AmazonS3/latest/API/API_control_UpdateJobStatus.html)>
+
+  take x-amz-account-id
+    like native-string
+    note <The Amazon Web Services account ID associated with the S3 Batch Operations job.>
+  take job-statuses
+    like list
+      like job-status
+    note <The `List Jobs` request returns jobs that match the statuses listed in this element.>
+    void take
+  take next-token
+    like native-string
+    note <A pagination token to request the next page of results. Use the token that Amazon S3 returned in the `NextToken` element of the `ListJobsResult` from the previous `List Jobs` request.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of jobs that Amazon S3 will include in the `List Jobs` response. If there are more jobs than this number, the response will include a pagination token in the `NextToken` field to enable you to retrieve the next page of results.>
+    void take
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+
+  line </v20180820/jobs#x-amz-account-id>
+
+  hint <x-amz-account-id>, loan x-amz-account-id
+
+  find <jobStatuses>, loan job-statuses
+  find <nextToken>, loan next-token
+  find <maxResults>, loan max-results
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed xml, like list-jobs-result
+    note <Success>
+  loot 480
+    seed xml, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed xml, like internal-service-exception
+    note <InternalServiceException>
+  loot 482
+    seed xml, like invalid-next-token-exception
+    note <InvalidNextTokenException>

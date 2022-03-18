@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/instance-tag-key-set
+  take form instance-tag-key-set
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/register-instance-event-notification-attributes-result
+  take form register-instance-event-notification-attributes-result
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-register-instance-event-notification-attributes, name <GET_RegisterInstanceEventNotificationAttributes>
+  note <Registers a set of tag keys to include in scheduled event notifications for your resources.
+
+To remove tags, use .>
+
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take instance-tag-attribute
+    like form
+      take include-all-tags-of-instance, name <IncludeAllTagsOfInstance>
+        like boolean
+        void take
+        note <Indicates whether to register all tag keys in the current Region. Specify `true` to register all tag keys.>
+      take instance-tag-keys, name <InstanceTagKeys>
+        like instance-tag-key-set
+        void take
+        note <The tag keys to register.>
+        host xml
+          host name, text <InstanceTagKey>
+    note <Information about the tag keys to register.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=RegisterInstanceEventNotificationAttributes>
+
+  find <DryRun>, loan dry-run
+  find <InstanceTagAttribute>, loan instance-tag-attribute
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like register-instance-event-notification-attributes-result
+    note <Success>

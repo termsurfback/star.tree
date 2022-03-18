@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/s3/2006-03-01/base/put-bucket-request-payment-body
+  take form put-bucket-request-payment-body
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-bucket-request-payment, name <PutBucketRequestPayment>
+  note <Sets the request payment configuration for a bucket. By default, the bucket owner pays for downloads from the bucket. This configuration parameter enables the bucket owner (only) to specify that the person requesting the download will be charged for the download. For more information, see [Requester Pays Buckets](https://docs.aws.amazon.com/AmazonS3/latest/dev/RequesterPaysBuckets.html).
+
+The following operations are related to `PutBucketRequestPayment`:
+
+- [CreateBucket](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CreateBucket.html)
+
+- [GetBucketRequestPayment](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetBucketRequestPayment.html)>
+
+  take bucket
+    like native-string
+    note <The bucket name.>
+  take content-md5
+    like native-string
+    note <The base64-encoded 128-bit MD5 digest of the data. You must use this header as a message integrity check to verify that the request body was not corrupted in transit. For more information, see [RFC 1864](http://www.ietf.org/rfc/rfc1864.txt).
+
+For requests made using the Amazon Web Services Command Line Interface (CLI) or Amazon Web Services SDKs, this field is calculated automatically.>
+    void take
+  take x-amz-expected-bucket-owner
+    like native-string
+    note <The account ID of the expected bucket owner. If the bucket is owned by a different account, the request will fail with an HTTP `403 (Access Denied)` error.>
+    void take
+  take request-payment
+    like native-boolean
+  take put-bucket-request-payment-body, like put-bucket-request-payment-body
+
+  line </{bucket}#requestPayment>
+
+  hint <Content-MD5>, loan content-md5
+  hint <x-amz-expected-bucket-owner>, loan x-amz-expected-bucket-owner
+
+  find <requestPayment>, loan request-payment
+
+  seed xml, loan put-bucket-request-payment-body
+
+  loot 200
+    note <Success>

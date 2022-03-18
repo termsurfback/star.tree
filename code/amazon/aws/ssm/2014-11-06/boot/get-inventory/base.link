@@ -1,0 +1,76 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/get-inventory-result
+  take form get-inventory-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-aggregator-exception
+  take form invalid-aggregator-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-filter
+  take form invalid-filter
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-inventory-group-exception
+  take form invalid-inventory-group-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-result-attribute-exception
+  take form invalid-result-attribute-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-type-name-exception
+  take form invalid-type-name-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-inventory, name <GetInventory>
+  note <Query inventory information. This includes instance status, such as `Stopped` or `Terminated`.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-inventory-request, like get-inventory-request
+
+  line </#X-Amz-Target=AmazonSSM.GetInventory>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan get-inventory-request
+
+  loot 200
+    seed json, like get-inventory-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like invalid-filter
+    note <InvalidFilter>
+  loot 482
+    seed json, like invalid-inventory-group-exception
+    note <InvalidInventoryGroupException>
+  loot 483
+    seed json, like invalid-next-token
+    note <InvalidNextToken>
+  loot 484
+    seed json, like invalid-type-name-exception
+    note <InvalidTypeNameException>
+  loot 485
+    seed json, like invalid-aggregator-exception
+    note <InvalidAggregatorException>
+  loot 486
+    seed json, like invalid-result-attribute-exception
+    note <InvalidResultAttributeException>

@@ -1,0 +1,42 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/db-snapshot-not-found-fault
+  take form db-snapshot-not-found-fault
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-remove-tags-from-resource, name <GET_RemoveTagsFromResource>
+  take resource-name
+    like native-string
+  take tag-keys
+    like list
+      like string
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=RemoveTagsFromResource>
+
+  find <ResourceName>, loan resource-name
+  find <TagKeys>, loan tag-keys
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>
+  loot 481
+    seed xml, like db-snapshot-not-found-fault
+    note <DBSnapshotNotFoundFault>

@@ -1,0 +1,126 @@
+
+load @drumwork/snow/amazonaws.com/compute-optimizer/2019-11-01/base/account-id
+  take form account-id
+
+load @drumwork/snow/amazonaws.com/compute-optimizer/2019-11-01/base/current-instance-type
+  take form current-instance-type
+
+load @drumwork/snow/amazonaws.com/compute-optimizer/2019-11-01/base/finding
+  take form finding
+
+load @drumwork/snow/amazonaws.com/compute-optimizer/2019-11-01/base/instance-arn
+  take form instance-arn
+
+load @drumwork/snow/amazonaws.com/compute-optimizer/2019-11-01/base/instance-name
+  take form instance-name
+
+load @drumwork/snow/amazonaws.com/compute-optimizer/2019-11-01/base/instance-recommendation-finding-reason-codes
+  take form instance-recommendation-finding-reason-codes
+
+load @drumwork/snow/amazonaws.com/compute-optimizer/2019-11-01/base/last-refresh-timestamp
+  take form last-refresh-timestamp
+
+load @drumwork/snow/amazonaws.com/compute-optimizer/2019-11-01/base/look-back-period-in-days
+  take form look-back-period-in-days
+
+load @drumwork/snow/amazonaws.com/compute-optimizer/2019-11-01/base/recommendation-options
+  take form recommendation-options
+
+load @drumwork/snow/amazonaws.com/compute-optimizer/2019-11-01/base/recommendation-sources
+  take form recommendation-sources
+
+load @drumwork/snow/amazonaws.com/compute-optimizer/2019-11-01/base/utilization-metrics
+  take form utilization-metrics
+
+form instance-recommendation, name <InstanceRecommendation>
+  note <Describes an Amazon EC2 instance recommendation.>
+  take instance-arn, name <instanceArn>
+    like instance-arn
+    void take
+    note <The Amazon Resource Name (ARN) of the current instance.>
+  take account-id, name <accountId>
+    like account-id
+    void take
+    note <The Amazon Web Services account ID of the instance.>
+  take instance-name, name <instanceName>
+    like instance-name
+    void take
+    note <The name of the current instance.>
+  take current-instance-type, name <currentInstanceType>
+    like current-instance-type
+    void take
+    note <The instance type of the current instance.>
+  take finding, name <finding>
+    like finding
+    void take
+    note <The finding classification of the instance.
+
+Findings for instances include:
+
+- **`Underprovisioned`** —An instance is considered under-provisioned when at least one specification of your instance, such as CPU, memory, or network, does not meet the performance requirements of your workload. Under-provisioned instances may lead to poor application performance.
+
+- **`Overprovisioned`** —An instance is considered over-provisioned when at least one specification of your instance, such as CPU, memory, or network, can be sized down while still meeting the performance requirements of your workload, and no specification is under-provisioned. Over-provisioned instances may lead to unnecessary infrastructure cost.
+
+- **`Optimized`** —An instance is considered optimized when all specifications of your instance, such as CPU, memory, and network, meet the performance requirements of your workload and is not over provisioned. For optimized resources, Compute Optimizer might recommend a new generation instance type.>
+  take finding-reason-codes, name <findingReasonCodes>
+    like instance-recommendation-finding-reason-codes
+    void take
+    note <The reason for the finding classification of the instance.
+
+Finding reason codes for instances include:
+
+- **`CPUOverprovisioned`** — The instance’s CPU configuration can be sized down while still meeting the performance requirements of your workload. This is identified by analyzing the `CPUUtilization` metric of the current instance during the look-back period.
+
+- **`CPUUnderprovisioned`** — The instance’s CPU configuration doesn't meet the performance requirements of your workload and there is an alternative instance type that provides better CPU performance. This is identified by analyzing the `CPUUtilization` metric of the current instance during the look-back period.
+
+- **`MemoryOverprovisioned`** — The instance’s memory configuration can be sized down while still meeting the performance requirements of your workload. This is identified by analyzing the memory utilization metric of the current instance during the look-back period.
+
+- **`MemoryUnderprovisioned`** — The instance’s memory configuration doesn't meet the performance requirements of your workload and there is an alternative instance type that provides better memory performance. This is identified by analyzing the memory utilization metric of the current instance during the look-back period.
+
+  Memory utilization is analyzed only for resources that have the unified CloudWatch agent installed on them. For more information, see [Enabling memory utilization with the Amazon CloudWatch Agent](https://docs.aws.amazon.com/compute-optimizer/latest/ug/metrics.html#cw-agent) in the _Compute Optimizer User Guide_. On Linux instances, Compute Optimizer analyses the `mem_used_percent` metric in the `CWAgent` namespace, or the legacy `MemoryUtilization` metric in the `System/Linux` namespace. On Windows instances, Compute Optimizer analyses the `Memory % Committed Bytes In Use` metric in the `CWAgent` namespace.
+
+- **`EBSThroughputOverprovisioned`** — The instance’s EBS throughput configuration can be sized down while still meeting the performance requirements of your workload. This is identified by analyzing the `VolumeReadOps` and `VolumeWriteOps` metrics of EBS volumes attached to the current instance during the look-back period.
+
+- **`EBSThroughputUnderprovisioned`** — The instance’s EBS throughput configuration doesn't meet the performance requirements of your workload and there is an alternative instance type that provides better EBS throughput performance. This is identified by analyzing the `VolumeReadOps` and `VolumeWriteOps` metrics of EBS volumes attached to the current instance during the look-back period.
+
+- **`EBSIOPSOverprovisioned`** — The instance’s EBS IOPS configuration can be sized down while still meeting the performance requirements of your workload. This is identified by analyzing the `VolumeReadBytes` and `VolumeWriteBytes` metric of EBS volumes attached to the current instance during the look-back period.
+
+- **`EBSIOPSUnderprovisioned`** — The instance’s EBS IOPS configuration doesn't meet the performance requirements of your workload and there is an alternative instance type that provides better EBS IOPS performance. This is identified by analyzing the `VolumeReadBytes` and `VolumeWriteBytes` metric of EBS volumes attached to the current instance during the look-back period.
+
+- **`NetworkBandwidthOverprovisioned`** — The instance’s network bandwidth configuration can be sized down while still meeting the performance requirements of your workload. This is identified by analyzing the `NetworkIn` and `NetworkOut` metrics of the current instance during the look-back period.
+
+- **`NetworkBandwidthUnderprovisioned`** — The instance’s network bandwidth configuration doesn't meet the performance requirements of your workload and there is an alternative instance type that provides better network bandwidth performance. This is identified by analyzing the `NetworkIn` and `NetworkOut` metrics of the current instance during the look-back period. This finding reason happens when the `NetworkIn` or `NetworkOut` performance of an instance is impacted.
+
+- **`NetworkPPSOverprovisioned`** — The instance’s network PPS (packets per second) configuration can be sized down while still meeting the performance requirements of your workload. This is identified by analyzing the `NetworkPacketsIn` and `NetworkPacketsIn` metrics of the current instance during the look-back period.
+
+- **`NetworkPPSUnderprovisioned`** — The instance’s network PPS (packets per second) configuration doesn't meet the performance requirements of your workload and there is an alternative instance type that provides better network PPS performance. This is identified by analyzing the `NetworkPacketsIn` and `NetworkPacketsIn` metrics of the current instance during the look-back period.
+
+- **`DiskIOPSOverprovisioned`** — The instance’s disk IOPS configuration can be sized down while still meeting the performance requirements of your workload. This is identified by analyzing the `DiskReadOps` and `DiskWriteOps` metrics of the current instance during the look-back period.
+
+- **`DiskIOPSUnderprovisioned`** — The instance’s disk IOPS configuration doesn't meet the performance requirements of your workload and there is an alternative instance type that provides better disk IOPS performance. This is identified by analyzing the `DiskReadOps` and `DiskWriteOps` metrics of the current instance during the look-back period.
+
+- **`DiskThroughputOverprovisioned`** — The instance’s disk throughput configuration can be sized down while still meeting the performance requirements of your workload. This is identified by analyzing the `DiskReadBytes` and `DiskWriteBytes` metrics of the current instance during the look-back period.
+
+- **`DiskThroughputUnderprovisioned`** — The instance’s disk throughput configuration doesn't meet the performance requirements of your workload and there is an alternative instance type that provides better disk throughput performance. This is identified by analyzing the `DiskReadBytes` and `DiskWriteBytes` metrics of the current instance during the look-back period.
+
+For more information about instance metrics, see [List the available CloudWatch metrics for your instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/viewing_metrics_with_cloudwatch.html) in the _Amazon Elastic Compute Cloud User Guide_. For more information about EBS volume metrics, see [Amazon CloudWatch metrics for Amazon EBS](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using_cloudwatch_ebs.html) in the _Amazon Elastic Compute Cloud User Guide_.>
+  take utilization-metrics, name <utilizationMetrics>
+    like utilization-metrics
+    void take
+    note <An array of objects that describe the utilization metrics of the instance.>
+  take look-back-period-in-days, name <lookBackPeriodInDays>
+    like look-back-period-in-days
+    void take
+    note <The number of days for which utilization metrics were analyzed for the instance.>
+  take recommendation-options, name <recommendationOptions>
+    like recommendation-options
+    void take
+    note <An array of objects that describe the recommendation options for the instance.>
+  take recommendation-sources, name <recommendationSources>
+    like recommendation-sources
+    void take
+    note <An array of objects that describe the source resource of the recommendation.>
+  take last-refresh-timestamp, name <lastRefreshTimestamp>
+    like last-refresh-timestamp
+    void take
+    note <The timestamp of when the instance recommendation was last refreshed.>

@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/list-instance-fleets-output
+  take form list-instance-fleets-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-instance-fleets, name <ListInstanceFleets>
+  note <Lists all available details about the instance fleets in a cluster.
+
+The instance fleet configuration is available only in Amazon EMR versions 4.8.0 and later, excluding 5.0.x versions.>
+
+  take x-amz-target
+    like native-string
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take list-instance-fleets-input, like list-instance-fleets-input
+
+  line </#X-Amz-Target=ElasticMapReduce.ListInstanceFleets>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <Marker>, loan marker
+
+  seed json, loan list-instance-fleets-input
+
+  loot 200
+    seed json, like list-instance-fleets-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

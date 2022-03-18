@@ -1,0 +1,25 @@
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/issuing-dispute
+  take form issuing-dispute
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-issuing-disputes-body
+  take form post-issuing-disputes-body
+
+boot post-issuing-disputes, name <PostIssuingDisputes>
+  note <Creates an Issuing `Dispute` object. Individual pieces of evidence within the `evidence` object are optional at this point. Stripe only validates that required evidence is present during submission. Refer to [Dispute reasons and evidence](/docs/issuing/purchases/disputes#dispute-reasons-and-evidence) for more details about evidence requirements.>
+
+  take post-issuing-disputes-body, like post-issuing-disputes-body
+
+  line </v1/issuing/disputes>
+
+  seed x-www-form-urlencoded, loan post-issuing-disputes-body
+
+  loot 200
+    seed json, like issuing-dispute
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

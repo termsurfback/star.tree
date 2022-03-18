@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/servicecatalog-appregistry/2020-06-24/base/disassociate-resource-response
+  take form disassociate-resource-response
+
+load @drumwork/snow/amazonaws.com/servicecatalog-appregistry/2020-06-24/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog-appregistry/2020-06-24/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot disassociate-resource, name <DisassociateResource>
+  note <Disassociates a resource from application. Both the resource and the application can be specified either by ID or name.>
+
+  take application
+    like native-string
+    note <The name or ID of the application.>
+  take resource-type
+    like native-string
+    note <The type of the resource that is being disassociated.>
+  take resource
+    like native-string
+    note <The name or ID of the resource.>
+
+  line </applications/{application}/resources/{resource-type}/{resource}>
+
+  loot 200
+    seed json, like disassociate-resource-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>

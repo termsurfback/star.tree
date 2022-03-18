@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/configuration-set-does-not-exist-exception
+  take form configuration-set-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/invalid-delivery-options-exception
+  take form invalid-delivery-options-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/put-configuration-set-delivery-options-response
+  take form put-configuration-set-delivery-options-response
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/tls-policy
+  take form tls-policy
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-put-configuration-set-delivery-options, name <GET_PutConfigurationSetDeliveryOptions>
+  note <Adds or updates the delivery options for a configuration set.>
+
+  take configuration-set-name
+    like native-string
+    note <The name of the configuration set that you want to specify the delivery options for.>
+  take delivery-options
+    like form
+      take tls-policy, name <TlsPolicy>
+        like tls-policy
+        void take
+        note <Specifies whether messages that use the configuration set are required to use Transport Layer Security (TLS). If the value is `Require`, messages are only delivered if a TLS connection can be established. If the value is `Optional`, messages can be delivered in plain text if a TLS connection can't be established.>
+    note <Specifies whether messages that use the configuration set are required to use Transport Layer Security (TLS).>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=PutConfigurationSetDeliveryOptions>
+
+  find <ConfigurationSetName>, loan configuration-set-name
+  find <DeliveryOptions>, loan delivery-options
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like put-configuration-set-delivery-options-response
+    note <Success>
+  loot 480
+    seed xml, like configuration-set-does-not-exist-exception
+    note <ConfigurationSetDoesNotExistException>
+  loot 481
+    seed xml, like invalid-delivery-options-exception
+    note <InvalidDeliveryOptionsException>

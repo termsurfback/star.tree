@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/cloudchannel/v1/base/google-cloud-channel-v1-list-customers-response
+  take form google-cloud-channel-v1-list-customers-response
+
+boot cloudchannel-accounts-customers-list, name <cloudchannel.accounts.customers.list>
+  note <List Customers. Possible error codes: * PERMISSION_DENIED: The reseller account making the request is different from the reseller account in the API request. * INVALID_ARGUMENT: Required request parameters are missing or invalid. Return value: List of Customers, or an empty list if there are no customers.>
+
+  take parent
+    like native-string
+    note <Required. The resource name of the reseller account to list customers from. Parent uses the format: accounts/{account_id}.>
+  take filter
+    like native-string
+    note <Optional. Filters applied to the [CloudChannelService.ListCustomers] results. See https://cloud.google.com/channel/docs/concepts/google-cloud/filter-customers for more information.>
+    void take
+  take page-size
+    like native-integer
+    note <Optional. The maximum number of customers to return. The service may return fewer than this value. If unspecified, returns at most 10 customers. The maximum value is 50.>
+    void take
+  take page-token
+    like native-string
+    note <Optional. A token identifying a page of results other than the first page. Obtained through ListCustomersResponse.next_page_token of the previous CloudChannelService.ListCustomers call.>
+    void take
+
+  line </v1/{parent}/customers>
+
+  find <filter>, loan filter
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like google-cloud-channel-v1-list-customers-response
+    note <Successful response>

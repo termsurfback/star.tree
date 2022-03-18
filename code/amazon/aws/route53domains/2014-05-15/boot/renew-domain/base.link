@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/duplicate-request
+  take form duplicate-request
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/operation-limit-exceeded
+  take form operation-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/renew-domain-response
+  take form renew-domain-response
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/tld-rules-violation
+  take form tld-rules-violation
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/unsupported-tld
+  take form unsupported-tld
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot renew-domain, name <RenewDomain>
+  note <This operation renews a domain for the specified number of years. The cost of renewing your domain is billed to your AWS account.
+
+We recommend that you renew your domain several weeks before the expiration date. Some TLD registries delete domains before the expiration date if you haven't renewed far enough in advance. For more information about renewing domain registration, see [Renewing Registration for a Domain](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-renew.html) in the _Amazon Route 53 Developer Guide_.>
+
+  take x-amz-target
+    like native-string
+  take renew-domain-request, like renew-domain-request
+
+  line </#X-Amz-Target=Route53Domains_v20140515.RenewDomain>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan renew-domain-request
+
+  loot 200
+    seed json, like renew-domain-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input
+    note <InvalidInput>
+  loot 481
+    seed json, like unsupported-tld
+    note <UnsupportedTLD>
+  loot 482
+    seed json, like duplicate-request
+    note <DuplicateRequest>
+  loot 483
+    seed json, like tld-rules-violation
+    note <TLDRulesViolation>
+  loot 484
+    seed json, like operation-limit-exceeded
+    note <OperationLimitExceeded>

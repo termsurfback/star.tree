@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/limit-exceeded-fault
+  take form limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/operation-not-permitted-fault
+  take form operation-not-permitted-fault
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/type-already-exists-fault
+  take form type-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/unknown-resource-fault
+  take form unknown-resource-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot register-workflow-type, name <RegisterWorkflowType>
+  note <Registers a new _workflow type_ and its configuration settings in the specified domain.
+
+The retention period for the workflow history is set by the RegisterDomain action.
+
+If the type already exists, then a `TypeAlreadyExists` fault is returned. You cannot change the configuration settings of a workflow type once it is registered and it must be registered as a new version.
+
+**Access Control** You can use IAM policies to control this action's access to Amazon SWF resources as follows:
+
+- Use a `Resource` element with the domain name to limit the action to only specified domains.
+
+- Use an `Action` element to allow or deny permission to call this action.
+
+- Constrain the following parameters by using a `Condition` element with the appropriate keys.
+
+  - `defaultTaskList.name`: String constraint. The key is `swf:defaultTaskList.name`.
+
+  - `name`: String constraint. The key is `swf:name`.
+
+  - `version`: String constraint. The key is `swf:version`.
+
+If the caller doesn't have sufficient permissions to invoke the action, or the parameter values fall outside the specified constraints, the action fails. The associated event attribute's `cause` parameter is set to `OPERATION_NOT_PERMITTED`. For details and example IAM policies, see [Using IAM to Manage Access to Amazon SWF Workflows](https://docs.aws.amazon.com/amazonswf/latest/developerguide/swf-dev-iam.html) in the _Amazon SWF Developer Guide_.>
+
+  take x-amz-target
+    like native-string
+  take register-workflow-type-input, like register-workflow-type-input
+
+  line </#X-Amz-Target=SimpleWorkflowService.RegisterWorkflowType>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan register-workflow-type-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like type-already-exists-fault
+    note <TypeAlreadyExistsFault>
+  loot 481
+    seed json, like limit-exceeded-fault
+    note <LimitExceededFault>
+  loot 482
+    seed json, like unknown-resource-fault
+    note <UnknownResourceFault>
+  loot 483
+    seed json, like operation-not-permitted-fault
+    note <OperationNotPermittedFault>

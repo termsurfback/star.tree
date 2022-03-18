@@ -1,0 +1,34 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/describe-stacks-output
+  take form describe-stacks-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-stacks, name <POST_DescribeStacks>
+  note <Returns the description for the specified stack; if no stack name was specified, then it returns the description for all the stacks created.
+
+If the stack does not exist, an `ValidationError` is returned.>
+
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-stacks-input, like describe-stacks-input
+    void take
+
+  line </#Action=DescribeStacks>
+
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-stacks-input
+
+  loot 200
+    seed xml, like describe-stacks-output
+    note <Success>

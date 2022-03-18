@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/create-subnet-group-response
+  take form create-subnet-group-response
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/invalid-subnet
+  take form invalid-subnet
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/service-linked-role-not-found-fault
+  take form service-linked-role-not-found-fault
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/subnet-group-already-exists-fault
+  take form subnet-group-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/subnet-group-quota-exceeded-fault
+  take form subnet-group-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/subnet-not-allowed-fault
+  take form subnet-not-allowed-fault
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/subnet-quota-exceeded-fault
+  take form subnet-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/tag-quota-per-resource-exceeded
+  take form tag-quota-per-resource-exceeded
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-subnet-group, name <CreateSubnetGroup>
+  note <Creates a subnet group. A subnet group is a collection of subnets (typically private) that you can designate for your clusters running in an Amazon Virtual Private Cloud (VPC) environment. When you create a cluster in an Amazon VPC, you must specify a subnet group. MemoryDB uses that subnet group to choose a subnet and IP addresses within that subnet to associate with your nodes. For more information, see [Subnets and subnet groups](https://docs.aws.amazon.com/MemoryDB/latest/devguide/subnetgroups.html).>
+
+  take x-amz-target
+    like native-string
+  take create-subnet-group-request, like create-subnet-group-request
+
+  line </#X-Amz-Target=AmazonMemoryDB.CreateSubnetGroup>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-subnet-group-request
+
+  loot 200
+    seed json, like create-subnet-group-response
+    note <Success>
+  loot 480
+    seed json, like subnet-group-already-exists-fault
+    note <SubnetGroupAlreadyExistsFault>
+  loot 481
+    seed json, like subnet-group-quota-exceeded-fault
+    note <SubnetGroupQuotaExceededFault>
+  loot 482
+    seed json, like subnet-quota-exceeded-fault
+    note <SubnetQuotaExceededFault>
+  loot 483
+    seed json, like invalid-subnet
+    note <InvalidSubnet>
+  loot 484
+    seed json, like service-linked-role-not-found-fault
+    note <ServiceLinkedRoleNotFoundFault>
+  loot 485
+    seed json, like subnet-not-allowed-fault
+    note <SubnetNotAllowedFault>
+  loot 486
+    seed json, like tag-quota-per-resource-exceeded
+    note <TagQuotaPerResourceExceeded>

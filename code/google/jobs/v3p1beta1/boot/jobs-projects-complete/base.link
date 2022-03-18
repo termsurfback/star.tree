@@ -1,0 +1,62 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/jobs/v3p1beta1/base/complete-query-response
+  take form complete-query-response
+
+boot jobs-projects-complete, name <jobs.projects.complete>
+  note <Completes the specified prefix with keyword suggestions. Intended for use by a job search auto-complete search box.>
+
+  take name
+    like native-string
+    note <Required. Resource name of project the completion is performed within. The format is "projects/{project_id}", for example, "projects/api-test-project".>
+  take company-name
+    like native-string
+    note <Optional. If provided, restricts completion to specified company. The format is "projects/{project_id}/companies/{company_id}", for example, "projects/api-test-project/companies/foo".>
+    void take
+  take language-code
+    like native-string
+    note <Deprecated. Use language_codes instead. Optional. The language of the query. This is the BCP-47 language code, such as "en-US" or "sr-Latn". For more information, see [Tags for Identifying Languages](https://tools.ietf.org/html/bcp47). For CompletionType.JOB_TITLE type, only open jobs with the same language_code are returned. For CompletionType.COMPANY_NAME type, only companies having open jobs with the same language_code are returned. For CompletionType.COMBINED type, only open jobs with the same language_code or companies having open jobs with the same language_code are returned. The maximum number of allowed characters is 255.>
+    void take
+  take language-codes
+    like list
+      like native-string
+    note <Optional. The list of languages of the query. This is the BCP-47 language code, such as "en-US" or "sr-Latn". For more information, see [Tags for Identifying Languages](https://tools.ietf.org/html/bcp47). For CompletionType.JOB_TITLE type, only open jobs with the same language_codes are returned. For CompletionType.COMPANY_NAME type, only companies having open jobs with the same language_codes are returned. For CompletionType.COMBINED type, only open jobs with the same language_codes or companies having open jobs with the same language_codes are returned. The maximum number of allowed characters is 255.>
+    void take
+  take page-size
+    like native-integer
+    note <Required. Completion result count. The maximum allowed page size is 10.>
+    void take
+  take query
+    like native-string
+    note <Required. The query used to generate suggestions. The maximum number of allowed characters is 255.>
+    void take
+  take scope
+    like native-string
+    note <Optional. The scope of the completion. The defaults is CompletionScope.PUBLIC.>
+    void take
+  take type
+    like native-string
+    note <Optional. The completion topic. The default is CompletionType.COMBINED.>
+    void take
+
+  line </v3p1beta1/{name}:complete>
+
+  find <companyName>, loan company-name
+  find <languageCode>, loan language-code
+  find <languageCodes>, loan language-codes
+  find <pageSize>, loan page-size
+  find <query>, loan query
+  find <scope>, loan scope
+  find <type>, loan type
+
+  loot 200
+    seed json, like complete-query-response
+    note <Successful response>

@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/describe-clusters-response
+  take form describe-clusters-response
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/service-linked-role-not-found-fault
+  take form service-linked-role-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-clusters, name <DescribeClusters>
+  note <Returns information about all provisioned clusters if no cluster identifier is specified, or about a specific cluster if a cluster name is supplied.>
+
+  take x-amz-target
+    like native-string
+  take describe-clusters-request, like describe-clusters-request
+
+  line </#X-Amz-Target=AmazonMemoryDB.DescribeClusters>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-clusters-request
+
+  loot 200
+    seed json, like describe-clusters-response
+    note <Success>
+  loot 480
+    seed json, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 481
+    seed json, like service-linked-role-not-found-fault
+    note <ServiceLinkedRoleNotFoundFault>
+  loot 482
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed json, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

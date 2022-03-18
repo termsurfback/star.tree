@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/cfn-registry-exception
+  take form cfn-registry-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/describe-type-output
+  take form describe-type-output
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/type-not-found-exception
+  take form type-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-type, name <POST_DescribeType>
+  note <Returns detailed information about an extension that has been registered.
+
+If you specify a `VersionId`, `DescribeType` returns information about that specific extension version. Otherwise, it returns information about the default extension version.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-type-input, like describe-type-input
+    void take
+
+  line </#Action=DescribeType>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-type-input
+
+  loot 200
+    seed xml, like describe-type-output
+    note <Success>
+  loot 480
+    seed xml, like cfn-registry-exception
+    note <CFNRegistryException>
+  loot 481
+    seed xml, like type-not-found-exception
+    note <TypeNotFoundException>

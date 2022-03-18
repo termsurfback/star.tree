@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot untag-resource, name <UntagResource>
+  note <Removes one or more tags from the specified secret.
+
+This operation is idempotent. If a requested tag is not attached to the secret, no error is returned and the secret metadata is unchanged.
+
+If you use tags as part of your security strategy, then removing a tag can change permissions. If successfully completing this operation would result in you losing your permissions for this secret, then the operation is blocked and returns an Access Denied error.
+
+**Minimum permissions** To run this command, you must have the following permissions:
+
+- secretsmanager:UntagResource
+
+**Related operations** - To add one or more tags to the collection attached to a secret, use TagResource.
+
+- To view the list of tags attached to a secret, use DescribeSecret.>
+
+  take x-amz-target
+    like native-string
+  take untag-resource-request, like untag-resource-request
+
+  line </#X-Amz-Target=secretsmanager.UntagResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan untag-resource-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 483
+    seed json, like internal-service-error
+    note <InternalServiceError>

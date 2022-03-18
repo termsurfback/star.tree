@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/create-notebook-instance-lifecycle-config-output
+  take form create-notebook-instance-lifecycle-config-output
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-limit-exceeded
+  take form resource-limit-exceeded
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-notebook-instance-lifecycle-config, name <CreateNotebookInstanceLifecycleConfig>
+  note <Creates a lifecycle configuration that you can associate with a notebook instance. A _lifecycle configuration_ is a collection of shell scripts that run when you create or start a notebook instance.
+
+Each lifecycle configuration script has a limit of 16384 characters.
+
+The value of the `$PATH` environment variable that is available to both scripts is `/sbin:bin:/usr/sbin:/usr/bin`.
+
+View CloudWatch Logs for notebook instance lifecycle configurations in log group `/aws/sagemaker/NotebookInstances` in log stream `[notebook-instance-name]/[LifecycleConfigHook]`.
+
+Lifecycle configuration scripts cannot run for longer than 5 minutes. If a script runs for longer than 5 minutes, it fails and the notebook instance is not created or started.
+
+For information about notebook instance lifestyle configurations, see [Step 2.1: (Optional) Customize a Notebook Instance](https://docs.aws.amazon.com/sagemaker/latest/dg/notebook-lifecycle-config.html).>
+
+  take x-amz-target
+    like native-string
+  take create-notebook-instance-lifecycle-config-input, like create-notebook-instance-lifecycle-config-input
+
+  line </#X-Amz-Target=SageMaker.CreateNotebookInstanceLifecycleConfig>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-notebook-instance-lifecycle-config-input
+
+  loot 200
+    seed json, like create-notebook-instance-lifecycle-config-output
+    note <Success>
+  loot 480
+    seed json, like resource-limit-exceeded
+    note <ResourceLimitExceeded>

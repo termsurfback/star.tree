@@ -1,0 +1,145 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cluster-quota-for-customer-exceeded-fault
+  take form cluster-quota-for-customer-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/configure-shard
+  take form configure-shard
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/decrease-replica-count-result
+  take form decrease-replica-count-result
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/insufficient-cache-cluster-capacity-fault
+  take form insufficient-cache-cluster-capacity-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-cache-cluster-state-fault
+  take form invalid-cache-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-replication-group-state-fault
+  take form invalid-replication-group-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-vpc-network-state-fault
+  take form invalid-vpc-network-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/no-operation-fault
+  take form no-operation-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/node-groups-per-replication-group-quota-exceeded-fault
+  take form node-groups-per-replication-group-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/node-quota-for-customer-exceeded-fault
+  take form node-quota-for-customer-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/replication-group-not-found-fault
+  take form replication-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/service-linked-role-not-found-fault
+  take form service-linked-role-not-found-fault
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-decrease-replica-count, name <GET_DecreaseReplicaCount>
+  note <Dynamically decreases the number of replicas in a Redis (cluster mode disabled) replication group or the number of replica nodes in one or more node groups (shards) of a Redis (cluster mode enabled) replication group. This operation is performed with no cluster down time.>
+
+  take replication-group-id
+    like native-string
+    note <The id of the replication group from which you want to remove replica nodes.>
+  take new-replica-count
+    like native-integer
+    note <The number of read replica nodes you want at the completion of this operation. For Redis (cluster mode disabled) replication groups, this is the number of replica nodes in the replication group. For Redis (cluster mode enabled) replication groups, this is the number of replica nodes in each of the replication group's node groups.
+
+The minimum number of replicas in a shard or replication group is:
+
+- Redis (cluster mode disabled)
+
+  - If Multi-AZ is enabled: 1
+
+  - If Multi-AZ is not enabled: 0
+
+- Redis (cluster mode enabled): 0 (though you will not be able to failover to a replica if your primary node fails)>
+    void take
+  take replica-configuration
+    like list
+      like configure-shard
+    note <A list of `ConfigureShard` objects that can be used to configure each shard in a Redis (cluster mode enabled) replication group. The `ConfigureShard` has three members: `NewReplicaCount`, `NodeGroupId`, and `PreferredAvailabilityZones`.>
+    void take
+  take replicas-to-remove
+    like list
+      like string
+    note <A list of the node ids to remove from the replication group or node group (shard).>
+    void take
+  take apply-immediately
+    like native-boolean
+    note <If `True`, the number of replica nodes is decreased immediately. `ApplyImmediately=False` is not currently supported.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DecreaseReplicaCount>
+
+  find <ReplicationGroupId>, loan replication-group-id
+  find <NewReplicaCount>, loan new-replica-count
+  find <ReplicaConfiguration>, loan replica-configuration
+  find <ReplicasToRemove>, loan replicas-to-remove
+  find <ApplyImmediately>, loan apply-immediately
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like decrease-replica-count-result
+    note <Success>
+  loot 480
+    seed xml, like replication-group-not-found-fault
+    note <ReplicationGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-replication-group-state-fault
+    note <InvalidReplicationGroupStateFault>
+  loot 482
+    seed xml, like invalid-cache-cluster-state-fault
+    note <InvalidCacheClusterStateFault>
+  loot 483
+    seed xml, like invalid-vpc-network-state-fault
+    note <InvalidVPCNetworkStateFault>
+  loot 484
+    seed xml, like insufficient-cache-cluster-capacity-fault
+    note <InsufficientCacheClusterCapacityFault>
+  loot 485
+    seed xml, like cluster-quota-for-customer-exceeded-fault
+    note <ClusterQuotaForCustomerExceededFault>
+  loot 486
+    seed xml, like node-groups-per-replication-group-quota-exceeded-fault
+    note <NodeGroupsPerReplicationGroupQuotaExceededFault>
+  loot 487
+    seed xml, like node-quota-for-customer-exceeded-fault
+    note <NodeQuotaForCustomerExceededFault>
+  loot 488
+    seed xml, like service-linked-role-not-found-fault
+    note <ServiceLinkedRoleNotFoundFault>
+  loot 489
+    seed xml, like no-operation-fault
+    note <NoOperationFault>
+  loot 490
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 491
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

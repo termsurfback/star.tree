@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/waf-regional/2016-11-28/base/get-change-token-status-response
+  take form get-change-token-status-response
+
+load @drumwork/snow/amazonaws.com/waf-regional/2016-11-28/base/waf-internal-error-exception
+  take form waf-internal-error-exception
+
+load @drumwork/snow/amazonaws.com/waf-regional/2016-11-28/base/waf-nonexistent-item-exception
+  take form waf-nonexistent-item-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-change-token-status, name <GetChangeTokenStatus>
+  note <This is **AWS WAF Classic** documentation. For more information, see [AWS WAF Classic](https://docs.aws.amazon.com/waf/latest/developerguide/classic-waf-chapter.html) in the developer guide.
+
+**For the latest version of AWS WAF**, use the AWS WAFV2 API and see the [AWS WAF Developer Guide](https://docs.aws.amazon.com/waf/latest/developerguide/waf-chapter.html). With the latest version, AWS WAF has a single set of endpoints for regional and global use.
+
+Returns the status of a `ChangeToken` that you got by calling GetChangeToken. `ChangeTokenStatus` is one of the following values:
+
+- `PROVISIONED`: You requested the change token by calling `GetChangeToken`, but you haven't used it yet in a call to create, update, or delete an AWS WAF object.
+
+- `PENDING`: AWS WAF is propagating the create, update, or delete request to all AWS WAF servers.
+
+- `INSYNC`: Propagation is complete.>
+
+  take x-amz-target
+    like native-string
+  take get-change-token-status-request, like get-change-token-status-request
+
+  line </#X-Amz-Target=AWSWAF_Regional_20161128.GetChangeTokenStatus>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-change-token-status-request
+
+  loot 200
+    seed json, like get-change-token-status-response
+    note <Success>
+  loot 480
+    seed json, like waf-nonexistent-item-exception
+    note <WAFNonexistentItemException>
+  loot 481
+    seed json, like waf-internal-error-exception
+    note <WAFInternalErrorException>

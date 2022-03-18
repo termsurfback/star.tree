@@ -1,0 +1,92 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/scheduled-action-filter
+  take form scheduled-action-filter
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/scheduled-action-not-found-fault
+  take form scheduled-action-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/scheduled-actions-message
+  take form scheduled-actions-message
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unauthorized-operation
+  take form unauthorized-operation
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-scheduled-actions, name <GET_DescribeScheduledActions>
+  note <Describes properties of scheduled actions.>
+
+  take scheduled-action-name
+    like native-string
+    note <The name of the scheduled action to retrieve.>
+    void take
+  take target-action-type
+    like native-string
+    note <The type of the scheduled actions to retrieve.>
+    void take
+  take start-time
+    like native-string
+    note <The start time in UTC of the scheduled actions to retrieve. Only active scheduled actions that have invocations after this time are retrieved.>
+    void take
+  take end-time
+    like native-string
+    note <The end time in UTC of the scheduled action to retrieve. Only active scheduled actions that have invocations before this time are retrieved.>
+    void take
+  take active
+    like native-boolean
+    note <If true, retrieve only active scheduled actions. If false, retrieve only disabled scheduled actions.>
+    void take
+  take filters
+    like list
+      like scheduled-action-filter
+    note <List of scheduled action filters.>
+    void take
+  take marker
+    like native-string
+    note <An optional parameter that specifies the starting point to return a set of response records. When the results of a DescribeScheduledActions request exceed the value specified in `MaxRecords`, Amazon Web Services returns a value in the `Marker` field of the response. You can retrieve the next set of response records by providing the returned marker value in the `Marker` parameter and retrying the request.>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of response records to return in each call. If the number of remaining response records exceeds the specified `MaxRecords` value, a value is returned in a `marker` field of the response. You can retrieve the next set of records by retrying the command with the returned marker value.
+
+Default: `100`
+
+Constraints: minimum 20, maximum 100.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeScheduledActions>
+
+  find <ScheduledActionName>, loan scheduled-action-name
+  find <TargetActionType>, loan target-action-type
+  find <StartTime>, loan start-time
+  find <EndTime>, loan end-time
+  find <Active>, loan active
+  find <Filters>, loan filters
+  find <Marker>, loan marker
+  find <MaxRecords>, loan max-records
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like scheduled-actions-message
+    note <Success>
+  loot 480
+    seed xml, like scheduled-action-not-found-fault
+    note <ScheduledActionNotFoundFault>
+  loot 481
+    seed xml, like unauthorized-operation
+    note <UnauthorizedOperation>

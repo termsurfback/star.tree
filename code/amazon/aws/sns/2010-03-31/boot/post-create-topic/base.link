@@ -1,0 +1,81 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/concurrent-access-exception
+  take form concurrent-access-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/create-topic-response
+  take form create-topic-response
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-security-exception
+  take form invalid-security-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/stale-tag-exception
+  take form stale-tag-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/tag-limit-exceeded-exception
+  take form tag-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/tag-policy-exception
+  take form tag-policy-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/topic-limit-exceeded-exception
+  take form topic-limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-topic, name <POST_CreateTopic>
+  note <Creates a topic to which notifications can be published. Users can create at most 100,000 standard topics (at most 1,000 FIFO topics). For more information, see [Creating an Amazon SNS topic](https://docs.aws.amazon.com/sns/latest/dg/sns-create-topic.html) in the _Amazon SNS Developer Guide_. This action is idempotent, so if the requester already owns a topic with the specified name, that topic's ARN is returned without creating a new topic.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-topic-input, like create-topic-input
+    void take
+
+  line </#Action=CreateTopic>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-topic-input
+
+  loot 200
+    seed xml, like create-topic-response
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed xml, like topic-limit-exceeded-exception
+    note <TopicLimitExceededException>
+  loot 482
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 483
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>
+  loot 484
+    seed xml, like invalid-security-exception
+    note <InvalidSecurityException>
+  loot 485
+    seed xml, like tag-limit-exceeded-exception
+    note <TagLimitExceededException>
+  loot 486
+    seed xml, like stale-tag-exception
+    note <StaleTagException>
+  loot 487
+    seed xml, like tag-policy-exception
+    note <TagPolicyException>
+  loot 488
+    seed xml, like concurrent-access-exception
+    note <ConcurrentAccessException>

@@ -1,0 +1,67 @@
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/batch-delete-recipe-version-body
+  take form batch-delete-recipe-version-body
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/batch-delete-recipe-version-response
+  take form batch-delete-recipe-version-response
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/databrew/2017-07-25/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot batch-delete-recipe-version, name <BatchDeleteRecipeVersion>
+  note <Deletes one or more versions of a recipe at a time.
+
+The entire request will be rejected if:
+
+- The recipe does not exist.
+
+- There is an invalid version identifier in the list of versions.
+
+- The version list is empty.
+
+- The version list size exceeds 50.
+
+- The version list contains duplicate entries.
+
+The request will complete successfully, but with partial failures, if:
+
+- A version does not exist.
+
+- A version is being used by a job.
+
+- You specify `LATEST_WORKING`, but it's being used by a project.
+
+- The version fails to be deleted.
+
+The `LATEST_WORKING` version will only be deleted if the recipe has no other versions. If you try to delete `LATEST_WORKING` while other versions exist (or if they can't be deleted), then `LATEST_WORKING` will be listed as partial failure in the response.>
+
+  take name
+    like native-string
+    note <The name of the recipe whose versions are to be deleted.>
+  take batch-delete-recipe-version-body, like batch-delete-recipe-version-body
+
+  line </recipes/{name}/batchDeleteRecipeVersion>
+
+  seed json, loan batch-delete-recipe-version-body
+
+  loot 200
+    seed json, like batch-delete-recipe-version-response
+    note <Success>
+  loot 480
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>

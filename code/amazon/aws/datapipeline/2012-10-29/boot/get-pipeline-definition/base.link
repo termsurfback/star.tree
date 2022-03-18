@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/get-pipeline-definition-output
+  take form get-pipeline-definition-output
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/pipeline-deleted-exception
+  take form pipeline-deleted-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/pipeline-not-found-exception
+  take form pipeline-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-pipeline-definition, name <GetPipelineDefinition>
+  note <Gets the definition of the specified pipeline. You can call `GetPipelineDefinition` to retrieve the pipeline definition that you provided using PutPipelineDefinition.>
+
+  take x-amz-target
+    like native-string
+  take get-pipeline-definition-input, like get-pipeline-definition-input
+
+  line </#X-Amz-Target=DataPipeline.GetPipelineDefinition>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-pipeline-definition-input
+
+  loot 200
+    seed json, like get-pipeline-definition-output
+    note <Success>
+  loot 480
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like pipeline-not-found-exception
+    note <PipelineNotFoundException>
+  loot 483
+    seed json, like pipeline-deleted-exception
+    note <PipelineDeletedException>

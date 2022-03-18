@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/cognito-idp/2016-04-18/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/cognito-idp/2016-04-18/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/cognito-idp/2016-04-18/base/list-user-pools-response
+  take form list-user-pools-response
+
+load @drumwork/snow/amazonaws.com/cognito-idp/2016-04-18/base/not-authorized-exception
+  take form not-authorized-exception
+
+load @drumwork/snow/amazonaws.com/cognito-idp/2016-04-18/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-user-pools, name <ListUserPools>
+  note <Lists the user pools associated with an account.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-user-pools-request, like list-user-pools-request
+
+  line </#X-Amz-Target=AWSCognitoIdentityProviderService.ListUserPools>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-user-pools-request
+
+  loot 200
+    seed json, like list-user-pools-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 482
+    seed json, like not-authorized-exception
+    note <NotAuthorizedException>
+  loot 483
+    seed json, like internal-error-exception
+    note <InternalErrorException>

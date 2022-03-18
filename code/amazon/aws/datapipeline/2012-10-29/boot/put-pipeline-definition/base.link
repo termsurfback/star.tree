@@ -1,0 +1,56 @@
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/pipeline-deleted-exception
+  take form pipeline-deleted-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/pipeline-not-found-exception
+  take form pipeline-not-found-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/put-pipeline-definition-output
+  take form put-pipeline-definition-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-pipeline-definition, name <PutPipelineDefinition>
+  note <Adds tasks, schedules, and preconditions to the specified pipeline. You can use `PutPipelineDefinition` to populate a new pipeline.
+
+`PutPipelineDefinition` also validates the configuration as it adds it to the pipeline. Changes to the pipeline are saved unless one of the following three validation errors exists in the pipeline.
+
+1. An object is missing a name or identifier field.
+2. A string or reference field is empty.
+3. The number of objects in the pipeline exceeds the maximum allowed objects.
+4. The pipeline is in a FINISHED state.
+
+Pipeline object definitions are passed to the `PutPipelineDefinition` action and returned by the GetPipelineDefinition action.>
+
+  take x-amz-target
+    like native-string
+  take put-pipeline-definition-input, like put-pipeline-definition-input
+
+  line </#X-Amz-Target=DataPipeline.PutPipelineDefinition>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan put-pipeline-definition-input
+
+  loot 200
+    seed json, like put-pipeline-definition-output
+    note <Success>
+  loot 480
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like pipeline-not-found-exception
+    note <PipelineNotFoundException>
+  loot 483
+    seed json, like pipeline-deleted-exception
+    note <PipelineDeletedException>

@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/get-query-execution-output
+  take form get-query-execution-output
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-query-execution, name <GetQueryExecution>
+  note <Returns information about a single execution of a query if you have access to the workgroup in which the query ran. Each time a query executes, information about the query execution is saved with a unique ID.>
+
+  take x-amz-target
+    like native-string
+  take get-query-execution-input, like get-query-execution-input
+
+  line </#X-Amz-Target=AmazonAthena.GetQueryExecution>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-query-execution-input
+
+  loot 200
+    seed json, like get-query-execution-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

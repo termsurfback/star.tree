@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/create-data-source-from-s3-output
+  take form create-data-source-from-s3-output
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/idempotent-parameter-mismatch-exception
+  take form idempotent-parameter-mismatch-exception
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-data-source-from-s3, name <CreateDataSourceFromS3>
+  note <Creates a `DataSource` object. A `DataSource` references data that can be used to perform `CreateMLModel`, `CreateEvaluation`, or `CreateBatchPrediction` operations.
+
+`CreateDataSourceFromS3` is an asynchronous operation. In response to `CreateDataSourceFromS3`, Amazon Machine Learning (Amazon ML) immediately returns and sets the `DataSource` status to `PENDING`. After the `DataSource` has been created and is ready for use, Amazon ML sets the `Status` parameter to `COMPLETED`. `DataSource` in the `COMPLETED` or `PENDING` state can be used to perform only `CreateMLModel`, `CreateEvaluation` or `CreateBatchPrediction` operations.
+
+If Amazon ML can't accept the input source, it sets the `Status` parameter to `FAILED` and includes an error message in the `Message` attribute of the `GetDataSource` operation response.
+
+The observation data used in a `DataSource` should be ready to use; that is, it should have a consistent structure, and missing data values should be kept to a minimum. The observation data must reside in one or more .csv files in an Amazon Simple Storage Service (Amazon S3) location, along with a schema that describes the data items by name and type. The same schema must be used for all of the data files referenced by the `DataSource`.
+
+After the `DataSource` has been created, it's ready to use in evaluations and batch predictions. If you plan to use the `DataSource` to train an `MLModel`, the `DataSource` also needs a recipe. A recipe describes how each input variable will be used in training an `MLModel`. Will the variable be included or excluded from training? Will the variable be manipulated; for example, will it be combined with another variable or will it be split apart into word combinations? The recipe provides answers to these questions.>
+
+  take x-amz-target
+    like native-string
+  take create-data-source-from-s3-input, like create-data-source-from-s3-input
+
+  line </#X-Amz-Target=AmazonML_20141212.CreateDataSourceFromS3>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-data-source-from-s3-input
+
+  loot 200
+    seed json, like create-data-source-from-s3-output
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like idempotent-parameter-mismatch-exception
+    note <IdempotentParameterMismatchException>

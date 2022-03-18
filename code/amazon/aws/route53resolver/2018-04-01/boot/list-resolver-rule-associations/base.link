@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/list-resolver-rule-associations-response
+  take form list-resolver-rule-associations-response
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-resolver-rule-associations, name <ListResolverRuleAssociations>
+  note <Lists the associations that were created between Resolver rules and VPCs using the current Amazon Web Services account.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-resolver-rule-associations-request, like list-resolver-rule-associations-request
+
+  line </#X-Amz-Target=Route53Resolver.ListResolverRuleAssociations>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-resolver-rule-associations-request
+
+  loot 200
+    seed json, like list-resolver-rule-associations-response
+    note <Success>
+  loot 480
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 483
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>
+  loot 484
+    seed json, like throttling-exception
+    note <ThrottlingException>

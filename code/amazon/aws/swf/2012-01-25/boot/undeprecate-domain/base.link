@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/domain-already-exists-fault
+  take form domain-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/operation-not-permitted-fault
+  take form operation-not-permitted-fault
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/unknown-resource-fault
+  take form unknown-resource-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot undeprecate-domain, name <UndeprecateDomain>
+  note <Undeprecates a previously deprecated domain. After a domain has been undeprecated it can be used to create new workflow executions or register new types.
+
+This operation is eventually consistent. The results are best effort and may not exactly reflect recent updates and changes.
+
+**Access Control** You can use IAM policies to control this action's access to Amazon SWF resources as follows:
+
+- Use a `Resource` element with the domain name to limit the action to only specified domains.
+
+- Use an `Action` element to allow or deny permission to call this action.
+
+- You cannot use an IAM policy to constrain this action's parameters.
+
+If the caller doesn't have sufficient permissions to invoke the action, or the parameter values fall outside the specified constraints, the action fails. The associated event attribute's `cause` parameter is set to `OPERATION_NOT_PERMITTED`. For details and example IAM policies, see [Using IAM to Manage Access to Amazon SWF Workflows](https://docs.aws.amazon.com/amazonswf/latest/developerguide/swf-dev-iam.html) in the _Amazon SWF Developer Guide_.>
+
+  take x-amz-target
+    like native-string
+  take undeprecate-domain-input, like undeprecate-domain-input
+
+  line </#X-Amz-Target=SimpleWorkflowService.UndeprecateDomain>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan undeprecate-domain-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like unknown-resource-fault
+    note <UnknownResourceFault>
+  loot 481
+    seed json, like domain-already-exists-fault
+    note <DomainAlreadyExistsFault>
+  loot 482
+    seed json, like operation-not-permitted-fault
+    note <OperationNotPermittedFault>

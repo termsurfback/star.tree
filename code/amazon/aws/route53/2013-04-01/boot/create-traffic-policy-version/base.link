@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/concurrent-modification
+  take form concurrent-modification
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/create-traffic-policy-version-body
+  take form create-traffic-policy-version-body
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/create-traffic-policy-version-response
+  take form create-traffic-policy-version-response
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-traffic-policy-document
+  take form invalid-traffic-policy-document
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/no-such-traffic-policy
+  take form no-such-traffic-policy
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/too-many-traffic-policy-versions-for-current-policy
+  take form too-many-traffic-policy-versions-for-current-policy
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-traffic-policy-version, name <CreateTrafficPolicyVersion>
+  note <Creates a new version of an existing traffic policy. When you create a new version of a traffic policy, you specify the ID of the traffic policy that you want to update and a JSON-formatted document that describes the new version. You use traffic policies to create multiple DNS resource record sets for one domain name (such as example.com) or one subdomain name (such as www.example.com). You can create a maximum of 1000 versions of a traffic policy. If you reach the limit and need to create another version, you'll need to start a new traffic policy.>
+
+  take id
+    like native-string
+    note <The ID of the traffic policy for which you want to create a new version.>
+  take create-traffic-policy-version-body, like create-traffic-policy-version-body
+
+  line </2013-04-01/trafficpolicy/{id}>
+
+  seed xml, loan create-traffic-policy-version-body
+
+  loot 201
+    seed xml, like create-traffic-policy-version-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-traffic-policy
+    note <NoSuchTrafficPolicy>
+  loot 481
+    seed xml, like invalid-input
+    note <InvalidInput>
+  loot 482
+    seed xml, like too-many-traffic-policy-versions-for-current-policy
+    note <TooManyTrafficPolicyVersionsForCurrentPolicy>
+  loot 483
+    seed xml, like concurrent-modification
+    note <ConcurrentModification>
+  loot 484
+    seed xml, like invalid-traffic-policy-document
+    note <InvalidTrafficPolicyDocument>

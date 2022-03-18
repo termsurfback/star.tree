@@ -1,0 +1,125 @@
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/copy-db-cluster-snapshot-result
+  take form copy-db-cluster-snapshot-result
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-snapshot-already-exists-fault
+  take form db-cluster-snapshot-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-snapshot-not-found-fault
+  take form db-cluster-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-cluster-snapshot-state-fault
+  take form invalid-db-cluster-snapshot-state-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/kms-key-not-accessible-fault
+  take form kms-key-not-accessible-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/snapshot-quota-exceeded-fault
+  take form snapshot-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/tag
+  take form tag
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-copy-db-cluster-snapshot, name <GET_CopyDBClusterSnapshot>
+  note <Copies a snapshot of a DB cluster.
+
+To copy a DB cluster snapshot from a shared manual DB cluster snapshot, `SourceDBClusterSnapshotIdentifier` must be the Amazon Resource Name (ARN) of the shared DB cluster snapshot.>
+
+  take source-db-cluster-snapshot-identifier
+    like native-string
+    note <The identifier of the DB cluster snapshot to copy. This parameter is not case-sensitive.
+
+Constraints:
+
+- Must specify a valid system snapshot in the "available" state.
+
+- Specify a valid DB snapshot identifier.
+
+Example: `my-cluster-snapshot1`>
+  take target-db-cluster-snapshot-identifier
+    like native-string
+    note <The identifier of the new DB cluster snapshot to create from the source DB cluster snapshot. This parameter is not case-sensitive.
+
+Constraints:
+
+- Must contain from 1 to 63 letters, numbers, or hyphens.
+
+- First character must be a letter.
+
+- Cannot end with a hyphen or contain two consecutive hyphens.
+
+Example: `my-cluster-snapshot2`>
+  take kms-key-id
+    like native-string
+    note <The Amazon Amazon KMS key ID for an encrypted DB cluster snapshot. The KMS key ID is the Amazon Resource Name (ARN), KMS key identifier, or the KMS key alias for the KMS encryption key.
+
+If you copy an encrypted DB cluster snapshot from your Amazon account, you can specify a value for `KmsKeyId` to encrypt the copy with a new KMS encryption key. If you don't specify a value for `KmsKeyId`, then the copy of the DB cluster snapshot is encrypted with the same KMS key as the source DB cluster snapshot.
+
+If you copy an encrypted DB cluster snapshot that is shared from another Amazon account, then you must specify a value for `KmsKeyId`.
+
+KMS encryption keys are specific to the Amazon Region that they are created in, and you can't use encryption keys from one Amazon Region in another Amazon Region.
+
+You cannot encrypt an unencrypted DB cluster snapshot when you copy it. If you try to copy an unencrypted DB cluster snapshot and specify a value for the KmsKeyId parameter, an error is returned.>
+    void take
+  take pre-signed-url
+    like native-string
+    note <Not currently supported.>
+    void take
+  take copy-tags
+    like native-boolean
+    note <True to copy all tags from the source DB cluster snapshot to the target DB cluster snapshot, and otherwise false. The default is false.>
+    void take
+  take tags
+    like list
+      like tag
+    note <The tags to assign to the new DB cluster snapshot copy.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CopyDBClusterSnapshot>
+
+  find <SourceDBClusterSnapshotIdentifier>, loan source-db-cluster-snapshot-identifier
+  find <TargetDBClusterSnapshotIdentifier>, loan target-db-cluster-snapshot-identifier
+  find <KmsKeyId>, loan kms-key-id
+  find <PreSignedUrl>, loan pre-signed-url
+  find <CopyTags>, loan copy-tags
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like copy-db-cluster-snapshot-result
+    note <Success>
+  loot 480
+    seed xml, like db-cluster-snapshot-already-exists-fault
+    note <DBClusterSnapshotAlreadyExistsFault>
+  loot 481
+    seed xml, like db-cluster-snapshot-not-found-fault
+    note <DBClusterSnapshotNotFoundFault>
+  loot 482
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>
+  loot 483
+    seed xml, like invalid-db-cluster-snapshot-state-fault
+    note <InvalidDBClusterSnapshotStateFault>
+  loot 484
+    seed xml, like snapshot-quota-exceeded-fault
+    note <SnapshotQuotaExceededFault>
+  loot 485
+    seed xml, like kms-key-not-accessible-fault
+    note <KMSKeyNotAccessibleFault>

@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/update-game-server-output
+  take form update-game-server-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-game-server, name <UpdateGameServer>
+  note <**This operation is used with the GameLift FleetIQ solution and game server groups.** Updates information about a registered game server to help GameLift FleetIQ to track game server availability. This operation is called by a game server process that is running on an instance in a game server group.
+
+Use this operation to update the following types of game server information. You can make all three types of updates in the same request:
+
+- To update the game server's utilization status, identify the game server and game server group and specify the current utilization status. Use this status to identify when game servers are currently hosting games and when they are available to be claimed.
+
+- To report health status, identify the game server and game server group and set health check to `HEALTHY`. If a game server does not report health status for a certain length of time, the game server is no longer considered healthy. As a result, it will be eventually deregistered from the game server group to avoid affecting utilization metrics. The best practice is to report health every 60 seconds.
+
+- To change game server metadata, provide updated game server data.
+
+Once a game server is successfully updated, the relevant statuses and timestamps are updated.
+
+**Learn more** [GameLift FleetIQ Guide](https://docs.aws.amazon.com/gamelift/latest/fleetiqguide/gsg-intro.html)
+
+**Related actions** RegisterGameServer | ListGameServers | ClaimGameServer | DescribeGameServer | UpdateGameServer | DeregisterGameServer | [All APIs by task](https://docs.aws.amazon.com/gamelift/latest/fleetiqguide/reference-awssdk-fleetiq.html)>
+
+  take x-amz-target
+    like native-string
+  take update-game-server-input, like update-game-server-input
+
+  line </#X-Amz-Target=GameLift.UpdateGameServer>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-game-server-input
+
+  loot 200
+    seed json, like update-game-server-output
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 482
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 483
+    seed json, like internal-service-exception
+    note <InternalServiceException>

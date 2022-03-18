@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/start-notebook-execution-output
+  take form start-notebook-execution-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-notebook-execution, name <StartNotebookExecution>
+  note <Starts a notebook execution.>
+
+  take x-amz-target
+    like native-string
+  take start-notebook-execution-input, like start-notebook-execution-input
+
+  line </#X-Amz-Target=ElasticMapReduce.StartNotebookExecution>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan start-notebook-execution-input
+
+  loot 200
+    seed json, like start-notebook-execution-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/apigatewaymanagementapi/2018-11-29/base/forbidden-exception
+  take form forbidden-exception
+
+load @drumwork/snow/amazonaws.com/apigatewaymanagementapi/2018-11-29/base/gone-exception
+  take form gone-exception
+
+load @drumwork/snow/amazonaws.com/apigatewaymanagementapi/2018-11-29/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/apigatewaymanagementapi/2018-11-29/base/payload-too-large-exception
+  take form payload-too-large-exception
+
+load @drumwork/snow/amazonaws.com/apigatewaymanagementapi/2018-11-29/base/post-to-connection-body
+  take form post-to-connection-body
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-to-connection, name <PostToConnection>
+  note <Sends the provided data to the specified connection.>
+
+  take connection-id
+    like native-string
+    note <The identifier of the connection that a specific client is using.>
+  take post-to-connection-body, like post-to-connection-body
+
+  line </@connections/{connection-id}>
+
+  seed json, loan post-to-connection-body
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like gone-exception
+    note <GoneException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like payload-too-large-exception
+    note <PayloadTooLargeException>
+  loot 483
+    seed json, like forbidden-exception
+    note <ForbiddenException>

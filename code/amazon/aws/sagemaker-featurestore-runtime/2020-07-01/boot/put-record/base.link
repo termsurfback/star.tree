@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker-featurestore-runtime/2020-07-01/base/access-forbidden
+  take form access-forbidden
+
+load @drumwork/snow/amazonaws.com/sagemaker-featurestore-runtime/2020-07-01/base/internal-failure
+  take form internal-failure
+
+load @drumwork/snow/amazonaws.com/sagemaker-featurestore-runtime/2020-07-01/base/put-record-body
+  take form put-record-body
+
+load @drumwork/snow/amazonaws.com/sagemaker-featurestore-runtime/2020-07-01/base/service-unavailable
+  take form service-unavailable
+
+load @drumwork/snow/amazonaws.com/sagemaker-featurestore-runtime/2020-07-01/base/validation-error
+  take form validation-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-record, name <PutRecord>
+  note <Used for data ingestion into the `FeatureStore`. The `PutRecord` API writes to both the `OnlineStore` and `OfflineStore`. If the record is the latest record for the `recordIdentifier`, the record is written to both the `OnlineStore` and `OfflineStore`. If the record is a historic record, it is written only to the `OfflineStore`.>
+
+  take feature-group-name
+    like native-string
+    note <The name of the feature group that you want to insert the record into.>
+  take put-record-body, like put-record-body
+
+  line </FeatureGroup/{feature-group-name}>
+
+  seed json, loan put-record-body
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like validation-error
+    note <ValidationError>
+  loot 481
+    seed json, like internal-failure
+    note <InternalFailure>
+  loot 482
+    seed json, like service-unavailable
+    note <ServiceUnavailable>
+  loot 483
+    seed json, like access-forbidden
+    note <AccessForbidden>

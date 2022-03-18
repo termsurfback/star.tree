@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/network-firewall/2020-11-12/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/network-firewall/2020-11-12/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/network-firewall/2020-11-12/base/list-rule-groups-response
+  take form list-rule-groups-response
+
+load @drumwork/snow/amazonaws.com/network-firewall/2020-11-12/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-rule-groups, name <ListRuleGroups>
+  note <Retrieves the metadata for the rule groups that you have defined. Depending on your setting for max results and the number of rule groups, a single call might not return the full list.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-rule-groups-request, like list-rule-groups-request
+
+  line </#X-Amz-Target=NetworkFirewall_20201112.ListRuleGroups>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-rule-groups-request
+
+  loot 200
+    seed json, like list-rule-groups-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like internal-server-error
+    note <InternalServerError>

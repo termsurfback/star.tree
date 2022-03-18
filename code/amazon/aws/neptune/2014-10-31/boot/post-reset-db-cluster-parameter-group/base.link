@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-parameter-group-name-message
+  take form db-cluster-parameter-group-name-message
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-parameter-group-not-found-fault
+  take form db-parameter-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-parameter-group-state-fault
+  take form invalid-db-parameter-group-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-reset-db-cluster-parameter-group, name <POST_ResetDBClusterParameterGroup>
+  note <Modifies the parameters of a DB cluster parameter group to the default value. To reset specific parameters submit a list of the following: `ParameterName` and `ApplyMethod`. To reset the entire DB cluster parameter group, specify the `DBClusterParameterGroupName` and `ResetAllParameters` parameters.
+
+When resetting the entire group, dynamic parameters are updated immediately and static parameters are set to `pending-reboot` to take effect on the next DB instance restart or RebootDBInstance request. You must call RebootDBInstance for every DB instance in your DB cluster that you want the updated static parameter to apply to.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take reset-db-cluster-parameter-group-message, like reset-db-cluster-parameter-group-message
+    void take
+
+  line </#Action=ResetDBClusterParameterGroup>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan reset-db-cluster-parameter-group-message
+
+  loot 200
+    seed xml, like db-cluster-parameter-group-name-message
+    note <Success>
+  loot 480
+    seed xml, like invalid-db-parameter-group-state-fault
+    note <InvalidDBParameterGroupStateFault>
+  loot 481
+    seed xml, like db-parameter-group-not-found-fault
+    note <DBParameterGroupNotFoundFault>

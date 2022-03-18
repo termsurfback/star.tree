@@ -1,0 +1,133 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/concurrent-access-exception
+  take form concurrent-access-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/create-topic-response
+  take form create-topic-response
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-security-exception
+  take form invalid-security-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/stale-tag-exception
+  take form stale-tag-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/tag
+  take form tag
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/tag-limit-exceeded-exception
+  take form tag-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/tag-policy-exception
+  take form tag-policy-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/topic-limit-exceeded-exception
+  take form topic-limit-exceeded-exception
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-topic, name <GET_CreateTopic>
+  note <Creates a topic to which notifications can be published. Users can create at most 100,000 standard topics (at most 1,000 FIFO topics). For more information, see [Creating an Amazon SNS topic](https://docs.aws.amazon.com/sns/latest/dg/sns-create-topic.html) in the _Amazon SNS Developer Guide_. This action is idempotent, so if the requester already owns a topic with the specified name, that topic's ARN is returned without creating a new topic.>
+
+  take name
+    like native-string
+    note <The name of the topic you want to create.
+
+Constraints: Topic names must be made up of only uppercase and lowercase ASCII letters, numbers, underscores, and hyphens, and must be between 1 and 256 characters long.
+
+For a FIFO (first-in-first-out) topic, the name must end with the `.fifo` suffix.>
+  take attributes
+    like form
+    note <A map of attributes with their corresponding values.
+
+The following lists the names, descriptions, and values of the special request parameters that the `CreateTopic` action uses:
+
+- `DeliveryPolicy` - The policy that defines how Amazon SNS retries failed deliveries to HTTP/S endpoints.
+
+- `DisplayName` - The display name to use for a topic with SMS subscriptions.
+
+- `FifoTopic` - Set to true to create a FIFO topic.
+
+- `Policy` - The policy that defines who can access your topic. By default, only the topic owner can publish or subscribe to the topic.
+
+The following attribute applies only to [server-side encryption](https://docs.aws.amazon.com/sns/latest/dg/sns-server-side-encryption.html):
+
+- `KmsMasterKeyId` - The ID of an Amazon Web Services managed customer master key (CMK) for Amazon SNS or a custom CMK. For more information, see [Key Terms](https://docs.aws.amazon.com/sns/latest/dg/sns-server-side-encryption.html#sse-key-terms). For more examples, see [KeyId](https://docs.aws.amazon.com/kms/latest/APIReference/API_DescribeKey.html#API_DescribeKey_RequestParameters) in the _Key Management Service API Reference_.
+
+The following attributes apply only to [FIFO topics](https://docs.aws.amazon.com/sns/latest/dg/sns-fifo-topics.html):
+
+- `FifoTopic` - When this is set to `true`, a FIFO topic is created.
+
+- `ContentBasedDeduplication` - Enables content-based deduplication for FIFO topics.
+
+  - By default, `ContentBasedDeduplication` is set to `false`. If you create a FIFO topic and this attribute is `false`, you must specify a value for the `MessageDeduplicationId` parameter for the [Publish](https://docs.aws.amazon.com/sns/latest/api/API_Publish.html) action.
+
+  - When you set `ContentBasedDeduplication` to `true`, Amazon SNS uses a SHA-256 hash to generate the `MessageDeduplicationId` using the body of the message (but not the attributes of the message).
+
+    (Optional) To override the generated value, you can specify a value for the `MessageDeduplicationId` parameter for the `Publish` action.>
+    void take
+  take tags
+    like list
+      like tag
+    note <The list of tags to add to a new topic.
+
+To be able to tag a topic on creation, you must have the `sns:CreateTopic` and `sns:TagResource` permissions.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateTopic>
+
+  find <Name>, loan name
+  find <Attributes>, loan attributes
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-topic-response
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed xml, like topic-limit-exceeded-exception
+    note <TopicLimitExceededException>
+  loot 482
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 483
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>
+  loot 484
+    seed xml, like invalid-security-exception
+    note <InvalidSecurityException>
+  loot 485
+    seed xml, like tag-limit-exceeded-exception
+    note <TagLimitExceededException>
+  loot 486
+    seed xml, like stale-tag-exception
+    note <StaleTagException>
+  loot 487
+    seed xml, like tag-policy-exception
+    note <TagPolicyException>
+  loot 488
+    seed xml, like concurrent-access-exception
+    note <ConcurrentAccessException>

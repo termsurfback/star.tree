@@ -1,0 +1,73 @@
+
+load @drumwork/snow/amazonaws.com/sso/2019-06-10/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/sso/2019-06-10/base/list-account-roles-response
+  take form list-account-roles-response
+
+load @drumwork/snow/amazonaws.com/sso/2019-06-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/sso/2019-06-10/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/amazonaws.com/sso/2019-06-10/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-account-roles, name <ListAccountRoles>
+  note <Lists all roles that are assigned to the user for a given AWS account.>
+
+  take x-amz-sso-bearer-token
+    like native-string
+    note <The token issued by the `CreateToken` API call. For more information, see [CreateToken](https://docs.aws.amazon.com/singlesignon/latest/OIDCAPIReference/API_CreateToken.html) in the _AWS SSO OIDC API Reference Guide_.>
+  take next-token
+    like native-string
+    note <The page token from the previous response output when you request subsequent pages.>
+    void take
+  take max-result
+    like native-integer
+    note <The number of items that clients can request per page.>
+    void take
+  take account-id
+    like native-string
+    note <The identifier for the AWS account that is assigned to the user.>
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+
+  line </assignment/roles#x-amz-sso_bearer_token&account_id>
+
+  hint <x-amz-sso_bearer_token>, loan x-amz-sso-bearer-token
+
+  find <next_token>, loan next-token
+  find <max_result>, loan max-result
+  find <account_id>, loan account-id
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  loot 200
+    seed json, like list-account-roles-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 482
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

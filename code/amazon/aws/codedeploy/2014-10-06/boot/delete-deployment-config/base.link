@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/deployment-config-in-use-exception
+  take form deployment-config-in-use-exception
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/deployment-config-name-required-exception
+  take form deployment-config-name-required-exception
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/invalid-deployment-config-name-exception
+  take form invalid-deployment-config-name-exception
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/invalid-operation-exception
+  take form invalid-operation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-deployment-config, name <DeleteDeploymentConfig>
+  note <Deletes a deployment configuration.
+
+A deployment configuration cannot be deleted if it is currently in use. Predefined configurations cannot be deleted.>
+
+  take x-amz-target
+    like native-string
+  take delete-deployment-config-input, like delete-deployment-config-input
+
+  line </#X-Amz-Target=CodeDeploy_20141006.DeleteDeploymentConfig>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-deployment-config-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like invalid-deployment-config-name-exception
+    note <InvalidDeploymentConfigNameException>
+  loot 481
+    seed json, like deployment-config-name-required-exception
+    note <DeploymentConfigNameRequiredException>
+  loot 482
+    seed json, like deployment-config-in-use-exception
+    note <DeploymentConfigInUseException>
+  loot 483
+    seed json, like invalid-operation-exception
+    note <InvalidOperationException>

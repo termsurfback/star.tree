@@ -1,0 +1,89 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/create-customer-gateway-result
+  take form create-customer-gateway-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/tag-specification
+  take form tag-specification
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-customer-gateway, name <GET_CreateCustomerGateway>
+  note <Provides information to AWS about your VPN customer gateway device. The customer gateway is the appliance at your end of the VPN connection. (The device on the AWS side of the VPN connection is the virtual private gateway.) You must provide the internet-routable IP address of the customer gateway's external interface. The IP address must be static and can be behind a device performing network address translation (NAT).
+
+For devices that use Border Gateway Protocol (BGP), you can also provide the device's BGP Autonomous System Number (ASN). You can use an existing ASN assigned to your network. If you don't have an ASN already, you can use a private ASN (in the 64512 - 65534 range).
+
+Amazon EC2 supports all 4-byte ASN numbers in the range of 1 - 2147483647, with the exception of the following:
+
+- 7224 - reserved in the `us-east-1` Region
+
+- 9059 - reserved in the `eu-west-1` Region
+
+- 17943 - reserved in the `ap-southeast-1` Region
+
+- 10124 - reserved in the `ap-northeast-1` Region
+
+For more information, see [AWS Site-to-Site VPN](https://docs.aws.amazon.com/vpn/latest/s2svpn/VPC_VPN.html) in the _AWS Site-to-Site VPN User Guide_.
+
+To create more than one customer gateway with the same VPN type, IP address, and BGP ASN, specify a unique device name for each customer gateway. Identical requests return information about the existing customer gateway and do not create new customer gateways.>
+
+  take bgp-asn
+    like native-integer
+    note <For devices that support BGP, the customer gateway's BGP ASN.
+
+Default: 65000>
+  take ip-address
+    like native-string
+    note <The Internet-routable IP address for the customer gateway's outside interface. The address must be static.>
+    void take
+  take certificate-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) for the customer gateway certificate.>
+    void take
+  take type
+    like native-string
+    note <The type of VPN connection that this customer gateway supports (`ipsec.1`).>
+  take tag-specification
+    like list
+      like tag-specification
+    note <The tags to apply to the customer gateway.>
+    void take
+  take device-name
+    like native-string
+    note <A name for the customer gateway device.
+
+Length Constraints: Up to 255 characters.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateCustomerGateway>
+
+  find <BgpAsn>, loan bgp-asn
+  find <IpAddress>, loan ip-address
+  find <CertificateArn>, loan certificate-arn
+  find <Type>, loan type
+  find <TagSpecification>, loan tag-specification
+  find <DeviceName>, loan device-name
+  find <DryRun>, loan dry-run
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-customer-gateway-result
+    note <Success>

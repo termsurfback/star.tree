@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/describe-users-response
+  take form describe-users-response
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/user-not-found-fault
+  take form user-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-users, name <DescribeUsers>
+  note <Returns a list of users.>
+
+  take x-amz-target
+    like native-string
+  take describe-users-request, like describe-users-request
+
+  line </#X-Amz-Target=AmazonMemoryDB.DescribeUsers>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-users-request
+
+  loot 200
+    seed json, like describe-users-response
+    note <Success>
+  loot 480
+    seed json, like user-not-found-fault
+    note <UserNotFoundFault>
+  loot 481
+    seed json, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

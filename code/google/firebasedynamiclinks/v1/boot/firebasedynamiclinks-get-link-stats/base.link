@@ -1,0 +1,30 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/firebasedynamiclinks/v1/base/dynamic-link-stats
+  take form dynamic-link-stats
+
+boot firebasedynamiclinks-get-link-stats, name <firebasedynamiclinks.getLinkStats>
+  note <Fetches analytics stats of a short Dynamic Link for a given duration. Metrics include number of clicks, redirects, installs, app first opens, and app reopens.>
+
+  take dynamic-link
+    like native-string
+    note <Dynamic Link URL. e.g. https://abcd.app.goo.gl/wxyz>
+  take duration-days
+    like native-string
+    note <The span of time requested in days.>
+    void take
+  take sdk-version
+    like native-string
+    note <Google SDK version. Version takes the form "$major.$minor.$patch">
+    void take
+
+  line </v1/{dynamic-link}/linkStats>
+
+  find <durationDays>, loan duration-days
+  find <sdkVersion>, loan sdk-version
+
+  loot 200
+    seed json, like dynamic-link-stats
+    note <Successful response>

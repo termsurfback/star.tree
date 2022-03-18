@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/pending-maintenance-actions-message
+  take form pending-maintenance-actions-message
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/resource-not-found-fault
+  take form resource-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-pending-maintenance-actions, name <POST_DescribePendingMaintenanceActions>
+  note <Returns a list of resources (for example, instances) that have at least one pending maintenance action.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-pending-maintenance-actions-message, like describe-pending-maintenance-actions-message
+    void take
+
+  line </#Action=DescribePendingMaintenanceActions>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-pending-maintenance-actions-message
+
+  loot 200
+    seed xml, like pending-maintenance-actions-message
+    note <Success>
+  loot 480
+    seed xml, like resource-not-found-fault
+    note <ResourceNotFoundFault>

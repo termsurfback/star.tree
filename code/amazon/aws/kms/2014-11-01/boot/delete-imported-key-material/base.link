@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/dependency-timeout-exception
+  take form dependency-timeout-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-arn-exception
+  take form invalid-arn-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-internal-exception
+  take form kms-internal-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-invalid-state-exception
+  take form kms-invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/unsupported-operation-exception
+  take form unsupported-operation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-imported-key-material, name <DeleteImportedKeyMaterial>
+  note <Deletes key material that you previously imported. This operation makes the specified KMS key unusable. For more information about importing key material into KMS, see [Importing Key Material](https://docs.aws.amazon.com/kms/latest/developerguide/importing-keys.html) in the _Key Management Service Developer Guide_.
+
+When the specified KMS key is in the `PendingDeletion` state, this operation does not change the KMS key's state. Otherwise, it changes the KMS key's state to `PendingImport`.
+
+After you delete key material, you can use ImportKeyMaterial to reimport the same key material into the KMS key.
+
+The KMS key that you use for this operation must be in a compatible key state. For details, see [Key state: Effect on your KMS key](https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html) in the _Key Management Service Developer Guide_.
+
+**Cross-account use**: No. You cannot perform this operation on a KMS key in a different Amazon Web Services account.
+
+**Required permissions**: [kms:DeleteImportedKeyMaterial](https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html) (key policy)
+
+**Related operations:** - GetParametersForImport
+
+- ImportKeyMaterial>
+
+  take x-amz-target
+    like native-string
+  take delete-imported-key-material-request, like delete-imported-key-material-request
+
+  line </#X-Amz-Target=TrentService.DeleteImportedKeyMaterial>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-imported-key-material-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like invalid-arn-exception
+    note <InvalidArnException>
+  loot 481
+    seed json, like unsupported-operation-exception
+    note <UnsupportedOperationException>
+  loot 482
+    seed json, like dependency-timeout-exception
+    note <DependencyTimeoutException>
+  loot 483
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 484
+    seed json, like kms-internal-exception
+    note <KMSInternalException>
+  loot 485
+    seed json, like kms-invalid-state-exception
+    note <KMSInvalidStateException>

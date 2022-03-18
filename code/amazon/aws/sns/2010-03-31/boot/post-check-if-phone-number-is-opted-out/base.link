@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/check-if-phone-number-is-opted-out-response
+  take form check-if-phone-number-is-opted-out-response
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/throttled-exception
+  take form throttled-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-check-if-phone-number-is-opted-out, name <POST_CheckIfPhoneNumberIsOptedOut>
+  note <Accepts a phone number and indicates whether the phone holder has opted out of receiving SMS messages from your account. You cannot send SMS messages to a number that is opted out.
+
+To resume sending messages, you can opt in the number by using the `OptInPhoneNumber` action.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take check-if-phone-number-is-opted-out-input, like check-if-phone-number-is-opted-out-input
+    void take
+
+  line </#Action=CheckIfPhoneNumberIsOptedOut>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan check-if-phone-number-is-opted-out-input
+
+  loot 200
+    seed xml, like check-if-phone-number-is-opted-out-response
+    note <Success>
+  loot 480
+    seed xml, like throttled-exception
+    note <ThrottledException>
+  loot 481
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 482
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>
+  loot 483
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>

@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/list-recording-configurations-body
+  take form list-recording-configurations-body
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/list-recording-configurations-response
+  take form list-recording-configurations-response
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-recording-configurations, name <ListRecordingConfigurations>
+  note <Gets summary information about all recording configurations in your account, in the AWS region where the API request is processed.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-recording-configurations-body, like list-recording-configurations-body
+
+  line </ListRecordingConfigurations>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-recording-configurations-body
+
+  loot 200
+    seed json, like list-recording-configurations-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>

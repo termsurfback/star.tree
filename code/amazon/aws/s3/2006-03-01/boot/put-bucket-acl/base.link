@@ -1,0 +1,167 @@
+
+load @drumwork/snow/amazonaws.com/s3/2006-03-01/base/put-bucket-acl-body
+  take form put-bucket-acl-body
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-bucket-acl, name <PutBucketAcl>
+  note <Sets the permissions on an existing bucket using access control lists (ACL). For more information, see [Using ACLs](https://docs.aws.amazon.com/AmazonS3/latest/dev/S3_ACLs_UsingACLs.html). To set the ACL of a bucket, you must have `WRITE_ACP` permission.
+
+You can use one of the following two ways to set a bucket's permissions:
+
+- Specify the ACL in the request body
+
+- Specify permissions using request headers
+
+You cannot specify access permission using both the body and the request headers.
+
+Depending on your application needs, you may choose to set the ACL on a bucket using either the request body or the headers. For example, if you have an existing application that updates a bucket ACL using the request body, then you can continue to use that approach.
+
+**Access Permissions** You can set access permissions using one of the following methods:
+
+- Specify a canned ACL with the `x-amz-acl` request header. Amazon S3 supports a set of predefined ACLs, known as _canned ACLs_. Each canned ACL has a predefined set of grantees and permissions. Specify the canned ACL name as the value of `x-amz-acl`. If you use this header, you cannot use other access control-specific headers in your request. For more information, see [Canned ACL](https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#CannedACL).
+
+- Specify access permissions explicitly with the `x-amz-grant-read`, `x-amz-grant-read-acp`, `x-amz-grant-write-acp`, and `x-amz-grant-full-control` headers. When using these headers, you specify explicit access permissions and grantees (Amazon Web Services accounts or Amazon S3 groups) who will receive the permission. If you use these ACL-specific headers, you cannot use the `x-amz-acl` header to set a canned ACL. These parameters map to the set of permissions that Amazon S3 supports in an ACL. For more information, see [Access Control List (ACL) Overview](https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html).
+
+  You specify each grantee as a type=value pair, where the type is one of the following:
+
+  - `id` - if the value specified is the canonical user ID of an Amazon Web Services account
+
+  - `uri` - if you are granting permissions to a predefined group
+
+  - `emailAddress` - if the value specified is the email address of an Amazon Web Services account
+
+    Using email addresses to specify a grantee is only supported in the following Amazon Web Services Regions:
+
+    - US East (N. Virginia)
+
+    - US West (N. California)
+
+    - US West (Oregon)
+
+    - Asia Pacific (Singapore)
+
+    - Asia Pacific (Sydney)
+
+    - Asia Pacific (Tokyo)
+
+    - Europe (Ireland)
+
+    - South America (São Paulo)
+
+    For a list of all the Amazon S3 supported Regions and endpoints, see [Regions and Endpoints](https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region) in the Amazon Web Services General Reference.
+
+  For example, the following `x-amz-grant-write` header grants create, overwrite, and delete objects permission to LogDelivery group predefined by Amazon S3 and two Amazon Web Services accounts identified by their email addresses.
+
+  `x-amz-grant-write: uri="http://acs.amazonaws.com/groups/s3/LogDelivery", id="111122223333", id="555566667777"`
+
+You can use either a canned ACL or specify access permissions explicitly. You cannot do both.
+
+**Grantee Values** You can specify the person (grantee) to whom you're assigning access rights (using request elements) in the following ways:
+
+- By the person's ID:
+
+  `&lt;Grantee xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="CanonicalUser"&gt;&lt;ID&gt;&lt;&gt;ID&lt;&gt;&lt;/ID&gt;&lt;DisplayName&gt;&lt;&gt;GranteesEmail&lt;&gt;&lt;/DisplayName&gt; &lt;/Grantee&gt;`
+
+  DisplayName is optional and ignored in the request
+
+- By URI:
+
+  `&lt;Grantee xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="Group"&gt;&lt;URI&gt;&lt;&gt;http://acs.amazonaws.com/groups/global/AuthenticatedUsers&lt;&gt;&lt;/URI&gt;&lt;/Grantee&gt;`
+
+- By Email address:
+
+  `&lt;Grantee xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="AmazonCustomerByEmail"&gt;&lt;EmailAddress&gt;&lt;&gt;Grantees@email.com&lt;&gt;&lt;/EmailAddress&gt;lt;/Grantee&gt;`
+
+  The grantee is resolved to the CanonicalUser and, in a response to a GET Object acl request, appears as the CanonicalUser.
+
+  Using email addresses to specify a grantee is only supported in the following Amazon Web Services Regions:
+
+  - US East (N. Virginia)
+
+  - US West (N. California)
+
+  - US West (Oregon)
+
+  - Asia Pacific (Singapore)
+
+  - Asia Pacific (Sydney)
+
+  - Asia Pacific (Tokyo)
+
+  - Europe (Ireland)
+
+  - South America (São Paulo)
+
+  For a list of all the Amazon S3 supported Regions and endpoints, see [Regions and Endpoints](https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region) in the Amazon Web Services General Reference.
+
+**Related Resources** - [CreateBucket](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CreateBucket.html)
+
+- [DeleteBucket](https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteBucket.html)
+
+- [GetObjectAcl](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectAcl.html)>
+
+  take bucket
+    like native-string
+    note <The bucket to which to apply the ACL.>
+  take x-amz-acl
+    like native-string
+    note <The canned ACL to apply to the bucket.>
+    void take
+  take content-md5
+    like native-string
+    note <The base64-encoded 128-bit MD5 digest of the data. This header must be used as a message integrity check to verify that the request body was not corrupted in transit. For more information, go to [RFC 1864.](http://www.ietf.org/rfc/rfc1864.txt)
+
+For requests made using the Amazon Web Services Command Line Interface (CLI) or Amazon Web Services SDKs, this field is calculated automatically.>
+    void take
+  take x-amz-grant-full-control
+    like native-string
+    note <Allows grantee the read, write, read ACP, and write ACP permissions on the bucket.>
+    void take
+  take x-amz-grant-read
+    like native-string
+    note <Allows grantee to list the objects in the bucket.>
+    void take
+  take x-amz-grant-read-acp
+    like native-string
+    note <Allows grantee to read the bucket ACL.>
+    void take
+  take x-amz-grant-write
+    like native-string
+    note <Allows grantee to create new objects in the bucket.
+
+For the bucket and object owners of existing objects, also allows deletions and overwrites of those objects.>
+    void take
+  take x-amz-grant-write-acp
+    like native-string
+    note <Allows grantee to write the ACL for the applicable bucket.>
+    void take
+  take x-amz-expected-bucket-owner
+    like native-string
+    note <The account ID of the expected bucket owner. If the bucket is owned by a different account, the request will fail with an HTTP `403 (Access Denied)` error.>
+    void take
+  take acl
+    like native-boolean
+  take put-bucket-acl-body, like put-bucket-acl-body
+
+  line </{bucket}#acl>
+
+  hint <x-amz-acl>, loan x-amz-acl
+  hint <Content-MD5>, loan content-md5
+  hint <x-amz-grant-full-control>, loan x-amz-grant-full-control
+  hint <x-amz-grant-read>, loan x-amz-grant-read
+  hint <x-amz-grant-read-acp>, loan x-amz-grant-read-acp
+  hint <x-amz-grant-write>, loan x-amz-grant-write
+  hint <x-amz-grant-write-acp>, loan x-amz-grant-write-acp
+  hint <x-amz-expected-bucket-owner>, loan x-amz-expected-bucket-owner
+
+  find <acl>, loan acl
+
+  seed xml, loan put-bucket-acl-body
+
+  loot 200
+    note <Success>

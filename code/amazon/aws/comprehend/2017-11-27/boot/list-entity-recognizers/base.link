@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/comprehend/2017-11-27/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/comprehend/2017-11-27/base/invalid-filter-exception
+  take form invalid-filter-exception
+
+load @drumwork/snow/amazonaws.com/comprehend/2017-11-27/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/comprehend/2017-11-27/base/list-entity-recognizers-response
+  take form list-entity-recognizers-response
+
+load @drumwork/snow/amazonaws.com/comprehend/2017-11-27/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-entity-recognizers, name <ListEntityRecognizers>
+  note <Gets a list of the properties of all entity recognizers that you created, including recognizers currently in training. Allows you to filter the list of recognizers based on criteria such as status and submission time. This call returns up to 500 entity recognizers in the list, with a default number of 100 recognizers in the list.
+
+The results of this list are not in any particular order. Please get the list and sort locally if needed.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-entity-recognizers-request, like list-entity-recognizers-request
+
+  line </#X-Amz-Target=Comprehend_20171127.ListEntityRecognizers>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-entity-recognizers-request
+
+  loot 200
+    seed json, like list-entity-recognizers-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 482
+    seed json, like invalid-filter-exception
+    note <InvalidFilterException>
+  loot 483
+    seed json, like internal-server-exception
+    note <InternalServerException>

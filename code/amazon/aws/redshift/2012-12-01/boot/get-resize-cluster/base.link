@@ -1,0 +1,131 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/insufficient-cluster-capacity-fault
+  take form insufficient-cluster-capacity-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-state-fault
+  take form invalid-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/limit-exceeded-fault
+  take form limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/number-of-nodes-per-cluster-limit-exceeded-fault
+  take form number-of-nodes-per-cluster-limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/number-of-nodes-quota-exceeded-fault
+  take form number-of-nodes-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/resize-cluster-result
+  take form resize-cluster-result
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unauthorized-operation
+  take form unauthorized-operation
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unsupported-operation-fault
+  take form unsupported-operation-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unsupported-option-fault
+  take form unsupported-option-fault
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-resize-cluster, name <GET_ResizeCluster>
+  note <Changes the size of the cluster. You can change the cluster's type, or change the number or type of nodes. The default behavior is to use the elastic resize method. With an elastic resize, your cluster is available for read and write operations more quickly than with the classic resize method.
+
+Elastic resize operations have the following restrictions:
+
+- You can only resize clusters of the following types:
+
+  - dc1.large (if your cluster is in a VPC)
+
+  - dc1.8xlarge (if your cluster is in a VPC)
+
+  - dc2.large
+
+  - dc2.8xlarge
+
+  - ds2.xlarge
+
+  - ds2.8xlarge
+
+  - ra3.xlplus
+
+  - ra3.4xlarge
+
+  - ra3.16xlarge
+
+- The type of nodes that you add must match the node type for the cluster.>
+
+  take cluster-identifier
+    like native-string
+    note <The unique identifier for the cluster to resize.>
+  take cluster-type
+    like native-string
+    note <The new cluster type for the specified cluster.>
+    void take
+  take node-type
+    like native-string
+    note <The new node type for the nodes you are adding. If not specified, the cluster's current node type is used.>
+    void take
+  take number-of-nodes
+    like native-integer
+    note <The new number of nodes for the cluster. If not specified, the cluster's current number of nodes is used.>
+    void take
+  take classic
+    like native-boolean
+    note <A boolean value indicating whether the resize operation is using the classic resize process. If you don't provide this parameter or set the value to `false`, the resize type is elastic.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ResizeCluster>
+
+  find <ClusterIdentifier>, loan cluster-identifier
+  find <ClusterType>, loan cluster-type
+  find <NodeType>, loan node-type
+  find <NumberOfNodes>, loan number-of-nodes
+  find <Classic>, loan classic
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like resize-cluster-result
+    note <Success>
+  loot 480
+    seed xml, like invalid-cluster-state-fault
+    note <InvalidClusterStateFault>
+  loot 481
+    seed xml, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 482
+    seed xml, like number-of-nodes-quota-exceeded-fault
+    note <NumberOfNodesQuotaExceededFault>
+  loot 483
+    seed xml, like number-of-nodes-per-cluster-limit-exceeded-fault
+    note <NumberOfNodesPerClusterLimitExceededFault>
+  loot 484
+    seed xml, like insufficient-cluster-capacity-fault
+    note <InsufficientClusterCapacityFault>
+  loot 485
+    seed xml, like unsupported-option-fault
+    note <UnsupportedOptionFault>
+  loot 486
+    seed xml, like unsupported-operation-fault
+    note <UnsupportedOperationFault>
+  loot 487
+    seed xml, like unauthorized-operation
+    note <UnauthorizedOperation>
+  loot 488
+    seed xml, like limit-exceeded-fault
+    note <LimitExceededFault>

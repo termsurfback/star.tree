@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/claim-devices-by-claim-code-response
+  take form claim-devices-by-claim-code-response
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/forbidden-exception
+  take form forbidden-exception
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot claim-devices-by-claim-code, name <ClaimDevicesByClaimCode>
+  note <Adds device(s) to your account (i.e., claim one or more devices) if and only if you received a claim code with the device(s).>
+
+  take claim-code
+    like native-string
+    note <The claim code, starting with "C-", as provided by the device manufacturer.>
+
+  line </claims/{claim-code}>
+
+  loot 200
+    seed json, like claim-devices-by-claim-code-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 482
+    seed json, like forbidden-exception
+    note <ForbiddenException>

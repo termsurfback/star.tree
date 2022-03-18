@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/list-ssh-public-keys-response
+  take form list-ssh-public-keys-response
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-list-ssh-public-keys, name <POST_ListSSHPublicKeys>
+  note <Returns information about the SSH public keys associated with the specified IAM user. If none exists, the operation returns an empty list.
+
+The SSH public keys returned by this operation are used only for authenticating the IAM user to an CodeCommit repository. For more information about using SSH keys to authenticate to an CodeCommit repository, see [Set up CodeCommit for SSH connections](https://docs.aws.amazon.com/codecommit/latest/userguide/setting-up-credentials-ssh.html) in the _CodeCommit User Guide_.
+
+Although each user is limited to a small number of keys, you can still paginate the results using the `MaxItems` and `Marker` parameters.>
+
+  take max-items
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take list-ssh-public-keys-request, like list-ssh-public-keys-request
+    void take
+
+  line </#Action=ListSSHPublicKeys>
+
+  find <MaxItems>, loan max-items
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan list-ssh-public-keys-request
+
+  loot 200
+    seed xml, like list-ssh-public-keys-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>

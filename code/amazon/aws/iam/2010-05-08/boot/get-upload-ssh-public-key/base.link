@@ -1,0 +1,73 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/duplicate-ssh-public-key-exception
+  take form duplicate-ssh-public-key-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/invalid-public-key-exception
+  take form invalid-public-key-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/unrecognized-public-key-encoding-exception
+  take form unrecognized-public-key-encoding-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/upload-ssh-public-key-response
+  take form upload-ssh-public-key-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-upload-ssh-public-key, name <GET_UploadSSHPublicKey>
+  note <Uploads an SSH public key and associates it with the specified IAM user.
+
+The SSH public key uploaded by this operation can be used only for authenticating the associated IAM user to an CodeCommit repository. For more information about using SSH keys to authenticate to an CodeCommit repository, see [Set up CodeCommit for SSH connections](https://docs.aws.amazon.com/codecommit/latest/userguide/setting-up-credentials-ssh.html) in the _CodeCommit User Guide_.>
+
+  take user-name
+    like native-string
+    note <The name of the IAM user to associate the SSH public key with.
+
+This parameter allows (through its [regex pattern](http://wikipedia.org/wiki/regex)) a string of characters consisting of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: _+=,.@->
+  take ssh-public-key-body
+    like native-string
+    note <The SSH public key. The public key must be encoded in ssh-rsa format or PEM format. The minimum bit-length of the public key is 2048 bits. For example, you can generate a 2048-bit key, and the resulting PEM file is 1679 bytes long.
+
+The [regex pattern](http://wikipedia.org/wiki/regex) used to validate this parameter is a string of characters consisting of the following:
+
+- Any printable ASCII character ranging from the space character (`\u0020`) through the end of the ASCII character range
+
+- The printable characters in the Basic Latin and Latin-1 Supplement character set (through `\u00FF`)
+
+- The special characters tab (`\u0009`), line feed (`\u000A`), and carriage return (`\u000D`)>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=UploadSSHPublicKey>
+
+  find <UserName>, loan user-name
+  find <SSHPublicKeyBody>, loan ssh-public-key-body
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like upload-ssh-public-key-response
+    note <Success>
+  loot 480
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 482
+    seed xml, like invalid-public-key-exception
+    note <InvalidPublicKeyException>
+  loot 483
+    seed xml, like duplicate-ssh-public-key-exception
+    note <DuplicateSSHPublicKeyException>
+  loot 484
+    seed xml, like unrecognized-public-key-encoding-exception
+    note <UnrecognizedPublicKeyEncodingException>

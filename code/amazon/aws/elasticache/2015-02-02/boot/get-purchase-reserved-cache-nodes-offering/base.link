@@ -1,0 +1,96 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/purchase-reserved-cache-nodes-offering-result
+  take form purchase-reserved-cache-nodes-offering-result
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/reserved-cache-node-already-exists-fault
+  take form reserved-cache-node-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/reserved-cache-node-quota-exceeded-fault
+  take form reserved-cache-node-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/reserved-cache-nodes-offering-not-found-fault
+  take form reserved-cache-nodes-offering-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/tag
+  take form tag
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/tag-quota-per-resource-exceeded
+  take form tag-quota-per-resource-exceeded
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-purchase-reserved-cache-nodes-offering, name <GET_PurchaseReservedCacheNodesOffering>
+  note <Allows you to purchase a reserved cache node offering. Reserved nodes are not eligible for cancellation and are non-refundable. For more information, see [Managing Costs with Reserved Nodes](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/reserved-nodes.html) for Redis or [Managing Costs with Reserved Nodes](https://docs.aws.amazon.com/AmazonElastiCache/latest/mem-ug/reserved-nodes.html) for Memcached.>
+
+  take reserved-cache-nodes-offering-id
+    like native-string
+    note <The ID of the reserved cache node offering to purchase.
+
+Example: `438012d3-4052-4cc7-b2e3-8d3372e0e706`>
+  take reserved-cache-node-id
+    like native-string
+    note <A customer-specified identifier to track this reservation.
+
+The Reserved Cache Node ID is an unique customer-specified identifier to track this reservation. If this parameter is not specified, ElastiCache automatically generates an identifier for the reservation.
+
+Example: myreservationID>
+    void take
+  take cache-node-count
+    like native-integer
+    note <The number of cache node instances to reserve.
+
+Default: `1`>
+    void take
+  take tags
+    like list
+      like tag
+    note <A list of tags to be added to this resource. A tag is a key-value pair. A tag key must be accompanied by a tag value, although null is accepted.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=PurchaseReservedCacheNodesOffering>
+
+  find <ReservedCacheNodesOfferingId>, loan reserved-cache-nodes-offering-id
+  find <ReservedCacheNodeId>, loan reserved-cache-node-id
+  find <CacheNodeCount>, loan cache-node-count
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like purchase-reserved-cache-nodes-offering-result
+    note <Success>
+  loot 480
+    seed xml, like reserved-cache-nodes-offering-not-found-fault
+    note <ReservedCacheNodesOfferingNotFoundFault>
+  loot 481
+    seed xml, like reserved-cache-node-already-exists-fault
+    note <ReservedCacheNodeAlreadyExistsFault>
+  loot 482
+    seed xml, like reserved-cache-node-quota-exceeded-fault
+    note <ReservedCacheNodeQuotaExceededFault>
+  loot 483
+    seed xml, like tag-quota-per-resource-exceeded
+    note <TagQuotaPerResourceExceeded>
+  loot 484
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 485
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

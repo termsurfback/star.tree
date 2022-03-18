@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-role-not-found-fault
+  take form db-cluster-role-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-remove-role-from-db-cluster, name <POST_RemoveRoleFromDBCluster>
+  note <Disassociates an Identity and Access Management (IAM) role from a DB cluster.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take remove-role-from-db-cluster-message, like remove-role-from-db-cluster-message
+    void take
+
+  line </#Action=RemoveRoleFromDBCluster>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan remove-role-from-db-cluster-message
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>
+  loot 481
+    seed xml, like db-cluster-role-not-found-fault
+    note <DBClusterRoleNotFoundFault>
+  loot 482
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>

@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/resourcegroupstaggingapi/2017-01-26/base/get-tag-values-output
+  take form get-tag-values-output
+
+load @drumwork/snow/amazonaws.com/resourcegroupstaggingapi/2017-01-26/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/resourcegroupstaggingapi/2017-01-26/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/resourcegroupstaggingapi/2017-01-26/base/pagination-token-expired-exception
+  take form pagination-token-expired-exception
+
+load @drumwork/snow/amazonaws.com/resourcegroupstaggingapi/2017-01-26/base/throttled-exception
+  take form throttled-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-tag-values, name <GetTagValues>
+  note <Returns all tag values for the specified key that are used in the specified AWS Region for the calling AWS account.
+
+This operation supports pagination, where the response can be sent in multiple pages. You should check the `PaginationToken` response parameter to determine if there are additional results available to return. Repeat the query, passing the `PaginationToken` response parameter value as an input to the next request until you recieve a `null` value. A null value for `PaginationToken` indicates that there are no more results waiting to be returned.>
+
+  take x-amz-target
+    like native-string
+  take pagination-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-tag-values-input, like get-tag-values-input
+
+  line </#X-Amz-Target=ResourceGroupsTaggingAPI_20170126.GetTagValues>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <PaginationToken>, loan pagination-token
+
+  seed json, loan get-tag-values-input
+
+  loot 200
+    seed json, like get-tag-values-output
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like throttled-exception
+    note <ThrottledException>
+  loot 482
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 483
+    seed json, like pagination-token-expired-exception
+    note <PaginationTokenExpiredException>

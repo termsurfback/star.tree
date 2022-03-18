@@ -1,0 +1,42 @@
+
+load @drumwork/snow/amazonaws.com/iot1click-projects/2018-05-14/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot1click-projects/2018-05-14/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot1click-projects/2018-05-14/base/list-projects-response
+  take form list-projects-response
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-projects, name <ListProjects>
+  note <Lists the AWS IoT 1-Click project(s) associated with your AWS account and region.>
+
+  take next-token
+    like native-string
+    note <The token to retrieve the next set of results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return per request. If not set, a default value of 100 is used.>
+    void take
+
+  line </projects>
+
+  find <nextToken>, loan next-token
+  find <maxResults>, loan max-results
+
+  loot 200
+    seed json, like list-projects-response
+    note <Success>
+  loot 480
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

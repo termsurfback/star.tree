@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/ram/2018-01-04/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/ram/2018-01-04/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ram/2018-01-04/base/list-principals-body
+  take form list-principals-body
+
+load @drumwork/snow/amazonaws.com/ram/2018-01-04/base/list-principals-response
+  take form list-principals-response
+
+load @drumwork/snow/amazonaws.com/ram/2018-01-04/base/malformed-arn-exception
+  take form malformed-arn-exception
+
+load @drumwork/snow/amazonaws.com/ram/2018-01-04/base/server-internal-exception
+  take form server-internal-exception
+
+load @drumwork/snow/amazonaws.com/ram/2018-01-04/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/ram/2018-01-04/base/unknown-resource-exception
+  take form unknown-resource-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-principals, name <ListPrincipals>
+  note <Lists the principals that you have shared resources with or that have shared resources with you.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-principals-body, like list-principals-body
+
+  line </listprincipals>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-principals-body
+
+  loot 200
+    seed json, like list-principals-response
+    note <Success>
+  loot 480
+    seed json, like malformed-arn-exception
+    note <MalformedArnException>
+  loot 481
+    seed json, like unknown-resource-exception
+    note <UnknownResourceException>
+  loot 482
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 483
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 484
+    seed json, like server-internal-exception
+    note <ServerInternalException>
+  loot 485
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

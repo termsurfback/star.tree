@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/notify-workers-response
+  take form notify-workers-response
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/request-error
+  take form request-error
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/service-fault
+  take form service-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot notify-workers, name <NotifyWorkers>
+  note <The `NotifyWorkers` operation sends an email to one or more Workers that you specify with the Worker ID. You can specify up to 100 Worker IDs to send the same message with a single call to the NotifyWorkers operation. The NotifyWorkers operation will send a notification email to a Worker only if you have previously approved or rejected work from the Worker.>
+
+  take x-amz-target
+    like native-string
+  take notify-workers-request, like notify-workers-request
+
+  line </#X-Amz-Target=MTurkRequesterServiceV20170117.NotifyWorkers>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan notify-workers-request
+
+  loot 200
+    seed json, like notify-workers-response
+    note <Success>
+  loot 480
+    seed json, like service-fault
+    note <ServiceFault>
+  loot 481
+    seed json, like request-error
+    note <RequestError>

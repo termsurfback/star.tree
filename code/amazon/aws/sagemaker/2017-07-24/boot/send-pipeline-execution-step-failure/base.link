@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-limit-exceeded
+  take form resource-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-not-found
+  take form resource-not-found
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/send-pipeline-execution-step-failure-response
+  take form send-pipeline-execution-step-failure-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot send-pipeline-execution-step-failure, name <SendPipelineExecutionStepFailure>
+  note <Notifies the pipeline that the execution of a callback step failed, along with a message describing why. When a callback step is run, the pipeline generates a callback token and includes the token in a message sent to Amazon Simple Queue Service (Amazon SQS).>
+
+  take x-amz-target
+    like native-string
+  take send-pipeline-execution-step-failure-request, like send-pipeline-execution-step-failure-request
+
+  line </#X-Amz-Target=SageMaker.SendPipelineExecutionStepFailure>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan send-pipeline-execution-step-failure-request
+
+  loot 200
+    seed json, like send-pipeline-execution-step-failure-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found
+    note <ResourceNotFound>
+  loot 481
+    seed json, like resource-limit-exceeded
+    note <ResourceLimitExceeded>

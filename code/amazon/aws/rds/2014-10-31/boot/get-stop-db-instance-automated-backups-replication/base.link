@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-instance-state-fault
+  take form invalid-db-instance-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/stop-db-instance-automated-backups-replication-result
+  take form stop-db-instance-automated-backups-replication-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-stop-db-instance-automated-backups-replication, name <GET_StopDBInstanceAutomatedBackupsReplication>
+  note <Stops automated backup replication for a DB instance.
+
+For more information, see [Replicating Automated Backups to Another Amazon Web Services Region](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ReplicateBackups.html) in the _Amazon RDS User Guide._>
+
+  take source-db-instance-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the source DB instance for which to stop replicating automated backups, for example, `arn:aws:rds:us-west-2:123456789012:db:mydatabase`.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=StopDBInstanceAutomatedBackupsReplication>
+
+  find <SourceDBInstanceArn>, loan source-db-instance-arn
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like stop-db-instance-automated-backups-replication-result
+    note <Success>
+  loot 480
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>
+  loot 481
+    seed xml, like invalid-db-instance-state-fault
+    note <InvalidDBInstanceStateFault>

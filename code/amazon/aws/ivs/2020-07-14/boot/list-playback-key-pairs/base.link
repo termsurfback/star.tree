@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/list-playback-key-pairs-body
+  take form list-playback-key-pairs-body
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/list-playback-key-pairs-response
+  take form list-playback-key-pairs-response
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-playback-key-pairs, name <ListPlaybackKeyPairs>
+  note <Gets summary information about playback key pairs. For more information, see [Setting Up Private Channels](https://docs.aws.amazon.com/ivs/latest/userguide/private-channels.html) in the _Amazon IVS User Guide_.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-playback-key-pairs-body, like list-playback-key-pairs-body
+
+  line </ListPlaybackKeyPairs>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-playback-key-pairs-body
+
+  loot 200
+    seed json, like list-playback-key-pairs-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

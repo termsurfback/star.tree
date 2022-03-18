@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/bad-request
+  take form bad-request
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/file-system-not-found
+  take form file-system-not-found
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/incorrect-file-system-life-cycle-state
+  take form incorrect-file-system-life-cycle-state
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/lifecycle-configuration-description
+  take form lifecycle-configuration-description
+
+load @drumwork/snow/amazonaws.com/elasticfilesystem/2015-02-01/base/put-lifecycle-configuration-body
+  take form put-lifecycle-configuration-body
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-lifecycle-configuration, name <PutLifecycleConfiguration>
+  note <Enables lifecycle management by creating a new `LifecycleConfiguration` object. A `LifecycleConfiguration` object defines when files in an Amazon EFS file system are automatically transitioned to the lower-cost EFS Infrequent Access (IA) storage class. To enable EFS Intelligent Tiering, set the value of `TransitionToPrimaryStorageClass` to `AFTER_1_ACCESS`. For more information, see [EFS Lifecycle Management](https://docs.aws.amazon.com/efs/latest/ug/lifecycle-management-efs.html).
+
+A `LifecycleConfiguration` applies to all files in a file system.
+
+Each Amazon EFS file system supports one lifecycle configuration, which applies to all files in the file system. If a `LifecycleConfiguration` object already exists for the specified file system, a `PutLifecycleConfiguration` call modifies the existing configuration. A `PutLifecycleConfiguration` call with an empty `LifecyclePolicies` array in the request body deletes any existing `LifecycleConfiguration` and disables lifecycle management.
+
+In the request, specify the following:
+
+- The ID for the file system for which you are enabling, disabling, or modifying lifecycle management.
+
+- A `LifecyclePolicies` array of `LifecyclePolicy` objects that define when files are moved to the IA storage class. The array can contain only one `LifecyclePolicy` item.
+
+This operation requires permissions for the `elasticfilesystem:PutLifecycleConfiguration` operation.
+
+To apply a `LifecycleConfiguration` object to an encrypted file system, you need the same Key Management Service permissions as when you created the encrypted file system.>
+
+  take file-system-id
+    like native-string
+    note <The ID of the file system for which you are creating the `LifecycleConfiguration` object (String).>
+  take put-lifecycle-configuration-body, like put-lifecycle-configuration-body
+
+  line </2015-02-01/file-systems/{file-system-id}/lifecycle-configuration>
+
+  seed json, loan put-lifecycle-configuration-body
+
+  loot 200
+    seed json, like lifecycle-configuration-description
+    note <Success>
+  loot 480
+    seed json, like bad-request
+    note <BadRequest>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 482
+    seed json, like file-system-not-found
+    note <FileSystemNotFound>
+  loot 483
+    seed json, like incorrect-file-system-life-cycle-state
+    note <IncorrectFileSystemLifeCycleState>

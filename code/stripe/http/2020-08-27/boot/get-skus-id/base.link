@@ -1,0 +1,47 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/deleted-sku
+  take form deleted-sku
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-skus-id-body
+  take form get-skus-id-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/sku
+  take form sku
+
+boot get-skus-id, name <GetSkusId>
+  note <Retrieves the details of an existing SKU. Supply the unique SKU identifier from either a SKU creation request or from the product, and Stripe will return the corresponding SKU information.>
+
+  take id
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-skus-id-body, like get-skus-id-body
+    void take
+
+  line </v1/skus/{id}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-skus-id-body
+
+  loot 200
+    seed json
+      like sink
+        like sku
+        like deleted-sku
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

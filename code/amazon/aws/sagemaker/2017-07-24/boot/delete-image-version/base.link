@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/delete-image-version-response
+  take form delete-image-version-response
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-in-use
+  take form resource-in-use
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-not-found
+  take form resource-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-image-version, name <DeleteImageVersion>
+  note <Deletes a version of a SageMaker image. The container image the version represents isn't deleted.>
+
+  take x-amz-target
+    like native-string
+  take delete-image-version-request, like delete-image-version-request
+
+  line </#X-Amz-Target=SageMaker.DeleteImageVersion>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-image-version-request
+
+  loot 200
+    seed json, like delete-image-version-response
+    note <Success>
+  loot 480
+    seed json, like resource-in-use
+    note <ResourceInUse>
+  loot 481
+    seed json, like resource-not-found
+    note <ResourceNotFound>

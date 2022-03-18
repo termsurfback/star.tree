@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/create-subscription-definition-version-body
+  take form create-subscription-definition-version-body
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/create-subscription-definition-version-response
+  take form create-subscription-definition-version-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-subscription-definition-version, name <CreateSubscriptionDefinitionVersion>
+  note <Creates a version of a subscription definition which has already been defined.>
+
+  take subscription-definition-id
+    like native-string
+    note <The ID of the subscription definition.>
+  take x-amzn-client-token
+    like native-string
+    note <A client token used to correlate requests and responses.>
+    void take
+  take create-subscription-definition-version-body, like create-subscription-definition-version-body
+
+  line </greengrass/definition/subscriptions/{subscription-definition-id}/versions>
+
+  hint <X-Amzn-Client-Token>, loan x-amzn-client-token
+
+  seed json, loan create-subscription-definition-version-body
+
+  loot 200
+    seed json, like create-subscription-definition-version-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>

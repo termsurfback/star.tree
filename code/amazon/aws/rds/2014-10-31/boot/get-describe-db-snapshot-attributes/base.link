@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-snapshot-not-found-fault
+  take form db-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/describe-db-snapshot-attributes-result
+  take form describe-db-snapshot-attributes-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-db-snapshot-attributes, name <GET_DescribeDBSnapshotAttributes>
+  note <Returns a list of DB snapshot attribute names and values for a manual DB snapshot.
+
+When sharing snapshots with other Amazon Web Services accounts, `DescribeDBSnapshotAttributes` returns the `restore` attribute and a list of IDs for the Amazon Web Services accounts that are authorized to copy or restore the manual DB snapshot. If `all` is included in the list of values for the `restore` attribute, then the manual DB snapshot is public and can be copied or restored by all Amazon Web Services accounts.
+
+To add or remove access for an Amazon Web Services account to copy or restore a manual DB snapshot, or to make the manual DB snapshot public or private, use the `ModifyDBSnapshotAttribute` API action.>
+
+  take db-snapshot-identifier
+    like native-string
+    note <The identifier for the DB snapshot to describe the attributes for.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeDBSnapshotAttributes>
+
+  find <DBSnapshotIdentifier>, loan db-snapshot-identifier
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-db-snapshot-attributes-result
+    note <Success>
+  loot 480
+    seed xml, like db-snapshot-not-found-fault
+    note <DBSnapshotNotFoundFault>

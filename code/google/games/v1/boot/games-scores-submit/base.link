@@ -1,0 +1,34 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/games/v1/base/player-score-response
+  take form player-score-response
+
+boot games-scores-submit, name <games.scores.submit>
+  note <Submits a score to the specified leaderboard.>
+
+  take leaderboard-id
+    like native-string
+    note <The ID of the leaderboard.>
+  take score
+    like native-string
+    note <The score you're submitting. The submitted score is ignored if it is worse than a previously submitted score, where worse depends on the leaderboard sort order. The meaning of the score value depends on the leaderboard format type. For fixed-point, the score represents the raw value. For time, the score represents elapsed time in milliseconds. For currency, the score represents a value in micro units.>
+  take language
+    like native-string
+    note <The preferred language to use for strings returned by this method.>
+    void take
+  take score-tag
+    like native-string
+    note <Additional information about the score you're submitting. Values must contain no more than 64 URI-safe characters as defined by section 2.3 of RFC 3986.>
+    void take
+
+  line </games/v1/leaderboards/{leaderboard-id}/scores>
+
+  find <score>, loan score
+  find <language>, loan language
+  find <scoreTag>, loan score-tag
+
+  loot 200
+    seed json, like player-score-response
+    note <Successful response>

@@ -1,0 +1,42 @@
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/list-code-signing-configs-response
+  take form list-code-signing-configs-response
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-code-signing-configs, name <ListCodeSigningConfigs>
+  note <Returns a list of [code signing configurations](https://docs.aws.amazon.com/lambda/latest/dg/configuring-codesigning.html). A request returns up to 10,000 configurations per call. You can use the `MaxItems` parameter to return fewer configurations per call.>
+
+  take marker
+    like native-string
+    note <Specify the pagination token that's returned by a previous request to retrieve the next page of results.>
+    void take
+  take max-items
+    like native-integer
+    note <Maximum number of items to return.>
+    void take
+
+  line </2020-04-22/code-signing-configs/>
+
+  find <Marker>, loan marker
+  find <MaxItems>, loan max-items
+
+  loot 200
+    seed json, like list-code-signing-configs-response
+    note <Success>
+  loot 480
+    seed json, like service-exception
+    note <ServiceException>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>

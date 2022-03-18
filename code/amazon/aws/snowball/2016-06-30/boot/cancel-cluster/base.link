@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/cancel-cluster-result
+  take form cancel-cluster-result
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/invalid-job-state-exception
+  take form invalid-job-state-exception
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/invalid-resource-exception
+  take form invalid-resource-exception
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/kms-request-failed-exception
+  take form kms-request-failed-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot cancel-cluster, name <CancelCluster>
+  note <Cancels a cluster job. You can only cancel a cluster job while it's in the `AwaitingQuorum` status. You'll have at least an hour after creating a cluster job to cancel it.>
+
+  take x-amz-target
+    like native-string
+  take cancel-cluster-request, like cancel-cluster-request
+
+  line </#X-Amz-Target=AWSIESnowballJobManagementService.CancelCluster>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan cancel-cluster-request
+
+  loot 200
+    seed json, like cancel-cluster-result
+    note <Success>
+  loot 480
+    seed json, like kms-request-failed-exception
+    note <KMSRequestFailedException>
+  loot 481
+    seed json, like invalid-job-state-exception
+    note <InvalidJobStateException>
+  loot 482
+    seed json, like invalid-resource-exception
+    note <InvalidResourceException>

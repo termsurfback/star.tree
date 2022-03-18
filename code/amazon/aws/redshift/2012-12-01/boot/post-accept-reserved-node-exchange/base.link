@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/accept-reserved-node-exchange-output-message
+  take form accept-reserved-node-exchange-output-message
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/dependent-service-unavailable-fault
+  take form dependent-service-unavailable-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-reserved-node-state-fault
+  take form invalid-reserved-node-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/reserved-node-already-exists-fault
+  take form reserved-node-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/reserved-node-already-migrated-fault
+  take form reserved-node-already-migrated-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/reserved-node-not-found-fault
+  take form reserved-node-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/reserved-node-offering-not-found-fault
+  take form reserved-node-offering-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unsupported-operation-fault
+  take form unsupported-operation-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-accept-reserved-node-exchange, name <POST_AcceptReservedNodeExchange>
+  note <Exchanges a DC1 Reserved Node for a DC2 Reserved Node with no changes to the configuration (term, payment type, or number of nodes) and no additional costs.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take accept-reserved-node-exchange-input-message, like accept-reserved-node-exchange-input-message
+    void take
+
+  line </#Action=AcceptReservedNodeExchange>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan accept-reserved-node-exchange-input-message
+
+  loot 200
+    seed xml, like accept-reserved-node-exchange-output-message
+    note <Success>
+  loot 480
+    seed xml, like reserved-node-not-found-fault
+    note <ReservedNodeNotFoundFault>
+  loot 481
+    seed xml, like invalid-reserved-node-state-fault
+    note <InvalidReservedNodeStateFault>
+  loot 482
+    seed xml, like reserved-node-already-migrated-fault
+    note <ReservedNodeAlreadyMigratedFault>
+  loot 483
+    seed xml, like reserved-node-offering-not-found-fault
+    note <ReservedNodeOfferingNotFoundFault>
+  loot 484
+    seed xml, like unsupported-operation-fault
+    note <UnsupportedOperationFault>
+  loot 485
+    seed xml, like dependent-service-unavailable-fault
+    note <DependentServiceUnavailableFault>
+  loot 486
+    seed xml, like reserved-node-already-exists-fault
+    note <ReservedNodeAlreadyExistsFault>

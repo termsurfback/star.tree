@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-security-group-message
+  take form cache-security-group-message
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-security-group-not-found-fault
+  take form cache-security-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-cache-security-groups, name <POST_DescribeCacheSecurityGroups>
+  note <Returns a list of cache security group descriptions. If a cache security group name is specified, the list contains only the description of that group. This applicable only when you have ElastiCache in Classic setup>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-cache-security-groups-message, like describe-cache-security-groups-message
+    void take
+
+  line </#Action=DescribeCacheSecurityGroups>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-cache-security-groups-message
+
+  loot 200
+    seed xml, like cache-security-group-message
+    note <Success>
+  loot 480
+    seed xml, like cache-security-group-not-found-fault
+    note <CacheSecurityGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

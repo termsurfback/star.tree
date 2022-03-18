@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/invalid-configuration-request-exception
+  take form invalid-configuration-request-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/load-balancer-attribute
+  take form load-balancer-attribute
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/load-balancer-not-found-exception
+  take form load-balancer-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/modify-load-balancer-attributes-output
+  take form modify-load-balancer-attributes-output
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-modify-load-balancer-attributes, name <GET_ModifyLoadBalancerAttributes>
+  note <Modifies the specified attributes of the specified Application Load Balancer, Network Load Balancer, or Gateway Load Balancer.
+
+If any of the specified attributes can't be modified as requested, the call fails. Any existing attributes that you do not modify retain their current values.>
+
+  take load-balancer-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the load balancer.>
+  take attributes
+    like list
+      like load-balancer-attribute
+    note <The load balancer attributes.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyLoadBalancerAttributes>
+
+  find <LoadBalancerArn>, loan load-balancer-arn
+  find <Attributes>, loan attributes
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-load-balancer-attributes-output
+    note <Success>
+  loot 480
+    seed xml, like load-balancer-not-found-exception
+    note <LoadBalancerNotFoundException>
+  loot 481
+    seed xml, like invalid-configuration-request-exception
+    note <InvalidConfigurationRequestException>

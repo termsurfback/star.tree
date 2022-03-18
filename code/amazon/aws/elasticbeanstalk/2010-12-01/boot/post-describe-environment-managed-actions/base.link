@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/describe-environment-managed-actions-result
+  take form describe-environment-managed-actions-result
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/elastic-beanstalk-service-exception
+  take form elastic-beanstalk-service-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-environment-managed-actions, name <POST_DescribeEnvironmentManagedActions>
+  note <Lists an environment's upcoming and in-progress managed actions.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-environment-managed-actions-request, like describe-environment-managed-actions-request
+    void take
+
+  line </#Action=DescribeEnvironmentManagedActions>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-environment-managed-actions-request
+
+  loot 200
+    seed xml, like describe-environment-managed-actions-result
+    note <Success>
+  loot 480
+    seed xml, like elastic-beanstalk-service-exception
+    note <ElasticBeanstalkServiceException>

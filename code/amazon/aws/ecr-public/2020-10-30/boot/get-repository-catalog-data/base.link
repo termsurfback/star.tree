@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/get-repository-catalog-data-response
+  take form get-repository-catalog-data-response
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/repository-not-found-exception
+  take form repository-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-repository-catalog-data, name <GetRepositoryCatalogData>
+  note <Retrieve catalog metadata for a repository in a public registry. This metadata is displayed publicly in the Amazon ECR Public Gallery.>
+
+  take x-amz-target
+    like native-string
+  take get-repository-catalog-data-request, like get-repository-catalog-data-request
+
+  line </#X-Amz-Target=SpencerFrontendService.GetRepositoryCatalogData>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-repository-catalog-data-request
+
+  loot 200
+    seed json, like get-repository-catalog-data-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like repository-not-found-exception
+    note <RepositoryNotFoundException>

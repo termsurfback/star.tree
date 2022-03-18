@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/get-ssh-public-key-response
+  take form get-ssh-public-key-response
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/unrecognized-public-key-encoding-exception
+  take form unrecognized-public-key-encoding-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-get-ssh-public-key, name <GET_GetSSHPublicKey>
+  note <Retrieves the specified SSH public key, including metadata about the key.
+
+The SSH public key retrieved by this operation is used only for authenticating the associated IAM user to an CodeCommit repository. For more information about using SSH keys to authenticate to an CodeCommit repository, see [Set up CodeCommit for SSH connections](https://docs.aws.amazon.com/codecommit/latest/userguide/setting-up-credentials-ssh.html) in the _CodeCommit User Guide_.>
+
+  take user-name
+    like native-string
+    note <The name of the IAM user associated with the SSH public key.
+
+This parameter allows (through its [regex pattern](http://wikipedia.org/wiki/regex)) a string of characters consisting of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: _+=,.@->
+  take ssh-public-key-id
+    like native-string
+    note <The unique identifier for the SSH public key.
+
+This parameter allows (through its [regex pattern](http://wikipedia.org/wiki/regex)) a string of characters that can consist of any upper or lowercased letter or digit.>
+  take encoding
+    like native-string
+    note <Specifies the public key encoding format to use in the response. To retrieve the public key in ssh-rsa format, use `SSH`. To retrieve the public key in PEM format, use `PEM`.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=GetSSHPublicKey>
+
+  find <UserName>, loan user-name
+  find <SSHPublicKeyId>, loan ssh-public-key-id
+  find <Encoding>, loan encoding
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like get-ssh-public-key-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like unrecognized-public-key-encoding-exception
+    note <UnrecognizedPublicKeyEncodingException>

@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/create-recording-configuration-body
+  take form create-recording-configuration-body
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/create-recording-configuration-response
+  take form create-recording-configuration-response
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/pending-verification
+  take form pending-verification
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/service-quota-exceeded-exception
+  take form service-quota-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/validation-exception
+  take form validation-exception
+
+boot create-recording-configuration, name <CreateRecordingConfiguration>
+  note <Creates a new recording configuration, used to enable recording to Amazon S3.
+
+**Known issue:** In the us-east-1 region, if you use the AWS CLI to create a recording configuration, it returns success even if the S3 bucket is in a different region. In this case, the `state` of the recording configuration is `CREATE_FAILED` (instead of `ACTIVE`). (In other regions, the CLI correctly returns failure if the bucket is in a different region.)
+
+**Workaround:** Ensure that your S3 bucket is in the same region as the recording configuration. If you create a recording configuration in a different region as your S3 bucket, delete that recording configuration and create a new one with an S3 bucket from the correct region.>
+
+  take create-recording-configuration-body, like create-recording-configuration-body
+
+  line </CreateRecordingConfiguration>
+
+  seed json, loan create-recording-configuration-body
+
+  loot 200
+    seed json, like create-recording-configuration-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 483
+    seed json, like pending-verification
+    note <PendingVerification>
+  loot 484
+    seed json, like service-quota-exceeded-exception
+    note <ServiceQuotaExceededException>
+  loot 485
+    seed json, like validation-exception
+    note <ValidationException>

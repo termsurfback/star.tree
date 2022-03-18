@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/list-stack-instances-output
+  take form list-stack-instances-output
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/stack-set-not-found-exception
+  take form stack-set-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-list-stack-instances, name <POST_ListStackInstances>
+  note <Returns summary information about stack instances that are associated with the specified stack set. You can filter for stack instances that are associated with a specific Amazon Web Services account name or Region, or that have a specific status.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take list-stack-instances-input, like list-stack-instances-input
+    void take
+
+  line </#Action=ListStackInstances>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan list-stack-instances-input
+
+  loot 200
+    seed xml, like list-stack-instances-output
+    note <Success>
+  loot 480
+    seed xml, like stack-set-not-found-exception
+    note <StackSetNotFoundException>

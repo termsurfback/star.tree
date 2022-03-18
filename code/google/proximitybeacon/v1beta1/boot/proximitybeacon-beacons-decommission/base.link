@@ -1,0 +1,25 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/proximitybeacon/v1beta1/base/empty
+  take form empty
+
+boot proximitybeacon-beacons-decommission, name <proximitybeacon.beacons.decommission>
+  note <Decommissions the specified beacon in the service. This beacon will no longer be returned from `beaconinfo.getforobserved`. This operation is permanent -- you will not be able to re-register a beacon with this ID again. Authenticate using an [OAuth access token](https://developers.google.com/identity/protocols/OAuth2) from a signed-in user with **Is owner** or **Can edit** permissions in the Google Developers Console project.>
+
+  take beacon-name
+    like native-string
+    note <Beacon that should be decommissioned. A beacon name has the format "beacons/N!beaconId" where the beaconId is the base16 ID broadcast by the beacon and N is a code for the beacon's type. Possible values are `3` for Eddystone-UID, `4` for Eddystone-EID, `1` for iBeacon, or `5` for AltBeacon. For Eddystone-EID beacons, you may use either the current EID of the beacon's "stable" UID. Required.>
+  take project-id
+    like native-string
+    note <The project id of the beacon to decommission. If the project id is not specified then the project making the request is used. The project id must match the project that owns the beacon. Optional.>
+    void take
+
+  line </v1beta1/{beacon-name}:decommission>
+
+  find <projectId>, loan project-id
+
+  loot 200
+    seed json, like empty
+    note <Successful response>

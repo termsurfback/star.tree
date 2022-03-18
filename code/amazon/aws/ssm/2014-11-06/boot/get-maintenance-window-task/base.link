@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/does-not-exist-exception
+  take form does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/get-maintenance-window-task-result
+  take form get-maintenance-window-task-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-maintenance-window-task, name <GetMaintenanceWindowTask>
+  note <Lists the tasks in a maintenance window.
+
+For maintenance window tasks without a specified target, you can't supply values for `--max-errors` and `--max-concurrency`. Instead, the system inserts a placeholder value of `1`, which may be reported in the response to this command. These values don't affect the running of your task and can be ignored.>
+
+  take x-amz-target
+    like native-string
+  take get-maintenance-window-task-request, like get-maintenance-window-task-request
+
+  line </#X-Amz-Target=AmazonSSM.GetMaintenanceWindowTask>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-maintenance-window-task-request
+
+  loot 200
+    seed json, like get-maintenance-window-task-result
+    note <Success>
+  loot 480
+    seed json, like does-not-exist-exception
+    note <DoesNotExistException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

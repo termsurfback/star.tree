@@ -1,0 +1,90 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-cluster-not-found-fault
+  take form cache-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/delete-cache-cluster-result
+  take form delete-cache-cluster-result
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-cache-cluster-state-fault
+  take form invalid-cache-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/snapshot-already-exists-fault
+  take form snapshot-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/snapshot-feature-not-supported-fault
+  take form snapshot-feature-not-supported-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/snapshot-quota-exceeded-fault
+  take form snapshot-quota-exceeded-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-cache-cluster, name <GET_DeleteCacheCluster>
+  note <Deletes a previously provisioned cluster. `DeleteCacheCluster` deletes all associated cache nodes, node endpoints and the cluster itself. When you receive a successful response from this operation, Amazon ElastiCache immediately begins deleting the cluster; you cannot cancel or revert this operation.
+
+This operation is not valid for:
+
+- Redis (cluster mode enabled) clusters
+
+- Redis (cluster mode disabled) clusters
+
+- A cluster that is the last read replica of a replication group
+
+- A cluster that is the primary node of a replication group
+
+- A node group (shard) that has Multi-AZ mode enabled
+
+- A cluster from a Redis (cluster mode enabled) replication group
+
+- A cluster that is not in the `available` state>
+
+  take cache-cluster-id
+    like native-string
+    note <The cluster identifier for the cluster to be deleted. This parameter is not case sensitive.>
+  take final-snapshot-identifier
+    like native-string
+    note <The user-supplied name of a final cluster snapshot. This is the unique name that identifies the snapshot. ElastiCache creates the snapshot, and then deletes the cluster immediately afterward.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteCacheCluster>
+
+  find <CacheClusterId>, loan cache-cluster-id
+  find <FinalSnapshotIdentifier>, loan final-snapshot-identifier
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-cache-cluster-result
+    note <Success>
+  loot 480
+    seed xml, like cache-cluster-not-found-fault
+    note <CacheClusterNotFoundFault>
+  loot 481
+    seed xml, like invalid-cache-cluster-state-fault
+    note <InvalidCacheClusterStateFault>
+  loot 482
+    seed xml, like snapshot-already-exists-fault
+    note <SnapshotAlreadyExistsFault>
+  loot 483
+    seed xml, like snapshot-feature-not-supported-fault
+    note <SnapshotFeatureNotSupportedFault>
+  loot 484
+    seed xml, like snapshot-quota-exceeded-fault
+    note <SnapshotQuotaExceededFault>
+  loot 485
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 486
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

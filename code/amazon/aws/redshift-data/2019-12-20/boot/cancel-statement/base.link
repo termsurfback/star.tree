@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/redshift-data/2019-12-20/base/cancel-statement-response
+  take form cancel-statement-response
+
+load @drumwork/snow/amazonaws.com/redshift-data/2019-12-20/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/redshift-data/2019-12-20/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/redshift-data/2019-12-20/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot cancel-statement, name <CancelStatement>
+  note <Cancels a running query. To be canceled, a query must be running.>
+
+  take x-amz-target
+    like native-string
+  take cancel-statement-request, like cancel-statement-request
+
+  line </#X-Amz-Target=RedshiftData.CancelStatement>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan cancel-statement-request
+
+  loot 200
+    seed json, like cancel-statement-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/list-instances-response
+  take form list-instances-response
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-instances, name <ListInstances>
+  note <This API is in preview release for Amazon Connect and is subject to change.
+
+Return a list of instances which are in active state, creation-in-progress state, and failed state. Instances that aren't successfully created (they are in a failed state) are returned only for 24 hours after the CreateInstance API was invoked.>
+
+  take next-token
+    like native-string
+    note <The token for the next set of results. Use the value returned in the previous response in the next request to retrieve the next set of results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return per page.>
+    void take
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+
+  line </instance>
+
+  find <nextToken>, loan next-token
+  find <maxResults>, loan max-results
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like list-instances-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like internal-service-exception
+    note <InternalServiceException>

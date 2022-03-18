@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/create-db-proxy-endpoint-response
+  take form create-db-proxy-endpoint-response
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-endpoint-already-exists-fault
+  take form db-proxy-endpoint-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-endpoint-quota-exceeded-fault
+  take form db-proxy-endpoint-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-not-found-fault
+  take form db-proxy-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-proxy-state-fault
+  take form invalid-db-proxy-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-subnet
+  take form invalid-subnet
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-db-proxy-endpoint, name <POST_CreateDBProxyEndpoint>
+  note <Creates a `DBProxyEndpoint`. Only applies to proxies that are associated with Aurora DB clusters. You can use DB proxy endpoints to specify read/write or read-only access to the DB cluster. You can also use DB proxy endpoints to access a DB proxy through a different VPC than the proxy's default VPC.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-db-proxy-endpoint-request, like create-db-proxy-endpoint-request
+    void take
+
+  line </#Action=CreateDBProxyEndpoint>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-db-proxy-endpoint-request
+
+  loot 200
+    seed xml, like create-db-proxy-endpoint-response
+    note <Success>
+  loot 480
+    seed xml, like invalid-subnet
+    note <InvalidSubnet>
+  loot 481
+    seed xml, like db-proxy-not-found-fault
+    note <DBProxyNotFoundFault>
+  loot 482
+    seed xml, like db-proxy-endpoint-already-exists-fault
+    note <DBProxyEndpointAlreadyExistsFault>
+  loot 483
+    seed xml, like db-proxy-endpoint-quota-exceeded-fault
+    note <DBProxyEndpointQuotaExceededFault>
+  loot 484
+    seed xml, like invalid-db-proxy-state-fault
+    note <InvalidDBProxyStateFault>

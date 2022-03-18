@@ -1,0 +1,44 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/metric-scale
+  take form metric-scale
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/predictive-scaling-predefined-load-metric
+  take form predictive-scaling-predefined-load-metric
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/predictive-scaling-predefined-metric-pair
+  take form predictive-scaling-predefined-metric-pair
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/predictive-scaling-predefined-scaling-metric
+  take form predictive-scaling-predefined-scaling-metric
+
+form predictive-scaling-metric-specification, name <PredictiveScalingMetricSpecification>
+  note <This structure specifies the metrics and target utilization settings for a predictive scaling policy.
+
+You must specify either a metric pair, or a load metric and a scaling metric individually. Specifying a metric pair instead of individual metrics provides a simpler way to configure metrics for a scaling policy. You choose the metric pair, and the policy automatically knows the correct sum and average statistics to use for the load metric and the scaling metric.
+
+Example
+
+- You create a predictive scaling policy and specify `ALBRequestCount` as the value for the metric pair and `1000.0` as the target value. For this type of metric, you must provide the metric dimension for the corresponding target group, so you also provide a resource label for the Application Load Balancer target group that is attached to your Auto Scaling group.
+
+- The number of requests the target group receives per minute provides the load metric, and the request count averaged between the members of the target group provides the scaling metric. In CloudWatch, this refers to the `RequestCount` and `RequestCountPerTarget` metrics, respectively.
+
+- For optimal use of predictive scaling, you adhere to the best practice of using a dynamic scaling policy to automatically scale between the minimum capacity and maximum capacity in response to real-time changes in resource utilization.
+
+- Amazon EC2 Auto Scaling consumes data points for the load metric over the last 14 days and creates an hourly load forecast for predictive scaling. (A minimum of 24 hours of data is required.)
+
+- After creating the load forecast, Amazon EC2 Auto Scaling determines when to reduce or increase the capacity of your Auto Scaling group in each hour of the forecast period so that the average number of requests received by each instance is as close to 1000 requests per minute as possible at all times.>
+  take target-value, name <TargetValue>
+    like metric-scale
+    note <Specifies the target utilization.>
+  take predefined-metric-pair-specification, name <PredefinedMetricPairSpecification>
+    like predictive-scaling-predefined-metric-pair
+    void take
+    note <The metric pair specification from which Amazon EC2 Auto Scaling determines the appropriate scaling metric and load metric to use.>
+  take predefined-scaling-metric-specification, name <PredefinedScalingMetricSpecification>
+    like predictive-scaling-predefined-scaling-metric
+    void take
+    note <The scaling metric specification.>
+  take predefined-load-metric-specification, name <PredefinedLoadMetricSpecification>
+    like predictive-scaling-predefined-load-metric
+    void take
+    note <The load metric specification.>

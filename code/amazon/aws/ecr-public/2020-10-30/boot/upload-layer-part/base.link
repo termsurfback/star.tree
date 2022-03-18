@@ -1,0 +1,75 @@
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/invalid-layer-part-exception
+  take form invalid-layer-part-exception
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/registry-not-found-exception
+  take form registry-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/repository-not-found-exception
+  take form repository-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/unsupported-command-exception
+  take form unsupported-command-exception
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/upload-layer-part-response
+  take form upload-layer-part-response
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/upload-not-found-exception
+  take form upload-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot upload-layer-part, name <UploadLayerPart>
+  note <Uploads an image layer part to Amazon ECR.
+
+When an image is pushed, each new image layer is uploaded in parts. The maximum size of each image layer part can be 20971520 bytes (or about 20MB). The UploadLayerPart API is called once per each new image layer part.
+
+This operation is used by the Amazon ECR proxy and is not generally used by customers for pulling and pushing images. In most cases, you should use the `docker` CLI to pull, tag, and push images.>
+
+  take x-amz-target
+    like native-string
+  take upload-layer-part-request, like upload-layer-part-request
+
+  line </#X-Amz-Target=SpencerFrontendService.UploadLayerPart>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan upload-layer-part-request
+
+  loot 200
+    seed json, like upload-layer-part-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like invalid-layer-part-exception
+    note <InvalidLayerPartException>
+  loot 483
+    seed json, like repository-not-found-exception
+    note <RepositoryNotFoundException>
+  loot 484
+    seed json, like upload-not-found-exception
+    note <UploadNotFoundException>
+  loot 485
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 486
+    seed json, like registry-not-found-exception
+    note <RegistryNotFoundException>
+  loot 487
+    seed json, like unsupported-command-exception
+    note <UnsupportedCommandException>

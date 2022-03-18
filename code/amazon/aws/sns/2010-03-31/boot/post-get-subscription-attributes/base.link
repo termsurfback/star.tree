@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/get-subscription-attributes-response
+  take form get-subscription-attributes-response
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-get-subscription-attributes, name <POST_GetSubscriptionAttributes>
+  note <Returns all of the properties of a subscription.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take get-subscription-attributes-input, like get-subscription-attributes-input
+    void take
+
+  line </#Action=GetSubscriptionAttributes>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan get-subscription-attributes-input
+
+  loot 200
+    seed xml, like get-subscription-attributes-response
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 482
+    seed xml, like not-found-exception
+    note <NotFoundException>
+  loot 483
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>

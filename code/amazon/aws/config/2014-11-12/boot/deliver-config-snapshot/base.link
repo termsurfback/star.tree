@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/deliver-config-snapshot-response
+  take form deliver-config-snapshot-response
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/no-available-configuration-recorder-exception
+  take form no-available-configuration-recorder-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/no-running-configuration-recorder-exception
+  take form no-running-configuration-recorder-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/no-such-delivery-channel-exception
+  take form no-such-delivery-channel-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot deliver-config-snapshot, name <DeliverConfigSnapshot>
+  note <Schedules delivery of a configuration snapshot to the Amazon S3 bucket in the specified delivery channel. After the delivery has started, Config sends the following notifications using an Amazon SNS topic that you have specified.
+
+- Notification of the start of the delivery.
+
+- Notification of the completion of the delivery, if the delivery was successfully completed.
+
+- Notification of delivery failure, if the delivery failed.>
+
+  take x-amz-target
+    like native-string
+  take deliver-config-snapshot-request, like deliver-config-snapshot-request
+
+  line </#X-Amz-Target=StarlingDoveService.DeliverConfigSnapshot>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan deliver-config-snapshot-request
+
+  loot 200
+    seed json, like deliver-config-snapshot-response
+    note <Success>
+  loot 480
+    seed json, like no-such-delivery-channel-exception
+    note <NoSuchDeliveryChannelException>
+  loot 481
+    seed json, like no-available-configuration-recorder-exception
+    note <NoAvailableConfigurationRecorderException>
+  loot 482
+    seed json, like no-running-configuration-recorder-exception
+    note <NoRunningConfigurationRecorderException>

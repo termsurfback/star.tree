@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/discovery/2015-11-01/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/discovery/2015-11-01/base/home-region-not-set-exception
+  take form home-region-not-set-exception
+
+load @drumwork/snow/amazonaws.com/discovery/2015-11-01/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/discovery/2015-11-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/discovery/2015-11-01/base/operation-not-permitted-exception
+  take form operation-not-permitted-exception
+
+load @drumwork/snow/amazonaws.com/discovery/2015-11-01/base/server-internal-error-exception
+  take form server-internal-error-exception
+
+load @drumwork/snow/amazonaws.com/discovery/2015-11-01/base/start-export-task-response
+  take form start-export-task-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-export-task, name <StartExportTask>
+  note <Begins the export of discovered data to an S3 bucket.
+
+If you specify `agentIds` in a filter, the task exports up to 72 hours of detailed data collected by the identified Application Discovery Agent, including network, process, and performance details. A time range for exported agent data may be set by using `startTime` and `endTime`. Export of detailed agent data is limited to five concurrently running exports.
+
+If you do not include an `agentIds` filter, summary data is exported that includes both AWS Agentless Discovery Connector data and summary data from AWS Discovery Agents. Export of summary data is limited to two exports per day.>
+
+  take x-amz-target
+    like native-string
+  take start-export-task-request, like start-export-task-request
+
+  line </#X-Amz-Target=AWSPoseidonService_V2015_11_01.StartExportTask>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan start-export-task-request
+
+  loot 200
+    seed json, like start-export-task-response
+    note <Success>
+  loot 480
+    seed json, like authorization-error-exception
+    note <AuthorizationErrorException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed json, like server-internal-error-exception
+    note <ServerInternalErrorException>
+  loot 484
+    seed json, like operation-not-permitted-exception
+    note <OperationNotPermittedException>
+  loot 485
+    seed json, like home-region-not-set-exception
+    note <HomeRegionNotSetException>

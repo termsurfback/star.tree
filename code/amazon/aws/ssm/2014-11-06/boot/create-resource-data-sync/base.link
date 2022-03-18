@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/create-resource-data-sync-result
+  take form create-resource-data-sync-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/resource-data-sync-already-exists-exception
+  take form resource-data-sync-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/resource-data-sync-count-exceeded-exception
+  take form resource-data-sync-count-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/resource-data-sync-invalid-configuration-exception
+  take form resource-data-sync-invalid-configuration-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-resource-data-sync, name <CreateResourceDataSync>
+  note <A resource data sync helps you view data from multiple sources in a single location. Amazon Web Services Systems Manager offers two types of resource data sync: `SyncToDestination` and `SyncFromSource`.
+
+You can configure Systems Manager Inventory to use the `SyncToDestination` type to synchronize Inventory data from multiple Amazon Web Services Regions to a single Amazon Simple Storage Service (Amazon S3) bucket. For more information, see [Configuring resource data sync for Inventory](https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-inventory-datasync.html) in the _Amazon Web Services Systems Manager User Guide_.
+
+You can configure Systems Manager Explorer to use the `SyncFromSource` type to synchronize operational work items (OpsItems) and operational data (OpsData) from multiple Amazon Web Services Regions to a single Amazon S3 bucket. This type can synchronize OpsItems and OpsData from multiple Amazon Web Services accounts and Amazon Web Services Regions or `EntireOrganization` by using Organizations. For more information, see [Setting up Systems Manager Explorer to display data from multiple accounts and Regions](https://docs.aws.amazon.com/systems-manager/latest/userguide/Explorer-resource-data-sync.html) in the _Amazon Web Services Systems Manager User Guide_.
+
+A resource data sync is an asynchronous operation that returns immediately. After a successful initial sync is completed, the system continuously syncs data. To check the status of a sync, use the ListResourceDataSync.
+
+By default, data isn't encrypted in Amazon S3. We strongly recommend that you enable encryption in Amazon S3 to ensure secure data storage. We also recommend that you secure access to the Amazon S3 bucket by creating a restrictive bucket policy.>
+
+  take x-amz-target
+    like native-string
+  take create-resource-data-sync-request, like create-resource-data-sync-request
+
+  line </#X-Amz-Target=AmazonSSM.CreateResourceDataSync>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-resource-data-sync-request
+
+  loot 200
+    seed json, like create-resource-data-sync-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like resource-data-sync-count-exceeded-exception
+    note <ResourceDataSyncCountExceededException>
+  loot 482
+    seed json, like resource-data-sync-already-exists-exception
+    note <ResourceDataSyncAlreadyExistsException>
+  loot 483
+    seed json, like resource-data-sync-invalid-configuration-exception
+    note <ResourceDataSyncInvalidConfigurationException>

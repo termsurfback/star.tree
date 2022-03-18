@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/set-local-console-password-output
+  take form set-local-console-password-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot set-local-console-password, name <SetLocalConsolePassword>
+  note <Sets the password for your VM local console. When you log in to the local console for the first time, you log in to the VM with the default credentials. We recommend that you set a new password. You don't need to know the default password to set a new password.>
+
+  take x-amz-target
+    like native-string
+  take set-local-console-password-input, like set-local-console-password-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.SetLocalConsolePassword>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan set-local-console-password-input
+
+  loot 200
+    seed json, like set-local-console-password-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

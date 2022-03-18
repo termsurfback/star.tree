@@ -1,0 +1,67 @@
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/concurrency
+  take form concurrency
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/put-function-concurrency-body
+  take form put-function-concurrency-body
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/resource-conflict-exception
+  take form resource-conflict-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-function-concurrency, name <PutFunctionConcurrency>
+  note <Sets the maximum number of simultaneous executions for a function, and reserves capacity for that concurrency level.
+
+Concurrency settings apply to the function as a whole, including all published versions and the unpublished version. Reserving concurrency both ensures that your function has capacity to process the specified number of events simultaneously, and prevents it from scaling beyond that level. Use GetFunction to see the current setting for a function.
+
+Use GetAccountSettings to see your Regional concurrency limit. You can reserve concurrency for as many functions as you like, as long as you leave at least 100 simultaneous executions unreserved for functions that aren't configured with a per-function limit. For more information, see [Managing Concurrency](https://docs.aws.amazon.com/lambda/latest/dg/concurrent-executions.html).>
+
+  take function-name
+    like native-string
+    note <The name of the Lambda function.
+
+**Name formats** - **Function name** - `my-function`.
+
+- **Function ARN** - `arn:aws:lambda:us-west-2:123456789012:function:my-function`.
+
+- **Partial ARN** - `123456789012:function:my-function`.
+
+The length constraint applies only to the full ARN. If you specify only the function name, it is limited to 64 characters in length.>
+  take put-function-concurrency-body, like put-function-concurrency-body
+
+  line </2017-10-31/functions/{function-name}/concurrency>
+
+  seed json, loan put-function-concurrency-body
+
+  loot 200
+    seed json, like concurrency
+    note <Success>
+  loot 480
+    seed json, like service-exception
+    note <ServiceException>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 484
+    seed json, like resource-conflict-exception
+    note <ResourceConflictException>

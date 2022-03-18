@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/activate-pipeline-output
+  take form activate-pipeline-output
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/pipeline-deleted-exception
+  take form pipeline-deleted-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/pipeline-not-found-exception
+  take form pipeline-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot activate-pipeline, name <ActivatePipeline>
+  note <Validates the specified pipeline and starts processing pipeline tasks. If the pipeline does not pass validation, activation fails.
+
+If you need to pause the pipeline to investigate an issue with a component, such as a data source or script, call DeactivatePipeline.
+
+To activate a finished pipeline, modify the end date for the pipeline and then activate it.>
+
+  take x-amz-target
+    like native-string
+  take activate-pipeline-input, like activate-pipeline-input
+
+  line </#X-Amz-Target=DataPipeline.ActivatePipeline>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan activate-pipeline-input
+
+  loot 200
+    seed json, like activate-pipeline-output
+    note <Success>
+  loot 480
+    seed json, like pipeline-not-found-exception
+    note <PipelineNotFoundException>
+  loot 481
+    seed json, like pipeline-deleted-exception
+    note <PipelineDeletedException>
+  loot 482
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 483
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

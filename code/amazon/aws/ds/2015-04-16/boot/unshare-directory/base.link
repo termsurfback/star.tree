@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/directory-not-shared-exception
+  take form directory-not-shared-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/entity-does-not-exist-exception
+  take form entity-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/invalid-target-exception
+  take form invalid-target-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/unshare-directory-result
+  take form unshare-directory-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot unshare-directory, name <UnshareDirectory>
+  note <Stops the directory sharing between the directory owner and consumer accounts.>
+
+  take x-amz-target
+    like native-string
+  take unshare-directory-request, like unshare-directory-request
+
+  line </#X-Amz-Target=DirectoryService_20150416.UnshareDirectory>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan unshare-directory-request
+
+  loot 200
+    seed json, like unshare-directory-result
+    note <Success>
+  loot 480
+    seed json, like entity-does-not-exist-exception
+    note <EntityDoesNotExistException>
+  loot 481
+    seed json, like invalid-target-exception
+    note <InvalidTargetException>
+  loot 482
+    seed json, like directory-not-shared-exception
+    note <DirectoryNotSharedException>
+  loot 483
+    seed json, like client-exception
+    note <ClientException>
+  loot 484
+    seed json, like service-exception
+    note <ServiceException>

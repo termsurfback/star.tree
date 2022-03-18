@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/last-delivery-channel-delete-failed-exception
+  take form last-delivery-channel-delete-failed-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/no-such-delivery-channel-exception
+  take form no-such-delivery-channel-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-delivery-channel, name <DeleteDeliveryChannel>
+  note <Deletes the delivery channel.
+
+Before you can delete the delivery channel, you must stop the configuration recorder by using the StopConfigurationRecorder action.>
+
+  take x-amz-target
+    like native-string
+  take delete-delivery-channel-request, like delete-delivery-channel-request
+
+  line </#X-Amz-Target=StarlingDoveService.DeleteDeliveryChannel>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-delivery-channel-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like no-such-delivery-channel-exception
+    note <NoSuchDeliveryChannelException>
+  loot 481
+    seed json, like last-delivery-channel-delete-failed-exception
+    note <LastDeliveryChannelDeleteFailedException>

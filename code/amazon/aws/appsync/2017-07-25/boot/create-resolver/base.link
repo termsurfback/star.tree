@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/appsync/2017-07-25/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/appsync/2017-07-25/base/create-resolver-body
+  take form create-resolver-body
+
+load @drumwork/snow/amazonaws.com/appsync/2017-07-25/base/create-resolver-response
+  take form create-resolver-response
+
+load @drumwork/snow/amazonaws.com/appsync/2017-07-25/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/appsync/2017-07-25/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/appsync/2017-07-25/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-resolver, name <CreateResolver>
+  note <Creates a `Resolver` object.
+
+A resolver converts incoming requests into a format that a data source can understand and converts the data source's responses into GraphQL.>
+
+  take api-id
+    like native-string
+    note <The ID for the GraphQL API for which the resolver is being created.>
+  take type-name
+    like native-string
+    note <The name of the `Type`.>
+  take create-resolver-body, like create-resolver-body
+
+  line </v1/apis/{api-id}/types/{type-name}/resolvers>
+
+  seed json, loan create-resolver-body
+
+  loot 200
+    seed json, like create-resolver-response
+    note <Success>
+  loot 480
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>
+  loot 481
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 482
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 483
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

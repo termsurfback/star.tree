@@ -1,0 +1,67 @@
+
+load @drumwork/snow/amazonaws.com/proton/2020-07-20/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/proton/2020-07-20/base/cancel-service-instance-deployment-output
+  take form cancel-service-instance-deployment-output
+
+load @drumwork/snow/amazonaws.com/proton/2020-07-20/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/proton/2020-07-20/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/proton/2020-07-20/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/proton/2020-07-20/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/proton/2020-07-20/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot cancel-service-instance-deployment, name <CancelServiceInstanceDeployment>
+  note <Attempts to cancel a service instance deployment on an UpdateServiceInstance action, if the deployment is `IN_PROGRESS`. For more information, see _Update a service instance_ in the [AWS Proton Administrator guide](https://docs.aws.amazon.com/proton/latest/adminguide/ag-svc-instance-update.html) or the [AWS Proton User guide](https://docs.aws.amazon.com/proton/latest/userguide/ug-svc-instance-update.html).
+
+The following list includes potential cancellation scenarios.
+
+- If the cancellation attempt succeeds, the resulting deployment state is `CANCELLED`.
+
+- If the cancellation attempt fails, the resulting deployment state is `FAILED`.
+
+- If the current UpdateServiceInstance action succeeds before the cancellation attempt starts, the resulting deployment state is `SUCCEEDED` and the cancellation attempt has no effect.>
+
+  take x-amz-target
+    like native-string
+  take cancel-service-instance-deployment-input, like cancel-service-instance-deployment-input
+
+  line </#X-Amz-Target=AwsProton20200720.CancelServiceInstanceDeployment>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan cancel-service-instance-deployment-input
+
+  loot 200
+    seed json, like cancel-service-instance-deployment-output
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 484
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 485
+    seed json, like internal-server-exception
+    note <InternalServerException>

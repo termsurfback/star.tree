@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/describe-products-response
+  take form describe-products-response
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/invalid-access-exception
+  take form invalid-access-exception
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/securityhub/2018-10-26/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-products, name <DescribeProducts>
+  note <Returns information about product integrations in Security Hub.
+
+You can optionally provide an integration ARN. If you provide an integration ARN, then the results only include that integration.
+
+If you do not provide an integration ARN, then the results include all of the available product integrations.>
+
+  take next-token
+    like native-string
+    note <The token that is required for pagination. On your first call to the `DescribeProducts` operation, set the value of this parameter to `NULL`.
+
+For subsequent calls to the operation, to continue listing data, set the value of this parameter to the value returned from the previous response.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return.>
+    void take
+  take product-arn
+    like native-string
+    note <The ARN of the integration to return.>
+    void take
+
+  line </products>
+
+  find <NextToken>, loan next-token
+  find <MaxResults>, loan max-results
+  find <ProductArn>, loan product-arn
+
+  loot 200
+    seed json, like describe-products-response
+    note <Success>
+  loot 480
+    seed json, like internal-exception
+    note <InternalException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like invalid-access-exception
+    note <InvalidAccessException>
+  loot 483
+    seed json, like invalid-input-exception
+    note <InvalidInputException>

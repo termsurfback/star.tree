@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot validate-configuration, name <ValidateConfiguration>
+  note <Uses the validators in a configuration profile to validate a configuration.>
+
+  take application-id
+    like native-string
+    note <The application ID.>
+  take configuration-profile-id
+    like native-string
+    note <The configuration profile ID.>
+  take configuration-version
+    like native-string
+    note <The version of the configuration to validate.>
+
+  line </applications/{application-id}/configurationprofiles/{configuration-profile-id}/validators#configuration_version>
+
+  find <configuration_version>, loan configuration-version
+
+  loot 204
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

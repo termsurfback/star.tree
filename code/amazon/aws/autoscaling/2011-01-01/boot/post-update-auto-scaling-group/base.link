@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/scaling-activity-in-progress-fault
+  take form scaling-activity-in-progress-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/service-linked-role-failure
+  take form service-linked-role-failure
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-update-auto-scaling-group, name <POST_UpdateAutoScalingGroup>
+  note <**We strongly recommend that all Auto Scaling groups use launch templates to ensure full functionality for Amazon EC2 Auto Scaling and Amazon EC2.** Updates the configuration for the specified Auto Scaling group.
+
+To update an Auto Scaling group, specify the name of the group and the parameter that you want to change. Any parameters that you don't specify are not changed by this update request. The new settings take effect on any scaling activities after this call returns.
+
+If you associate a new launch configuration or template with an Auto Scaling group, all new instances will get the updated configuration. Existing instances continue to run with the configuration that they were originally launched with. When you update a group to specify a mixed instances policy instead of a launch configuration or template, existing instances may be replaced to match the new purchasing options that you specified in the policy. For example, if the group currently has 100% On-Demand capacity and the policy specifies 50% Spot capacity, this means that half of your instances will be gradually terminated and relaunched as Spot Instances. When replacing instances, Amazon EC2 Auto Scaling launches new instances before terminating the old ones, so that updating your group does not compromise the performance or availability of your application.
+
+Note the following about changing `DesiredCapacity`, `MaxSize`, or `MinSize`:
+
+- If a scale-in activity occurs as a result of a new `DesiredCapacity` value that is lower than the current size of the group, the Auto Scaling group uses its termination policy to determine which instances to terminate.
+
+- If you specify a new value for `MinSize` without specifying a value for `DesiredCapacity`, and the new `MinSize` is larger than the current size of the group, this sets the group's `DesiredCapacity` to the new `MinSize` value.
+
+- If you specify a new value for `MaxSize` without specifying a value for `DesiredCapacity`, and the new `MaxSize` is smaller than the current size of the group, this sets the group's `DesiredCapacity` to the new `MaxSize` value.
+
+To see which parameters have been set, call the DescribeAutoScalingGroups API. To view the scaling policies for an Auto Scaling group, call the DescribePolicies API. If the group has scaling policies, you can update them by calling the PutScalingPolicy API.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take update-auto-scaling-group-type, like update-auto-scaling-group-type
+    void take
+
+  line </#Action=UpdateAutoScalingGroup>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan update-auto-scaling-group-type
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like scaling-activity-in-progress-fault
+    note <ScalingActivityInProgressFault>
+  loot 481
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>
+  loot 482
+    seed xml, like service-linked-role-failure
+    note <ServiceLinkedRoleFailure>

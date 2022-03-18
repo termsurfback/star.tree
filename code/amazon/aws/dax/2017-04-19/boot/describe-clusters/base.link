@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/describe-clusters-response
+  take form describe-clusters-response
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/service-linked-role-not-found-fault
+  take form service-linked-role-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-clusters, name <DescribeClusters>
+  note <Returns information about all provisioned DAX clusters if no cluster identifier is specified, or about a specific DAX cluster if a cluster identifier is supplied.
+
+If the cluster is in the CREATING state, only cluster level information will be displayed until all of the nodes are successfully provisioned.
+
+If the cluster is in the DELETING state, only cluster level information will be displayed.
+
+If nodes are currently being added to the DAX cluster, node endpoint information and creation time for the additional nodes will not be displayed until they are completely provisioned. When the DAX cluster state is _available_, the cluster is ready for use.
+
+If nodes are currently being removed from the DAX cluster, no endpoint information for the removed nodes is displayed.>
+
+  take x-amz-target
+    like native-string
+  take describe-clusters-request, like describe-clusters-request
+
+  line </#X-Amz-Target=AmazonDAXV3.DescribeClusters>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-clusters-request
+
+  loot 200
+    seed json, like describe-clusters-response
+    note <Success>
+  loot 480
+    seed json, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 481
+    seed json, like service-linked-role-not-found-fault
+    note <ServiceLinkedRoleNotFoundFault>
+  loot 482
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed json, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

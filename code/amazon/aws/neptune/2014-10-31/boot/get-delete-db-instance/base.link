@@ -1,0 +1,100 @@
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-snapshot-already-exists-fault
+  take form db-snapshot-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/delete-db-instance-result
+  take form delete-db-instance-result
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-instance-state-fault
+  take form invalid-db-instance-state-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/snapshot-quota-exceeded-fault
+  take form snapshot-quota-exceeded-fault
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-db-instance, name <GET_DeleteDBInstance>
+  note <The DeleteDBInstance action deletes a previously provisioned DB instance. When you delete a DB instance, all automated backups for that instance are deleted and can't be recovered. Manual DB snapshots of the DB instance to be deleted by `DeleteDBInstance` are not deleted.
+
+If you request a final DB snapshot the status of the Amazon Neptune DB instance is `deleting` until the DB snapshot is created. The API action `DescribeDBInstance` is used to monitor the status of this operation. The action can't be canceled or reverted once submitted.
+
+Note that when a DB instance is in a failure state and has a status of `failed`, `incompatible-restore`, or `incompatible-network`, you can only delete it when the `SkipFinalSnapshot` parameter is set to `true`.
+
+You can't delete a DB instance if it is the only instance in the DB cluster, or if it has deletion protection enabled.>
+
+  take db-instance-identifier
+    like native-string
+    note <The DB instance identifier for the DB instance to be deleted. This parameter isn't case-sensitive.
+
+Constraints:
+
+- Must match the name of an existing DB instance.>
+  take skip-final-snapshot
+    like native-boolean
+    note <Determines whether a final DB snapshot is created before the DB instance is deleted. If `true` is specified, no DBSnapshot is created. If `false` is specified, a DB snapshot is created before the DB instance is deleted.
+
+Note that when a DB instance is in a failure state and has a status of 'failed', 'incompatible-restore', or 'incompatible-network', it can only be deleted when the SkipFinalSnapshot parameter is set to "true".
+
+Specify `true` when deleting a Read Replica.
+
+The FinalDBSnapshotIdentifier parameter must be specified if SkipFinalSnapshot is `false`.
+
+Default: `false`>
+    void take
+  take final-db-snapshot-identifier
+    like native-string
+    note <The DBSnapshotIdentifier of the new DBSnapshot created when SkipFinalSnapshot is set to `false`.
+
+Specifying this parameter and also setting the SkipFinalShapshot parameter to true results in an error.
+
+Constraints:
+
+- Must be 1 to 255 letters or numbers.
+
+- First character must be a letter
+
+- Cannot end with a hyphen or contain two consecutive hyphens
+
+- Cannot be specified when deleting a Read Replica.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteDBInstance>
+
+  find <DBInstanceIdentifier>, loan db-instance-identifier
+  find <SkipFinalSnapshot>, loan skip-final-snapshot
+  find <FinalDBSnapshotIdentifier>, loan final-db-snapshot-identifier
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-db-instance-result
+    note <Success>
+  loot 480
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>
+  loot 481
+    seed xml, like invalid-db-instance-state-fault
+    note <InvalidDBInstanceStateFault>
+  loot 482
+    seed xml, like db-snapshot-already-exists-fault
+    note <DBSnapshotAlreadyExistsFault>
+  loot 483
+    seed xml, like snapshot-quota-exceeded-fault
+    note <SnapshotQuotaExceededFault>
+  loot 484
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>

@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/authorization-not-found-fault
+  take form authorization-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-security-group-not-found-fault
+  take form cluster-security-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-security-group-state-fault
+  take form invalid-cluster-security-group-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/revoke-cluster-security-group-ingress-result
+  take form revoke-cluster-security-group-ingress-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-revoke-cluster-security-group-ingress, name <GET_RevokeClusterSecurityGroupIngress>
+  note <Revokes an ingress rule in an Amazon Redshift security group for a previously authorized IP range or Amazon EC2 security group. To add an ingress rule, see AuthorizeClusterSecurityGroupIngress. For information about managing security groups, go to [Amazon Redshift Cluster Security Groups](https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-security-groups.html) in the _Amazon Redshift Cluster Management Guide_.>
+
+  take cluster-security-group-name
+    like native-string
+    note <The name of the security Group from which to revoke the ingress rule.>
+  take cidrip
+    like native-string
+    note <The IP range for which to revoke access. This range must be a valid Classless Inter-Domain Routing (CIDR) block of IP addresses. If `CIDRIP` is specified, `EC2SecurityGroupName` and `EC2SecurityGroupOwnerId` cannot be provided.>
+    void take
+  take ec2-security-group-name
+    like native-string
+    note <The name of the EC2 Security Group whose access is to be revoked. If `EC2SecurityGroupName` is specified, `EC2SecurityGroupOwnerId` must also be provided and `CIDRIP` cannot be provided.>
+    void take
+  take ec2-security-group-owner-id
+    like native-string
+    note <The Amazon Web Services account number of the owner of the security group specified in the `EC2SecurityGroupName` parameter. The Amazon Web Services access key ID is not an acceptable value. If `EC2SecurityGroupOwnerId` is specified, `EC2SecurityGroupName` must also be provided. and `CIDRIP` cannot be provided.
+
+Example: `111122223333`>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=RevokeClusterSecurityGroupIngress>
+
+  find <ClusterSecurityGroupName>, loan cluster-security-group-name
+  find <CIDRIP>, loan cidrip
+  find <EC2SecurityGroupName>, loan ec2-security-group-name
+  find <EC2SecurityGroupOwnerId>, loan ec2-security-group-owner-id
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like revoke-cluster-security-group-ingress-result
+    note <Success>
+  loot 480
+    seed xml, like cluster-security-group-not-found-fault
+    note <ClusterSecurityGroupNotFoundFault>
+  loot 481
+    seed xml, like authorization-not-found-fault
+    note <AuthorizationNotFoundFault>
+  loot 482
+    seed xml, like invalid-cluster-security-group-state-fault
+    note <InvalidClusterSecurityGroupStateFault>

@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/servicecatalog-appregistry/2020-06-24/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog-appregistry/2020-06-24/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog-appregistry/2020-06-24/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog-appregistry/2020-06-24/base/update-application-body
+  take form update-application-body
+
+load @drumwork/snow/amazonaws.com/servicecatalog-appregistry/2020-06-24/base/update-application-response
+  take form update-application-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-application, name <UpdateApplication>
+  note <Updates an existing application with new attributes.>
+
+  take application
+    like native-string
+    note <The name or ID of the application that will be updated.>
+  take update-application-body, like update-application-body
+
+  line </applications/{application}>
+
+  seed json, loan update-application-body
+
+  loot 200
+    seed json, like update-application-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

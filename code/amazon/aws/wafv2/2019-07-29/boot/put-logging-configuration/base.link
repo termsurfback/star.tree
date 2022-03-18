@@ -1,0 +1,81 @@
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/put-logging-configuration-response
+  take form put-logging-configuration-response
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-internal-error-exception
+  take form waf-internal-error-exception
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-invalid-operation-exception
+  take form waf-invalid-operation-exception
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-invalid-parameter-exception
+  take form waf-invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-limits-exceeded-exception
+  take form waf-limits-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-nonexistent-item-exception
+  take form waf-nonexistent-item-exception
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-optimistic-lock-exception
+  take form waf-optimistic-lock-exception
+
+load @drumwork/snow/amazonaws.com/wafv2/2019-07-29/base/waf-service-linked-role-error-exception
+  take form waf-service-linked-role-error-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-logging-configuration, name <PutLoggingConfiguration>
+  note <Enables the specified LoggingConfiguration, to start logging from a web ACL, according to the configuration provided.
+
+You can access information about all traffic that WAF inspects using the following steps:
+
+1. Create an Amazon Kinesis Data Firehose.
+
+  Create the data firehose with a PUT source and in the Region that you are operating. If you are capturing logs for Amazon CloudFront, always create the firehose in US East (N. Virginia).
+
+  Give the data firehose a name that starts with the prefix `aws-waf-logs-`. For example, `aws-waf-logs-us-east-2-analytics`.
+
+  Do not create the data firehose using a `Kinesis stream` as your source.
+
+2. Associate that firehose to your web ACL using a `PutLoggingConfiguration` request.
+
+When you successfully enable logging using a `PutLoggingConfiguration` request, WAF will create a service linked role with the necessary permissions to write logs to the Amazon Kinesis Data Firehose. For more information, see [Logging Web ACL Traffic Information](https://docs.aws.amazon.com/waf/latest/developerguide/logging.html) in the _WAF Developer Guide_.
+
+This operation completely replaces the mutable specifications that you already have for the logging configuration with the ones that you provide to this call. To modify the logging configuration, retrieve it by calling GetLoggingConfiguration, update the settings as needed, and then provide the complete logging configuration specification to this call.>
+
+  take x-amz-target
+    like native-string
+  take put-logging-configuration-request, like put-logging-configuration-request
+
+  line </#X-Amz-Target=AWSWAF_20190729.PutLoggingConfiguration>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan put-logging-configuration-request
+
+  loot 200
+    seed json, like put-logging-configuration-response
+    note <Success>
+  loot 480
+    seed json, like waf-internal-error-exception
+    note <WAFInternalErrorException>
+  loot 481
+    seed json, like waf-nonexistent-item-exception
+    note <WAFNonexistentItemException>
+  loot 482
+    seed json, like waf-optimistic-lock-exception
+    note <WAFOptimisticLockException>
+  loot 483
+    seed json, like waf-service-linked-role-error-exception
+    note <WAFServiceLinkedRoleErrorException>
+  loot 484
+    seed json, like waf-invalid-parameter-exception
+    note <WAFInvalidParameterException>
+  loot 485
+    seed json, like waf-invalid-operation-exception
+    note <WAFInvalidOperationException>
+  loot 486
+    seed json, like waf-limits-exceeded-exception
+    note <WAFLimitsExceededException>

@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/list-firewall-domain-lists-response
+  take form list-firewall-domain-lists-response
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-firewall-domain-lists, name <ListFirewallDomainLists>
+  note <Retrieves the firewall domain lists that you have defined. For each firewall domain list, you can retrieve the domains that are defined for a list by calling ListFirewallDomains.
+
+A single call to this list operation might return only a partial list of the domain lists. For information, see `MaxResults`.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-firewall-domain-lists-request, like list-firewall-domain-lists-request
+
+  line </#X-Amz-Target=Route53Resolver.ListFirewallDomainLists>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-firewall-domain-lists-request
+
+  loot 200
+    seed json, like list-firewall-domain-lists-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>

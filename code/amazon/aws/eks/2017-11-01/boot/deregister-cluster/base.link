@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/deregister-cluster-response
+  take form deregister-cluster-response
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot deregister-cluster, name <DeregisterCluster>
+  note <Deregisters a connected cluster to remove it from the Amazon EKS control plane.>
+
+  take name
+    like native-string
+    note <The name of the connected cluster to deregister.>
+
+  line </cluster-registrations/{name}>
+
+  loot 200
+    seed json, like deregister-cluster-response
+    note <Success>
+  loot 480
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like client-exception
+    note <ClientException>
+  loot 483
+    seed json, like server-exception
+    note <ServerException>
+  loot 484
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

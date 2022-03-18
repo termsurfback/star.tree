@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/invalid-parameters-exception
+  take form invalid-parameters-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/search-products-as-admin-output
+  take form search-products-as-admin-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot search-products-as-admin, name <SearchProductsAsAdmin>
+  note <Gets information about the products for the specified portfolio or all products.>
+
+  take x-amz-target
+    like native-string
+  take page-size
+    like native-string
+    note <Pagination limit>
+    void take
+  take page-token
+    like native-string
+    note <Pagination token>
+    void take
+  take search-products-as-admin-input, like search-products-as-admin-input
+
+  line </#X-Amz-Target=AWS242ServiceCatalogService.SearchProductsAsAdmin>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <PageSize>, loan page-size
+  find <PageToken>, loan page-token
+
+  seed json, loan search-products-as-admin-input
+
+  loot 200
+    seed json, like search-products-as-admin-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-parameters-exception
+    note <InvalidParametersException>

@@ -1,0 +1,76 @@
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/adjustment-type
+  take form adjustment-type
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/cooldown
+  take form cooldown
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/metric-aggregation-type
+  take form metric-aggregation-type
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/min-adjustment-magnitude
+  take form min-adjustment-magnitude
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/step-adjustments
+  take form step-adjustments
+
+form step-scaling-policy-configuration, name <StepScalingPolicyConfiguration>
+  note <Represents a step scaling policy configuration to use with Application Auto Scaling.>
+  take adjustment-type, name <AdjustmentType>
+    like adjustment-type
+    void take
+    note <Specifies how the `ScalingAdjustment` value in a [StepAdjustment](https://docs.aws.amazon.com/autoscaling/application/APIReference/API_StepAdjustment.html) is interpreted (for example, an absolute number or a percentage). The valid values are `ChangeInCapacity`, `ExactCapacity`, and `PercentChangeInCapacity`.
+
+`AdjustmentType` is required if you are adding a new step scaling policy configuration.>
+  take step-adjustments, name <StepAdjustments>
+    like step-adjustments
+    void take
+    note <A set of adjustments that enable you to scale based on the size of the alarm breach.
+
+At least one step adjustment is required if you are adding a new step scaling policy configuration.>
+  take min-adjustment-magnitude, name <MinAdjustmentMagnitude>
+    like min-adjustment-magnitude
+    void take
+    note <The minimum value to scale by when the adjustment type is `PercentChangeInCapacity`. For example, suppose that you create a step scaling policy to scale out an Amazon ECS service by 25 percent and you specify a `MinAdjustmentMagnitude` of 2. If the service has 4 tasks and the scaling policy is performed, 25 percent of 4 is 1. However, because you specified a `MinAdjustmentMagnitude` of 2, Application Auto Scaling scales out the service by 2 tasks.>
+  take cooldown, name <Cooldown>
+    like cooldown
+    void take
+    note <The amount of time, in seconds, to wait for a previous scaling activity to take effect.
+
+With scale-out policies, the intention is to continuously (but not excessively) scale out. After Application Auto Scaling successfully scales out using a step scaling policy, it starts to calculate the cooldown time. The scaling policy won't increase the desired capacity again unless either a larger scale out is triggered or the cooldown period ends. While the cooldown period is in effect, capacity added by the initiating scale-out activity is calculated as part of the desired capacity for the next scale-out activity. For example, when an alarm triggers a step scaling policy to increase the capacity by 2, the scaling activity completes successfully, and a cooldown period starts. If the alarm triggers again during the cooldown period but at a more aggressive step adjustment of 3, the previous increase of 2 is considered part of the current capacity. Therefore, only 1 is added to the capacity.
+
+With scale-in policies, the intention is to scale in conservatively to protect your application’s availability, so scale-in activities are blocked until the cooldown period has expired. However, if another alarm triggers a scale-out activity during the cooldown period after a scale-in activity, Application Auto Scaling scales out the target immediately. In this case, the cooldown period for the scale-in activity stops and doesn't complete.
+
+Application Auto Scaling provides a default value of 600 for Amazon ElastiCache replication groups and a default value of 300 for the following scalable targets:
+
+- ECS services
+
+- Spot Fleet requests
+
+- EMR clusters
+
+- AppStream 2.0 fleets
+
+- Aurora DB clusters
+
+- Amazon SageMaker endpoint variants
+
+- Custom resources
+
+For all other scalable targets, the default value is 0:
+
+- DynamoDB tables
+
+- DynamoDB global secondary indexes
+
+- Amazon Comprehend document classification and entity recognizer endpoints
+
+- Lambda provisioned concurrency
+
+- Amazon Keyspaces tables
+
+- Amazon MSK broker storage>
+  take metric-aggregation-type, name <MetricAggregationType>
+    like metric-aggregation-type
+    void take
+    note <The aggregation type for the CloudWatch metrics. Valid values are `Minimum`, `Maximum`, and `Average`. If the aggregation type is null, the value is treated as `Average`.>

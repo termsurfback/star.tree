@@ -1,0 +1,82 @@
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/get-face-detection-response
+  take form get-face-detection-response
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/invalid-pagination-token-exception
+  take form invalid-pagination-token-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/provisioned-throughput-exceeded-exception
+  take form provisioned-throughput-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-face-detection, name <GetFaceDetection>
+  note <Gets face detection results for a Amazon Rekognition Video analysis started by StartFaceDetection.
+
+Face detection with Amazon Rekognition Video is an asynchronous operation. You start face detection by calling StartFaceDetection which returns a job identifier (`JobId`). When the face detection operation finishes, Amazon Rekognition Video publishes a completion status to the Amazon Simple Notification Service topic registered in the initial call to `StartFaceDetection`. To get the results of the face detection operation, first check that the status value published to the Amazon SNS topic is `SUCCEEDED`. If so, call GetFaceDetection and pass the job identifier (`JobId`) from the initial call to `StartFaceDetection`.
+
+`GetFaceDetection` returns an array of detected faces (`Faces`) sorted by the time the faces were detected.
+
+Use MaxResults parameter to limit the number of labels returned. If there are more results than specified in `MaxResults`, the value of `NextToken` in the operation response contains a pagination token for getting the next set of results. To get the next page of results, call `GetFaceDetection` and populate the `NextToken` request parameter with the token value returned from the previous call to `GetFaceDetection`.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-face-detection-request, like get-face-detection-request
+
+  line </#X-Amz-Target=RekognitionService.GetFaceDetection>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan get-face-detection-request
+
+  loot 200
+    seed json, like get-face-detection-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 483
+    seed json, like invalid-pagination-token-exception
+    note <InvalidPaginationTokenException>
+  loot 484
+    seed json, like provisioned-throughput-exceeded-exception
+    note <ProvisionedThroughputExceededException>
+  loot 485
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 486
+    seed json, like throttling-exception
+    note <ThrottlingException>

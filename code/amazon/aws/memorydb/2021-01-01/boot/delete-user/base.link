@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/delete-user-response
+  take form delete-user-response
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/invalid-user-state-fault
+  take form invalid-user-state-fault
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/user-not-found-fault
+  take form user-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-user, name <DeleteUser>
+  note <Deletes a user. The user will be removed from all ACLs and in turn removed from all clusters.>
+
+  take x-amz-target
+    like native-string
+  take delete-user-request, like delete-user-request
+
+  line </#X-Amz-Target=AmazonMemoryDB.DeleteUser>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-user-request
+
+  loot 200
+    seed json, like delete-user-response
+    note <Success>
+  loot 480
+    seed json, like invalid-user-state-fault
+    note <InvalidUserStateFault>
+  loot 481
+    seed json, like user-not-found-fault
+    note <UserNotFoundFault>
+  loot 482
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>

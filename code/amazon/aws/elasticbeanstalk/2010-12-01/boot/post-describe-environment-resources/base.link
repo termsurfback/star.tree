@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/environment-resource-descriptions-message
+  take form environment-resource-descriptions-message
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/insufficient-privileges-exception
+  take form insufficient-privileges-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-environment-resources, name <POST_DescribeEnvironmentResources>
+  note <Returns AWS resources for this environment.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-environment-resources-message, like describe-environment-resources-message
+    void take
+
+  line </#Action=DescribeEnvironmentResources>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-environment-resources-message
+
+  loot 200
+    seed xml, like environment-resource-descriptions-message
+    note <Success>
+  loot 480
+    seed xml, like insufficient-privileges-exception
+    note <InsufficientPrivilegesException>

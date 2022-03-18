@@ -1,0 +1,112 @@
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-balance-transactions-body
+  take form get-balance-transactions-body
+
+boot get-balance-transactions, name <GetBalanceTransactions>
+  note <Returns a list of transactions that have contributed to the Stripe account balance (e.g., charges, transfers, and so forth). The transactions are returned in sorted order, with the most recent transactions appearing first.
+
+Note that this endpoint was previously called “Balance history” and used the path `/v1/balance/history`.>
+
+  take available-on
+    like sink
+      like form
+        take gt, name <gt>
+          void take
+        take gte, name <gte>
+          void take
+        take lt, name <lt>
+          void take
+        take lte, name <lte>
+          void take
+      like native-integer
+    void take
+  take created
+    like sink
+      like form
+        take gt, name <gt>
+          void take
+        take gte, name <gte>
+          void take
+        take lt, name <lt>
+          void take
+        take lte, name <lte>
+          void take
+      like native-integer
+    void take
+  take currency
+    like native-string
+    note <Only return transactions in a certain currency. Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).>
+    void take
+  take ending-before
+    like native-string
+    note <A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.>
+    void take
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take limit
+    like native-integer
+    note <A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.>
+    void take
+  take payout
+    like native-string
+    note <For automatic Stripe payouts only, only returns transactions that were paid out on the specified payout ID.>
+    void take
+  take source
+    like native-string
+    note <Only returns the original transaction.>
+    void take
+  take starting-after
+    like native-string
+    note <A cursor for use in pagination. `starting_after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with `obj_foo`, your subsequent call can include `starting_after=obj_foo` in order to fetch the next page of the list.>
+    void take
+  take type
+    like native-string
+    note <Only returns transactions of the given type. One of: `adjustment`, `advance`, `advance_funding`, `anticipation_repayment`, `application_fee`, `application_fee_refund`, `charge`, `connect_collection_transfer`, `contribution`, `issuing_authorization_hold`, `issuing_authorization_release`, `issuing_dispute`, `issuing_transaction`, `payment`, `payment_failure_refund`, `payment_refund`, `payout`, `payout_cancel`, `payout_failure`, `refund`, `refund_failure`, `reserve_transaction`, `reserved_funds`, `stripe_fee`, `stripe_fx_fee`, `tax_fee`, `topup`, `topup_reversal`, `transfer`, `transfer_cancel`, `transfer_failure`, or `transfer_refund`.>
+    void take
+  take get-balance-transactions-body, like get-balance-transactions-body
+    void take
+
+  line </v1/balance_transactions>
+
+  find <available_on>, loan available-on
+  find <created>, loan created
+  find <currency>, loan currency
+  find <ending_before>, loan ending-before
+  find <expand>, loan expand
+  find <limit>, loan limit
+  find <payout>, loan payout
+  find <source>, loan source
+  find <starting_after>, loan starting-after
+  find <type>, loan type
+
+  seed x-www-form-urlencoded, loan get-balance-transactions-body
+
+  loot 200
+    seed json
+      like form
+        take data, name <data>
+        take has-more, name <has_more>
+        take object, name <object>
+        take url, name <url>
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

@@ -1,0 +1,48 @@
+
+load @drumwork/snow/amazonaws.com/sdb/2009-04-15/base/request-timeout
+  take form request-timeout
+
+load @drumwork/snow/amazonaws.com/sdb/2009-04-15/base/select-result
+  take form select-result
+
+load @drumwork/snow/amazonaws.com/sdb/2009-04-15/base/too-many-requested-attributes
+  take form too-many-requested-attributes
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-select, name <POST_Select>
+  note <The `Select` operation returns a set of attributes for `ItemNames` that match the select expression. `Select` is similar to the standard SQL SELECT statement.
+
+The total size of the response cannot exceed 1 MB in total size. Amazon SimpleDB automatically adjusts the number of items returned per page to enforce this limit. For example, if the client asks to retrieve 2500 items, but each individual item is 10 kB in size, the system returns 100 items and an appropriate `NextToken` so the client can access the next page of results.
+
+For information on how to construct select expressions, see Using Select to Create Amazon SimpleDB Queries in the Developer Guide.>
+
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take select-request, like select-request
+    void take
+
+  line </#Action=Select>
+
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan select-request
+
+  loot 200
+    seed xml, like select-result
+    note <Success>
+  loot 400
+    seed xml, like too-many-requested-attributes
+    note <TooManyRequestedAttributes>
+  loot 408
+    seed xml, like request-timeout
+    note <RequestTimeout>

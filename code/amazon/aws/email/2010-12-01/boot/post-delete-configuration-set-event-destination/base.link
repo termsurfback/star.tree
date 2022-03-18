@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/configuration-set-does-not-exist-exception
+  take form configuration-set-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/delete-configuration-set-event-destination-response
+  take form delete-configuration-set-event-destination-response
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/event-destination-does-not-exist-exception
+  take form event-destination-does-not-exist-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-configuration-set-event-destination, name <POST_DeleteConfigurationSetEventDestination>
+  note <Deletes a configuration set event destination. Configuration set event destinations are associated with configuration sets, which enable you to publish email sending events. For information about using configuration sets, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/monitor-sending-activity.html).
+
+You can execute this operation no more than once per second.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-configuration-set-event-destination-request, like delete-configuration-set-event-destination-request
+    void take
+
+  line </#Action=DeleteConfigurationSetEventDestination>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-configuration-set-event-destination-request
+
+  loot 200
+    seed xml, like delete-configuration-set-event-destination-response
+    note <Success>
+  loot 480
+    seed xml, like configuration-set-does-not-exist-exception
+    note <ConfigurationSetDoesNotExistException>
+  loot 481
+    seed xml, like event-destination-does-not-exist-exception
+    note <EventDestinationDoesNotExistException>

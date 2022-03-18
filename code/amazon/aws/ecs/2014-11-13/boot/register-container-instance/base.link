@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/register-container-instance-response
+  take form register-container-instance-response
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot register-container-instance, name <RegisterContainerInstance>
+  note <This action is only used by the Amazon ECS agent, and it is not intended for use outside of the agent.
+
+Registers an EC2 instance into the specified cluster. This instance becomes available to place containers on.>
+
+  take x-amz-target
+    like native-string
+  take register-container-instance-request, like register-container-instance-request
+
+  line </#X-Amz-Target=AmazonEC2ContainerServiceV20141113.RegisterContainerInstance>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan register-container-instance-request
+
+  loot 200
+    seed json, like register-container-instance-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like client-exception
+    note <ClientException>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>

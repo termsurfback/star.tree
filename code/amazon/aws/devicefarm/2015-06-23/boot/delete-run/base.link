@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/argument-exception
+  take form argument-exception
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/delete-run-result
+  take form delete-run-result
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/service-account-exception
+  take form service-account-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-run, name <DeleteRun>
+  note <Deletes the run, given the run ARN.
+
+Deleting this resource does not stop an in-progress run.>
+
+  take x-amz-target
+    like native-string
+  take delete-run-request, like delete-run-request
+
+  line </#X-Amz-Target=DeviceFarm_20150623.DeleteRun>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-run-request
+
+  loot 200
+    seed json, like delete-run-result
+    note <Success>
+  loot 480
+    seed json, like argument-exception
+    note <ArgumentException>
+  loot 481
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 482
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 483
+    seed json, like service-account-exception
+    note <ServiceAccountException>

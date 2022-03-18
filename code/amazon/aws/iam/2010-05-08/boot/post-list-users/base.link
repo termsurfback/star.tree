@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/list-users-response
+  take form list-users-response
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-list-users, name <POST_ListUsers>
+  note <Lists the IAM users that have the specified path prefix. If no path prefix is specified, the operation returns all users in the account. If there are none, the operation returns an empty list.
+
+IAM resource-listing operations return a subset of the available attributes for the resource. For example, this operation does not return tags, even though they are an attribute of the returned object. To view all of the information for a user, see GetUser.
+
+You can paginate the results using the `MaxItems` and `Marker` parameters.>
+
+  take max-items
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take list-users-request, like list-users-request
+    void take
+
+  line </#Action=ListUsers>
+
+  find <MaxItems>, loan max-items
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan list-users-request
+
+  loot 200
+    seed xml, like list-users-response
+    note <Success>
+  loot 480
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

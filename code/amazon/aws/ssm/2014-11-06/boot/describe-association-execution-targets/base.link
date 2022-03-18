@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/association-does-not-exist
+  take form association-does-not-exist
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/association-execution-does-not-exist
+  take form association-execution-does-not-exist
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/describe-association-execution-targets-result
+  take form describe-association-execution-targets-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-association-execution-targets, name <DescribeAssociationExecutionTargets>
+  note <Views information about a specific execution of a specific association.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-association-execution-targets-request, like describe-association-execution-targets-request
+
+  line </#X-Amz-Target=AmazonSSM.DescribeAssociationExecutionTargets>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-association-execution-targets-request
+
+  loot 200
+    seed json, like describe-association-execution-targets-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like association-does-not-exist
+    note <AssociationDoesNotExist>
+  loot 482
+    seed json, like invalid-next-token
+    note <InvalidNextToken>
+  loot 483
+    seed json, like association-execution-does-not-exist
+    note <AssociationExecutionDoesNotExist>

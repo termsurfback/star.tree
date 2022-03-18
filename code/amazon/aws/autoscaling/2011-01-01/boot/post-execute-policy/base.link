@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/scaling-activity-in-progress-fault
+  take form scaling-activity-in-progress-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-execute-policy, name <POST_ExecutePolicy>
+  note <Executes the specified policy. This can be useful for testing the design of your scaling policy.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take execute-policy-type, like execute-policy-type
+    void take
+
+  line </#Action=ExecutePolicy>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan execute-policy-type
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like scaling-activity-in-progress-fault
+    note <ScalingActivityInProgressFault>
+  loot 481
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

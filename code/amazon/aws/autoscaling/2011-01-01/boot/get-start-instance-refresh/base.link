@@ -1,0 +1,124 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/checkpoint-delay
+  take form checkpoint-delay
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/checkpoint-percentages
+  take form checkpoint-percentages
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/instance-refresh-in-progress-fault
+  take form instance-refresh-in-progress-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/int-percent
+  take form int-percent
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/launch-template-specification
+  take form launch-template-specification
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/limit-exceeded-fault
+  take form limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/mixed-instances-policy
+  take form mixed-instances-policy
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/refresh-instance-warmup
+  take form refresh-instance-warmup
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/skip-matching
+  take form skip-matching
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/start-instance-refresh-answer
+  take form start-instance-refresh-answer
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-start-instance-refresh, name <GET_StartInstanceRefresh>
+  note <Starts a new instance refresh operation. An instance refresh performs a rolling replacement of all or some instances in an Auto Scaling group. Each instance is terminated first and then replaced, which temporarily reduces the capacity available within your Auto Scaling group.
+
+This operation is part of the [instance refresh feature](https://docs.aws.amazon.com/autoscaling/ec2/userguide/asg-instance-refresh.html) in Amazon EC2 Auto Scaling, which helps you update instances in your Auto Scaling group. This feature is helpful, for example, when you have a new AMI or a new user data script. You just need to create a new launch template that specifies the new AMI or user data script. Then start an instance refresh to immediately begin the process of updating instances in the group.
+
+If the call succeeds, it creates a new instance refresh request with a unique ID that you can use to track its progress. To query its status, call the DescribeInstanceRefreshes API. To describe the instance refreshes that have already run, call the DescribeInstanceRefreshes API. To cancel an instance refresh operation in progress, use the CancelInstanceRefresh API.>
+
+  take auto-scaling-group-name
+    like native-string
+    note <The name of the Auto Scaling group.>
+  take strategy
+    like native-string
+    note <The strategy to use for the instance refresh. The only valid value is `Rolling`.
+
+A rolling update helps you update your instances gradually. A rolling update can fail due to failed health checks or if instances are on standby or are protected from scale in. If the rolling update process fails, any instances that are replaced are not rolled back to their previous configuration.>
+    void take
+  take desired-configuration
+    like form
+      take launch-template, name <LaunchTemplate>
+        like launch-template-specification
+        void take
+      take mixed-instances-policy, name <MixedInstancesPolicy>
+        like mixed-instances-policy
+        void take
+    note <The desired configuration. For example, the desired configuration can specify a new launch template or a new version of the current launch template.
+
+Once the instance refresh succeeds, Amazon EC2 Auto Scaling updates the settings of the Auto Scaling group to reflect the new desired configuration.
+
+When you specify a new launch template or a new version of the current launch template for your desired configuration, consider enabling the `SkipMatching` property in preferences. If it's enabled, Amazon EC2 Auto Scaling skips replacing instances that already use the specified launch template and version. This can help you reduce the number of replacements that are required to apply updates.>
+    void take
+  take preferences
+    like form
+      take min-healthy-percentage, name <MinHealthyPercentage>
+        like int-percent
+        void take
+        note <The amount of capacity in the Auto Scaling group that must remain healthy during an instance refresh to allow the operation to continue. The value is expressed as a percentage of the desired capacity of the Auto Scaling group (rounded up to the nearest integer). The default is `90`.
+
+Setting the minimum healthy percentage to 100 percent limits the rate of replacement to one instance at a time. In contrast, setting it to 0 percent has the effect of replacing all instances at the same time.>
+      take instance-warmup, name <InstanceWarmup>
+        like refresh-instance-warmup
+        void take
+        note <The number of seconds until a newly launched instance is configured and ready to use. During this time, Amazon EC2 Auto Scaling does not immediately move on to the next replacement. The default is to use the value for the health check grace period defined for the group.>
+      take checkpoint-percentages, name <CheckpointPercentages>
+        like checkpoint-percentages
+        void take
+        note <Threshold values for each checkpoint in ascending order. Each number must be unique. To replace all instances in the Auto Scaling group, the last number in the array must be `100`.
+
+For usage examples, see [Adding checkpoints to an instance refresh](https://docs.aws.amazon.com/autoscaling/ec2/userguide/asg-adding-checkpoints-instance-refresh.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+      take checkpoint-delay, name <CheckpointDelay>
+        like checkpoint-delay
+        void take
+        note <The amount of time, in seconds, to wait after a checkpoint before continuing. This property is optional, but if you specify a value for it, you must also specify a value for `CheckpointPercentages`. If you specify a value for `CheckpointPercentages` and not for `CheckpointDelay`, the `CheckpointDelay` defaults to `3600` (1 hour).>
+      take skip-matching, name <SkipMatching>
+        like skip-matching
+        void take
+        note <A boolean value that indicates whether skip matching is enabled. If true, then Amazon EC2 Auto Scaling skips replacing instances that match the desired configuration. If no desired configuration is specified, then it skips replacing instances that have the same configuration that is already set on the group. The default is `false`.>
+    note <Set of preferences associated with the instance refresh request. If not provided, the default values are used.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=StartInstanceRefresh>
+
+  find <AutoScalingGroupName>, loan auto-scaling-group-name
+  find <Strategy>, loan strategy
+  find <DesiredConfiguration>, loan desired-configuration
+  find <Preferences>, loan preferences
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like start-instance-refresh-answer
+    note <Success>
+  loot 480
+    seed xml, like limit-exceeded-fault
+    note <LimitExceededFault>
+  loot 481
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>
+  loot 482
+    seed xml, like instance-refresh-in-progress-fault
+    note <InstanceRefreshInProgressFault>

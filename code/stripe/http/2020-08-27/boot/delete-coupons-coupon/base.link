@@ -1,0 +1,31 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/delete-coupons-coupon-body
+  take form delete-coupons-coupon-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/deleted-coupon
+  take form deleted-coupon
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+boot delete-coupons-coupon, name <DeleteCouponsCoupon>
+  note <You can delete coupons via the [coupon management](https://dashboard.stripe.com/coupons) page of the Stripe dashboard. However, deleting a coupon does not affect any customers who have already applied the coupon; it means that new customers can’t redeem the coupon. You can also delete coupons via the API.>
+
+  take coupon
+    like native-string
+  take delete-coupons-coupon-body, like delete-coupons-coupon-body
+    void take
+
+  line </v1/coupons/{coupon}>
+
+  seed x-www-form-urlencoded, loan delete-coupons-coupon-body
+
+  loot 200
+    seed json, like deleted-coupon
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

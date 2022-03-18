@@ -1,0 +1,110 @@
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/credit-note
+  take form credit-note
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-credit-notes-preview-body
+  take form get-credit-notes-preview-body
+
+boot get-credit-notes-preview, name <GetCreditNotesPreview>
+  note <Get a preview of a credit note without creating it.>
+
+  take amount
+    like native-integer
+    note <The integer amount in %s representing the total amount of the credit note.>
+    void take
+  take credit-amount
+    like native-integer
+    note <The integer amount in %s representing the amount to credit the customer&#39;s balance, which will be automatically applied to their next invoice.>
+    void take
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take invoice
+    like native-string
+    note <ID of the invoice.>
+  take lines
+    like list
+      like form
+        take amount, name <amount>
+          void take
+        take description, name <description>
+          void take
+        take invoice-line-item, name <invoice_line_item>
+          void take
+        take quantity, name <quantity>
+          void take
+        take tax-rates, name <tax_rates>
+          void take
+        take type, name <type>
+        take unit-amount, name <unit_amount>
+          void take
+        take unit-amount-decimal, name <unit_amount_decimal>
+          void take
+    note <Line items that make up the credit note.>
+    void take
+  take memo
+    like native-string
+    note <The credit note&#39;s memo appears on the credit note PDF.>
+    void take
+  take metadata
+    like form
+    note <Set of [key-value pairs](https://stripe.com/docs/api/metadata) that you can attach to an object. This can be useful for storing additional information about the object in a structured format. Individual keys can be unset by posting an empty value to them. All keys can be unset by posting an empty value to `metadata`.>
+    void take
+  take out-of-band-amount
+    like native-integer
+    note <The integer amount in %s representing the amount that is credited outside of Stripe.>
+    void take
+  take reason
+    like native-string
+    note <Reason for issuing this credit note, one of `duplicate`, `fraudulent`, `order_change`, or `product_unsatisfactory`>
+    void take
+  take refund
+    like native-string
+    note <ID of an existing refund to link this credit note to.>
+    void take
+  take refund-amount
+    like native-integer
+    note <The integer amount in %s representing the amount to refund. If set, a refund will be created for the charge associated with the invoice.>
+    void take
+  take get-credit-notes-preview-body, like get-credit-notes-preview-body
+    void take
+
+  line </v1/credit_notes/preview>
+
+  find <amount>, loan amount
+  find <credit_amount>, loan credit-amount
+  find <expand>, loan expand
+  find <invoice>, loan invoice
+  find <lines>, loan lines
+  find <memo>, loan memo
+  find <metadata>, loan metadata
+  find <out_of_band_amount>, loan out-of-band-amount
+  find <reason>, loan reason
+  find <refund>, loan refund
+  find <refund_amount>, loan refund-amount
+
+  seed x-www-form-urlencoded, loan get-credit-notes-preview-body
+
+  loot 200
+    seed json, like credit-note
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

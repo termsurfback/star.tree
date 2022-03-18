@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/get-calendar-state-response
+  take form get-calendar-state-response
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-document
+  take form invalid-document
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-document-type
+  take form invalid-document-type
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/unsupported-calendar-exception
+  take form unsupported-calendar-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-calendar-state, name <GetCalendarState>
+  note <Gets the state of a Amazon Web Services Systems Manager change calendar at the current time or a specified time. If you specify a time, `GetCalendarState` returns the state of the calendar at that specific time, and returns the next time that the change calendar state will transition. If you don't specify a time, `GetCalendarState` uses the current time. Change Calendar entries have two possible states: `OPEN` or `CLOSED`.
+
+If you specify more than one calendar in a request, the command returns the status of `OPEN` only if all calendars in the request are open. If one or more calendars in the request are closed, the status returned is `CLOSED`.
+
+For more information about Change Calendar, a capability of Amazon Web Services Systems Manager, see [Amazon Web Services Systems Manager Change Calendar](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-change-calendar.html) in the _Amazon Web Services Systems Manager User Guide_.>
+
+  take x-amz-target
+    like native-string
+  take get-calendar-state-request, like get-calendar-state-request
+
+  line </#X-Amz-Target=AmazonSSM.GetCalendarState>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-calendar-state-request
+
+  loot 200
+    seed json, like get-calendar-state-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like invalid-document
+    note <InvalidDocument>
+  loot 482
+    seed json, like invalid-document-type
+    note <InvalidDocumentType>
+  loot 483
+    seed json, like unsupported-calendar-exception
+    note <UnsupportedCalendarException>

@@ -1,0 +1,36 @@
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/list-logger-definition-versions-response
+  take form list-logger-definition-versions-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-logger-definition-versions, name <ListLoggerDefinitionVersions>
+  note <Lists the versions of a logger definition.>
+
+  take logger-definition-id
+    like native-string
+    note <The ID of the logger definition.>
+  take max-results
+    like native-string
+    note <The maximum number of results to be returned per request.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next set of results, or ''null'' if there are no additional results.>
+    void take
+
+  line </greengrass/definition/loggers/{logger-definition-id}/versions>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like list-logger-definition-versions-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>

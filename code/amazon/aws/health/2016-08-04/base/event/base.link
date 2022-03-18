@@ -1,0 +1,92 @@
+
+load @drumwork/snow/amazonaws.com/health/2016-08-04/base/availability-zone
+  take form availability-zone
+
+load @drumwork/snow/amazonaws.com/health/2016-08-04/base/event-arn
+  take form event-arn
+
+load @drumwork/snow/amazonaws.com/health/2016-08-04/base/event-scope-code
+  take form event-scope-code
+
+load @drumwork/snow/amazonaws.com/health/2016-08-04/base/event-status-code
+  take form event-status-code
+
+load @drumwork/snow/amazonaws.com/health/2016-08-04/base/event-type-category
+  take form event-type-category
+
+load @drumwork/snow/amazonaws.com/health/2016-08-04/base/event-type-code
+  take form event-type-code
+
+load @drumwork/snow/amazonaws.com/health/2016-08-04/base/region
+  take form region
+
+load @drumwork/snow/amazonaws.com/health/2016-08-04/base/service
+  take form service
+
+load @drumwork/snow/amazonaws.com/health/2016-08-04/base/timestamp
+  take form timestamp
+
+form event, name <Event>
+  note <Summary information about an AWS Health event.
+
+AWS Health events can be public or account-specific:
+
+- _Public events_ might be service events that are not specific to an AWS account. For example, if there is an issue with an AWS Region, AWS Health provides information about the event, even if you don't use services or resources in that Region.
+
+- _Account-specific_ events are specific to either your AWS account or an account in your organization. For example, if there's an issue with Amazon Elastic Compute Cloud in a Region that you use, AWS Health provides information about the event and the affected resources in the account.
+
+You can determine if an event is public or account-specific by using the `eventScopeCode` parameter. For more information, see [eventScopeCode](https://docs.aws.amazon.com/health/latest/APIReference/API_Event.html#AWSHealth-Type-Event-eventScopeCode).>
+  take arn, name <arn>
+    like event-arn
+    void take
+    note <The unique identifier for the event. The event ARN has the `arn:aws:health:_event-region_::event/_SERVICE_/_EVENT_TYPE_CODE_/_EVENT_TYPE_PLUS_ID_` format.
+
+For example, an event ARN might look like the following:
+
+`arn:aws:health:us-east-1::event/EC2/EC2_INSTANCE_RETIREMENT_SCHEDULED/EC2_INSTANCE_RETIREMENT_SCHEDULED_ABC123-DEF456`>
+  take service, name <service>
+    like service
+    void take
+    note <The AWS service that is affected by the event. For example, `EC2`, `RDS`.>
+  take event-type-code, name <eventTypeCode>
+    like event-type-code
+    void take
+    note <The unique identifier for the event type. The format is `AWS__SERVICE___DESCRIPTION_` ; for example, `AWS_EC2_SYSTEM_MAINTENANCE_EVENT`.>
+  take event-type-category, name <eventTypeCategory>
+    like event-type-category
+    void take
+    note <The category of the event. Possible values are `issue`, `scheduledChange`, and `accountNotification`.>
+  take region, name <region>
+    like region
+    void take
+    note <The AWS Region name of the event.>
+  take availability-zone, name <availabilityZone>
+    like availability-zone
+    void take
+    note <The AWS Availability Zone of the event. For example, us-east-1a.>
+  take start-time, name <startTime>
+    like timestamp
+    void take
+    note <The date and time that the event began.>
+  take end-time, name <endTime>
+    like timestamp
+    void take
+    note <The date and time that the event ended.>
+  take last-updated-time, name <lastUpdatedTime>
+    like timestamp
+    void take
+    note <The most recent date and time that the event was updated.>
+  take status-code, name <statusCode>
+    like event-status-code
+    void take
+    note <The most recent status of the event. Possible values are `open`, `closed`, and `upcoming`.>
+  take event-scope-code, name <eventScopeCode>
+    like event-scope-code
+    void take
+    note <This parameter specifies if the AWS Health event is a public AWS service event or an account-specific event.
+
+- If the `eventScopeCode` value is `PUBLIC`, then the `affectedAccounts` value is always empty.
+
+- If the `eventScopeCode` value is `ACCOUNT_SPECIFIC`, then the `affectedAccounts` value lists the affected AWS accounts in your organization. For example, if an event affects a service such as Amazon Elastic Compute Cloud and you have AWS accounts that use that service, those account IDs appear in the response.
+
+- If the `eventScopeCode` value is `NONE`, then the `eventArn` that you specified in the request is invalid or doesn't exist.>

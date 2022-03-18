@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/health/2016-08-04/base/describe-events-for-organization-response
+  take form describe-events-for-organization-response
+
+load @drumwork/snow/amazonaws.com/health/2016-08-04/base/invalid-pagination-token
+  take form invalid-pagination-token
+
+load @drumwork/snow/amazonaws.com/health/2016-08-04/base/unsupported-locale
+  take form unsupported-locale
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-events-for-organization, name <DescribeEventsForOrganization>
+  note <Returns information about events across your organization in AWS Organizations. You can use the`filters` parameter to specify the events that you want to return. Events are returned in a summary form and don't include the affected accounts, detailed description, any additional metadata that depends on the event type, or any affected resources. To retrieve that information, use the following operations:
+
+- [DescribeAffectedAccountsForOrganization](https://docs.aws.amazon.com/health/latest/APIReference/API_DescribeAffectedAccountsForOrganization.html)
+
+- [DescribeEventDetailsForOrganization](https://docs.aws.amazon.com/health/latest/APIReference/API_DescribeEventDetailsForOrganization.html)
+
+- [DescribeAffectedEntitiesForOrganization](https://docs.aws.amazon.com/health/latest/APIReference/API_DescribeAffectedEntitiesForOrganization.html)
+
+If you don't specify a `filter`, the `DescribeEventsForOrganizations` returns all events across your organization. Results are sorted by `lastModifiedTime`, starting with the most recent event.
+
+For more information about the different types of AWS Health events, see [Event](https://docs.aws.amazon.com/health/latest/APIReference/API_Event.html).
+
+Before you can call this operation, you must first enable AWS Health to work with AWS Organizations. To do this, call the [EnableHealthServiceAccessForOrganization](https://docs.aws.amazon.com/health/latest/APIReference/API_EnableHealthServiceAccessForOrganization.html) operation from your organization's management account.
+
+This API operation uses pagination. Specify the `nextToken` parameter in the next request to return more results.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-events-for-organization-request, like describe-events-for-organization-request
+
+  line </#X-Amz-Target=AWSHealth_20160804.DescribeEventsForOrganization>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan describe-events-for-organization-request
+
+  loot 200
+    seed json, like describe-events-for-organization-response
+    note <Success>
+  loot 480
+    seed json, like invalid-pagination-token
+    note <InvalidPaginationToken>
+  loot 481
+    seed json, like unsupported-locale
+    note <UnsupportedLocale>

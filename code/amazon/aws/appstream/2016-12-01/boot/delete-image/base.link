@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/delete-image-result
+  take form delete-image-result
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/operation-not-permitted-exception
+  take form operation-not-permitted-exception
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-image, name <DeleteImage>
+  note <Deletes the specified image. You cannot delete an image when it is in use. After you delete an image, you cannot provision new capacity using the image.>
+
+  take x-amz-target
+    like native-string
+  take delete-image-request, like delete-image-request
+
+  line </#X-Amz-Target=PhotonAdminProxyService.DeleteImage>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-image-request
+
+  loot 200
+    seed json, like delete-image-result
+    note <Success>
+  loot 480
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like operation-not-permitted-exception
+    note <OperationNotPermittedException>
+  loot 483
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>

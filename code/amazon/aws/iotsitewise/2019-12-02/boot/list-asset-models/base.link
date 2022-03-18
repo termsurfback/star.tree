@@ -1,0 +1,50 @@
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/list-asset-models-response
+  take form list-asset-models-response
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-asset-models, name <ListAssetModels>
+  note <Retrieves a paginated list of summaries of all asset models.>
+
+  take next-token
+    like native-string
+    note <The token to be used for the next set of paginated results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return for each paginated request.
+
+Default: 50>
+    void take
+
+  line </asset-models>
+
+  find <nextToken>, loan next-token
+  find <maxResults>, loan max-results
+
+  loot 200
+    seed json, like list-asset-models-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>

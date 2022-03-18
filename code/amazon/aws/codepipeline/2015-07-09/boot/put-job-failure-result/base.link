@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/invalid-job-state-exception
+  take form invalid-job-state-exception
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/job-not-found-exception
+  take form job-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-job-failure-result, name <PutJobFailureResult>
+  note <Represents the failure of a job as returned to the pipeline by a job worker. Used for custom actions only.>
+
+  take x-amz-target
+    like native-string
+  take put-job-failure-result-input, like put-job-failure-result-input
+
+  line </#X-Amz-Target=CodePipeline_20150709.PutJobFailureResult>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan put-job-failure-result-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like job-not-found-exception
+    note <JobNotFoundException>
+  loot 482
+    seed json, like invalid-job-state-exception
+    note <InvalidJobStateException>

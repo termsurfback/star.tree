@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/eventbridge/2015-10-07/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/eventbridge/2015-10-07/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/eventbridge/2015-10-07/base/managed-rule-exception
+  take form managed-rule-exception
+
+load @drumwork/snow/amazonaws.com/eventbridge/2015-10-07/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-rule, name <DeleteRule>
+  note <Deletes the specified rule.
+
+Before you can delete the rule, you must remove all targets, using [RemoveTargets](https://docs.aws.amazon.com/eventbridge/latest/APIReference/API_RemoveTargets.html).
+
+When you delete a rule, incoming events might continue to match to the deleted rule. Allow a short period of time for changes to take effect.
+
+If you call delete rule multiple times for the same rule, all calls will succeed. When you call delete rule for a non-existent custom eventbus, `ResourceNotFoundException` is returned.
+
+Managed rules are rules created and managed by another Amazon Web Services service on your behalf. These rules are created by those other Amazon Web Services services to support functionality in those services. You can delete these rules using the `Force` option, but you should do so only if you are sure the other service is not still using that rule.>
+
+  take x-amz-target
+    like native-string
+  take delete-rule-request, like delete-rule-request
+
+  line </#X-Amz-Target=AWSEvents.DeleteRule>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-rule-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>
+  loot 481
+    seed json, like managed-rule-exception
+    note <ManagedRuleException>
+  loot 482
+    seed json, like internal-exception
+    note <InternalException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

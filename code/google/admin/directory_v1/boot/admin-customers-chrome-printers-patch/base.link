@@ -1,0 +1,34 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/admin/directory_v1/base/printer
+  take form printer
+
+boot admin-customers-chrome-printers-patch, name <admin.customers.chrome.printers.patch>
+  note <Updates a `Printer` resource.>
+
+  take name
+    like native-string
+    note <The resource name of the Printer object, in the format customers/{customer-id}/printers/{printer-id} (During printer creation leave empty)>
+  take clear-mask
+    like native-string
+    note <The list of fields to be cleared. Note, some of the fields are read only and cannot be updated. Values for not specified fields will be patched.>
+    void take
+  take update-mask
+    like native-string
+    note <The list of fields to be updated. Note, some of the fields are read only and cannot be updated. Values for not specified fields will be patched.>
+    void take
+  take printer, like printer
+    void take
+
+  line </admin/directory/v1/{name}>
+
+  find <clearMask>, loan clear-mask
+  find <updateMask>, loan update-mask
+
+  seed json, loan printer
+
+  loot 200
+    seed json, like printer
+    note <Successful response>

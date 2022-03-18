@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/register-webhook-with-third-party-output
+  take form register-webhook-with-third-party-output
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/webhook-not-found-exception
+  take form webhook-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot register-webhook-with-third-party, name <RegisterWebhookWithThirdParty>
+  note <Configures a connection between the webhook that was created and the external tool with events to be detected.>
+
+  take x-amz-target
+    like native-string
+  take register-webhook-with-third-party-input, like register-webhook-with-third-party-input
+
+  line </#X-Amz-Target=CodePipeline_20150709.RegisterWebhookWithThirdParty>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan register-webhook-with-third-party-input
+
+  loot 200
+    seed json, like register-webhook-with-third-party-output
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like webhook-not-found-exception
+    note <WebhookNotFoundException>

@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/describe-code-coverages-output
+  take form describe-code-coverages-output
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-code-coverages, name <DescribeCodeCoverages>
+  note <Retrieves one or more code coverage reports.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-code-coverages-input, like describe-code-coverages-input
+
+  line </#X-Amz-Target=CodeBuild_20161006.DescribeCodeCoverages>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan describe-code-coverages-input
+
+  loot 200
+    seed json, like describe-code-coverages-output
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>

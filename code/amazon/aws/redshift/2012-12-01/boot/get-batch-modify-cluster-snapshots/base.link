@@ -1,0 +1,66 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/batch-modify-cluster-snapshots-limit-exceeded-fault
+  take form batch-modify-cluster-snapshots-limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/batch-modify-cluster-snapshots-output-message
+  take form batch-modify-cluster-snapshots-output-message
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-retention-period-fault
+  take form invalid-retention-period-fault
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-batch-modify-cluster-snapshots, name <GET_BatchModifyClusterSnapshots>
+  note <Modifies the settings for a set of cluster snapshots.>
+
+  take snapshot-identifier-list
+    like list
+      like string
+    note <A list of snapshot identifiers you want to modify.>
+  take manual-snapshot-retention-period
+    like native-integer
+    note <The number of days that a manual snapshot is retained. If you specify the value -1, the manual snapshot is retained indefinitely.
+
+The number must be either -1 or an integer between 1 and 3,653.
+
+If you decrease the manual snapshot retention period from its current value, existing manual snapshots that fall outside of the new retention period will return an error. If you want to suppress the errors and delete the snapshots, use the force option.>
+    void take
+  take force
+    like native-boolean
+    note <A boolean value indicating whether to override an exception if the retention period has passed.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=BatchModifyClusterSnapshots>
+
+  find <SnapshotIdentifierList>, loan snapshot-identifier-list
+  find <ManualSnapshotRetentionPeriod>, loan manual-snapshot-retention-period
+  find <Force>, loan force
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like batch-modify-cluster-snapshots-output-message
+    note <Success>
+  loot 480
+    seed xml, like invalid-retention-period-fault
+    note <InvalidRetentionPeriodFault>
+  loot 481
+    seed xml, like batch-modify-cluster-snapshots-limit-exceeded-fault
+    note <BatchModifyClusterSnapshotsLimitExceededFault>

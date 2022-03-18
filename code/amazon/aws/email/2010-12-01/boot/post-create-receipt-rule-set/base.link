@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/already-exists-exception
+  take form already-exists-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/create-receipt-rule-set-response
+  take form create-receipt-rule-set-response
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-receipt-rule-set, name <POST_CreateReceiptRuleSet>
+  note <Creates an empty receipt rule set.
+
+For information about setting up receipt rule sets, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-receipt-rule-set.html).
+
+You can execute this operation no more than once per second.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-receipt-rule-set-request, like create-receipt-rule-set-request
+    void take
+
+  line </#Action=CreateReceiptRuleSet>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-receipt-rule-set-request
+
+  loot 200
+    seed xml, like create-receipt-rule-set-response
+    note <Success>
+  loot 480
+    seed xml, like already-exists-exception
+    note <AlreadyExistsException>
+  loot 481
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>

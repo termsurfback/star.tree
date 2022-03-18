@@ -1,0 +1,48 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/batch-describe-type-configurations-output
+  take form batch-describe-type-configurations-output
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/cfn-registry-exception
+  take form cfn-registry-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/type-configuration-identifier
+  take form type-configuration-identifier
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/type-configuration-not-found-exception
+  take form type-configuration-not-found-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-batch-describe-type-configurations, name <GET_BatchDescribeTypeConfigurations>
+  note <Returns configuration data for the specified CloudFormation extensions, from the CloudFormation registry for the account and region.
+
+For more information, see [Configuring extensions at the account level](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/registry-register.html#registry-set-configuration) in the _CloudFormation User Guide_.>
+
+  take type-configuration-identifiers
+    like list
+      like type-configuration-identifier
+    note <The list of identifiers for the desired extension configurations.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=BatchDescribeTypeConfigurations>
+
+  find <TypeConfigurationIdentifiers>, loan type-configuration-identifiers
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like batch-describe-type-configurations-output
+    note <Success>
+  loot 480
+    seed xml, like type-configuration-not-found-exception
+    note <TypeConfigurationNotFoundException>
+  loot 481
+    seed xml, like cfn-registry-exception
+    note <CFNRegistryException>

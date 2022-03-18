@@ -1,0 +1,28 @@
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/payment-method
+  take form payment-method
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-payment-methods-body
+  take form post-payment-methods-body
+
+boot post-payment-methods, name <PostPaymentMethods>
+  note <Creates a PaymentMethod object. Read the [Stripe.js reference](/docs/stripe-js/reference#stripe-create-payment-method) to learn how to create PaymentMethods via Stripe.js.
+
+Instead of creating a PaymentMethod directly, we recommend using the [PaymentIntents](/docs/payments/accept-a-payment) API to accept a payment immediately or the [SetupIntent](/docs/payments/save-and-reuse) API to collect payment method details ahead of a future payment.>
+
+  take post-payment-methods-body, like post-payment-methods-body
+    void take
+
+  line </v1/payment_methods>
+
+  seed x-www-form-urlencoded, loan post-payment-methods-body
+
+  loot 200
+    seed json, like payment-method
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

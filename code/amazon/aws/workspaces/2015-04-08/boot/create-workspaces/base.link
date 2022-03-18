@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/workspaces/2015-04-08/base/create-workspaces-result
+  take form create-workspaces-result
+
+load @drumwork/snow/amazonaws.com/workspaces/2015-04-08/base/invalid-parameter-values-exception
+  take form invalid-parameter-values-exception
+
+load @drumwork/snow/amazonaws.com/workspaces/2015-04-08/base/resource-limit-exceeded-exception
+  take form resource-limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-workspaces, name <CreateWorkspaces>
+  note <Creates one or more WorkSpaces.
+
+This operation is asynchronous and returns before the WorkSpaces are created.>
+
+  take x-amz-target
+    like native-string
+  take create-workspaces-request, like create-workspaces-request
+
+  line </#X-Amz-Target=WorkspacesService.CreateWorkspaces>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-workspaces-request
+
+  loot 200
+    seed json, like create-workspaces-result
+    note <Success>
+  loot 480
+    seed json, like resource-limit-exceeded-exception
+    note <ResourceLimitExceededException>
+  loot 481
+    seed json, like invalid-parameter-values-exception
+    note <InvalidParameterValuesException>

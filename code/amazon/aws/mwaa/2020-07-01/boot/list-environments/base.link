@@ -1,0 +1,42 @@
+
+load @drumwork/snow/amazonaws.com/mwaa/2020-07-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/mwaa/2020-07-01/base/list-environments-output
+  take form list-environments-output
+
+load @drumwork/snow/amazonaws.com/mwaa/2020-07-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-environments, name <ListEnvironments>
+  note <Lists the Amazon Managed Workflows for Apache Airflow (MWAA) environments.>
+
+  take max-results
+    like native-integer
+    note <The maximum number of results to retrieve per page. For example, `5` environments per page.>
+    void take
+  take next-token
+    like native-string
+    note <Retrieves the next page of the results.>
+    void take
+
+  line </environments>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like list-environments-output
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>

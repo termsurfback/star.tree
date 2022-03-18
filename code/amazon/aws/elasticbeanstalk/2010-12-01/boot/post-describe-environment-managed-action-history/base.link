@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/describe-environment-managed-action-history-result
+  take form describe-environment-managed-action-history-result
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/elastic-beanstalk-service-exception
+  take form elastic-beanstalk-service-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-environment-managed-action-history, name <POST_DescribeEnvironmentManagedActionHistory>
+  note <Lists an environment's completed and failed managed actions.>
+
+  take max-items
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-environment-managed-action-history-request, like describe-environment-managed-action-history-request
+    void take
+
+  line </#Action=DescribeEnvironmentManagedActionHistory>
+
+  find <MaxItems>, loan max-items
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-environment-managed-action-history-request
+
+  loot 200
+    seed xml, like describe-environment-managed-action-history-result
+    note <Success>
+  loot 480
+    seed xml, like elastic-beanstalk-service-exception
+    note <ElasticBeanstalkServiceException>

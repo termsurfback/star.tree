@@ -1,0 +1,31 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/plan
+  take form plan
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-plans-plan-body
+  take form post-plans-plan-body
+
+boot post-plans-plan, name <PostPlansPlan>
+  note <Updates the specified plan by setting the values of the parameters passed. Any parameters not provided are left unchanged. By design, you cannot change a plan’s ID, amount, currency, or billing cycle.>
+
+  take plan
+    like native-string
+  take post-plans-plan-body, like post-plans-plan-body
+    void take
+
+  line </v1/plans/{plan}>
+
+  seed x-www-form-urlencoded, loan post-plans-plan-body
+
+  loot 200
+    seed json, like plan
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

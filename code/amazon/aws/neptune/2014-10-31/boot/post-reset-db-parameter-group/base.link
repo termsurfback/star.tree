@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-parameter-group-name-message
+  take form db-parameter-group-name-message
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-parameter-group-not-found-fault
+  take form db-parameter-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-parameter-group-state-fault
+  take form invalid-db-parameter-group-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-reset-db-parameter-group, name <POST_ResetDBParameterGroup>
+  note <Modifies the parameters of a DB parameter group to the engine/system default value. To reset specific parameters, provide a list of the following: `ParameterName` and `ApplyMethod`. To reset the entire DB parameter group, specify the `DBParameterGroup` name and `ResetAllParameters` parameters. When resetting the entire group, dynamic parameters are updated immediately and static parameters are set to `pending-reboot` to take effect on the next DB instance restart or `RebootDBInstance` request.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take reset-db-parameter-group-message, like reset-db-parameter-group-message
+    void take
+
+  line </#Action=ResetDBParameterGroup>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan reset-db-parameter-group-message
+
+  loot 200
+    seed xml, like db-parameter-group-name-message
+    note <Success>
+  loot 480
+    seed xml, like invalid-db-parameter-group-state-fault
+    note <InvalidDBParameterGroupStateFault>
+  loot 481
+    seed xml, like db-parameter-group-not-found-fault
+    note <DBParameterGroupNotFoundFault>

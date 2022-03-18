@@ -1,0 +1,67 @@
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/data-unavailable-exception
+  take form data-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/get-reservation-coverage-response
+  take form get-reservation-coverage-response
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-reservation-coverage, name <GetReservationCoverage>
+  note <Retrieves the reservation coverage for your account. This enables you to see how much of your Amazon Elastic Compute Cloud, Amazon ElastiCache, Amazon Relational Database Service, or Amazon Redshift usage is covered by a reservation. An organization's management account can see the coverage of the associated member accounts. This supports dimensions, Cost Categories, and nested expressions. For any time period, you can filter data about reservation usage by the following dimensions:
+
+- AZ
+
+- CACHE_ENGINE
+
+- DATABASE_ENGINE
+
+- DEPLOYMENT_OPTION
+
+- INSTANCE_TYPE
+
+- LINKED_ACCOUNT
+
+- OPERATING_SYSTEM
+
+- PLATFORM
+
+- REGION
+
+- SERVICE
+
+- TAG
+
+- TENANCY
+
+To determine valid values for a dimension, use the `GetDimensionValues` operation.>
+
+  take x-amz-target
+    like native-string
+  take get-reservation-coverage-request, like get-reservation-coverage-request
+
+  line </#X-Amz-Target=AWSInsightsIndexService.GetReservationCoverage>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-reservation-coverage-request
+
+  loot 200
+    seed json, like get-reservation-coverage-response
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed json, like data-unavailable-exception
+    note <DataUnavailableException>
+  loot 482
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>

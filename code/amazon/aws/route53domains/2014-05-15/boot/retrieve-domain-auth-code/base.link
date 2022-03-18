@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/retrieve-domain-auth-code-response
+  take form retrieve-domain-auth-code-response
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/unsupported-tld
+  take form unsupported-tld
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot retrieve-domain-auth-code, name <RetrieveDomainAuthCode>
+  note <This operation returns the AuthCode for the domain. To transfer a domain to another registrar, you provide this value to the new registrar.>
+
+  take x-amz-target
+    like native-string
+  take retrieve-domain-auth-code-request, like retrieve-domain-auth-code-request
+
+  line </#X-Amz-Target=Route53Domains_v20140515.RetrieveDomainAuthCode>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan retrieve-domain-auth-code-request
+
+  loot 200
+    seed json, like retrieve-domain-auth-code-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input
+    note <InvalidInput>
+  loot 481
+    seed json, like unsupported-tld
+    note <UnsupportedTLD>

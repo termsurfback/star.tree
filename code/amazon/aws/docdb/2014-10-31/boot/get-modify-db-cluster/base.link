@@ -1,0 +1,230 @@
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-cluster-already-exists-fault
+  take form db-cluster-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-cluster-parameter-group-not-found-fault
+  take form db-cluster-parameter-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-subnet-group-not-found-fault
+  take form db-subnet-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/invalid-db-instance-state-fault
+  take form invalid-db-instance-state-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/invalid-db-security-group-state-fault
+  take form invalid-db-security-group-state-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/invalid-db-subnet-group-state-fault
+  take form invalid-db-subnet-group-state-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/invalid-subnet
+  take form invalid-subnet
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/invalid-vpc-network-state-fault
+  take form invalid-vpc-network-state-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/log-type-list
+  take form log-type-list
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/modify-db-cluster-result
+  take form modify-db-cluster-result
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/storage-quota-exceeded-fault
+  take form storage-quota-exceeded-fault
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-modify-db-cluster, name <GET_ModifyDBCluster>
+  note <Modifies a setting for an Amazon DocumentDB cluster. You can change one or more database configuration parameters by specifying these parameters and the new values in the request.>
+
+  take db-cluster-identifier
+    like native-string
+    note <The cluster identifier for the cluster that is being modified. This parameter is not case sensitive.
+
+Constraints:
+
+- Must match the identifier of an existing `DBCluster`.>
+  take new-db-cluster-identifier
+    like native-string
+    note <The new cluster identifier for the cluster when renaming a cluster. This value is stored as a lowercase string.
+
+Constraints:
+
+- Must contain from 1 to 63 letters, numbers, or hyphens.
+
+- The first character must be a letter.
+
+- Cannot end with a hyphen or contain two consecutive hyphens.
+
+Example: `my-cluster2`>
+    void take
+  take apply-immediately
+    like native-boolean
+    note <A value that specifies whether the changes in this request and any pending changes are asynchronously applied as soon as possible, regardless of the `PreferredMaintenanceWindow` setting for the cluster. If this parameter is set to `false`, changes to the cluster are applied during the next maintenance window.
+
+The `ApplyImmediately` parameter affects only the `NewDBClusterIdentifier` and `MasterUserPassword` values. If you set this parameter value to `false`, the changes to the `NewDBClusterIdentifier` and `MasterUserPassword` values are applied during the next maintenance window. All other changes are applied immediately, regardless of the value of the `ApplyImmediately` parameter.
+
+Default: `false`>
+    void take
+  take backup-retention-period
+    like native-integer
+    note <The number of days for which automated backups are retained. You must specify a minimum value of 1.
+
+Default: 1
+
+Constraints:
+
+- Must be a value from 1 to 35.>
+    void take
+  take db-cluster-parameter-group-name
+    like native-string
+    note <The name of the cluster parameter group to use for the cluster.>
+    void take
+  take vpc-security-group-ids
+    like list
+      like string
+    note <A list of virtual private cloud (VPC) security groups that the cluster will belong to.>
+    void take
+  take port
+    like native-integer
+    note <The port number on which the cluster accepts connections.
+
+Constraints: Must be a value from `1150` to `65535`.
+
+Default: The same port as the original cluster.>
+    void take
+  take master-user-password
+    like native-string
+    note <The password for the master database user. This password can contain any printable ASCII character except forward slash (/), double quote ("), or the "at" symbol (@).
+
+Constraints: Must contain from 8 to 100 characters.>
+    void take
+  take preferred-backup-window
+    like native-string
+    note <The daily time range during which automated backups are created if automated backups are enabled, using the `BackupRetentionPeriod` parameter.
+
+The default is a 30-minute window selected at random from an 8-hour block of time for each Region.
+
+Constraints:
+
+- Must be in the format `hh24:mi-hh24:mi`.
+
+- Must be in Universal Coordinated Time (UTC).
+
+- Must not conflict with the preferred maintenance window.
+
+- Must be at least 30 minutes.>
+    void take
+  take preferred-maintenance-window
+    like native-string
+    note <The weekly time range during which system maintenance can occur, in Universal Coordinated Time (UTC).
+
+Format: `ddd:hh24:mi-ddd:hh24:mi`
+
+The default is a 30-minute window selected at random from an 8-hour block of time for each Region, occurring on a random day of the week.
+
+Valid days: Mon, Tue, Wed, Thu, Fri, Sat, Sun
+
+Constraints: Minimum 30-minute window.>
+    void take
+  take cloudwatch-logs-export-configuration
+    like form
+      take enable-log-types, name <EnableLogTypes>
+        like log-type-list
+        void take
+        note <The list of log types to enable.>
+      take disable-log-types, name <DisableLogTypes>
+        like log-type-list
+        void take
+        note <The list of log types to disable.>
+    note <The configuration setting for the log types to be enabled for export to Amazon CloudWatch Logs for a specific instance or cluster. The `EnableLogTypes` and `DisableLogTypes` arrays determine which logs are exported (or not exported) to CloudWatch Logs.>
+    void take
+  take engine-version
+    like native-string
+    note <The version number of the database engine to which you want to upgrade. Modifying engine version is not supported on Amazon DocumentDB.>
+    void take
+  take deletion-protection
+    like native-boolean
+    note <Specifies whether this cluster can be deleted. If `DeletionProtection` is enabled, the cluster cannot be deleted unless it is modified and `DeletionProtection` is disabled. `DeletionProtection` protects clusters from being accidentally deleted.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyDBCluster>
+
+  find <DBClusterIdentifier>, loan db-cluster-identifier
+  find <NewDBClusterIdentifier>, loan new-db-cluster-identifier
+  find <ApplyImmediately>, loan apply-immediately
+  find <BackupRetentionPeriod>, loan backup-retention-period
+  find <DBClusterParameterGroupName>, loan db-cluster-parameter-group-name
+  find <VpcSecurityGroupIds>, loan vpc-security-group-ids
+  find <Port>, loan port
+  find <MasterUserPassword>, loan master-user-password
+  find <PreferredBackupWindow>, loan preferred-backup-window
+  find <PreferredMaintenanceWindow>, loan preferred-maintenance-window
+  find <CloudwatchLogsExportConfiguration>, loan cloudwatch-logs-export-configuration
+  find <EngineVersion>, loan engine-version
+  find <DeletionProtection>, loan deletion-protection
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-db-cluster-result
+    note <Success>
+  loot 480
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>
+  loot 481
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>
+  loot 482
+    seed xml, like storage-quota-exceeded-fault
+    note <StorageQuotaExceededFault>
+  loot 483
+    seed xml, like db-subnet-group-not-found-fault
+    note <DBSubnetGroupNotFoundFault>
+  loot 484
+    seed xml, like invalid-vpc-network-state-fault
+    note <InvalidVPCNetworkStateFault>
+  loot 485
+    seed xml, like invalid-db-subnet-group-state-fault
+    note <InvalidDBSubnetGroupStateFault>
+  loot 486
+    seed xml, like invalid-subnet
+    note <InvalidSubnet>
+  loot 487
+    seed xml, like db-cluster-parameter-group-not-found-fault
+    note <DBClusterParameterGroupNotFoundFault>
+  loot 488
+    seed xml, like invalid-db-security-group-state-fault
+    note <InvalidDBSecurityGroupStateFault>
+  loot 489
+    seed xml, like invalid-db-instance-state-fault
+    note <InvalidDBInstanceStateFault>
+  loot 490
+    seed xml, like db-cluster-already-exists-fault
+    note <DBClusterAlreadyExistsFault>

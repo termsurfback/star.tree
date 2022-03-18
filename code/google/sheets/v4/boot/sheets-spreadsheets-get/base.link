@@ -1,0 +1,37 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/sheets/v4/base/spreadsheet
+  take form spreadsheet
+
+boot sheets-spreadsheets-get, name <sheets.spreadsheets.get>
+  note <Returns the spreadsheet at the given ID. The caller must specify the spreadsheet ID. By default, data within grids will not be returned. You can include grid data one of two ways: * Specify a field mask listing your desired fields using the `fields` URL parameter in HTTP * Set the includeGridData URL parameter to true. If a field mask is set, the `includeGridData` parameter is ignored For large spreadsheets, it is recommended to retrieve only the specific fields of the spreadsheet that you want. To retrieve only subsets of the spreadsheet, use the ranges URL parameter. Multiple ranges can be specified. Limiting the range will return only the portions of the spreadsheet that intersect the requested ranges. Ranges are specified using A1 notation.>
+
+  take spreadsheet-id
+    like native-string
+    note <The spreadsheet to request.>
+  take include-grid-data
+    like native-boolean
+    note <True if grid data should be returned. This parameter is ignored if a field mask was set in the request.>
+    void take
+  take ranges
+    like list
+      like native-string
+    note <The ranges to retrieve from the spreadsheet.>
+    void take
+
+  line </v4/spreadsheets/{spreadsheet-id}>
+
+  find <includeGridData>, loan include-grid-data
+  find <ranges>, loan ranges
+
+  loot 200
+    seed json, like spreadsheet
+    note <Successful response>

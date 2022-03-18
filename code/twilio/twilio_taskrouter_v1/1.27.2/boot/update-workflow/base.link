@@ -1,0 +1,27 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_taskrouter_v1/1.27.2/base/taskrouter-v1-workspace-workflow
+  take form taskrouter-v1-workspace-workflow
+
+load @drumwork/snow/twilio.com/twilio_taskrouter_v1/1.27.2/base/update-workflow-body
+  take form update-workflow-body
+
+boot update-workflow, name <UpdateWorkflow>
+  take workspace-sid
+    like native-string
+    note <The SID of the Workspace with the Workflow to update.>
+  take sid
+    like native-string
+    note <The SID of the Workflow resource to update.>
+  take update-workflow-body, like update-workflow-body
+    void take
+
+  line </v1/Workspaces/{workspace-sid}/Workflows/{sid}>
+
+  seed x-www-form-urlencoded, loan update-workflow-body
+
+  loot 200
+    seed json, like taskrouter-v1-workspace-workflow
+    note <OK>

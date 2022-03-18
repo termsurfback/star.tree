@@ -1,0 +1,48 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/my-business/v4/base/list-locations-response
+  take form list-locations-response
+
+boot mybusiness-accounts-locations-list, name <mybusiness.accounts.locations.list>
+  note <Lists the locations for the specified account.>
+
+  take parent
+    like native-string
+    note <The name of the account to fetch locations from. If the Account is of AccountType PERSONAL, only Locations that are directly owned by the Account are returned, otherwise it will return all accessible locations from the Account, either directly or indirectly.>
+  take filter
+    like native-string
+    note <A filter constraining the locations to return. The response includes only entries that match the filter. If `filter` is empty, then constraints are applied and all locations (paginated) are retrieved for the requested account. For more information about valid fields and example usage, see [Work with Location Data Guide](https://developers.google.com/my-business/content/location-data#filter_results_when_you_list_locations).>
+    void take
+  take language-code
+    like native-string
+    note <The BCP 47 code of language to get display location properties in. If this language is not available, they will be provided in the language of the location. If neither is available, they will be provided in English. Deprecated. After August 15th, 2020, this field will no longer be applied. Instead, the language of the location will always be used.>
+    void take
+  take order-by
+    like native-string
+    note <Sorting order for the request. Multiple fields should be comma-separated, following SQL syntax. The default sorting order is ascending. To specify descending order, a suffix " desc" should be added. Valid fields to order_by are location_name and store_code. For example: "location_name, store_code desc" or "location_name" or "store_code desc">
+    void take
+  take page-size
+    like native-integer
+    note <How many locations to fetch per page. Default is 100, minimum is 1, and maximum page size is 100.>
+    void take
+  take page-token
+    like native-string
+    note <If specified, it fetches the next `page` of locations. The page token is returned by previous calls to `ListLocations` when there were more locations than could fit in the requested page size.>
+    void take
+
+  line </v4/{parent}/locations>
+
+  find <filter>, loan filter
+  find <languageCode>, loan language-code
+  find <orderBy>, loan order-by
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-locations-response
+    note <Successful response>

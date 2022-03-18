@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/delete-resource-data-sync-result
+  take form delete-resource-data-sync-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/resource-data-sync-invalid-configuration-exception
+  take form resource-data-sync-invalid-configuration-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/resource-data-sync-not-found-exception
+  take form resource-data-sync-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-resource-data-sync, name <DeleteResourceDataSync>
+  note <Deletes a resource data sync configuration. After the configuration is deleted, changes to data on managed instances are no longer synced to or from the target. Deleting a sync configuration doesn't delete data.>
+
+  take x-amz-target
+    like native-string
+  take delete-resource-data-sync-request, like delete-resource-data-sync-request
+
+  line </#X-Amz-Target=AmazonSSM.DeleteResourceDataSync>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-resource-data-sync-request
+
+  loot 200
+    seed json, like delete-resource-data-sync-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like resource-data-sync-not-found-exception
+    note <ResourceDataSyncNotFoundException>
+  loot 482
+    seed json, like resource-data-sync-invalid-configuration-exception
+    note <ResourceDataSyncInvalidConfigurationException>

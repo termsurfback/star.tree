@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/endpoint-authorization-list
+  take form endpoint-authorization-list
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unsupported-operation-fault
+  take form unsupported-operation-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-endpoint-authorization, name <POST_DescribeEndpointAuthorization>
+  note <Describes an endpoint authorization.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-endpoint-authorization-message, like describe-endpoint-authorization-message
+    void take
+
+  line </#Action=DescribeEndpointAuthorization>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-endpoint-authorization-message
+
+  loot 200
+    seed xml, like endpoint-authorization-list
+    note <Success>
+  loot 480
+    seed xml, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 481
+    seed xml, like unsupported-operation-fault
+    note <UnsupportedOperationFault>

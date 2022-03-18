@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/lambda/2014-11-11/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2014-11-11/base/list-event-sources-response
+  take form list-event-sources-response
+
+load @drumwork/snow/amazonaws.com/lambda/2014-11-11/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2014-11-11/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-event-sources, name <ListEventSources>
+  note <Returns a list of event source mappings you created using the `AddEventSource` (see AddEventSource), where you identify a stream as event source. This list does not include Amazon S3 event sources.
+
+For each mapping, the API returns configuration information. You can optionally specify filters to retrieve specific event source mappings.
+
+This operation requires permission for the `lambda:ListEventSources` action.>
+
+  take event-source
+    like native-string
+    note <The Amazon Resource Name (ARN) of the Amazon Kinesis stream.>
+    void take
+  take function-name
+    like native-string
+    note <The name of the AWS Lambda function.>
+    void take
+  take marker
+    like native-string
+    note <Optional string. An opaque pagination token returned from a previous `ListEventSources` operation. If present, specifies to continue the list from where the returning call left off.>
+    void take
+  take max-items
+    like native-integer
+    note <Optional integer. Specifies the maximum number of event sources to return in response. This value must be greater than 0.>
+    void take
+
+  line </2014-11-13/event-source-mappings/>
+
+  find <EventSource>, loan event-source
+  find <FunctionName>, loan function-name
+  find <Marker>, loan marker
+  find <MaxItems>, loan max-items
+
+  loot 200
+    seed json, like list-event-sources-response
+    note <Success>
+  loot 400
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 404
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 500
+    seed json, like service-exception
+    note <ServiceException>

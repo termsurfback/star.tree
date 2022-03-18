@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/create-work-group-output
+  take form create-work-group-output
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-work-group, name <CreateWorkGroup>
+  note <Creates a workgroup with the specified name.>
+
+  take x-amz-target
+    like native-string
+  take create-work-group-input, like create-work-group-input
+
+  line </#X-Amz-Target=AmazonAthena.CreateWorkGroup>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-work-group-input
+
+  loot 200
+    seed json, like create-work-group-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

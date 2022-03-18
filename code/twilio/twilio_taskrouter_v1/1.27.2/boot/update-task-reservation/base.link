@@ -1,0 +1,36 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_taskrouter_v1/1.27.2/base/taskrouter-v1-workspace-task-task-reservation
+  take form taskrouter-v1-workspace-task-task-reservation
+
+load @drumwork/snow/twilio.com/twilio_taskrouter_v1/1.27.2/base/update-task-reservation-body
+  take form update-task-reservation-body
+
+boot update-task-reservation, name <UpdateTaskReservation>
+  take workspace-sid
+    like native-string
+    note <The SID of the Workspace with the TaskReservation resources to update.>
+  take task-sid
+    like native-string
+    note <The SID of the reserved Task resource with the TaskReservation resources to update.>
+  take sid
+    like native-string
+    note <The SID of the TaskReservation resource to update.>
+  take if-match
+    like native-string
+    note <The If-Match HTTP request header>
+    void take
+  take update-task-reservation-body, like update-task-reservation-body
+    void take
+
+  line </v1/Workspaces/{workspace-sid}/Tasks/{task-sid}/Reservations/{sid}>
+
+  hint <If-Match>, loan if-match
+
+  seed x-www-form-urlencoded, loan update-task-reservation-body
+
+  loot 200
+    seed json, like taskrouter-v1-workspace-task-task-reservation
+    note <OK>

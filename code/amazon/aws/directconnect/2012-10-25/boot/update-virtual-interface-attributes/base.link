@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/direct-connect-client-exception
+  take form direct-connect-client-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/direct-connect-server-exception
+  take form direct-connect-server-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/virtual-interface
+  take form virtual-interface
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-virtual-interface-attributes, name <UpdateVirtualInterfaceAttributes>
+  note <Updates the specified attributes of the specified virtual private interface.
+
+Setting the MTU of a virtual interface to 9001 (jumbo frames) can cause an update to the underlying physical connection if it wasn't updated to support jumbo frames. Updating the connection disrupts network connectivity for all virtual interfaces associated with the connection for up to 30 seconds. To check whether your connection supports jumbo frames, call DescribeConnections. To check whether your virtual q interface supports jumbo frames, call DescribeVirtualInterfaces.>
+
+  take x-amz-target
+    like native-string
+  take update-virtual-interface-attributes-request, like update-virtual-interface-attributes-request
+
+  line </#X-Amz-Target=OvertureService.UpdateVirtualInterfaceAttributes>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-virtual-interface-attributes-request
+
+  loot 200
+    seed json, like virtual-interface
+    note <Success>
+  loot 480
+    seed json, like direct-connect-server-exception
+    note <DirectConnectServerException>
+  loot 481
+    seed json, like direct-connect-client-exception
+    note <DirectConnectClientException>

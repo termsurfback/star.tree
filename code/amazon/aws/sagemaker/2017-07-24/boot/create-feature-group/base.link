@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/create-feature-group-response
+  take form create-feature-group-response
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-in-use
+  take form resource-in-use
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-limit-exceeded
+  take form resource-limit-exceeded
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-feature-group, name <CreateFeatureGroup>
+  note <Create a new `FeatureGroup`. A `FeatureGroup` is a group of `Features` defined in the `FeatureStore` to describe a `Record`.
+
+The `FeatureGroup` defines the schema and features contained in the FeatureGroup. A `FeatureGroup` definition is composed of a list of `Features`, a `RecordIdentifierFeatureName`, an `EventTimeFeatureName` and configurations for its `OnlineStore` and `OfflineStore`. Check [Amazon Web Services service quotas](https://docs.aws.amazon.com/general/latest/gr/aws_service_limits.html) to see the `FeatureGroup`s quota for your Amazon Web Services account.
+
+You must include at least one of `OnlineStoreConfig` and `OfflineStoreConfig` to create a `FeatureGroup`.>
+
+  take x-amz-target
+    like native-string
+  take create-feature-group-request, like create-feature-group-request
+
+  line </#X-Amz-Target=SageMaker.CreateFeatureGroup>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-feature-group-request
+
+  loot 200
+    seed json, like create-feature-group-response
+    note <Success>
+  loot 480
+    seed json, like resource-in-use
+    note <ResourceInUse>
+  loot 481
+    seed json, like resource-limit-exceeded
+    note <ResourceLimitExceeded>

@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/add-association-response
+  take form add-association-response
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-limit-exceeded
+  take form resource-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-not-found
+  take form resource-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot add-association, name <AddAssociation>
+  note <Creates an _association_ between the source and the destination. A source can be associated with multiple destinations, and a destination can be associated with multiple sources. An association is a lineage tracking entity. For more information, see [Amazon SageMaker ML Lineage Tracking](https://docs.aws.amazon.com/sagemaker/latest/dg/lineage-tracking.html).>
+
+  take x-amz-target
+    like native-string
+  take add-association-request, like add-association-request
+
+  line </#X-Amz-Target=SageMaker.AddAssociation>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan add-association-request
+
+  loot 200
+    seed json, like add-association-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found
+    note <ResourceNotFound>
+  loot 481
+    seed json, like resource-limit-exceeded
+    note <ResourceLimitExceeded>

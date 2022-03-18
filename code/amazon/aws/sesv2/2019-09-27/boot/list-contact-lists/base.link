@@ -1,0 +1,42 @@
+
+load @drumwork/snow/amazonaws.com/sesv2/2019-09-27/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/sesv2/2019-09-27/base/list-contact-lists-response
+  take form list-contact-lists-response
+
+load @drumwork/snow/amazonaws.com/sesv2/2019-09-27/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-contact-lists, name <ListContactLists>
+  note <Lists all of the contact lists available.>
+
+  take page-size
+    like native-integer
+    note <Maximum number of contact lists to return at once. Use this parameter to paginate results. If additional contact lists exist beyond the specified limit, the `NextToken` element is sent in the response. Use the `NextToken` value in subsequent requests to retrieve additional lists.>
+    void take
+  take next-token
+    like native-string
+    note <A string token indicating that there might be additional contact lists available to be listed. Use the token provided in the Response to use in the subsequent call to ListContactLists with the same parameters to retrieve the next page of contact lists.>
+    void take
+
+  line </v2/email/contact-lists>
+
+  find <PageSize>, loan page-size
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like list-contact-lists-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>

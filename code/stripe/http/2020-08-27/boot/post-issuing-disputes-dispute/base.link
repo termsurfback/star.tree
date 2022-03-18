@@ -1,0 +1,31 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/issuing-dispute
+  take form issuing-dispute
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-issuing-disputes-dispute-body
+  take form post-issuing-disputes-dispute-body
+
+boot post-issuing-disputes-dispute, name <PostIssuingDisputesDispute>
+  note <Updates the specified Issuing `Dispute` object by setting the values of the parameters passed. Any parameters not provided will be left unchanged. Properties on the `evidence` object can be unset by passing in an empty string.>
+
+  take dispute
+    like native-string
+  take post-issuing-disputes-dispute-body, like post-issuing-disputes-dispute-body
+    void take
+
+  line </v1/issuing/disputes/{dispute}>
+
+  seed x-www-form-urlencoded, loan post-issuing-disputes-dispute-body
+
+  loot 200
+    seed json, like issuing-dispute
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

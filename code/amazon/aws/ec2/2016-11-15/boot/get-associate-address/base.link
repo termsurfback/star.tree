@@ -1,0 +1,75 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/associate-address-result
+  take form associate-address-result
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-associate-address, name <GET_AssociateAddress>
+  note <Associates an Elastic IP address, or carrier IP address (for instances that are in subnets in Wavelength Zones) with an instance or a network interface. Before you can use an Elastic IP address, you must allocate it to your account.
+
+An Elastic IP address is for use in either the EC2-Classic platform or in a VPC. For more information, see [Elastic IP Addresses](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html) in the _Amazon Elastic Compute Cloud User Guide_.
+
+[EC2-Classic, VPC in an EC2-VPC-only account] If the Elastic IP address is already associated with a different instance, it is disassociated from that instance and associated with the specified instance. If you associate an Elastic IP address with an instance that has an existing Elastic IP address, the existing address is disassociated from the instance, but remains allocated to your account.
+
+[VPC in an EC2-Classic account] If you don't specify a private IP address, the Elastic IP address is associated with the primary IP address. If the Elastic IP address is already associated with a different instance or a network interface, you get an error unless you allow reassociation. You cannot associate an Elastic IP address with an instance or network interface that has an existing Elastic IP address.
+
+[Subnets in Wavelength Zones] You can associate an IP address from the telecommunication carrier to the instance or network interface.
+
+You cannot associate an Elastic IP address with an interface in a different network border group.
+
+This is an idempotent operation. If you perform the operation more than once, Amazon EC2 doesn't return an error, and you may be charged for each time the Elastic IP address is remapped to the same instance. For more information, see the _Elastic IP Addresses_ section of [Amazon EC2 Pricing](http://aws.amazon.com/ec2/pricing/).>
+
+  take allocation-id
+    like native-string
+    note <[EC2-VPC] The allocation ID. This is required for EC2-VPC.>
+    void take
+  take instance-id
+    like native-string
+    note <The ID of the instance. The instance must have exactly one attached network interface. For EC2-VPC, you can specify either the instance ID or the network interface ID, but not both. For EC2-Classic, you must specify an instance ID and the instance must be in the running state.>
+    void take
+  take public-ip
+    like native-string
+    note <[EC2-Classic] The Elastic IP address to associate with the instance. This is required for EC2-Classic.>
+    void take
+  take allow-reassociation
+    like native-boolean
+    note <[EC2-VPC] For a VPC in an EC2-Classic account, specify true to allow an Elastic IP address that is already associated with an instance or network interface to be reassociated with the specified instance or network interface. Otherwise, the operation fails. In a VPC in an EC2-VPC-only account, reassociation is automatic, therefore you can specify false to ensure the operation fails if the Elastic IP address is already associated with another resource.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take network-interface-id
+    like native-string
+    note <[EC2-VPC] The ID of the network interface. If the instance has more than one network interface, you must specify a network interface ID.
+
+For EC2-VPC, you can specify either the instance ID or the network interface ID, but not both.>
+    void take
+  take private-ip-address
+    like native-string
+    note <[EC2-VPC] The primary or secondary private IP address to associate with the Elastic IP address. If no private IP address is specified, the Elastic IP address is associated with the primary private IP address.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=AssociateAddress>
+
+  find <AllocationId>, loan allocation-id
+  find <InstanceId>, loan instance-id
+  find <PublicIp>, loan public-ip
+  find <AllowReassociation>, loan allow-reassociation
+  find <DryRun>, loan dry-run
+  find <NetworkInterfaceId>, loan network-interface-id
+  find <PrivateIpAddress>, loan private-ip-address
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like associate-address-result
+    note <Success>

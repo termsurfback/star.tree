@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/list-work-groups-output
+  take form list-work-groups-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-work-groups, name <ListWorkGroups>
+  note <Lists available workgroups for the account.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-work-groups-input, like list-work-groups-input
+
+  line </#X-Amz-Target=AmazonAthena.ListWorkGroups>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-work-groups-input
+
+  loot 200
+    seed json, like list-work-groups-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

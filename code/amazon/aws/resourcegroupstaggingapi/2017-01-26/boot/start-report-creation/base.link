@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/resourcegroupstaggingapi/2017-01-26/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/resourcegroupstaggingapi/2017-01-26/base/constraint-violation-exception
+  take form constraint-violation-exception
+
+load @drumwork/snow/amazonaws.com/resourcegroupstaggingapi/2017-01-26/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/resourcegroupstaggingapi/2017-01-26/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/resourcegroupstaggingapi/2017-01-26/base/start-report-creation-output
+  take form start-report-creation-output
+
+load @drumwork/snow/amazonaws.com/resourcegroupstaggingapi/2017-01-26/base/throttled-exception
+  take form throttled-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-report-creation, name <StartReportCreation>
+  note <Generates a report that lists all tagged resources in the accounts across your organization and tells whether each resource is compliant with the effective tag policy. Compliance data is refreshed daily. The report is generated asynchronously.
+
+The generated report is saved to the following location:
+
+`s3://example-bucket/AwsTagPolicies/o-exampleorgid/YYYY-MM-ddTHH:mm:ssZ/report.csv`
+
+You can call this operation only from the organization's management account and from the us-east-1 Region.>
+
+  take x-amz-target
+    like native-string
+  take start-report-creation-input, like start-report-creation-input
+
+  line </#X-Amz-Target=ResourceGroupsTaggingAPI_20170126.StartReportCreation>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan start-report-creation-input
+
+  loot 200
+    seed json, like start-report-creation-output
+    note <Success>
+  loot 480
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>
+  loot 481
+    seed json, like constraint-violation-exception
+    note <ConstraintViolationException>
+  loot 482
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 483
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 484
+    seed json, like throttled-exception
+    note <ThrottledException>

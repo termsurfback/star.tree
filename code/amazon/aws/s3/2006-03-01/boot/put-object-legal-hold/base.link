@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/s3/2006-03-01/base/put-object-legal-hold-body
+  take form put-object-legal-hold-body
+
+load @drumwork/snow/amazonaws.com/s3/2006-03-01/base/put-object-legal-hold-output
+  take form put-object-legal-hold-output
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-object-legal-hold, name <PutObjectLegalHold>
+  note <Applies a Legal Hold configuration to the specified object. For more information, see [Locking Objects](https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lock.html).
+
+This action is not supported by Amazon S3 on Outposts.>
+
+  take bucket
+    like native-string
+    note <The bucket name containing the object that you want to place a Legal Hold on.
+
+When using this action with an access point, you must direct requests to the access point hostname. The access point hostname takes the form _AccessPointName_-_AccountId_.s3-accesspoint._Region_.amazonaws.com. When using this action with an access point through the Amazon Web Services SDKs, you provide the access point ARN in place of the bucket name. For more information about access point ARNs, see [Using access points](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-access-points.html) in the _Amazon S3 User Guide_.>
+  take key
+    like native-string
+    note <The key name for the object that you want to place a Legal Hold on.>
+  take x-amz-request-payer
+    like native-string
+    void take
+  take content-md5
+    like native-string
+    note <The MD5 hash for the request body.
+
+For requests made using the Amazon Web Services Command Line Interface (CLI) or Amazon Web Services SDKs, this field is calculated automatically.>
+    void take
+  take x-amz-expected-bucket-owner
+    like native-string
+    note <The account ID of the expected bucket owner. If the bucket is owned by a different account, the request will fail with an HTTP `403 (Access Denied)` error.>
+    void take
+  take version-id
+    like native-string
+    note <The version ID of the object that you want to place a Legal Hold on.>
+    void take
+  take legal-hold
+    like native-boolean
+  take put-object-legal-hold-body, like put-object-legal-hold-body
+
+  line </{bucket}/{key}#legal-hold>
+
+  hint <x-amz-request-payer>, loan x-amz-request-payer
+  hint <Content-MD5>, loan content-md5
+  hint <x-amz-expected-bucket-owner>, loan x-amz-expected-bucket-owner
+
+  find <versionId>, loan version-id
+  find <legal-hold>, loan legal-hold
+
+  seed xml, loan put-object-legal-hold-body
+
+  loot 200
+    seed xml, like put-object-legal-hold-output
+    note <Success>

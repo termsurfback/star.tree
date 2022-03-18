@@ -1,0 +1,73 @@
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/delete-repository-permissions-policy-result
+  take form delete-repository-permissions-policy-result
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/codeartifact/2018-09-22/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-repository-permissions-policy, name <DeleteRepositoryPermissionsPolicy>
+  note <Deletes the resource policy that is set on a repository. After a resource policy is deleted, the permissions allowed and denied by the deleted policy are removed. The effect of deleting a resource policy might not be immediate.
+
+Use `DeleteRepositoryPermissionsPolicy` with caution. After a policy is deleted, AWS users, roles, and accounts lose permissions to perform the repository actions granted by the deleted policy.>
+
+  take domain
+    like native-string
+    note <The name of the domain that contains the repository associated with the resource policy to be deleted.>
+  take domain-owner
+    like native-string
+    note <The 12-digit account number of the AWS account that owns the domain. It does not include dashes or spaces.>
+    void take
+  take repository
+    like native-string
+    note <The name of the repository that is associated with the resource policy to be deleted>
+  take policy-revision
+    like native-string
+    note <The revision of the repository's resource policy to be deleted. This revision is used for optimistic locking, which prevents others from accidentally overwriting your changes to the repository's resource policy.>
+    void take
+
+  line </v1/repository/permissions/policies#domain&repository>
+
+  find <domain>, loan domain
+  find <domain-owner>, loan domain-owner
+  find <repository>, loan repository
+  find <policy-revision>, loan policy-revision
+
+  loot 200
+    seed json, like delete-repository-permissions-policy-result
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 484
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 485
+    seed json, like validation-exception
+    note <ValidationException>

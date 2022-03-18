@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/create-transit-virtual-interface-result
+  take form create-transit-virtual-interface-result
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/direct-connect-client-exception
+  take form direct-connect-client-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/direct-connect-server-exception
+  take form direct-connect-server-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/duplicate-tag-keys-exception
+  take form duplicate-tag-keys-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/too-many-tags-exception
+  take form too-many-tags-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-transit-virtual-interface, name <CreateTransitVirtualInterface>
+  note <Creates a transit virtual interface. A transit virtual interface should be used to access one or more transit gateways associated with Direct Connect gateways. A transit virtual interface enables the connection of multiple VPCs attached to a transit gateway to a Direct Connect gateway.
+
+If you associate your transit gateway with one or more Direct Connect gateways, the Autonomous System Number (ASN) used by the transit gateway and the Direct Connect gateway must be different. For example, if you use the default ASN 64512 for both your the transit gateway and Direct Connect gateway, the association request fails.
+
+Setting the MTU of a virtual interface to 8500 (jumbo frames) can cause an update to the underlying physical connection if it wasn't updated to support jumbo frames. Updating the connection disrupts network connectivity for all virtual interfaces associated with the connection for up to 30 seconds. To check whether your connection supports jumbo frames, call DescribeConnections. To check whether your virtual interface supports jumbo frames, call DescribeVirtualInterfaces.>
+
+  take x-amz-target
+    like native-string
+  take create-transit-virtual-interface-request, like create-transit-virtual-interface-request
+
+  line </#X-Amz-Target=OvertureService.CreateTransitVirtualInterface>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-transit-virtual-interface-request
+
+  loot 200
+    seed json, like create-transit-virtual-interface-result
+    note <Success>
+  loot 480
+    seed json, like duplicate-tag-keys-exception
+    note <DuplicateTagKeysException>
+  loot 481
+    seed json, like too-many-tags-exception
+    note <TooManyTagsException>
+  loot 482
+    seed json, like direct-connect-server-exception
+    note <DirectConnectServerException>
+  loot 483
+    seed json, like direct-connect-client-exception
+    note <DirectConnectClientException>

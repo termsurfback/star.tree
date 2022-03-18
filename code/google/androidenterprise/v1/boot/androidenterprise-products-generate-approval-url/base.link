@@ -1,0 +1,28 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/androidenterprise/v1/base/products-generate-approval-url-response
+  take form products-generate-approval-url-response
+
+boot androidenterprise-products-generate-approval-url, name <androidenterprise.products.generateApprovalUrl>
+  note <Generates a URL that can be rendered in an iframe to display the permissions (if any) of a product. An enterprise admin must view these permissions and accept them on behalf of their organization in order to approve that product. Admins should accept the displayed permissions by interacting with a separate UI element in the EMM console, which in turn should trigger the use of this URL as the approvalUrlInfo.approvalUrl property in a Products.approve call to approve the product. This URL can only be used to display permissions for up to 1 day.>
+
+  take enterprise-id
+    like native-string
+    note <The ID of the enterprise.>
+  take product-id
+    like native-string
+    note <The ID of the product.>
+  take language-code
+    like native-string
+    note <The BCP 47 language code used for permission names and descriptions in the returned iframe, for instance "en-US".>
+    void take
+
+  line </androidenterprise/v1/enterprises/{enterprise-id}/products/{product-id}/generateApprovalUrl>
+
+  find <languageCode>, loan language-code
+
+  loot 200
+    seed json, like products-generate-approval-url-response
+    note <Successful response>

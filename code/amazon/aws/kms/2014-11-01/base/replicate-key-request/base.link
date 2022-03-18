@@ -1,0 +1,88 @@
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/boolean-type
+  take form boolean-type
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/description-type
+  take form description-type
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/key-id-type
+  take form key-id-type
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/policy-type
+  take form policy-type
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/region-type
+  take form region-type
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/tag-list
+  take form tag-list
+
+form replicate-key-request, name <ReplicateKeyRequest>
+  take key-id, name <KeyId>
+    like key-id-type
+    note <Identifies the multi-Region primary key that is being replicated. To determine whether a KMS key is a multi-Region primary key, use the DescribeKey operation to check the value of the `MultiRegionKeyType` property.
+
+Specify the key ID or key ARN of a multi-Region primary key.
+
+For example:
+
+- Key ID: `mrk-1234abcd12ab34cd56ef1234567890ab`
+
+- Key ARN: `arn:aws:kms:us-east-2:111122223333:key/mrk-1234abcd12ab34cd56ef1234567890ab`
+
+To get the key ID and key ARN for a KMS key, use ListKeys or DescribeKey.>
+  take replica-region, name <ReplicaRegion>
+    like region-type
+    note <The Region ID of the Amazon Web Services Region for this replica key.
+
+Enter the Region ID, such as `us-east-1` or `ap-southeast-2`. For a list of Amazon Web Services Regions in which KMS is supported, see [KMS service endpoints](https://docs.aws.amazon.com/general/latest/gr/kms.html#kms_region) in the _Amazon Web Services General Reference_.
+
+The replica must be in a different Amazon Web Services Region than its primary key and other replicas of that primary key, but in the same Amazon Web Services partition. KMS must be available in the replica Region. If the Region is not enabled by default, the Amazon Web Services account must be enabled in the Region.
+
+For information about Amazon Web Services partitions, see [Amazon Resource Names (ARNs) in the _Amazon Web Services General Reference_.](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html) For information about enabling and disabling Regions, see [Enabling a Region](https://docs.aws.amazon.com/general/latest/gr/rande-manage.html#rande-manage-enable) and [Disabling a Region](https://docs.aws.amazon.com/general/latest/gr/rande-manage.html#rande-manage-disable) in the _Amazon Web Services General Reference_.>
+  take policy, name <Policy>
+    like policy-type
+    void take
+    note <The key policy to attach to the KMS key. This parameter is optional. If you do not provide a key policy, KMS attaches the [default key policy](https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html#key-policy-default) to the KMS key.
+
+The key policy is not a shared property of multi-Region keys. You can specify the same key policy or a different key policy for each key in a set of related multi-Region keys. KMS does not synchronize this property.
+
+If you provide a key policy, it must meet the following criteria:
+
+- If you don't set `BypassPolicyLockoutSafetyCheck` to true, the key policy must give the caller `kms:PutKeyPolicy` permission on the replica key. This reduces the risk that the KMS key becomes unmanageable. For more information, refer to the scenario in the [Default Key Policy](https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html#key-policy-default-allow-root-enable-iam) section of the __Key Management Service Developer Guide__ .
+
+- Each statement in the key policy must contain one or more principals. The principals in the key policy must exist and be visible to KMS. When you create a new Amazon Web Services principal (for example, an IAM user or role), you might need to enforce a delay before including the new principal in a key policy because the new principal might not be immediately visible to KMS. For more information, see [Changes that I make are not always immediately visible](https://docs.aws.amazon.com/IAM/latest/UserGuide/troubleshoot_general.html#troubleshoot_general_eventual-consistency) in the __Identity and Access Management User Guide__ .
+
+- The key policy size quota is 32 kilobytes (32768 bytes).>
+  take bypass-policy-lockout-safety-check, name <BypassPolicyLockoutSafetyCheck>
+    like boolean-type
+    void take
+    note <A flag to indicate whether to bypass the key policy lockout safety check.
+
+Setting this value to true increases the risk that the KMS key becomes unmanageable. Do not set this value to true indiscriminately.
+
+For more information, refer to the scenario in the [Default Key Policy](https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html#key-policy-default-allow-root-enable-iam) section in the _Key Management Service Developer Guide_.
+
+Use this parameter only when you intend to prevent the principal that is making the request from making a subsequent `PutKeyPolicy` request on the KMS key.
+
+The default value is false.>
+  take description, name <Description>
+    like description-type
+    void take
+    note <A description of the KMS key. The default value is an empty string (no description).
+
+The description is not a shared property of multi-Region keys. You can specify the same description or a different description for each key in a set of related multi-Region keys. KMS does not synchronize this property.>
+  take tags, name <Tags>
+    like tag-list
+    void take
+    note <Assigns one or more tags to the replica key. Use this parameter to tag the KMS key when it is created. To tag an existing KMS key, use the TagResource operation.
+
+Tagging or untagging a KMS key can allow or deny permission to the KMS key. For details, see [Using ABAC in KMS](https://docs.aws.amazon.com/kms/latest/developerguide/abac.html) in the _Key Management Service Developer Guide_.
+
+To use this parameter, you must have [kms:TagResource](https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html) permission in an IAM policy.
+
+Tags are not a shared property of multi-Region keys. You can specify the same tags or different tags for each key in a set of related multi-Region keys. KMS does not synchronize this property.
+
+Each tag consists of a tag key and a tag value. Both the tag key and the tag value are required, but the tag value can be an empty (null) string. You cannot have more than one tag on a KMS key with the same tag key. If you specify an existing tag key with a different tag value, KMS replaces the current tag value with the specified one.
+
+When you add tags to an Amazon Web Services resource, Amazon Web Services generates a cost allocation report with usage and costs aggregated by tags. Tags can also be used to control access to a KMS key. For details, see [Tagging Keys](https://docs.aws.amazon.com/kms/latest/developerguide/tagging-keys.html).>

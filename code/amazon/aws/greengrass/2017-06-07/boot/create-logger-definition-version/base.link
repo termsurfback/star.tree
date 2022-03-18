@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/create-logger-definition-version-body
+  take form create-logger-definition-version-body
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/create-logger-definition-version-response
+  take form create-logger-definition-version-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-logger-definition-version, name <CreateLoggerDefinitionVersion>
+  note <Creates a version of a logger definition that has already been defined.>
+
+  take logger-definition-id
+    like native-string
+    note <The ID of the logger definition.>
+  take x-amzn-client-token
+    like native-string
+    note <A client token used to correlate requests and responses.>
+    void take
+  take create-logger-definition-version-body, like create-logger-definition-version-body
+
+  line </greengrass/definition/loggers/{logger-definition-id}/versions>
+
+  hint <X-Amzn-Client-Token>, loan x-amzn-client-token
+
+  seed json, loan create-logger-definition-version-body
+
+  loot 200
+    seed json, like create-logger-definition-version-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>

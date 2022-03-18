@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/invalid-argument-exception
+  take form invalid-argument-exception
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/kinesis/2013-12-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot deregister-stream-consumer, name <DeregisterStreamConsumer>
+  note <To deregister a consumer, provide its ARN. Alternatively, you can provide the ARN of the data stream and the name you gave the consumer when you registered it. You may also provide all three parameters, as long as they don't conflict with each other. If you don't know the name or ARN of the consumer that you want to deregister, you can use the ListStreamConsumers operation to get a list of the descriptions of all the consumers that are currently registered with a given data stream. The description of a consumer contains its name and ARN.
+
+This operation has a limit of five transactions per second per stream.>
+
+  take x-amz-target
+    like native-string
+  take deregister-stream-consumer-input, like deregister-stream-consumer-input
+
+  line </#X-Amz-Target=Kinesis_20131202.DeregisterStreamConsumer>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan deregister-stream-consumer-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like invalid-argument-exception
+    note <InvalidArgumentException>

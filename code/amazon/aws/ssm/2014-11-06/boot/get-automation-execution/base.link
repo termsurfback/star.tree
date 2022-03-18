@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/automation-execution-not-found-exception
+  take form automation-execution-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/get-automation-execution-result
+  take form get-automation-execution-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-automation-execution, name <GetAutomationExecution>
+  note <Get detailed information about a particular Automation execution.>
+
+  take x-amz-target
+    like native-string
+  take get-automation-execution-request, like get-automation-execution-request
+
+  line </#X-Amz-Target=AmazonSSM.GetAutomationExecution>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-automation-execution-request
+
+  loot 200
+    seed json, like get-automation-execution-result
+    note <Success>
+  loot 480
+    seed json, like automation-execution-not-found-exception
+    note <AutomationExecutionNotFoundException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

@@ -1,0 +1,66 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/configuration-option-setting
+  take form configuration-option-setting
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/configuration-settings-validation-messages
+  take form configuration-settings-validation-messages
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/insufficient-privileges-exception
+  take form insufficient-privileges-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/too-many-buckets-exception
+  take form too-many-buckets-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-validate-configuration-settings, name <GET_ValidateConfigurationSettings>
+  note <Takes a set of configuration settings and either a configuration template or environment, and determines whether those values are valid.
+
+This action returns a list of messages indicating any errors or warnings associated with the selection of option values.>
+
+  take application-name
+    like native-string
+    note <The name of the application that the configuration template or environment belongs to.>
+  take template-name
+    like native-string
+    note <The name of the configuration template to validate the settings against.
+
+Condition: You cannot specify both this and an environment name.>
+    void take
+  take environment-name
+    like native-string
+    note <The name of the environment to validate the settings against.
+
+Condition: You cannot specify both this and a configuration template name.>
+    void take
+  take option-settings
+    like list
+      like configuration-option-setting
+    note <A list of the options and desired values to evaluate.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ValidateConfigurationSettings>
+
+  find <ApplicationName>, loan application-name
+  find <TemplateName>, loan template-name
+  find <EnvironmentName>, loan environment-name
+  find <OptionSettings>, loan option-settings
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like configuration-settings-validation-messages
+    note <Success>
+  loot 480
+    seed xml, like insufficient-privileges-exception
+    note <InsufficientPrivilegesException>
+  loot 481
+    seed xml, like too-many-buckets-exception
+    note <TooManyBucketsException>

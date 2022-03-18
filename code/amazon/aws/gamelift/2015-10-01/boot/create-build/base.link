@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/create-build-output
+  take form create-build-output
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/tagging-failed-exception
+  take form tagging-failed-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-build, name <CreateBuild>
+  note <Creates a new Amazon GameLift build resource for your game server binary files. Game server binaries must be combined into a zip file for use with Amazon GameLift.
+
+When setting up a new game build for GameLift, we recommend using the AWS CLI command **[upload-build](https://docs.aws.amazon.com/cli/latest/reference/gamelift/upload-build.html)** . This helper command combines two tasks: (1) it uploads your build files from a file directory to a GameLift Amazon S3 location, and (2) it creates a new build resource.
+
+The `CreateBuild` operation can used in the following scenarios:
+
+- To create a new game build with build files that are in an Amazon S3 location under an AWS account that you control. To use this option, you must first give Amazon GameLift access to the Amazon S3 bucket. With permissions in place, call `CreateBuild` and specify a build name, operating system, and the Amazon S3 storage location of your game build.
+
+- To directly upload your build files to a GameLift Amazon S3 location. To use this option, first call `CreateBuild` and specify a build name and operating system. This operation creates a new build resource and also returns an Amazon S3 location with temporary access credentials. Use the credentials to manually upload your build files to the specified Amazon S3 location. For more information, see [Uploading Objects](https://docs.aws.amazon.com/AmazonS3/latest/dev/UploadingObjects.html) in the _Amazon S3 Developer Guide_. Build files can be uploaded to the GameLift Amazon S3 location once only; that can't be updated.
+
+If successful, this operation creates a new build resource with a unique build ID and places it in `INITIALIZED` status. A build must be in `READY` status before you can create fleets with it.
+
+**Learn more** [Uploading Your Game](https://docs.aws.amazon.com/gamelift/latest/developerguide/gamelift-build-intro.html)
+
+[Create a Build with Files in Amazon S3](https://docs.aws.amazon.com/gamelift/latest/developerguide/gamelift-build-cli-uploading.html#gamelift-build-cli-uploading-create-build)
+
+**Related actions** CreateBuild | ListBuilds | DescribeBuild | UpdateBuild | DeleteBuild | [All APIs by task](https://docs.aws.amazon.com/gamelift/latest/developerguide/reference-awssdk.html#reference-awssdk-resources-fleets)>
+
+  take x-amz-target
+    like native-string
+  take create-build-input, like create-build-input
+
+  line </#X-Amz-Target=GameLift.CreateBuild>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-build-input
+
+  loot 200
+    seed json, like create-build-output
+    note <Success>
+  loot 480
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 483
+    seed json, like tagging-failed-exception
+    note <TaggingFailedException>
+  loot 484
+    seed json, like internal-service-exception
+    note <InternalServiceException>

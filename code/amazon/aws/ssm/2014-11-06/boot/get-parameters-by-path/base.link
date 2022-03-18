@@ -1,0 +1,72 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/get-parameters-by-path-result
+  take form get-parameters-by-path-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-filter-key
+  take form invalid-filter-key
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-filter-option
+  take form invalid-filter-option
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-filter-value
+  take form invalid-filter-value
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-key-id
+  take form invalid-key-id
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-parameters-by-path, name <GetParametersByPath>
+  note <Retrieve information about one or more parameters in a specific hierarchy.
+
+Request results are returned on a best-effort basis. If you specify `MaxResults` in the request, the response includes information up to the limit specified. The number of items returned, however, can be between zero and the value of `MaxResults`. If the service reaches an internal limit while processing the results, it stops the operation and returns the matching values up to that point and a `NextToken`. You can specify the `NextToken` in a subsequent call to get the next set of results.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-parameters-by-path-request, like get-parameters-by-path-request
+
+  line </#X-Amz-Target=AmazonSSM.GetParametersByPath>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan get-parameters-by-path-request
+
+  loot 200
+    seed json, like get-parameters-by-path-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like invalid-filter-key
+    note <InvalidFilterKey>
+  loot 482
+    seed json, like invalid-filter-option
+    note <InvalidFilterOption>
+  loot 483
+    seed json, like invalid-filter-value
+    note <InvalidFilterValue>
+  loot 484
+    seed json, like invalid-key-id
+    note <InvalidKeyId>
+  loot 485
+    seed json, like invalid-next-token
+    note <InvalidNextToken>

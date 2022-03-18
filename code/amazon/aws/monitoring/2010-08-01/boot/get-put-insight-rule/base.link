@@ -1,0 +1,74 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/missing-required-parameter-exception
+  take form missing-required-parameter-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/put-insight-rule-output
+  take form put-insight-rule-output
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/tag
+  take form tag
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-put-insight-rule, name <GET_PutInsightRule>
+  note <Creates a Contributor Insights rule. Rules evaluate log events in a CloudWatch Logs log group, enabling you to find contributor data for the log events in that log group. For more information, see [Using Contributor Insights to Analyze High-Cardinality Data](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContributorInsights.html).
+
+If you create a rule, delete it, and then re-create it with the same name, historical data from the first time the rule was created might not be available.>
+
+  take rule-name
+    like native-string
+    note <A unique name for the rule.>
+  take rule-state
+    like native-string
+    note <The state of the rule. Valid values are ENABLED and DISABLED.>
+    void take
+  take rule-definition
+    like native-string
+    note <The definition of the rule, as a JSON object. For details on the valid syntax, see [Contributor Insights Rule Syntax](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContributorInsights-RuleSyntax.html).>
+  take tags
+    like list
+      like tag
+    note <A list of key-value pairs to associate with the Contributor Insights rule. You can associate as many as 50 tags with a rule.
+
+Tags can help you organize and categorize your resources. You can also use them to scope user permissions, by granting a user permission to access or change only the resources that have certain tag values.
+
+To be able to associate tags with a rule, you must have the `cloudwatch:TagResource` permission in addition to the `cloudwatch:PutInsightRule` permission.
+
+If you are using this operation to update an existing Contributor Insights rule, any tags you specify in this parameter are ignored. To change the tags of an existing rule, use [TagResource](https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_TagResource.html).>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=PutInsightRule>
+
+  find <RuleName>, loan rule-name
+  find <RuleState>, loan rule-state
+  find <RuleDefinition>, loan rule-definition
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like put-insight-rule-output
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 481
+    seed xml, like missing-required-parameter-exception
+    note <MissingRequiredParameterException>
+  loot 482
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>

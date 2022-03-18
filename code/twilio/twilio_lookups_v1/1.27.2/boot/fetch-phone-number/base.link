@@ -1,0 +1,46 @@
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-list
+  take form native-list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_lookups_v1/1.27.2/base/lookups-v1-phone-number
+  take form lookups-v1-phone-number
+
+boot fetch-phone-number, name <FetchPhoneNumber>
+  take phone-number
+    like native-string
+    note <The phone number to lookup in \[E.164\](https://www.twilio.com/docs/glossary/what-e164) format, which consists of a + followed by the country code and subscriber number.>
+  take country-code
+    like native-string
+    note <The \[ISO country code\](https://en.wikipedia.org/wiki/ISO\_3166-1\_alpha-2) of the phone number to fetch. This is used to specify the country when the phone number is provided in a national format.>
+    void take
+  take type
+    like native-list
+      like native-string
+    note <The type of information to return. Can be: \`carrier\` or \`caller-name\`. The default is null. Carrier information costs $0.005 per phone number looked up. Caller Name information is currently available only in the US and costs $0.01 per phone number looked up. To retrieve both types on information, specify this parameter twice; once with \`carrier\` and once with \`caller-name\` as the value.>
+    void take
+  take add-ons
+    like native-list
+      like native-string
+    note <The \`unique\_name\` of an Add-on you would like to invoke. Can be the \`unique\_name\` of an Add-on that is installed on your account. You can specify multiple instances of this parameter to invoke multiple Add-ons. For more information about Add-ons, see the \[Add-ons documentation\](https://www.twilio.com/docs/add-ons).>
+    void take
+  take add-ons-data
+    like form
+    note <Data specific to the add-on you would like to invoke. The content and format of this value depends on the add-on.>
+    void take
+
+  line </v1/PhoneNumbers/{phone-number}>
+
+  find <CountryCode>, loan country-code
+  find <Type>, loan type
+  find <AddOns>, loan add-ons
+  find <AddOnsData>, loan add-ons-data
+
+  loot 200
+    seed json, like lookups-v1-phone-number
+    note <OK>

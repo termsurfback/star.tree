@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/delete-anomaly-detector-output
+  take form delete-anomaly-detector-output
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/internal-service-fault
+  take form internal-service-fault
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/missing-required-parameter-exception
+  take form missing-required-parameter-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-anomaly-detector, name <POST_DeleteAnomalyDetector>
+  note <Deletes the specified anomaly detection model from your account.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-anomaly-detector-input, like delete-anomaly-detector-input
+    void take
+
+  line </#Action=DeleteAnomalyDetector>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-anomaly-detector-input
+
+  loot 200
+    seed xml, like delete-anomaly-detector-output
+    note <Success>
+  loot 480
+    seed xml, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed xml, like internal-service-fault
+    note <InternalServiceFault>
+  loot 482
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed xml, like missing-required-parameter-exception
+    note <MissingRequiredParameterException>

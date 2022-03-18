@@ -1,0 +1,78 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/chat-schedule-message-body
+  take form chat-schedule-message-body
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-bot-id
+  take form defs-bot-id
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-channel
+  take form defs-channel
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-team
+  take form defs-team
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-user-id
+  take form defs-user-id
+
+load @drumwork/snow/slack.com/1.7.0/base/objs-bot-profile
+  take form objs-bot-profile
+
+boot chat-schedule-message, name <chat_scheduleMessage>
+  note <Schedules a message to be sent to a channel.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `chat:write`>
+    void take
+  take chat-schedule-message-body, like chat-schedule-message-body
+    void take
+
+  line </chat.scheduleMessage>
+
+  hint <token>, loan token
+
+  seed x-www-form-urlencoded, loan chat-schedule-message-body
+
+  loot 200
+    seed json
+      like form
+        take channel, name <channel>
+          like defs-channel
+        take message, name <message>
+          like form
+            take bot-id, name <bot_id>
+              like defs-bot-id
+            take bot-profile, name <bot_profile>
+              like objs-bot-profile
+              void take
+            take team, name <team>
+              like defs-team
+            take text, name <text>
+            take type, name <type>
+            take user, name <user>
+              like defs-user-id
+            take username, name <username>
+              void take
+        take ok, name <ok>
+          like defs-ok-true
+        take post-at, name <post_at>
+        take scheduled-message-id, name <scheduled_message_id>
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take callstack, name <callstack>
+          void take
+        take error, name <error>
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response if the `post_at` is invalid (ex. in the past or too far into the future)>

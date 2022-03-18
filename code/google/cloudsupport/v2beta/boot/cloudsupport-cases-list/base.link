@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/cloudsupport/v2beta/base/list-cases-response
+  take form list-cases-response
+
+boot cloudsupport-cases-list, name <cloudsupport.cases.list>
+  note <Retrieve all cases under the specified parent.>
+
+  take parent
+    like native-string
+    note <Required. The fully qualified name of parent resource to list cases under.>
+  take filter
+    like native-string
+    note <An expression written in the Cloud filter language. If non-empty, then only cases whose fields match the filter are returned. If empty, then no messages are filtered out. Filter strings can use the following fields: - state (Accepted values: OPEN or CLOSED) - severity (Accepted values: S0, S1, S2, S3, or S4) - creator.email with the operators equals (=) and AND. Additionally, a global restriction (with no operator) can be used to search across displayName, description, and comments (e.g. "my search").>
+    void take
+  take page-size
+    like native-integer
+    note <The maximum number of cases fetched with each request. Defaults to 10.>
+    void take
+  take page-token
+    like native-string
+    note <A token identifying the page of results to return. If unspecified, the first page is retrieved.>
+    void take
+
+  line </v2beta/{parent}/cases>
+
+  find <filter>, loan filter
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-cases-response
+    note <Successful response>

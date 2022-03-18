@@ -1,0 +1,34 @@
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/cost-category-inherited-value-dimension
+  take form cost-category-inherited-value-dimension
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/cost-category-rule-type
+  take form cost-category-rule-type
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/cost-category-value
+  take form cost-category-value
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/expression
+  take form expression
+
+form cost-category-rule, name <CostCategoryRule>
+  note <Rules are processed in order. If there are multiple rules that match the line item, then the first rule to match is used to determine that Cost Category value.>
+  take value, name <Value>
+    like cost-category-value
+    void take
+  take rule, name <Rule>
+    like expression
+    void take
+    note <An [Expression](https://docs.aws.amazon.com/aws-cost-management/latest/APIReference/API_Expression.html) object used to categorize costs. This supports dimensions, tags, and nested expressions. Currently the only dimensions supported are `LINKED_ACCOUNT`, `SERVICE_CODE`, `RECORD_TYPE`, and `LINKED_ACCOUNT_NAME`.
+
+Root level `OR` isn't supported. We recommend that you create a separate rule instead.
+
+`RECORD_TYPE` is a dimension used for Cost Explorer APIs, and is also supported for Cost Category expressions. This dimension uses different terms, depending on whether you're using the console or API/JSON editor. For a detailed comparison, see [Term Comparisons](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/manage-cost-categories.html#cost-categories-terms) in the _Billing and Cost Management User Guide_.>
+  take inherited-value, name <InheritedValue>
+    like cost-category-inherited-value-dimension
+    void take
+    note <The value the line item is categorized as if the line item contains the matched dimension.>
+  take type, name <Type>
+    like cost-category-rule-type
+    void take
+    note <You can define the `CostCategoryRule` rule type as either `REGULAR` or `INHERITED_VALUE`. The `INHERITED_VALUE` rule type adds the flexibility of defining a rule that dynamically inherits the cost category value from the dimension value defined by `CostCategoryInheritedValueDimension`. For example, if you want to dynamically group costs based on the value of a specific tag key, first choose an inherited value rule type, then choose the tag dimension and specify the tag key to use.>

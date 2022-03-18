@@ -1,0 +1,80 @@
+
+load @drumwork/snow/amazonaws.com/ebs/2019-11-02/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/ebs/2019-11-02/base/complete-snapshot-response
+  take form complete-snapshot-response
+
+load @drumwork/snow/amazonaws.com/ebs/2019-11-02/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/ebs/2019-11-02/base/request-throttled-exception
+  take form request-throttled-exception
+
+load @drumwork/snow/amazonaws.com/ebs/2019-11-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ebs/2019-11-02/base/service-quota-exceeded-exception
+  take form service-quota-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/ebs/2019-11-02/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot complete-snapshot, name <CompleteSnapshot>
+  note <Seals and completes the snapshot after all of the required blocks of data have been written to it. Completing the snapshot changes the status to `completed`. You cannot write new blocks to a snapshot after it has been completed.>
+
+  take snapshot-id
+    like native-string
+    note <The ID of the snapshot.>
+  take x-amz-changed-blocks-count
+    like native-integer
+    note <The number of blocks that were written to the snapshot.>
+  take x-amz-checksum
+    like native-string
+    note <An aggregated Base-64 SHA256 checksum based on the checksums of each written block.
+
+To generate the aggregated checksum using the linear aggregation method, arrange the checksums for each written block in ascending order of their block index, concatenate them to form a single string, and then generate the checksum on the entire string using the SHA256 algorithm.>
+    void take
+  take x-amz-checksum-algorithm
+    like native-string
+    note <The algorithm used to generate the checksum. Currently, the only supported algorithm is `SHA256`.>
+    void take
+  take x-amz-checksum-aggregation-method
+    like native-string
+    note <The aggregation method used to generate the checksum. Currently, the only supported aggregation method is `LINEAR`.>
+    void take
+
+  line </snapshots/completion/{snapshot-id}#x-amz-ChangedBlocksCount>
+
+  hint <x-amz-ChangedBlocksCount>, loan x-amz-changed-blocks-count
+  hint <x-amz-Checksum>, loan x-amz-checksum
+  hint <x-amz-Checksum-Algorithm>, loan x-amz-checksum-algorithm
+  hint <x-amz-Checksum-Aggregation-Method>, loan x-amz-checksum-aggregation-method
+
+  loot 202
+    seed json, like complete-snapshot-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like request-throttled-exception
+    note <RequestThrottledException>
+  loot 484
+    seed json, like service-quota-exceeded-exception
+    note <ServiceQuotaExceededException>
+  loot 485
+    seed json, like internal-server-exception
+    note <InternalServerException>

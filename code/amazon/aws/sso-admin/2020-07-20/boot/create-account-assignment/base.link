@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/sso-admin/2020-07-20/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/sso-admin/2020-07-20/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/sso-admin/2020-07-20/base/create-account-assignment-response
+  take form create-account-assignment-response
+
+load @drumwork/snow/amazonaws.com/sso-admin/2020-07-20/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/sso-admin/2020-07-20/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/sso-admin/2020-07-20/base/service-quota-exceeded-exception
+  take form service-quota-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/sso-admin/2020-07-20/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/sso-admin/2020-07-20/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-account-assignment, name <CreateAccountAssignment>
+  note <Assigns access to a principal for a specified Amazon Web Services account using a specified permission set.
+
+The term _principal_ here refers to a user or group that is defined in Amazon Web Services SSO.
+
+As part of a successful `CreateAccountAssignment` call, the specified permission set will automatically be provisioned to the account in the form of an IAM policy. That policy is attached to the SSO-created IAM role. If the permission set is subsequently updated, the corresponding IAM policies attached to roles in your accounts will not be updated automatically. In this case, you must call `ProvisionPermissionSet` to make these updates.>
+
+  take x-amz-target
+    like native-string
+  take create-account-assignment-request, like create-account-assignment-request
+
+  line </#X-Amz-Target=SWBExternalService.CreateAccountAssignment>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-account-assignment-request
+
+  loot 200
+    seed json, like create-account-assignment-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like service-quota-exceeded-exception
+    note <ServiceQuotaExceededException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 485
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 486
+    seed json, like conflict-exception
+    note <ConflictException>

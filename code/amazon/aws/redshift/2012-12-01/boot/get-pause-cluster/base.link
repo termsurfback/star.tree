@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-state-fault
+  take form invalid-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/pause-cluster-result
+  take form pause-cluster-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-pause-cluster, name <GET_PauseCluster>
+  note <Pauses a cluster.>
+
+  take cluster-identifier
+    like native-string
+    note <The identifier of the cluster to be paused.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=PauseCluster>
+
+  find <ClusterIdentifier>, loan cluster-identifier
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like pause-cluster-result
+    note <Success>
+  loot 480
+    seed xml, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 481
+    seed xml, like invalid-cluster-state-fault
+    note <InvalidClusterStateFault>

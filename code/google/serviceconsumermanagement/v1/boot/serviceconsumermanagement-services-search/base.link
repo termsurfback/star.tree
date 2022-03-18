@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/serviceconsumermanagement/v1/base/search-tenancy-units-response
+  take form search-tenancy-units-response
+
+boot serviceconsumermanagement-services-search, name <serviceconsumermanagement.services.search>
+  note <Search tenancy units for a managed service.>
+
+  take parent
+    like native-string
+    note <Required. Service for which search is performed. services/{service} {service} the name of a service, for example 'service.googleapis.com'.>
+  take page-size
+    like native-integer
+    note <Optional. The maximum number of results returned by this request. Currently, the default maximum is set to 1000. If `page_size` isn't provided or the size provided is a number larger than 1000, it's automatically set to 1000.>
+    void take
+  take page-token
+    like native-string
+    note <Optional. The continuation token, which is used to page through large result sets. To get the next page of results, set this parameter to the value of `nextPageToken` from the previous response.>
+    void take
+  take query
+    like native-string
+    note <Optional. Set a query `{expression}` for querying tenancy units. Your `{expression}` must be in the format: `field_name=literal_string`. The `field_name` is the name of the field you want to compare. Supported fields are `tenant_resources.tag` and `tenant_resources.resource`. For example, to search tenancy units that contain at least one tenant resource with a given tag 'xyz', use the query `tenant_resources.tag=xyz`. To search tenancy units that contain at least one tenant resource with a given resource name 'projects/123456', use the query `tenant_resources.resource=projects/123456`. Multiple expressions can be joined with `AND`s. Tenancy units must match all expressions to be included in the result set. For example, `tenant_resources.tag=xyz AND tenant_resources.resource=projects/123456`>
+    void take
+
+  line </v1/{parent}:search>
+
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+  find <query>, loan query
+
+  loot 200
+    seed json, like search-tenancy-units-response
+    note <Successful response>

@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/fms/2018-01-01/base/get-policy-response
+  take form get-policy-response
+
+load @drumwork/snow/amazonaws.com/fms/2018-01-01/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/fms/2018-01-01/base/invalid-operation-exception
+  take form invalid-operation-exception
+
+load @drumwork/snow/amazonaws.com/fms/2018-01-01/base/invalid-type-exception
+  take form invalid-type-exception
+
+load @drumwork/snow/amazonaws.com/fms/2018-01-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-policy, name <GetPolicy>
+  note <Returns information about the specified Firewall Manager policy.>
+
+  take x-amz-target
+    like native-string
+  take get-policy-request, like get-policy-request
+
+  line </#X-Amz-Target=AWSFMS_20180101.GetPolicy>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-policy-request
+
+  loot 200
+    seed json, like get-policy-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-operation-exception
+    note <InvalidOperationException>
+  loot 482
+    seed json, like internal-error-exception
+    note <InternalErrorException>
+  loot 483
+    seed json, like invalid-type-exception
+    note <InvalidTypeException>

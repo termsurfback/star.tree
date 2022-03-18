@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/scheduled-action-state
+  take form scheduled-action-state
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/scheduled-action-time-list
+  take form scheduled-action-time-list
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/scheduled-action-type
+  take form scheduled-action-type
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/t-stamp
+  take form t-stamp
+
+load @drumwork/snow/base/string
+  take form string
+
+form scheduled-action, name <ScheduledAction>
+  note <Describes a scheduled action. You can use a scheduled action to trigger some Amazon Redshift API operations on a schedule. For information about which API operations can be scheduled, see ScheduledActionType.>
+  take scheduled-action-name, name <ScheduledActionName>
+    like string
+    void take
+    note <The name of the scheduled action.>
+  take target-action, name <TargetAction>
+    like scheduled-action-type
+    void take
+    note <A JSON format string of the Amazon Redshift API operation with input parameters.
+
+"`{\"ResizeCluster\":{\"NodeType\":\"ds2.8xlarge\",\"ClusterIdentifier\":\"my-test-cluster\",\"NumberOfNodes\":3}}`".>
+  take schedule, name <Schedule>
+    like string
+    void take
+    note <The schedule for a one-time (at format) or recurring (cron format) scheduled action. Schedule invocations must be separated by at least one hour.
+
+Format of at expressions is "`at(yyyy-mm-ddThh:mm:ss)`". For example, "`at(2016-03-04T17:27:00)`".
+
+Format of cron expressions is "`cron(Minutes Hours Day-of-month Month Day-of-week Year)`". For example, "`cron(0 10 ? * MON *)`". For more information, see [Cron Expressions](https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html#CronExpressions) in the _Amazon CloudWatch Events User Guide_.>
+  take iam-role, name <IamRole>
+    like string
+    void take
+    note <The IAM role to assume to run the scheduled action. This IAM role must have permission to run the Amazon Redshift API operation in the scheduled action. This IAM role must allow the Amazon Redshift scheduler (Principal scheduler.redshift.amazonaws.com) to assume permissions on your behalf. For more information about the IAM role to use with the Amazon Redshift scheduler, see [Using Identity-Based Policies for Amazon Redshift](https://docs.aws.amazon.com/redshift/latest/mgmt/redshift-iam-access-control-identity-based.html) in the _Amazon Redshift Cluster Management Guide_.>
+  take scheduled-action-description, name <ScheduledActionDescription>
+    like string
+    void take
+    note <The description of the scheduled action.>
+  take state, name <State>
+    like scheduled-action-state
+    void take
+    note <The state of the scheduled action. For example, `DISABLED`.>
+  take next-invocations, name <NextInvocations>
+    like scheduled-action-time-list
+    void take
+    note <List of times when the scheduled action will run.>
+  take start-time, name <StartTime>
+    like t-stamp
+    void take
+    note <The start time in UTC when the schedule is active. Before this time, the scheduled action does not trigger.>
+  take end-time, name <EndTime>
+    like t-stamp
+    void take
+    note <The end time in UTC when the schedule is no longer active. After this time, the scheduled action does not trigger.>

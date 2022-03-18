@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/resource-conflict-exception
+  take form resource-conflict-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/tag-key
+  take form tag-key
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot untag-resource, name <UntagResource>
+  note <Removes [tags](https://docs.aws.amazon.com/lambda/latest/dg/tagging.html) from a function.>
+
+  take arn
+    like native-string
+    note <The function's Amazon Resource Name (ARN).>
+  take tag-keys
+    like list
+      like tag-key
+    note <A list of tag keys to remove from the function.>
+
+  line </2017-03-31/tags/{arn}#tagKeys>
+
+  find <tagKeys>, loan tag-keys
+
+  loot 204
+    note <Success>
+  loot 480
+    seed json, like service-exception
+    note <ServiceException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 484
+    seed json, like resource-conflict-exception
+    note <ResourceConflictException>

@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/athena/2017-05-18/base/list-engine-versions-output
+  take form list-engine-versions-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-engine-versions, name <ListEngineVersions>
+  note <Returns a list of engine versions that are available to choose from, including the Auto option.>
+
+  take x-amz-target
+    like native-string
+  take list-engine-versions-input, like list-engine-versions-input
+
+  line </#X-Amz-Target=AmazonAthena.ListEngineVersions>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-engine-versions-input
+
+  loot 200
+    seed json, like list-engine-versions-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

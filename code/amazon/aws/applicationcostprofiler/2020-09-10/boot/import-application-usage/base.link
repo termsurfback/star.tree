@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/applicationcostprofiler/2020-09-10/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/applicationcostprofiler/2020-09-10/base/import-application-usage-body
+  take form import-application-usage-body
+
+load @drumwork/snow/amazonaws.com/applicationcostprofiler/2020-09-10/base/import-application-usage-result
+  take form import-application-usage-result
+
+load @drumwork/snow/amazonaws.com/applicationcostprofiler/2020-09-10/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/applicationcostprofiler/2020-09-10/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/applicationcostprofiler/2020-09-10/base/validation-exception
+  take form validation-exception
+
+boot import-application-usage, name <ImportApplicationUsage>
+  note <Ingests application usage data from Amazon Simple Storage Service (Amazon S3).
+
+The data must already exist in the S3 location. As part of the action, AWS Application Cost Profiler copies the object from your S3 bucket to an S3 bucket owned by Amazon for processing asynchronously.>
+
+  take import-application-usage-body, like import-application-usage-body
+
+  line </importApplicationUsage>
+
+  seed json, loan import-application-usage-body
+
+  loot 200
+    seed json, like import-application-usage-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

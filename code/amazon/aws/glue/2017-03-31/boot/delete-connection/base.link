@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/delete-connection-response
+  take form delete-connection-response
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/entity-not-found-exception
+  take form entity-not-found-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/operation-timeout-exception
+  take form operation-timeout-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-connection, name <DeleteConnection>
+  note <Deletes a connection from the Data Catalog.>
+
+  take x-amz-target
+    like native-string
+  take delete-connection-request, like delete-connection-request
+
+  line </#X-Amz-Target=AWSGlue.DeleteConnection>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-connection-request
+
+  loot 200
+    seed json, like delete-connection-response
+    note <Success>
+  loot 480
+    seed json, like entity-not-found-exception
+    note <EntityNotFoundException>
+  loot 481
+    seed json, like operation-timeout-exception
+    note <OperationTimeoutException>

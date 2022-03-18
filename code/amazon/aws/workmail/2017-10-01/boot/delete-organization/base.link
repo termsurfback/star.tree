@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/delete-organization-response
+  take form delete-organization-response
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/organization-not-found-exception
+  take form organization-not-found-exception
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/organization-state-exception
+  take form organization-state-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-organization, name <DeleteOrganization>
+  note <Deletes an Amazon WorkMail organization and all underlying AWS resources managed by Amazon WorkMail as part of the organization. You can choose whether to delete the associated directory. For more information, see [Removing an organization](https://docs.aws.amazon.com/workmail/latest/adminguide/remove_organization.html) in the _Amazon WorkMail Administrator Guide_.>
+
+  take x-amz-target
+    like native-string
+  take delete-organization-request, like delete-organization-request
+
+  line </#X-Amz-Target=WorkMailService.DeleteOrganization>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-organization-request
+
+  loot 200
+    seed json, like delete-organization-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like organization-not-found-exception
+    note <OrganizationNotFoundException>
+  loot 482
+    seed json, like organization-state-exception
+    note <OrganizationStateException>

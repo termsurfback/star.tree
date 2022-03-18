@@ -1,0 +1,112 @@
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-snapshot-message
+  take form db-cluster-snapshot-message
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-snapshot-not-found-fault
+  take form db-cluster-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/filter
+  take form filter
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-db-cluster-snapshots, name <GET_DescribeDBClusterSnapshots>
+  note <Returns information about DB cluster snapshots. This API action supports pagination.>
+
+  take db-cluster-identifier
+    like native-string
+    note <The ID of the DB cluster to retrieve the list of DB cluster snapshots for. This parameter can't be used in conjunction with the `DBClusterSnapshotIdentifier` parameter. This parameter is not case-sensitive.
+
+Constraints:
+
+- If supplied, must match the identifier of an existing DBCluster.>
+    void take
+  take db-cluster-snapshot-identifier
+    like native-string
+    note <A specific DB cluster snapshot identifier to describe. This parameter can't be used in conjunction with the `DBClusterIdentifier` parameter. This value is stored as a lowercase string.
+
+Constraints:
+
+- If supplied, must match the identifier of an existing DBClusterSnapshot.
+
+- If this identifier is for an automated snapshot, the `SnapshotType` parameter must also be specified.>
+    void take
+  take snapshot-type
+    like native-string
+    note <The type of DB cluster snapshots to be returned. You can specify one of the following values:
+
+- `automated` - Return all DB cluster snapshots that have been automatically taken by Amazon Neptune for my Amazon account.
+
+- `manual` - Return all DB cluster snapshots that have been taken by my AWS account.
+
+- `shared` - Return all manual DB cluster snapshots that have been shared to my Amazon account.
+
+- `public` - Return all DB cluster snapshots that have been marked as public.
+
+If you don't specify a `SnapshotType` value, then both automated and manual DB cluster snapshots are returned. You can include shared DB cluster snapshots with these results by setting the `IncludeShared` parameter to `true`. You can include public DB cluster snapshots with these results by setting the `IncludePublic` parameter to `true`.
+
+The `IncludeShared` and `IncludePublic` parameters don't apply for `SnapshotType` values of `manual` or `automated`. The `IncludePublic` parameter doesn't apply when `SnapshotType` is set to `shared`. The `IncludeShared` parameter doesn't apply when `SnapshotType` is set to `public`.>
+    void take
+  take filters
+    like list
+      like filter
+    note <This parameter is not currently supported.>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of records to include in the response. If more records exist than the specified `MaxRecords` value, a pagination token called a marker is included in the response so that the remaining results can be retrieved.
+
+Default: 100
+
+Constraints: Minimum 20, maximum 100.>
+    void take
+  take marker
+    like native-string
+    note <An optional pagination token provided by a previous `DescribeDBClusterSnapshots` request. If this parameter is specified, the response includes only records beyond the marker, up to the value specified by `MaxRecords`.>
+    void take
+  take include-shared
+    like native-boolean
+    note <True to include shared manual DB cluster snapshots from other Amazon accounts that this AWS account has been given permission to copy or restore, and otherwise false. The default is `false`.
+
+You can give an Amazon account permission to restore a manual DB cluster snapshot from another Amazon account by the ModifyDBClusterSnapshotAttribute API action.>
+    void take
+  take include-public
+    like native-boolean
+    note <True to include manual DB cluster snapshots that are public and can be copied or restored by any Amazon account, and otherwise false. The default is `false`. The default is false.
+
+You can share a manual DB cluster snapshot as public by using the ModifyDBClusterSnapshotAttribute API action.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeDBClusterSnapshots>
+
+  find <DBClusterIdentifier>, loan db-cluster-identifier
+  find <DBClusterSnapshotIdentifier>, loan db-cluster-snapshot-identifier
+  find <SnapshotType>, loan snapshot-type
+  find <Filters>, loan filters
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <IncludeShared>, loan include-shared
+  find <IncludePublic>, loan include-public
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like db-cluster-snapshot-message
+    note <Success>
+  loot 480
+    seed xml, like db-cluster-snapshot-not-found-fault
+    note <DBClusterSnapshotNotFoundFault>

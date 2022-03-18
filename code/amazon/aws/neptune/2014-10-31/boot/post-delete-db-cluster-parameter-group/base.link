@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-parameter-group-not-found-fault
+  take form db-parameter-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-parameter-group-state-fault
+  take form invalid-db-parameter-group-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-db-cluster-parameter-group, name <POST_DeleteDBClusterParameterGroup>
+  note <Deletes a specified DB cluster parameter group. The DB cluster parameter group to be deleted can't be associated with any DB clusters.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-db-cluster-parameter-group-message, like delete-db-cluster-parameter-group-message
+    void take
+
+  line </#Action=DeleteDBClusterParameterGroup>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-db-cluster-parameter-group-message
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like invalid-db-parameter-group-state-fault
+    note <InvalidDBParameterGroupStateFault>
+  loot 481
+    seed xml, like db-parameter-group-not-found-fault
+    note <DBParameterGroupNotFoundFault>

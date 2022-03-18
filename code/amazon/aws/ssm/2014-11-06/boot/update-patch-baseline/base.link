@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/does-not-exist-exception
+  take form does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/update-patch-baseline-result
+  take form update-patch-baseline-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-patch-baseline, name <UpdatePatchBaseline>
+  note <Modifies an existing patch baseline. Fields not specified in the request are left unchanged.
+
+For information about valid key-value pairs in `PatchFilters` for each supported operating system type, see PatchFilter.>
+
+  take x-amz-target
+    like native-string
+  take update-patch-baseline-request, like update-patch-baseline-request
+
+  line </#X-Amz-Target=AmazonSSM.UpdatePatchBaseline>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-patch-baseline-request
+
+  loot 200
+    seed json, like update-patch-baseline-result
+    note <Success>
+  loot 480
+    seed json, like does-not-exist-exception
+    note <DoesNotExistException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

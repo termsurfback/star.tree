@@ -1,0 +1,81 @@
+
+load @drumwork/snow/amazonaws.com/textract/2018-06-27/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/textract/2018-06-27/base/get-document-text-detection-response
+  take form get-document-text-detection-response
+
+load @drumwork/snow/amazonaws.com/textract/2018-06-27/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/textract/2018-06-27/base/invalid-job-id-exception
+  take form invalid-job-id-exception
+
+load @drumwork/snow/amazonaws.com/textract/2018-06-27/base/invalid-kms-key-exception
+  take form invalid-kms-key-exception
+
+load @drumwork/snow/amazonaws.com/textract/2018-06-27/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/textract/2018-06-27/base/invalid-s3-object-exception
+  take form invalid-s3-object-exception
+
+load @drumwork/snow/amazonaws.com/textract/2018-06-27/base/provisioned-throughput-exceeded-exception
+  take form provisioned-throughput-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/textract/2018-06-27/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-document-text-detection, name <GetDocumentTextDetection>
+  note <Gets the results for an Amazon Textract asynchronous operation that detects text in a document. Amazon Textract can detect lines of text and the words that make up a line of text.
+
+You start asynchronous text detection by calling StartDocumentTextDetection, which returns a job identifier (`JobId`). When the text detection operation finishes, Amazon Textract publishes a completion status to the Amazon Simple Notification Service (Amazon SNS) topic that's registered in the initial call to `StartDocumentTextDetection`. To get the results of the text-detection operation, first check that the status value published to the Amazon SNS topic is `SUCCEEDED`. If so, call `GetDocumentTextDetection`, and pass the job identifier (`JobId`) from the initial call to `StartDocumentTextDetection`.
+
+`GetDocumentTextDetection` returns an array of Block objects.
+
+Each document page has as an associated `Block` of type PAGE. Each PAGE `Block` object is the parent of LINE `Block` objects that represent the lines of detected text on a page. A LINE `Block` object is a parent for each word that makes up the line. Words are represented by `Block` objects of type WORD.
+
+Use the MaxResults parameter to limit the number of blocks that are returned. If there are more results than specified in `MaxResults`, the value of `NextToken` in the operation response contains a pagination token for getting the next set of results. To get the next page of results, call `GetDocumentTextDetection`, and populate the `NextToken` request parameter with the token value that's returned from the previous call to `GetDocumentTextDetection`.
+
+For more information, see [Document Text Detection](https://docs.aws.amazon.com/textract/latest/dg/how-it-works-detecting.html).>
+
+  take x-amz-target
+    like native-string
+  take get-document-text-detection-request, like get-document-text-detection-request
+
+  line </#X-Amz-Target=Textract.GetDocumentTextDetection>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-document-text-detection-request
+
+  loot 200
+    seed json, like get-document-text-detection-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like provisioned-throughput-exceeded-exception
+    note <ProvisionedThroughputExceededException>
+  loot 483
+    seed json, like invalid-job-id-exception
+    note <InvalidJobIdException>
+  loot 484
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 485
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 486
+    seed json, like invalid-s3-object-exception
+    note <InvalidS3ObjectException>
+  loot 487
+    seed json, like invalid-kms-key-exception
+    note <InvalidKMSKeyException>

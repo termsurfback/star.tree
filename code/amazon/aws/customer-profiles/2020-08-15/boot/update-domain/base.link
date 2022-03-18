@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/update-domain-body
+  take form update-domain-body
+
+load @drumwork/snow/amazonaws.com/customer-profiles/2020-08-15/base/update-domain-response
+  take form update-domain-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-domain, name <UpdateDomain>
+  note <Updates the properties of a domain, including creating or selecting a dead letter queue or an encryption key.
+
+After a domain is created, the name can’t be changed.
+
+Use this API or [CreateDomain](https://docs.aws.amazon.com/customerprofiles/latest/APIReference/API_CreateDomain.html) to enable [identity resolution](https://docs.aws.amazon.com/customerprofiles/latest/APIReference/API_GetMatches.html): set `Matching` to true.>
+
+  take domain-name
+    like native-string
+    note <The unique name of the domain.>
+  take update-domain-body, like update-domain-body
+
+  line </domains/{domain-name}>
+
+  seed json, loan update-domain-body
+
+  loot 200
+    seed json, like update-domain-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like internal-server-exception
+    note <InternalServerException>

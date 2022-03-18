@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/lambda/2014-11-11/base/get-function-response
+  take form get-function-response
+
+load @drumwork/snow/amazonaws.com/lambda/2014-11-11/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2014-11-11/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-function, name <GetFunction>
+  note <Returns the configuration information of the Lambda function and a presigned URL link to the .zip file you uploaded with UploadFunction so you can download the .zip file. Note that the URL is valid for up to 10 minutes. The configuration information is the same information you provided as parameters when uploading the function.
+
+This operation requires permission for the `lambda:GetFunction` action.>
+
+  take function-name
+    like native-string
+    note <The Lambda function name.>
+
+  line </2014-11-13/functions/{function-name}>
+
+  loot 200
+    seed json, like get-function-response
+    note <Success>
+  loot 404
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 500
+    seed json, like service-exception
+    note <ServiceException>

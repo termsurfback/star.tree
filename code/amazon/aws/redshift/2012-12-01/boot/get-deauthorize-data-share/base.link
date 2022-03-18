@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/data-share
+  take form data-share
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-data-share-fault
+  take form invalid-data-share-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-deauthorize-data-share, name <GET_DeauthorizeDataShare>
+  note <From the producer account, removes authorization from the specified datashare.>
+
+  take data-share-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the datashare to remove authorization from.>
+  take consumer-identifier
+    like native-string
+    note <The identifier of the data consumer that is to have authorization removed from the datashare. This identifier is an AWS account ID.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeauthorizeDataShare>
+
+  find <DataShareArn>, loan data-share-arn
+  find <ConsumerIdentifier>, loan consumer-identifier
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like data-share
+    note <Success>
+  loot 480
+    seed xml, like invalid-data-share-fault
+    note <InvalidDataShareFault>

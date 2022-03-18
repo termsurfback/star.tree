@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-layer-version, name <DeleteLayerVersion>
+  note <Deletes a version of an [Lambda layer](https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html). Deleted versions can no longer be viewed or added to functions. To avoid breaking functions, a copy of the version remains in Lambda until no functions refer to it.>
+
+  take layer-name
+    like native-string
+    note <The name or Amazon Resource Name (ARN) of the layer.>
+  take version-number
+    like native-integer
+    note <The version number.>
+
+  line </2018-10-31/layers/{layer-name}/versions/{version-number}>
+
+  loot 204
+    note <Success>
+  loot 480
+    seed json, like service-exception
+    note <ServiceException>
+  loot 481
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>

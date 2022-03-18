@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/resource-data-sync-conflict-exception
+  take form resource-data-sync-conflict-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/resource-data-sync-invalid-configuration-exception
+  take form resource-data-sync-invalid-configuration-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/resource-data-sync-not-found-exception
+  take form resource-data-sync-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/update-resource-data-sync-result
+  take form update-resource-data-sync-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-resource-data-sync, name <UpdateResourceDataSync>
+  note <Update a resource data sync. After you create a resource data sync for a Region, you can't change the account options for that sync. For example, if you create a sync in the us-east-2 (Ohio) Region and you choose the `Include only the current account` option, you can't edit that sync later and choose the `Include all accounts from my Organizations configuration` option. Instead, you must delete the first resource data sync, and create a new one.
+
+This API operation only supports a resource data sync that was created with a SyncFromSource `SyncType`.>
+
+  take x-amz-target
+    like native-string
+  take update-resource-data-sync-request, like update-resource-data-sync-request
+
+  line </#X-Amz-Target=AmazonSSM.UpdateResourceDataSync>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-resource-data-sync-request
+
+  loot 200
+    seed json, like update-resource-data-sync-result
+    note <Success>
+  loot 480
+    seed json, like resource-data-sync-not-found-exception
+    note <ResourceDataSyncNotFoundException>
+  loot 481
+    seed json, like resource-data-sync-invalid-configuration-exception
+    note <ResourceDataSyncInvalidConfigurationException>
+  loot 482
+    seed json, like resource-data-sync-conflict-exception
+    note <ResourceDataSyncConflictException>
+  loot 483
+    seed json, like internal-server-error
+    note <InternalServerError>

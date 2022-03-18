@@ -1,0 +1,56 @@
+
+load @drumwork/snow/amazonaws.com/cognito-sync/2014-06-30/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/cognito-sync/2014-06-30/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/cognito-sync/2014-06-30/base/list-identity-pool-usage-response
+  take form list-identity-pool-usage-response
+
+load @drumwork/snow/amazonaws.com/cognito-sync/2014-06-30/base/not-authorized-exception
+  take form not-authorized-exception
+
+load @drumwork/snow/amazonaws.com/cognito-sync/2014-06-30/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-identity-pool-usage, name <ListIdentityPoolUsage>
+  note <Gets a list of identity pools registered with Cognito.
+
+ListIdentityPoolUsage can only be called with developer credentials. You cannot make this API call with the temporary user credentials provided by Cognito Identity.>
+
+  take next-token
+    like native-string
+    note <A pagination token for obtaining the next page of results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to be returned.>
+    void take
+
+  line </identitypools>
+
+  find <nextToken>, loan next-token
+  find <maxResults>, loan max-results
+
+  loot 200
+    seed json, like list-identity-pool-usage-response
+    note <Success>
+  loot 480
+    seed json, like not-authorized-exception
+    note <NotAuthorizedException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like internal-error-exception
+    note <InternalErrorException>
+  loot 483
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>

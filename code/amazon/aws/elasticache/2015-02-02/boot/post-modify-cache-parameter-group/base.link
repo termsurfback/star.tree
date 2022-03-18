@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-parameter-group-name-message
+  take form cache-parameter-group-name-message
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-parameter-group-not-found-fault
+  take form cache-parameter-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-cache-parameter-group-state-fault
+  take form invalid-cache-parameter-group-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-global-replication-group-state-fault
+  take form invalid-global-replication-group-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-modify-cache-parameter-group, name <POST_ModifyCacheParameterGroup>
+  note <Modifies the parameters of a cache parameter group. You can modify up to 20 parameters in a single request by submitting a list parameter name and value pairs.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take modify-cache-parameter-group-message, like modify-cache-parameter-group-message
+    void take
+
+  line </#Action=ModifyCacheParameterGroup>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan modify-cache-parameter-group-message
+
+  loot 200
+    seed xml, like cache-parameter-group-name-message
+    note <Success>
+  loot 480
+    seed xml, like cache-parameter-group-not-found-fault
+    note <CacheParameterGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-cache-parameter-group-state-fault
+    note <InvalidCacheParameterGroupStateFault>
+  loot 482
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>
+  loot 484
+    seed xml, like invalid-global-replication-group-state-fault
+    note <InvalidGlobalReplicationGroupStateFault>

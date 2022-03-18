@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/limit-exceeded-fault
+  take form limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/set-instance-protection-answer
+  take form set-instance-protection-answer
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/xml-string-max-len19
+  take form xml-string-max-len19
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-set-instance-protection, name <GET_SetInstanceProtection>
+  note <Updates the instance protection settings of the specified instances. This operation cannot be called on instances in a warm pool.
+
+For more information about preventing instances that are part of an Auto Scaling group from terminating on scale in, see [Instance scale-in protection](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-instance-termination.html#instance-protection) in the _Amazon EC2 Auto Scaling User Guide_.
+
+If you exceed your maximum limit of instance IDs, which is 50 per Auto Scaling group, the call fails.>
+
+  take instance-ids
+    like list
+      like xml-string-max-len19
+    note <One or more instance IDs. You can specify up to 50 instances.>
+  take auto-scaling-group-name
+    like native-string
+    note <The name of the Auto Scaling group.>
+  take protected-from-scale-in
+    like native-boolean
+    note <Indicates whether the instance is protected from termination by Amazon EC2 Auto Scaling when scaling in.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=SetInstanceProtection>
+
+  find <InstanceIds>, loan instance-ids
+  find <AutoScalingGroupName>, loan auto-scaling-group-name
+  find <ProtectedFromScaleIn>, loan protected-from-scale-in
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like set-instance-protection-answer
+    note <Success>
+  loot 480
+    seed xml, like limit-exceeded-fault
+    note <LimitExceededFault>
+  loot 481
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

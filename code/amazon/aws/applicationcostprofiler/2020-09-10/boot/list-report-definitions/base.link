@@ -1,0 +1,56 @@
+
+load @drumwork/snow/amazonaws.com/applicationcostprofiler/2020-09-10/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/applicationcostprofiler/2020-09-10/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/applicationcostprofiler/2020-09-10/base/list-report-definitions-result
+  take form list-report-definitions-result
+
+load @drumwork/snow/amazonaws.com/applicationcostprofiler/2020-09-10/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/applicationcostprofiler/2020-09-10/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-report-definitions, name <ListReportDefinitions>
+  note <Retrieves a list of all reports and their configurations for your AWS account.
+
+The maximum number of reports is one.>
+
+  take next-token
+    like native-string
+    note <The token value from a previous call to access the next page of results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return.>
+    void take
+
+  line </reportDefinition>
+
+  find <nextToken>, loan next-token
+  find <maxResults>, loan max-results
+
+  loot 200
+    seed json, like list-report-definitions-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

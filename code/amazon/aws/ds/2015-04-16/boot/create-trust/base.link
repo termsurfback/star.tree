@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/create-trust-result
+  take form create-trust-result
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/entity-already-exists-exception
+  take form entity-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/entity-does-not-exist-exception
+  take form entity-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/unsupported-operation-exception
+  take form unsupported-operation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-trust, name <CreateTrust>
+  note <Directory Service for Microsoft Active Directory allows you to configure trust relationships. For example, you can establish a trust between your Managed Microsoft AD directory, and your existing self-managed Microsoft Active Directory. This would allow you to provide users and groups access to resources in either domain, with a single set of credentials.
+
+This action initiates the creation of the Amazon Web Services side of a trust relationship between an Managed Microsoft AD directory and an external domain. You can create either a forest trust or an external trust.>
+
+  take x-amz-target
+    like native-string
+  take create-trust-request, like create-trust-request
+
+  line </#X-Amz-Target=DirectoryService_20150416.CreateTrust>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-trust-request
+
+  loot 200
+    seed json, like create-trust-result
+    note <Success>
+  loot 480
+    seed json, like entity-already-exists-exception
+    note <EntityAlreadyExistsException>
+  loot 481
+    seed json, like entity-does-not-exist-exception
+    note <EntityDoesNotExistException>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 483
+    seed json, like client-exception
+    note <ClientException>
+  loot 484
+    seed json, like service-exception
+    note <ServiceException>
+  loot 485
+    seed json, like unsupported-operation-exception
+    note <UnsupportedOperationException>

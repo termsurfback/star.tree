@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/create-members-body
+  take form create-members-body
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/create-members-response
+  take form create-members-response
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/service-quota-exceeded-exception
+  take form service-quota-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/validation-exception
+  take form validation-exception
+
+boot create-members, name <CreateMembers>
+  note <Sends a request to invite the specified AWS accounts to be member accounts in the behavior graph. This operation can only be called by the administrator account for a behavior graph.
+
+`CreateMembers` verifies the accounts and then invites the verified accounts. The administrator can optionally specify to not send invitation emails to the member accounts. This would be used when the administrator manages their member accounts centrally.
+
+The request provides the behavior graph ARN and the list of accounts to invite.
+
+The response separates the requested accounts into two lists:
+
+- The accounts that `CreateMembers` was able to start the verification for. This list includes member accounts that are being verified, that have passed verification and are to be invited, and that have failed verification.
+
+- The accounts that `CreateMembers` was unable to process. This list includes accounts that were already invited to be member accounts in the behavior graph.>
+
+  take create-members-body, like create-members-body
+
+  line </graph/members>
+
+  seed json, loan create-members-body
+
+  loot 200
+    seed json, like create-members-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like service-quota-exceeded-exception
+    note <ServiceQuotaExceededException>

@@ -1,0 +1,67 @@
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/destination-not-allowed-exception
+  take form destination-not-allowed-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/outbound-contact-not-permitted-exception
+  take form outbound-contact-not-permitted-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/start-outbound-voice-contact-body
+  take form start-outbound-voice-contact-body
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/start-outbound-voice-contact-response
+  take form start-outbound-voice-contact-response
+
+boot start-outbound-voice-contact, name <StartOutboundVoiceContact>
+  note <Places an outbound call to a contact, and then initiates the contact flow. It performs the actions in the contact flow that's specified (in `ContactFlowId`).
+
+Agents do not initiate the outbound API, which means that they do not dial the contact. If the contact flow places an outbound call to a contact, and then puts the contact in queue, the call is then routed to the agent, like any other inbound case.
+
+There is a 60-second dialing timeout for this operation. If the call is not connected after 60 seconds, it fails.
+
+UK numbers with a 447 prefix are not allowed by default. Before you can dial these UK mobile numbers, you must submit a service quota increase request. For more information, see [Amazon Connect Service Quotas](https://docs.aws.amazon.com/connect/latest/adminguide/amazon-connect-service-limits.html) in the _Amazon Connect Administrator Guide_.>
+
+  take start-outbound-voice-contact-body, like start-outbound-voice-contact-body
+
+  line </contact/outbound-voice>
+
+  seed json, loan start-outbound-voice-contact-body
+
+  loot 200
+    seed json, like start-outbound-voice-contact-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 484
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 485
+    seed json, like destination-not-allowed-exception
+    note <DestinationNotAllowedException>
+  loot 486
+    seed json, like outbound-contact-not-permitted-exception
+    note <OutboundContactNotPermittedException>

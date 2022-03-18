@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-schedule-fault
+  take form invalid-schedule-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-scheduled-action-fault
+  take form invalid-scheduled-action-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/scheduled-action
+  take form scheduled-action
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/scheduled-action-already-exists-fault
+  take form scheduled-action-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/scheduled-action-quota-exceeded-fault
+  take form scheduled-action-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/scheduled-action-type-unsupported-fault
+  take form scheduled-action-type-unsupported-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unauthorized-operation
+  take form unauthorized-operation
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-scheduled-action, name <POST_CreateScheduledAction>
+  note <Creates a scheduled action. A scheduled action contains a schedule and an Amazon Redshift API action. For example, you can create a schedule of when to run the `ResizeCluster` API operation.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-scheduled-action-message, like create-scheduled-action-message
+    void take
+
+  line </#Action=CreateScheduledAction>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-scheduled-action-message
+
+  loot 200
+    seed xml, like scheduled-action
+    note <Success>
+  loot 480
+    seed xml, like scheduled-action-already-exists-fault
+    note <ScheduledActionAlreadyExistsFault>
+  loot 481
+    seed xml, like scheduled-action-quota-exceeded-fault
+    note <ScheduledActionQuotaExceededFault>
+  loot 482
+    seed xml, like scheduled-action-type-unsupported-fault
+    note <ScheduledActionTypeUnsupportedFault>
+  loot 483
+    seed xml, like invalid-schedule-fault
+    note <InvalidScheduleFault>
+  loot 484
+    seed xml, like invalid-scheduled-action-fault
+    note <InvalidScheduledActionFault>
+  loot 485
+    seed xml, like unauthorized-operation
+    note <UnauthorizedOperation>

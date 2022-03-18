@@ -1,0 +1,26 @@
+
+load @drumwork/snow/amazonaws.com/network-firewall/2020-11-12/base/configuration-sync-state
+  take form configuration-sync-state
+
+load @drumwork/snow/amazonaws.com/network-firewall/2020-11-12/base/firewall-status-value
+  take form firewall-status-value
+
+load @drumwork/snow/amazonaws.com/network-firewall/2020-11-12/base/sync-states
+  take form sync-states
+
+form firewall-status, name <FirewallStatus>
+  note <Detailed information about the current status of a Firewall. You can retrieve this for a firewall by calling DescribeFirewall and providing the firewall name and ARN.>
+  take status, name <Status>
+    like firewall-status-value
+    note <The readiness of the configured firewall to handle network traffic across all of the Availability Zones where you've configured it. This setting is `READY` only when the `ConfigurationSyncStateSummary` value is `IN_SYNC` and the `Attachment` `Status` values for all of the configured subnets are `READY`.>
+  take configuration-sync-state-summary, name <ConfigurationSyncStateSummary>
+    like configuration-sync-state
+    note <The configuration sync state for the firewall. This summarizes the sync states reported in the `Config` settings for all of the Availability Zones where you have configured the firewall.
+
+When you create a firewall or update its configuration, for example by adding a rule group to its firewall policy, Network Firewall distributes the configuration changes to all zones where the firewall is in use. This summary indicates whether the configuration changes have been applied everywhere.
+
+This status must be `IN_SYNC` for the firewall to be ready for use, but it doesn't indicate that the firewall is ready. The `Status` setting indicates firewall readiness.>
+  take sync-states, name <SyncStates>
+    like sync-states
+    void take
+    note <The subnets that you've configured for use by the Network Firewall firewall. This contains one array element per Availability Zone where you've configured a subnet. These objects provide details of the information that is summarized in the `ConfigurationSyncStateSummary` and `Status`, broken down by zone and configuration object.>

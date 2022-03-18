@@ -1,0 +1,67 @@
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/precondition-failed-exception
+  take form precondition-failed-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2015-03-31/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot remove-permission, name <RemovePermission>
+  note <Revokes function-use permission from an Amazon Web Services service or another account. You can get the ID of the statement from the output of GetPolicy.>
+
+  take function-name
+    like native-string
+    note <The name of the Lambda function, version, or alias.
+
+**Name formats** - **Function name** - `my-function` (name-only), `my-function:v1` (with alias).
+
+- **Function ARN** - `arn:aws:lambda:us-west-2:123456789012:function:my-function`.
+
+- **Partial ARN** - `123456789012:function:my-function`.
+
+You can append a version number or alias to any of the formats. The length constraint applies only to the full ARN. If you specify only the function name, it is limited to 64 characters in length.>
+  take statement-id
+    like native-string
+    note <Statement ID of the permission to remove.>
+  take qualifier
+    like native-string
+    note <Specify a version or alias to remove permissions from a published version of the function.>
+    void take
+  take revision-id
+    like native-string
+    note <Only update the policy if the revision ID matches the ID that's specified. Use this option to avoid modifying a policy that has changed since you last read it.>
+    void take
+
+  line </2015-03-31/functions/{function-name}/policy/{statement-id}>
+
+  find <Qualifier>, loan qualifier
+  find <RevisionId>, loan revision-id
+
+  loot 204
+    note <Success>
+  loot 480
+    seed json, like service-exception
+    note <ServiceException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 484
+    seed json, like precondition-failed-exception
+    note <PreconditionFailedException>

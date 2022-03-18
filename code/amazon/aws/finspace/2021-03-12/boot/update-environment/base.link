@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/finspace/2021-03-12/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/finspace/2021-03-12/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/finspace/2021-03-12/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/finspace/2021-03-12/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/finspace/2021-03-12/base/update-environment-body
+  take form update-environment-body
+
+load @drumwork/snow/amazonaws.com/finspace/2021-03-12/base/update-environment-response
+  take form update-environment-response
+
+load @drumwork/snow/amazonaws.com/finspace/2021-03-12/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-environment, name <UpdateEnvironment>
+  note <Update your FinSpace environment.>
+
+  take environment-id
+    like native-string
+    note <The identifier of the FinSpace environment.>
+  take update-environment-body, like update-environment-body
+
+  line </environment/{environment-id}>
+
+  seed json, loan update-environment-body
+
+  loot 200
+    seed json, like update-environment-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like validation-exception
+    note <ValidationException>

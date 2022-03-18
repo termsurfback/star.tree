@@ -1,0 +1,29 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/spanner/v1/base/backup
+  take form backup
+
+boot spanner-projects-instances-backups-patch, name <spanner.projects.instances.backups.patch>
+  note <Updates a pending or completed Backup.>
+
+  take name
+    like native-string
+    note <Output only for the CreateBackup operation. Required for the UpdateBackup operation. A globally unique identifier for the backup which cannot be changed. Values are of the form `projects//instances//backups/a-z*[a-z0-9]` The final segment of the name must be between 2 and 60 characters in length. The backup is stored in the location(s) specified in the instance configuration of the instance containing the backup, identified by the prefix of the backup name of the form `projects//instances/`.>
+  take update-mask
+    like native-string
+    note <Required. A mask specifying which fields (e.g. `expire_time`) in the Backup resource should be updated. This mask is relative to the Backup resource, not to the request message. The field mask must always be specified; this prevents any future fields from being erased accidentally by clients that do not know about them.>
+    void take
+  take backup, like backup
+    void take
+
+  line </v1/{name}>
+
+  find <updateMask>, loan update-mask
+
+  seed json, loan backup
+
+  loot 200
+    seed json, like backup
+    note <Successful response>

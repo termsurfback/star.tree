@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/delete-product-output
+  take form delete-product-output
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/invalid-parameters-exception
+  take form invalid-parameters-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/tag-option-not-migrated-exception
+  take form tag-option-not-migrated-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-product, name <DeleteProduct>
+  note <Deletes the specified product.
+
+You cannot delete a product if it was shared with you or is associated with a portfolio.
+
+A delegated admin is authorized to invoke this command.>
+
+  take x-amz-target
+    like native-string
+  take delete-product-input, like delete-product-input
+
+  line </#X-Amz-Target=AWS242ServiceCatalogService.DeleteProduct>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-product-input
+
+  loot 200
+    seed json, like delete-product-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>
+  loot 482
+    seed json, like invalid-parameters-exception
+    note <InvalidParametersException>
+  loot 483
+    seed json, like tag-option-not-migrated-exception
+    note <TagOptionNotMigratedException>

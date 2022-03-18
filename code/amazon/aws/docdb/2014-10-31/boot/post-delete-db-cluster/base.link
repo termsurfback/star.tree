@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-cluster-snapshot-already-exists-fault
+  take form db-cluster-snapshot-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/delete-db-cluster-result
+  take form delete-db-cluster-result
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/invalid-db-cluster-snapshot-state-fault
+  take form invalid-db-cluster-snapshot-state-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/snapshot-quota-exceeded-fault
+  take form snapshot-quota-exceeded-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-db-cluster, name <POST_DeleteDBCluster>
+  note <Deletes a previously provisioned cluster. When you delete a cluster, all automated backups for that cluster are deleted and can't be recovered. Manual DB cluster snapshots of the specified cluster are not deleted.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-db-cluster-message, like delete-db-cluster-message
+    void take
+
+  line </#Action=DeleteDBCluster>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-db-cluster-message
+
+  loot 200
+    seed xml, like delete-db-cluster-result
+    note <Success>
+  loot 480
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>
+  loot 481
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>
+  loot 482
+    seed xml, like db-cluster-snapshot-already-exists-fault
+    note <DBClusterSnapshotAlreadyExistsFault>
+  loot 483
+    seed xml, like snapshot-quota-exceeded-fault
+    note <SnapshotQuotaExceededFault>
+  loot 484
+    seed xml, like invalid-db-cluster-snapshot-state-fault
+    note <InvalidDBClusterSnapshotStateFault>

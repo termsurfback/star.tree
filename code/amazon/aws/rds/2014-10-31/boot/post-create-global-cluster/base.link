@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/create-global-cluster-result
+  take form create-global-cluster-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/global-cluster-already-exists-fault
+  take form global-cluster-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/global-cluster-quota-exceeded-fault
+  take form global-cluster-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-global-cluster, name <POST_CreateGlobalCluster>
+  note <Creates an Aurora global database spread across multiple Amazon Web Services Regions. The global database contains a single primary cluster with read-write capability, and a read-only secondary cluster that receives data from the primary cluster through high-speed replication performed by the Aurora storage subsystem.
+
+You can create a global database that is initially empty, and then add a primary cluster and a secondary cluster to it. Or you can specify an existing Aurora cluster during the create operation, and this cluster becomes the primary cluster of the global database.
+
+This action only applies to Aurora DB clusters.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-global-cluster-message, like create-global-cluster-message
+    void take
+
+  line </#Action=CreateGlobalCluster>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-global-cluster-message
+
+  loot 200
+    seed xml, like create-global-cluster-result
+    note <Success>
+  loot 480
+    seed xml, like global-cluster-already-exists-fault
+    note <GlobalClusterAlreadyExistsFault>
+  loot 481
+    seed xml, like global-cluster-quota-exceeded-fault
+    note <GlobalClusterQuotaExceededFault>
+  loot 482
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>
+  loot 483
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>

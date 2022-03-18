@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/association-does-not-exist
+  take form association-does-not-exist
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-association
+  take form invalid-association
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/start-associations-once-result
+  take form start-associations-once-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-associations-once, name <StartAssociationsOnce>
+  note <Runs an association immediately and only one time. This operation can be helpful when troubleshooting associations.>
+
+  take x-amz-target
+    like native-string
+  take start-associations-once-request, like start-associations-once-request
+
+  line </#X-Amz-Target=AmazonSSM.StartAssociationsOnce>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan start-associations-once-request
+
+  loot 200
+    seed json, like start-associations-once-result
+    note <Success>
+  loot 480
+    seed json, like invalid-association
+    note <InvalidAssociation>
+  loot 481
+    seed json, like association-does-not-exist
+    note <AssociationDoesNotExist>

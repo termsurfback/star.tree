@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/describe-services-response
+  take form describe-services-response
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-services, name <DescribeServices>
+  note <Returns the current list of AWS services and a list of service categories for each service. You then use service names and categories in your CreateCase requests. Each AWS service has its own set of categories.
+
+The service codes and category codes correspond to the values that appear in the **Service** and **Category** lists on the AWS Support Center [Create Case](https://console.aws.amazon.com/support/home#/case/create) page. The values in those fields don't necessarily match the service codes and categories returned by the `DescribeServices` operation. Always use the service codes and categories that the `DescribeServices` operation returns, so that you have the most recent set of service and category codes.
+
+- You must have a Business or Enterprise Support plan to use the AWS Support API.
+
+- If you call the AWS Support API from an account that does not have a Business or Enterprise Support plan, the `SubscriptionRequiredException` error message appears. For information about changing your support plan, see [AWS Support](http://aws.amazon.com/premiumsupport/).>
+
+  take x-amz-target
+    like native-string
+  take describe-services-request, like describe-services-request
+
+  line </#X-Amz-Target=AWSSupport_20130415.DescribeServices>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-services-request
+
+  loot 200
+    seed json, like describe-services-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>

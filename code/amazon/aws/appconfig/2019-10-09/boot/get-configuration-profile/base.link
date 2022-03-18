@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/configuration-profile
+  take form configuration-profile
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-configuration-profile, name <GetConfigurationProfile>
+  note <Retrieve information about a configuration profile.>
+
+  take application-id
+    like native-string
+    note <The ID of the application that includes the configuration profile you want to get.>
+  take configuration-profile-id
+    like native-string
+    note <The ID of the configuration profile you want to get.>
+
+  line </applications/{application-id}/configurationprofiles/{configuration-profile-id}>
+
+  loot 200
+    seed json, like configuration-profile
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like bad-request-exception
+    note <BadRequestException>

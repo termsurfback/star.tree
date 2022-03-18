@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/describe-nodegroup-response
+  take form describe-nodegroup-response
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-nodegroup, name <DescribeNodegroup>
+  note <Returns descriptive information about an Amazon EKS node group.>
+
+  take name
+    like native-string
+    note <The name of the Amazon EKS cluster associated with the node group.>
+  take nodegroup-name
+    like native-string
+    note <The name of the node group to describe.>
+
+  line </clusters/{name}/node-groups/{nodegroup-name}>
+
+  loot 200
+    seed json, like describe-nodegroup-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like client-exception
+    note <ClientException>
+  loot 483
+    seed json, like server-exception
+    note <ServerException>
+  loot 484
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

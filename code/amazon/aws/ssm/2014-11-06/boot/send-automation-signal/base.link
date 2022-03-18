@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/automation-execution-not-found-exception
+  take form automation-execution-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/automation-step-not-found-exception
+  take form automation-step-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-automation-signal-exception
+  take form invalid-automation-signal-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/send-automation-signal-result
+  take form send-automation-signal-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot send-automation-signal, name <SendAutomationSignal>
+  note <Sends a signal to an Automation execution to change the current behavior or status of the execution.>
+
+  take x-amz-target
+    like native-string
+  take send-automation-signal-request, like send-automation-signal-request
+
+  line </#X-Amz-Target=AmazonSSM.SendAutomationSignal>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan send-automation-signal-request
+
+  loot 200
+    seed json, like send-automation-signal-result
+    note <Success>
+  loot 480
+    seed json, like automation-execution-not-found-exception
+    note <AutomationExecutionNotFoundException>
+  loot 481
+    seed json, like automation-step-not-found-exception
+    note <AutomationStepNotFoundException>
+  loot 482
+    seed json, like invalid-automation-signal-exception
+    note <InvalidAutomationSignalException>
+  loot 483
+    seed json, like internal-server-error
+    note <InternalServerError>

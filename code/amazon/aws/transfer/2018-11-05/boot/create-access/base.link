@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/create-access-response
+  take form create-access-response
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/resource-exists-exception
+  take form resource-exists-exception
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/transfer/2018-11-05/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-access, name <CreateAccess>
+  note <Used by administrators to choose which groups in the directory should have access to upload and download files over the enabled protocols using Amazon Web Services Transfer Family. For example, a Microsoft Active Directory might contain 50,000 users, but only a small fraction might need the ability to transfer files to the server. An administrator can use `CreateAccess` to limit the access to the correct set of users who need this ability.>
+
+  take x-amz-target
+    like native-string
+  take create-access-request, like create-access-request
+
+  line </#X-Amz-Target=TransferService.CreateAccess>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-access-request
+
+  loot 200
+    seed json, like create-access-response
+    note <Success>
+  loot 480
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 481
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 482
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 483
+    seed json, like resource-exists-exception
+    note <ResourceExistsException>
+  loot 484
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

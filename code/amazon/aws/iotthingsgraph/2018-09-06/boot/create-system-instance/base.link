@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/create-system-instance-response
+  take form create-system-instance-response
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/resource-already-exists-exception
+  take form resource-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-system-instance, name <CreateSystemInstance>
+  note <Creates a system instance.
+
+This action validates the system instance, prepares the deployment-related resources. For Greengrass deployments, it updates the Greengrass group that is specified by the `greengrassGroupName` parameter. It also adds a file to the S3 bucket specified by the `s3BucketName` parameter. You need to call `DeploySystemInstance` after running this action.
+
+For Greengrass deployments, since this action modifies and adds resources to a Greengrass group and an S3 bucket on the caller's behalf, the calling identity must have write permissions to both the specified Greengrass group and S3 bucket. Otherwise, the call will fail with an authorization error.
+
+For cloud deployments, this action requires a `flowActionsRoleArn` value. This is an IAM role that has permissions to access AWS services, such as AWS Lambda and AWS IoT, that the flow uses when it executes.
+
+If the definition document doesn't specify a version of the user's namespace, the latest version will be used by default.>
+
+  take x-amz-target
+    like native-string
+  take create-system-instance-request, like create-system-instance-request
+
+  line </#X-Amz-Target=IotThingsGraphFrontEndService.CreateSystemInstance>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-system-instance-request
+
+  loot 200
+    seed json, like create-system-instance-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like resource-already-exists-exception
+    note <ResourceAlreadyExistsException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 484
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>

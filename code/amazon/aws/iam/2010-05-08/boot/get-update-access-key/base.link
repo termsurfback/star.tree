@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-update-access-key, name <GET_UpdateAccessKey>
+  note <Changes the status of the specified access key from Active to Inactive, or vice versa. This operation can be used to disable a user's key as part of a key rotation workflow.
+
+If the `UserName` is not specified, the user name is determined implicitly based on the Amazon Web Services access key ID used to sign the request. This operation works for access keys under the account. Consequently, you can use this operation to manage account root user credentials even if the account has no associated users.
+
+For information about rotating keys, see [Managing keys and certificates](https://docs.aws.amazon.com/IAM/latest/UserGuide/ManagingCredentials.html) in the _IAM User Guide_.>
+
+  take user-name
+    like native-string
+    note <The name of the user whose key you want to update.
+
+This parameter allows (through its [regex pattern](http://wikipedia.org/wiki/regex)) a string of characters consisting of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: _+=,.@->
+    void take
+  take access-key-id
+    like native-string
+    note <The access key ID of the secret access key you want to update.
+
+This parameter allows (through its [regex pattern](http://wikipedia.org/wiki/regex)) a string of characters that can consist of any upper or lowercased letter or digit.>
+  take status
+    like native-string
+    note <The status you want to assign to the secret access key. `Active` means that the key can be used for programmatic calls to Amazon Web Services, while `Inactive` means that the key cannot be used.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=UpdateAccessKey>
+
+  find <UserName>, loan user-name
+  find <AccessKeyId>, loan access-key-id
+  find <Status>, loan status
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/join-domain-output
+  take form join-domain-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot join-domain, name <JoinDomain>
+  note <Adds a file gateway to an Active Directory domain. This operation is only supported for file gateways that support the SMB file protocol.>
+
+  take x-amz-target
+    like native-string
+  take join-domain-input, like join-domain-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.JoinDomain>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan join-domain-input
+
+  loot 200
+    seed json, like join-domain-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

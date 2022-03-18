@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/invalid-arn-exception
+  take form invalid-arn-exception
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/invalid-state-exception
+  take form invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/lockout-prevented-exception
+  take form lockout-prevented-exception
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/request-failed-exception
+  take form request-failed-exception
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-policy, name <DeletePolicy>
+  note <Deletes the resource-based policy attached to a private CA. Deletion will remove any access that the policy has granted. If there is no policy attached to the private CA, this action will return successful.
+
+If you delete a policy that was applied through AWS Resource Access Manager (RAM), the CA will be removed from all shares in which it was included.
+
+The AWS Certificate Manager Service Linked Role that the policy supports is not affected when you delete the policy.
+
+The current policy can be shown with [GetPolicy](https://docs.aws.amazon.com/acm-pca/latest/APIReference/API_GetPolicy.html) and updated with [PutPolicy](https://docs.aws.amazon.com/acm-pca/latest/APIReference/API_PutPolicy.html).
+
+**About Policies** - A policy grants access on a private CA to an AWS customer account, to AWS Organizations, or to an AWS Organizations unit. Policies are under the control of a CA administrator. For more information, see [Using a Resource Based Policy with ACM Private CA](https://docs.aws.amazon.com/acm-pca/latest/userguide/pca-rbp.html).
+
+- A policy permits a user of AWS Certificate Manager (ACM) to issue ACM certificates signed by a CA in another account.
+
+- For ACM to manage automatic renewal of these certificates, the ACM user must configure a Service Linked Role (SLR). The SLR allows the ACM service to assume the identity of the user, subject to confirmation against the ACM Private CA policy. For more information, see [Using a Service Linked Role with ACM](https://docs.aws.amazon.com/acm/latest/userguide/acm-slr.html).
+
+- Updates made in AWS Resource Manager (RAM) are reflected in policies. For more information, see [Attach a Policy for Cross-Account Access](https://docs.aws.amazon.com/acm-pca/latest/userguide/pca-ram.html).>
+
+  take x-amz-target
+    like native-string
+  take delete-policy-request, like delete-policy-request
+
+  line </#X-Amz-Target=ACMPrivateCA.DeletePolicy>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-policy-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>
+  loot 481
+    seed json, like invalid-arn-exception
+    note <InvalidArnException>
+  loot 482
+    seed json, like invalid-state-exception
+    note <InvalidStateException>
+  loot 483
+    seed json, like lockout-prevented-exception
+    note <LockoutPreventedException>
+  loot 484
+    seed json, like request-failed-exception
+    note <RequestFailedException>
+  loot 485
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

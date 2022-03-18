@@ -1,0 +1,70 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-option-group-state-fault
+  take form invalid-option-group-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/modify-option-group-result
+  take form modify-option-group-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/option-configuration
+  take form option-configuration
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/option-group-not-found-fault
+  take form option-group-not-found-fault
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-modify-option-group, name <GET_ModifyOptionGroup>
+  note <Modifies an existing option group.>
+
+  take option-group-name
+    like native-string
+    note <The name of the option group to be modified.
+
+Permanent options, such as the TDE option for Oracle Advanced Security TDE, can't be removed from an option group, and that option group can't be removed from a DB instance once it is associated with a DB instance>
+  take options-to-include
+    like list
+      like option-configuration
+    note <Options in this list are added to the option group or, if already present, the specified configuration is used to update the existing configuration.>
+    void take
+  take options-to-remove
+    like list
+      like string
+    note <Options in this list are removed from the option group.>
+    void take
+  take apply-immediately
+    like native-boolean
+    note <A value that indicates whether to apply the change immediately or during the next maintenance window for each instance associated with the option group.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyOptionGroup>
+
+  find <OptionGroupName>, loan option-group-name
+  find <OptionsToInclude>, loan options-to-include
+  find <OptionsToRemove>, loan options-to-remove
+  find <ApplyImmediately>, loan apply-immediately
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-option-group-result
+    note <Success>
+  loot 480
+    seed xml, like invalid-option-group-state-fault
+    note <InvalidOptionGroupStateFault>
+  loot 481
+    seed xml, like option-group-not-found-fault
+    note <OptionGroupNotFoundFault>

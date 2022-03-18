@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-arn-exception
+  take form invalid-arn-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-marker-exception
+  take form invalid-marker-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-internal-exception
+  take form kms-internal-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/list-resource-tags-response
+  take form list-resource-tags-response
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-resource-tags, name <ListResourceTags>
+  note <Returns all tags on the specified KMS key.
+
+For general information about tags, including the format and syntax, see [Tagging Amazon Web Services resources](https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html) in the _Amazon Web Services General Reference_. For information about using tags in KMS, see [Tagging keys](https://docs.aws.amazon.com/kms/latest/developerguide/tagging-keys.html).
+
+**Cross-account use**: No. You cannot perform this operation on a KMS key in a different Amazon Web Services account.
+
+**Required permissions**: [kms:ListResourceTags](https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html) (key policy)
+
+**Related operations:** - CreateKey
+
+- ReplicateKey
+
+- TagResource
+
+- UntagResource>
+
+  take x-amz-target
+    like native-string
+  take list-resource-tags-request, like list-resource-tags-request
+
+  line </#X-Amz-Target=TrentService.ListResourceTags>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-resource-tags-request
+
+  loot 200
+    seed json, like list-resource-tags-response
+    note <Success>
+  loot 480
+    seed json, like kms-internal-exception
+    note <KMSInternalException>
+  loot 481
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 482
+    seed json, like invalid-arn-exception
+    note <InvalidArnException>
+  loot 483
+    seed json, like invalid-marker-exception
+    note <InvalidMarkerException>

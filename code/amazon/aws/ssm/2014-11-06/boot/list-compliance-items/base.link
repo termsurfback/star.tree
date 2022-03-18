@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-filter
+  take form invalid-filter
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-resource-id
+  take form invalid-resource-id
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-resource-type
+  take form invalid-resource-type
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/list-compliance-items-result
+  take form list-compliance-items-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-compliance-items, name <ListComplianceItems>
+  note <For a specified resource ID, this API operation returns a list of compliance statuses for different resource types. Currently, you can only specify one resource ID per call. List results depend on the criteria specified in the filter.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-compliance-items-request, like list-compliance-items-request
+
+  line </#X-Amz-Target=AmazonSSM.ListComplianceItems>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-compliance-items-request
+
+  loot 200
+    seed json, like list-compliance-items-result
+    note <Success>
+  loot 480
+    seed json, like invalid-resource-type
+    note <InvalidResourceType>
+  loot 481
+    seed json, like invalid-resource-id
+    note <InvalidResourceId>
+  loot 482
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 483
+    seed json, like invalid-filter
+    note <InvalidFilter>
+  loot 484
+    seed json, like invalid-next-token
+    note <InvalidNextToken>

@@ -1,0 +1,90 @@
+
+load @drumwork/snow/amazonaws.com/networkmanager/2019-07-05/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/networkmanager/2019-07-05/base/get-connections-response
+  take form get-connections-response
+
+load @drumwork/snow/amazonaws.com/networkmanager/2019-07-05/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/networkmanager/2019-07-05/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/networkmanager/2019-07-05/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/networkmanager/2019-07-05/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-connections, name <GetConnections>
+  note <Gets information about one or more of your connections in a global network.>
+
+  take global-network-id
+    like native-string
+    note <The ID of the global network.>
+  take connection-ids
+    like list
+      like string
+    note <One or more connection IDs.>
+    void take
+  take device-id
+    like native-string
+    note <The ID of the device.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next page of results.>
+    void take
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+
+  line </global-networks/{global-network-id}/connections>
+
+  find <connectionIds>, loan connection-ids
+  find <deviceId>, loan device-id
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like get-connections-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like internal-server-exception
+    note <InternalServerException>

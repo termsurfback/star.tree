@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/missing-parameter-value-exception
+  take form missing-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/update-recovery-point-lifecycle-body
+  take form update-recovery-point-lifecycle-body
+
+load @drumwork/snow/amazonaws.com/backup/2018-11-15/base/update-recovery-point-lifecycle-output
+  take form update-recovery-point-lifecycle-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-recovery-point-lifecycle, name <UpdateRecoveryPointLifecycle>
+  note <Sets the transition lifecycle of a recovery point.
+
+The lifecycle defines when a protected resource is transitioned to cold storage and when it expires. Backup transitions and expires backups automatically according to the lifecycle that you define.
+
+Backups transitioned to cold storage must be stored in cold storage for a minimum of 90 days. Therefore, the “expire after days” setting must be 90 days greater than the “transition to cold after days” setting. The “transition to cold after days” setting cannot be changed after a backup has been transitioned to cold.
+
+Only Amazon EFS file system backups can be transitioned to cold storage.
+
+Does not support continuous backups.>
+
+  take backup-vault-name
+    like native-string
+    note <The name of a logical container where backups are stored. Backup vaults are identified by names that are unique to the account used to create them and the Amazon Web Services Region where they are created. They consist of lowercase letters, numbers, and hyphens.>
+  take recovery-point-arn
+    like native-string
+    note <An Amazon Resource Name (ARN) that uniquely identifies a recovery point; for example, `arn:aws:backup:us-east-1:123456789012:recovery-point:1EB3B5E7-9EB0-435A-A80B-108B488B0D45`.>
+  take update-recovery-point-lifecycle-body, like update-recovery-point-lifecycle-body
+
+  line </backup-vaults/{backup-vault-name}/recovery-points/{recovery-point-arn}>
+
+  seed json, loan update-recovery-point-lifecycle-body
+
+  loot 200
+    seed json, like update-recovery-point-lifecycle-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed json, like missing-parameter-value-exception
+    note <MissingParameterValueException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

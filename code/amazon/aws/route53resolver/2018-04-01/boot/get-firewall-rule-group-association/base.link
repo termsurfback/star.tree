@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/get-firewall-rule-group-association-response
+  take form get-firewall-rule-group-association-response
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-firewall-rule-group-association, name <GetFirewallRuleGroupAssociation>
+  note <Retrieves a firewall rule group association, which enables DNS filtering for a VPC with one rule group. A VPC can have more than one firewall rule group association, and a rule group can be associated with more than one VPC.>
+
+  take x-amz-target
+    like native-string
+  take get-firewall-rule-group-association-request, like get-firewall-rule-group-association-request
+
+  line </#X-Amz-Target=Route53Resolver.GetFirewallRuleGroupAssociation>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-firewall-rule-group-association-request
+
+  loot 200
+    seed json, like get-firewall-rule-group-association-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>

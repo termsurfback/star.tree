@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/create-pipeline-output
+  take form create-pipeline-output
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-pipeline, name <CreatePipeline>
+  note <Creates a new, empty pipeline. Use PutPipelineDefinition to populate the pipeline.>
+
+  take x-amz-target
+    like native-string
+  take create-pipeline-input, like create-pipeline-input
+
+  line </#X-Amz-Target=DataPipeline.CreatePipeline>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-pipeline-input
+
+  loot 200
+    seed json, like create-pipeline-output
+    note <Success>
+  loot 480
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

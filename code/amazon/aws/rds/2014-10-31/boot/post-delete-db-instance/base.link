@@ -1,0 +1,75 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-instance-automated-backup-quota-exceeded-fault
+  take form db-instance-automated-backup-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-snapshot-already-exists-fault
+  take form db-snapshot-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/delete-db-instance-result
+  take form delete-db-instance-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-instance-state-fault
+  take form invalid-db-instance-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/snapshot-quota-exceeded-fault
+  take form snapshot-quota-exceeded-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-db-instance, name <POST_DeleteDBInstance>
+  note <The DeleteDBInstance action deletes a previously provisioned DB instance. When you delete a DB instance, all automated backups for that instance are deleted and can't be recovered. Manual DB snapshots of the DB instance to be deleted by `DeleteDBInstance` are not deleted.
+
+If you request a final DB snapshot the status of the Amazon RDS DB instance is `deleting` until the DB snapshot is created. The API action `DescribeDBInstance` is used to monitor the status of this operation. The action can't be canceled or reverted once submitted.
+
+When a DB instance is in a failure state and has a status of `failed`, `incompatible-restore`, or `incompatible-network`, you can only delete it when you skip creation of the final snapshot with the `SkipFinalSnapshot` parameter.
+
+If the specified DB instance is part of an Amazon Aurora DB cluster, you can't delete the DB instance if both of the following conditions are true:
+
+- The DB cluster is a read replica of another Amazon Aurora DB cluster.
+
+- The DB instance is the only instance in the DB cluster.
+
+To delete a DB instance in this case, first call the `PromoteReadReplicaDBCluster` API action to promote the DB cluster so it's no longer a read replica. After the promotion completes, then call the `DeleteDBInstance` API action to delete the final instance in the DB cluster.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-db-instance-message, like delete-db-instance-message
+    void take
+
+  line </#Action=DeleteDBInstance>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-db-instance-message
+
+  loot 200
+    seed xml, like delete-db-instance-result
+    note <Success>
+  loot 480
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>
+  loot 481
+    seed xml, like invalid-db-instance-state-fault
+    note <InvalidDBInstanceStateFault>
+  loot 482
+    seed xml, like db-snapshot-already-exists-fault
+    note <DBSnapshotAlreadyExistsFault>
+  loot 483
+    seed xml, like snapshot-quota-exceeded-fault
+    note <SnapshotQuotaExceededFault>
+  loot 484
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>
+  loot 485
+    seed xml, like db-instance-automated-backup-quota-exceeded-fault
+    note <DBInstanceAutomatedBackupQuotaExceededFault>

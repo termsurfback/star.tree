@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/codecommit/2015-04-13/base/invalid-continuation-token-exception
+  take form invalid-continuation-token-exception
+
+load @drumwork/snow/amazonaws.com/codecommit/2015-04-13/base/invalid-max-results-exception
+  take form invalid-max-results-exception
+
+load @drumwork/snow/amazonaws.com/codecommit/2015-04-13/base/list-approval-rule-templates-output
+  take form list-approval-rule-templates-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-approval-rule-templates, name <ListApprovalRuleTemplates>
+  note <Lists all approval rule templates in the specified AWS Region in your AWS account. If an AWS Region is not specified, the AWS Region where you are signed in is used.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-approval-rule-templates-input, like list-approval-rule-templates-input
+
+  line </#X-Amz-Target=CodeCommit_20150413.ListApprovalRuleTemplates>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-approval-rule-templates-input
+
+  loot 200
+    seed json, like list-approval-rule-templates-output
+    note <Success>
+  loot 480
+    seed json, like invalid-max-results-exception
+    note <InvalidMaxResultsException>
+  loot 481
+    seed json, like invalid-continuation-token-exception
+    note <InvalidContinuationTokenException>

@@ -1,0 +1,68 @@
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/list-audit-tasks-response
+  take form list-audit-tasks-response
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-audit-tasks, name <ListAuditTasks>
+  note <Lists the Device Defender audits that have been performed during a given time period.
+
+Requires permission to access the [ListAuditTasks](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiot.html#awsiot-actions-as-permissions) action.>
+
+  take start-time
+    like native-string
+    note <The beginning of the time period. Audit information is retained for a limited time (90 days). Requesting a start time prior to what is retained results in an "InvalidRequestException".>
+  take end-time
+    like native-string
+    note <The end of the time period.>
+  take task-type
+    like native-string
+    note <A filter to limit the output to the specified type of audit: can be one of "ON_DEMAND_AUDIT_TASK" or "SCHEDULED__AUDIT_TASK".>
+    void take
+  take task-status
+    like native-string
+    note <A filter to limit the output to audits with the specified completion status: can be one of "IN_PROGRESS", "COMPLETED", "FAILED", or "CANCELED".>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next set of results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return at one time. The default is 25.>
+    void take
+
+  line </audit/tasks#startTime&endTime>
+
+  find <startTime>, loan start-time
+  find <endTime>, loan end-time
+  find <taskType>, loan task-type
+  find <taskStatus>, loan task-status
+  find <nextToken>, loan next-token
+  find <maxResults>, loan max-results
+
+  loot 200
+    seed json, like list-audit-tasks-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

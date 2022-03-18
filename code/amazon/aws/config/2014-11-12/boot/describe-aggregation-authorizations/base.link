@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/describe-aggregation-authorizations-response
+  take form describe-aggregation-authorizations-response
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-limit-exception
+  take form invalid-limit-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-aggregation-authorizations, name <DescribeAggregationAuthorizations>
+  note <Returns a list of authorizations granted to various aggregator accounts and regions.>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-aggregation-authorizations-request, like describe-aggregation-authorizations-request
+
+  line </#X-Amz-Target=StarlingDoveService.DescribeAggregationAuthorizations>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <Limit>, loan limit
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-aggregation-authorizations-request
+
+  loot 200
+    seed json, like describe-aggregation-authorizations-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 481
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 482
+    seed json, like invalid-limit-exception
+    note <InvalidLimitException>

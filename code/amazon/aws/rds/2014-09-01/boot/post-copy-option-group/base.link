@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/copy-option-group-result
+  take form copy-option-group-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/option-group-already-exists-fault
+  take form option-group-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/option-group-not-found-fault
+  take form option-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/option-group-quota-exceeded-fault
+  take form option-group-quota-exceeded-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-copy-option-group, name <POST_CopyOptionGroup>
+  take action
+    like native-string
+  take version
+    like native-string
+  take copy-option-group-message, like copy-option-group-message
+    void take
+
+  line </#Action=CopyOptionGroup>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan copy-option-group-message
+
+  loot 200
+    seed xml, like copy-option-group-result
+    note <Success>
+  loot 480
+    seed xml, like option-group-already-exists-fault
+    note <OptionGroupAlreadyExistsFault>
+  loot 481
+    seed xml, like option-group-not-found-fault
+    note <OptionGroupNotFoundFault>
+  loot 482
+    seed xml, like option-group-quota-exceeded-fault
+    note <OptionGroupQuotaExceededFault>

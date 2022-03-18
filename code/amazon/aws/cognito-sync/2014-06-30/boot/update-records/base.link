@@ -1,0 +1,97 @@
+
+load @drumwork/snow/amazonaws.com/cognito-sync/2014-06-30/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/cognito-sync/2014-06-30/base/invalid-lambda-function-output-exception
+  take form invalid-lambda-function-output-exception
+
+load @drumwork/snow/amazonaws.com/cognito-sync/2014-06-30/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/cognito-sync/2014-06-30/base/lambda-throttled-exception
+  take form lambda-throttled-exception
+
+load @drumwork/snow/amazonaws.com/cognito-sync/2014-06-30/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/cognito-sync/2014-06-30/base/not-authorized-exception
+  take form not-authorized-exception
+
+load @drumwork/snow/amazonaws.com/cognito-sync/2014-06-30/base/resource-conflict-exception
+  take form resource-conflict-exception
+
+load @drumwork/snow/amazonaws.com/cognito-sync/2014-06-30/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/cognito-sync/2014-06-30/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/amazonaws.com/cognito-sync/2014-06-30/base/update-records-body
+  take form update-records-body
+
+load @drumwork/snow/amazonaws.com/cognito-sync/2014-06-30/base/update-records-response
+  take form update-records-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-records, name <UpdateRecords>
+  note <Posts updates to records and adds and deletes records for a dataset and user.
+
+The sync count in the record patch is your last known sync count for that record. The server will reject an UpdateRecords request with a ResourceConflictException if you try to patch a record with a new value but a stale sync count.
+
+For example, if the sync count on the server is 5 for a key called highScore and you try and submit a new highScore with sync count of 4, the request will be rejected. To obtain the current sync count for a record, call ListRecords. On a successful update of the record, the response returns the new sync count for that record. You should present that sync count the next time you try to update that same record. When the record does not exist, specify the sync count as 0.
+
+This API can be called with temporary user credentials provided by Cognito Identity or with developer credentials.>
+
+  take identity-pool-id
+    like native-string
+    note <A name-spaced GUID (for example, us-east-1:23EC4050-6AEA-7089-A2DD-08002EXAMPLE) created by Amazon Cognito. GUID generation is unique within a region.>
+  take identity-id
+    like native-string
+    note <A name-spaced GUID (for example, us-east-1:23EC4050-6AEA-7089-A2DD-08002EXAMPLE) created by Amazon Cognito. GUID generation is unique within a region.>
+  take dataset-name
+    like native-string
+    note <A string of up to 128 characters. Allowed characters are a-z, A-Z, 0-9, '_' (underscore), '-' (dash), and '.' (dot).>
+  take x-amz-client-context
+    like native-string
+    note <Intended to supply a device ID that will populate the lastModifiedBy field referenced in other methods. The ClientContext field is not yet implemented.>
+    void take
+  take update-records-body, like update-records-body
+
+  line </identitypools/{identity-pool-id}/identities/{identity-id}/datasets/{dataset-name}>
+
+  hint <x-amz-Client-Context>, loan x-amz-client-context
+
+  seed json, loan update-records-body
+
+  loot 200
+    seed json, like update-records-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like not-authorized-exception
+    note <NotAuthorizedException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 484
+    seed json, like resource-conflict-exception
+    note <ResourceConflictException>
+  loot 485
+    seed json, like invalid-lambda-function-output-exception
+    note <InvalidLambdaFunctionOutputException>
+  loot 486
+    seed json, like lambda-throttled-exception
+    note <LambdaThrottledException>
+  loot 487
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 488
+    seed json, like internal-error-exception
+    note <InternalErrorException>

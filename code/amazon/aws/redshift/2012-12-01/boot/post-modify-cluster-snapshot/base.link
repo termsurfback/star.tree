@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-snapshot-not-found-fault
+  take form cluster-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-snapshot-state-fault
+  take form invalid-cluster-snapshot-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-retention-period-fault
+  take form invalid-retention-period-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/modify-cluster-snapshot-result
+  take form modify-cluster-snapshot-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-modify-cluster-snapshot, name <POST_ModifyClusterSnapshot>
+  note <Modifies the settings for a snapshot.
+
+This exanmple modifies the manual retention period setting for a cluster snapshot.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take modify-cluster-snapshot-message, like modify-cluster-snapshot-message
+    void take
+
+  line </#Action=ModifyClusterSnapshot>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan modify-cluster-snapshot-message
+
+  loot 200
+    seed xml, like modify-cluster-snapshot-result
+    note <Success>
+  loot 480
+    seed xml, like invalid-cluster-snapshot-state-fault
+    note <InvalidClusterSnapshotStateFault>
+  loot 481
+    seed xml, like cluster-snapshot-not-found-fault
+    note <ClusterSnapshotNotFoundFault>
+  loot 482
+    seed xml, like invalid-retention-period-fault
+    note <InvalidRetentionPeriodFault>

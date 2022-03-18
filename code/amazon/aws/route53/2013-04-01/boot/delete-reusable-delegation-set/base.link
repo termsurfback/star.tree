@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/delegation-set-in-use
+  take form delegation-set-in-use
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/delegation-set-not-reusable
+  take form delegation-set-not-reusable
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/delete-reusable-delegation-set-response
+  take form delete-reusable-delegation-set-response
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/no-such-delegation-set
+  take form no-such-delegation-set
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-reusable-delegation-set, name <DeleteReusableDelegationSet>
+  note <Deletes a reusable delegation set.
+
+You can delete a reusable delegation set only if it isn't associated with any hosted zones.
+
+To verify that the reusable delegation set is not associated with any hosted zones, submit a [GetReusableDelegationSet](https://docs.aws.amazon.com/Route53/latest/APIReference/API_GetReusableDelegationSet.html) request and specify the ID of the reusable delegation set that you want to delete.>
+
+  take id
+    like native-string
+    note <The ID of the reusable delegation set that you want to delete.>
+
+  line </2013-04-01/delegationset/{id}>
+
+  loot 200
+    seed xml, like delete-reusable-delegation-set-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-delegation-set
+    note <NoSuchDelegationSet>
+  loot 481
+    seed xml, like delegation-set-in-use
+    note <DelegationSetInUse>
+  loot 482
+    seed xml, like delegation-set-not-reusable
+    note <DelegationSetNotReusable>
+  loot 483
+    seed xml, like invalid-input
+    note <InvalidInput>

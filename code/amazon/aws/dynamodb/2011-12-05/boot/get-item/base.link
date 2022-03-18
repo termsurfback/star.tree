@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/dynamodb/2011-12-05/base/get-item-output
+  take form get-item-output
+
+load @drumwork/snow/amazonaws.com/dynamodb/2011-12-05/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/dynamodb/2011-12-05/base/provisioned-throughput-exceeded-exception
+  take form provisioned-throughput-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2011-12-05/base/request-limit-exceeded
+  take form request-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/dynamodb/2011-12-05/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-item, name <GetItem>
+  note <Retrieves a set of Attributes for an item that matches the primary key.
+
+The `GetItem` operation provides an eventually-consistent read by default. If eventually-consistent reads are not acceptable for your application, use `ConsistentRead`. Although this operation might take longer than a standard read, it always returns the last updated value.>
+
+  take x-amz-target
+    like native-string
+  take get-item-input, like get-item-input
+
+  line </#X-Amz-Target=DynamoDB_20111205.GetItem>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-item-input
+
+  loot 200
+    seed json, like get-item-output
+    note <Success>
+  loot 480
+    seed json, like provisioned-throughput-exceeded-exception
+    note <ProvisionedThroughputExceededException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like request-limit-exceeded
+    note <RequestLimitExceeded>
+  loot 483
+    seed json, like internal-server-error
+    note <InternalServerError>

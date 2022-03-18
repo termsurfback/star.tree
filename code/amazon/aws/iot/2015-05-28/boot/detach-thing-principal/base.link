@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/detach-thing-principal-response
+  take form detach-thing-principal-response
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot detach-thing-principal, name <DetachThingPrincipal>
+  note <Detaches the specified principal from the specified thing. A principal can be X.509 certificates, IAM users, groups, and roles, Amazon Cognito identities or federated identities.
+
+This call is asynchronous. It might take several seconds for the detachment to propagate.
+
+Requires permission to access the [DetachThingPrincipal](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiot.html#awsiot-actions-as-permissions) action.>
+
+  take thing-name
+    like native-string
+    note <The name of the thing.>
+  take x-amzn-principal
+    like native-string
+    note <If the principal is a certificate, this value must be ARN of the certificate. If the principal is an Amazon Cognito identity, this value must be the ID of the Amazon Cognito identity.>
+
+  line </things/{thing-name}/principals#x-amzn-principal>
+
+  hint <x-amzn-principal>, loan x-amzn-principal
+
+  loot 200
+    seed json, like detach-thing-principal-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 484
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 485
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

@@ -1,0 +1,26 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/youtube/v3/base/thumbnail-set-response
+  take form thumbnail-set-response
+
+boot youtube-thumbnails-set, name <youtube.thumbnails.set>
+  note <As this is not an insert in a strict sense (it supports uploading/setting of a thumbnail for multiple videos, which doesn't result in creation of a single resource), I use a custom verb here.>
+
+  take video-id
+    like native-string
+    note <Returns the Thumbnail with the given video IDs for Stubby or Apiary.>
+  take on-behalf-of-content-owner
+    like native-string
+    note <*Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with must be linked to the specified YouTube content owner.>
+    void take
+
+  line </youtube/v3/thumbnails/set>
+
+  find <videoId>, loan video-id
+  find <onBehalfOfContentOwner>, loan on-behalf-of-content-owner
+
+  loot 200
+    seed json, like thumbnail-set-response
+    note <Successful response>

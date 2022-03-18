@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/channel-not-broadcasting
+  take form channel-not-broadcasting
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/stop-stream-body
+  take form stop-stream-body
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/stop-stream-response
+  take form stop-stream-response
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/stream-unavailable
+  take form stream-unavailable
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/validation-exception
+  take form validation-exception
+
+boot stop-stream, name <StopStream>
+  note <Disconnects the incoming RTMPS stream for the specified channel. Can be used in conjunction with DeleteStreamKey to prevent further streaming to a channel.
+
+Many streaming client-software libraries automatically reconnect a dropped RTMPS session, so to stop the stream permanently, you may want to first revoke the `streamKey` attached to the channel.>
+
+  take stop-stream-body, like stop-stream-body
+
+  line </StopStream>
+
+  seed json, loan stop-stream-body
+
+  loot 200
+    seed json, like stop-stream-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like channel-not-broadcasting
+    note <ChannelNotBroadcasting>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 483
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 484
+    seed json, like stream-unavailable
+    note <StreamUnavailable>

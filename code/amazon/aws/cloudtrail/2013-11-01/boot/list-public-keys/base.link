@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/invalid-time-range-exception
+  take form invalid-time-range-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/invalid-token-exception
+  take form invalid-token-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/list-public-keys-response
+  take form list-public-keys-response
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/operation-not-permitted-exception
+  take form operation-not-permitted-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/unsupported-operation-exception
+  take form unsupported-operation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-public-keys, name <ListPublicKeys>
+  note <Returns all public keys whose private keys were used to sign the digest files within the specified time range. The public key is needed to validate digest files that were signed with its corresponding private key.
+
+CloudTrail uses different private and public key pairs per region. Each digest file is signed with a private key unique to its region. When you validate a digest file from a specific region, you must look in the same region for its corresponding public key.>
+
+  take x-amz-target
+    like native-string
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-public-keys-request, like list-public-keys-request
+
+  line </#X-Amz-Target=com.amazonaws.cloudtrail.v20131101.CloudTrail_20131101.ListPublicKeys>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <NextToken>, loan next-token
+
+  seed json, loan list-public-keys-request
+
+  loot 200
+    seed json, like list-public-keys-response
+    note <Success>
+  loot 480
+    seed json, like invalid-time-range-exception
+    note <InvalidTimeRangeException>
+  loot 481
+    seed json, like unsupported-operation-exception
+    note <UnsupportedOperationException>
+  loot 482
+    seed json, like operation-not-permitted-exception
+    note <OperationNotPermittedException>
+  loot 483
+    seed json, like invalid-token-exception
+    note <InvalidTokenException>

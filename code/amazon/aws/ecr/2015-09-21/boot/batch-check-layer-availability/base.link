@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/batch-check-layer-availability-response
+  take form batch-check-layer-availability-response
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/repository-not-found-exception
+  take form repository-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot batch-check-layer-availability, name <BatchCheckLayerAvailability>
+  note <Checks the availability of one or more image layers in a repository.
+
+When an image is pushed to a repository, each image layer is checked to verify if it has been uploaded before. If it has been uploaded, then the image layer is skipped.
+
+This operation is used by the Amazon ECR proxy and is not generally used by customers for pulling and pushing images. In most cases, you should use the `docker` CLI to pull, tag, and push images.>
+
+  take x-amz-target
+    like native-string
+  take batch-check-layer-availability-request, like batch-check-layer-availability-request
+
+  line </#X-Amz-Target=AmazonEC2ContainerRegistry_V20150921.BatchCheckLayerAvailability>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan batch-check-layer-availability-request
+
+  loot 200
+    seed json, like batch-check-layer-availability-response
+    note <Success>
+  loot 480
+    seed json, like repository-not-found-exception
+    note <RepositoryNotFoundException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like server-exception
+    note <ServerException>

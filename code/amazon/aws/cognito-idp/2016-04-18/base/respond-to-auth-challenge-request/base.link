@@ -1,0 +1,80 @@
+
+load @drumwork/snow/amazonaws.com/cognito-idp/2016-04-18/base/analytics-metadata-type
+  take form analytics-metadata-type
+
+load @drumwork/snow/amazonaws.com/cognito-idp/2016-04-18/base/challenge-name-type
+  take form challenge-name-type
+
+load @drumwork/snow/amazonaws.com/cognito-idp/2016-04-18/base/challenge-responses-type
+  take form challenge-responses-type
+
+load @drumwork/snow/amazonaws.com/cognito-idp/2016-04-18/base/client-id-type
+  take form client-id-type
+
+load @drumwork/snow/amazonaws.com/cognito-idp/2016-04-18/base/client-metadata-type
+  take form client-metadata-type
+
+load @drumwork/snow/amazonaws.com/cognito-idp/2016-04-18/base/session-type
+  take form session-type
+
+load @drumwork/snow/amazonaws.com/cognito-idp/2016-04-18/base/user-context-data-type
+  take form user-context-data-type
+
+form respond-to-auth-challenge-request, name <RespondToAuthChallengeRequest>
+  note <The request to respond to an authentication challenge.>
+  take client-id, name <ClientId>
+    like client-id-type
+    note <The app client ID.>
+  take challenge-name, name <ChallengeName>
+    like challenge-name-type
+    note <The challenge name. For more information, see [InitiateAuth](https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/API_InitiateAuth.html).
+
+`ADMIN_NO_SRP_AUTH` is not a valid value.>
+  take session, name <Session>
+    like session-type
+    void take
+    note <The session which should be passed both ways in challenge-response calls to the service. If `InitiateAuth` or `RespondToAuthChallenge` API call determines that the caller needs to go through another challenge, they return a session with other challenge parameters. This session should be passed as it is to the next `RespondToAuthChallenge` API call.>
+  take challenge-responses, name <ChallengeResponses>
+    like challenge-responses-type
+    void take
+    note <The challenge responses. These are inputs corresponding to the value of `ChallengeName`, for example:
+
+`SECRET_HASH` (if app client is configured with client secret) applies to all inputs below (including `SOFTWARE_TOKEN_MFA`).
+
+- `SMS_MFA`: `SMS_MFA_CODE`, `USERNAME`.
+
+- `PASSWORD_VERIFIER`: `PASSWORD_CLAIM_SIGNATURE`, `PASSWORD_CLAIM_SECRET_BLOCK`, `TIMESTAMP`, `USERNAME`.
+
+- `NEW_PASSWORD_REQUIRED`: `NEW_PASSWORD`, any other required attributes, `USERNAME`.
+
+- `SOFTWARE_TOKEN_MFA`: `USERNAME` and `SOFTWARE_TOKEN_MFA_CODE` are required attributes.
+
+- `DEVICE_SRP_AUTH` requires `USERNAME`, `DEVICE_KEY`, `SRP_A` (and `SECRET_HASH`).
+
+- `DEVICE_PASSWORD_VERIFIER` requires everything that `PASSWORD_VERIFIER` requires plus `DEVICE_KEY`.
+
+- `MFA_SETUP` requires `USERNAME`, plus you need to use the session value returned by `VerifySoftwareToken` in the `Session` parameter.>
+  take analytics-metadata, name <AnalyticsMetadata>
+    like analytics-metadata-type
+    void take
+    note <The Amazon Pinpoint analytics metadata for collecting metrics for `RespondToAuthChallenge` calls.>
+  take user-context-data, name <UserContextData>
+    like user-context-data-type
+    void take
+    note <Contextual data such as the user's device fingerprint, IP address, or location used for evaluating the risk of an unexpected event by Amazon Cognito advanced security.>
+  take client-metadata, name <ClientMetadata>
+    like client-metadata-type
+    void take
+    note <A map of custom key-value pairs that you can provide as input for any custom workflows that this action triggers.
+
+You create custom workflows by assigning Lambda functions to user pool triggers. When you use the RespondToAuthChallenge API action, Amazon Cognito invokes any functions that are assigned to the following triggers: _post authentication_, _pre token generation_, _define auth challenge_, _create auth challenge_, and _verify auth challenge_. When Amazon Cognito invokes any of these functions, it passes a JSON payload, which the function receives as input. This payload contains a `clientMetadata` attribute, which provides the data that you assigned to the ClientMetadata parameter in your RespondToAuthChallenge request. In your function code in Lambda, you can process the `clientMetadata` value to enhance your workflow for your specific needs.
+
+For more information, see [Customizing User Pool Workflows with Lambda Triggers](https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-identity-pools-working-with-aws-lambda-triggers.html) in the _Amazon Cognito Developer Guide_.
+
+Take the following limitations into consideration when you use the ClientMetadata parameter:
+
+- Amazon Cognito does not store the ClientMetadata value. This data is available only to Lambda triggers that are assigned to a user pool to support custom workflows. If your user pool configuration does not include triggers, the ClientMetadata parameter serves no purpose.
+
+- Amazon Cognito does not validate the ClientMetadata value.
+
+- Amazon Cognito does not encrypt the the ClientMetadata value, so don't use it to provide sensitive information.>

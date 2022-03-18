@@ -1,0 +1,48 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/iam/v1/base/list-roles-response
+  take form list-roles-response
+
+boot iam-roles-list, name <iam.roles.list>
+  note <Lists every predefined Role that IAM supports, or every custom role that is defined for an organization or project.>
+
+  take page-size
+    like native-integer
+    note <Optional limit on the number of roles to include in the response. The default is 300, and the maximum is 1,000.>
+    void take
+  take page-token
+    like native-string
+    note <Optional pagination token returned in an earlier ListRolesResponse.>
+    void take
+  take parent
+    like native-string
+    note <The `parent` parameter's value depends on the target resource for the request, namely [`roles`](https://cloud.google.com/iam/reference/rest/v1/roles), [`projects`](https://cloud.google.com/iam/reference/rest/v1/projects.roles), or [`organizations`](https://cloud.google.com/iam/reference/rest/v1/organizations.roles). Each resource type's `parent` value format is described below: * [`roles.list()`](https://cloud.google.com/iam/reference/rest/v1/roles/list): An empty string. This method doesn't require a resource; it simply returns all [predefined roles](https://cloud.google.com/iam/docs/understanding-roles#predefined_roles) in Cloud IAM. Example request URL: `https://iam.googleapis.com/v1/roles` * [`projects.roles.list()`](https://cloud.google.com/iam/reference/rest/v1/projects.roles/list): `projects/{PROJECT_ID}`. This method lists all project-level [custom roles](https://cloud.google.com/iam/docs/understanding-custom-roles). Example request URL: `https://iam.googleapis.com/v1/projects/{PROJECT_ID}/roles` * [`organizations.roles.list()`](https://cloud.google.com/iam/reference/rest/v1/organizations.roles/list): `organizations/{ORGANIZATION_ID}`. This method lists all organization-level [custom roles](https://cloud.google.com/iam/docs/understanding-custom-roles). Example request URL: `https://iam.googleapis.com/v1/organizations/{ORGANIZATION_ID}/roles` Note: Wildcard (*) values are invalid; you must specify a complete project ID or organization ID.>
+    void take
+  take show-deleted
+    like native-boolean
+    note <Include Roles that have been deleted.>
+    void take
+  take view
+    like native-string
+    note <Optional view for the returned Role objects. When `FULL` is specified, the `includedPermissions` field is returned, which includes a list of all permissions in the role. The default value is `BASIC`, which does not return the `includedPermissions` field.>
+    void take
+
+  line </v1/roles>
+
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+  find <parent>, loan parent
+  find <showDeleted>, loan show-deleted
+  find <view>, loan view
+
+  loot 200
+    seed json, like list-roles-response
+    note <Successful response>

@@ -1,0 +1,113 @@
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/dependency-timeout-exception
+  take form dependency-timeout-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/disabled-exception
+  take form disabled-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/generate-data-key-response
+  take form generate-data-key-response
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-grant-token-exception
+  take form invalid-grant-token-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-key-usage-exception
+  take form invalid-key-usage-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/key-unavailable-exception
+  take form key-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-internal-exception
+  take form kms-internal-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-invalid-state-exception
+  take form kms-invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot generate-data-key, name <GenerateDataKey>
+  note <Generates a unique symmetric data key for client-side encryption. This operation returns a plaintext copy of the data key and a copy that is encrypted under a KMS key that you specify. You can use the plaintext key to encrypt your data outside of KMS and store the encrypted data key with the encrypted data.
+
+`GenerateDataKey` returns a unique data key for each request. The bytes in the plaintext key are not related to the caller or the KMS key.
+
+To generate a data key, specify the symmetric KMS key that will be used to encrypt the data key. You cannot use an asymmetric KMS key to generate data keys. To get the type of your KMS key, use the DescribeKey operation. You must also specify the length of the data key. Use either the `KeySpec` or `NumberOfBytes` parameters (but not both). For 128-bit and 256-bit data keys, use the `KeySpec` parameter.
+
+To get only an encrypted copy of the data key, use GenerateDataKeyWithoutPlaintext. To generate an asymmetric data key pair, use the GenerateDataKeyPair or GenerateDataKeyPairWithoutPlaintext operation. To get a cryptographically secure random byte string, use GenerateRandom.
+
+You can use the optional encryption context to add additional security to the encryption operation. If you specify an `EncryptionContext`, you must specify the same encryption context (a case-sensitive exact match) when decrypting the encrypted data key. Otherwise, the request to decrypt fails with an `InvalidCiphertextException`. For more information, see [Encryption Context](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#encrypt_context) in the _Key Management Service Developer Guide_.
+
+Applications in Amazon Web Services Nitro Enclaves can call this operation by using the [Amazon Web Services Nitro Enclaves Development Kit](https://github.com/aws/aws-nitro-enclaves-sdk-c). For information about the supporting parameters, see [How Amazon Web Services Nitro Enclaves use KMS](https://docs.aws.amazon.com/kms/latest/developerguide/services-nitro-enclaves.html) in the _Key Management Service Developer Guide_.
+
+The KMS key that you use for this operation must be in a compatible key state. For details, see [Key state: Effect on your KMS key](https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html) in the _Key Management Service Developer Guide_.
+
+**How to use your data key** We recommend that you use the following pattern to encrypt data locally in your application. You can write your own code or use a client-side encryption library, such as the [Amazon Web Services Encryption SDK](https://docs.aws.amazon.com/encryption-sdk/latest/developer-guide/), the [Amazon DynamoDB Encryption Client](https://docs.aws.amazon.com/dynamodb-encryption-client/latest/devguide/), or [Amazon S3 client-side encryption](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingClientSideEncryption.html) to do these tasks for you.
+
+To encrypt data outside of KMS:
+
+1. Use the `GenerateDataKey` operation to get a data key.
+
+2. Use the plaintext data key (in the `Plaintext` field of the response) to encrypt your data outside of KMS. Then erase the plaintext data key from memory.
+
+3. Store the encrypted data key (in the `CiphertextBlob` field of the response) with the encrypted data.
+
+To decrypt data outside of KMS:
+
+1. Use the Decrypt operation to decrypt the encrypted data key. The operation returns a plaintext copy of the data key.
+
+2. Use the plaintext data key to decrypt data outside of KMS, then erase the plaintext data key from memory.
+
+**Cross-account use**: Yes. To perform this operation with a KMS key in a different Amazon Web Services account, specify the key ARN or alias ARN in the value of the `KeyId` parameter.
+
+**Required permissions**: [kms:GenerateDataKey](https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html) (key policy)
+
+**Related operations:** - Decrypt
+
+- Encrypt
+
+- GenerateDataKeyPair
+
+- GenerateDataKeyPairWithoutPlaintext
+
+- GenerateDataKeyWithoutPlaintext>
+
+  take x-amz-target
+    like native-string
+  take generate-data-key-request, like generate-data-key-request
+
+  line </#X-Amz-Target=TrentService.GenerateDataKey>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan generate-data-key-request
+
+  loot 200
+    seed json, like generate-data-key-response
+    note <Success>
+  loot 480
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 481
+    seed json, like disabled-exception
+    note <DisabledException>
+  loot 482
+    seed json, like key-unavailable-exception
+    note <KeyUnavailableException>
+  loot 483
+    seed json, like dependency-timeout-exception
+    note <DependencyTimeoutException>
+  loot 484
+    seed json, like invalid-key-usage-exception
+    note <InvalidKeyUsageException>
+  loot 485
+    seed json, like invalid-grant-token-exception
+    note <InvalidGrantTokenException>
+  loot 486
+    seed json, like kms-internal-exception
+    note <KMSInternalException>
+  loot 487
+    seed json, like kms-invalid-state-exception
+    note <KMSInvalidStateException>

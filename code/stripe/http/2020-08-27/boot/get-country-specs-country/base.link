@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/country-spec
+  take form country-spec
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-country-specs-country-body
+  take form get-country-specs-country-body
+
+boot get-country-specs-country, name <GetCountrySpecsCountry>
+  note <Returns a Country Spec for a given Country code.>
+
+  take country
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-country-specs-country-body, like get-country-specs-country-body
+    void take
+
+  line </v1/country_specs/{country}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-country-specs-country-body
+
+  loot 200
+    seed json, like country-spec
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

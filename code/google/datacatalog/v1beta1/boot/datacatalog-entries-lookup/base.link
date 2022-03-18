@@ -1,0 +1,27 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/datacatalog/v1beta1/base/google-cloud-datacatalog-v1beta1-entry
+  take form google-cloud-datacatalog-v1beta1-entry
+
+boot datacatalog-entries-lookup, name <datacatalog.entries.lookup>
+  note <Get an entry by target resource name. This method allows clients to use the resource name from the source Google Cloud Platform service to get the Data Catalog Entry.>
+
+  take linked-resource
+    like native-string
+    note <The full name of the Google Cloud Platform resource the Data Catalog entry represents. See: https://cloud.google.com/apis/design/resource_names#full_resource_name. Full names are case-sensitive. Examples: * //bigquery.googleapis.com/projects/projectId/datasets/datasetId/tables/tableId * //pubsub.googleapis.com/projects/projectId/topics/topicId>
+    void take
+  take sql-resource
+    like native-string
+    note <The SQL name of the entry. SQL names are case-sensitive. Examples: * `pubsub.project_id.topic_id` * ``pubsub.project_id.`topic.id.with.dots` `` * `bigquery.table.project_id.dataset_id.table_id` * `bigquery.dataset.project_id.dataset_id` * `datacatalog.entry.project_id.location_id.entry_group_id.entry_id` `*_id`s should satisfy the standard SQL rules for identifiers. https://cloud.google.com/bigquery/docs/reference/standard-sql/lexical.>
+    void take
+
+  line </v1beta1/entries:lookup>
+
+  find <linkedResource>, loan linked-resource
+  find <sqlResource>, loan sql-resource
+
+  loot 200
+    seed json, like google-cloud-datacatalog-v1beta1-entry
+    note <Successful response>

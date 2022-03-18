@@ -1,0 +1,32 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/adexchangebuyer2/v2beta1/base/filter-set
+  take form filter-set
+
+boot adexchangebuyer2-bidders-filter-sets-create, name <adexchangebuyer2.bidders.filterSets.create>
+  note <Creates the specified filter set for the account with the given account ID.>
+
+  take owner-name
+    like native-string
+    note <Name of the owner (bidder or account) of the filter set to be created. For example: - For a bidder-level filter set for bidder 123: `bidders/123` - For an account-level filter set for the buyer account representing bidder 123: `bidders/123/accounts/123` - For an account-level filter set for the child seat buyer account 456 whose bidder is 123: `bidders/123/accounts/456`>
+  take is-transient
+    like native-boolean
+    note <Whether the filter set is transient, or should be persisted indefinitely. By default, filter sets are not transient. If transient, it will be available for at least 1 hour after creation.>
+    void take
+  take filter-set, like filter-set
+    void take
+
+  line </v2beta1/{owner-name}/filterSets>
+
+  find <isTransient>, loan is-transient
+
+  seed json, loan filter-set
+
+  loot 200
+    seed json, like filter-set
+    note <Successful response>

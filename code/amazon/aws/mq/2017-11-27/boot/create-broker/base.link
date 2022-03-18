@@ -1,0 +1,81 @@
+
+load @drumwork/snow/amazonaws.com/mq/2017-11-27/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/mq/2017-11-27/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/mq/2017-11-27/base/create-broker-body
+  take form create-broker-body
+
+load @drumwork/snow/amazonaws.com/mq/2017-11-27/base/create-broker-response
+  take form create-broker-response
+
+load @drumwork/snow/amazonaws.com/mq/2017-11-27/base/forbidden-exception
+  take form forbidden-exception
+
+load @drumwork/snow/amazonaws.com/mq/2017-11-27/base/internal-server-error-exception
+  take form internal-server-error-exception
+
+load @drumwork/snow/amazonaws.com/mq/2017-11-27/base/unauthorized-exception
+  take form unauthorized-exception
+
+boot create-broker, name <CreateBroker>
+  note <Creates a broker. Note: This API is asynchronous.
+
+To create a broker, you must either use the AmazonMQFullAccess IAM policy or include the following EC2 permissions in your IAM policy.
+
+- ec2:CreateNetworkInterface
+
+  This permission is required to allow Amazon MQ to create an elastic network interface (ENI) on behalf of your account.
+
+- ec2:CreateNetworkInterfacePermission
+
+  This permission is required to attach the ENI to the broker instance.
+
+- ec2:DeleteNetworkInterface
+
+- ec2:DeleteNetworkInterfacePermission
+
+- ec2:DetachNetworkInterface
+
+- ec2:DescribeInternetGateways
+
+- ec2:DescribeNetworkInterfaces
+
+- ec2:DescribeNetworkInterfacePermissions
+
+- ec2:DescribeRouteTables
+
+- ec2:DescribeSecurityGroups
+
+- ec2:DescribeSubnets
+
+- ec2:DescribeVpcs
+
+For more information, see [Create an IAM User and Get Your AWS Credentials](https://docs.aws.amazon.com//amazon-mq/latest/developer-guide/amazon-mq-setting-up.html#create-iam-user) and [Never Modify or Delete the Amazon MQ Elastic Network Interface](https://docs.aws.amazon.com/amazon-mq/latest/developer-guide/connecting-to-amazon-mq.html#never-modify-delete-elastic-network-interface) in the _Amazon MQ Developer Guide_.>
+
+  take create-broker-body, like create-broker-body
+
+  line </v1/brokers>
+
+  seed json, loan create-broker-body
+
+  loot 200
+    seed json, like create-broker-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 482
+    seed json, like internal-server-error-exception
+    note <InternalServerErrorException>
+  loot 483
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 484
+    seed json, like forbidden-exception
+    note <ForbiddenException>

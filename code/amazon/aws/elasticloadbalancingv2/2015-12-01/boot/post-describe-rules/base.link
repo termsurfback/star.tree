@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/describe-rules-output
+  take form describe-rules-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/listener-not-found-exception
+  take form listener-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/rule-not-found-exception
+  take form rule-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancingv2/2015-12-01/base/unsupported-protocol-exception
+  take form unsupported-protocol-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-rules, name <POST_DescribeRules>
+  note <Describes the specified rules or the rules for the specified listener. You must specify either a listener or one or more rules.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-rules-input, like describe-rules-input
+    void take
+
+  line </#Action=DescribeRules>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-rules-input
+
+  loot 200
+    seed xml, like describe-rules-output
+    note <Success>
+  loot 480
+    seed xml, like listener-not-found-exception
+    note <ListenerNotFoundException>
+  loot 481
+    seed xml, like rule-not-found-exception
+    note <RuleNotFoundException>
+  loot 482
+    seed xml, like unsupported-protocol-exception
+    note <UnsupportedProtocolException>

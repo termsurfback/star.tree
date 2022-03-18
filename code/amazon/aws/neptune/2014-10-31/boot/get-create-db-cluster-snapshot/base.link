@@ -1,0 +1,89 @@
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/create-db-cluster-snapshot-result
+  take form create-db-cluster-snapshot-result
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-snapshot-already-exists-fault
+  take form db-cluster-snapshot-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-cluster-snapshot-state-fault
+  take form invalid-db-cluster-snapshot-state-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/snapshot-quota-exceeded-fault
+  take form snapshot-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/tag
+  take form tag
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-db-cluster-snapshot, name <GET_CreateDBClusterSnapshot>
+  note <Creates a snapshot of a DB cluster.>
+
+  take db-cluster-snapshot-identifier
+    like native-string
+    note <The identifier of the DB cluster snapshot. This parameter is stored as a lowercase string.
+
+Constraints:
+
+- Must contain from 1 to 63 letters, numbers, or hyphens.
+
+- First character must be a letter.
+
+- Cannot end with a hyphen or contain two consecutive hyphens.
+
+Example: `my-cluster1-snapshot1`>
+  take db-cluster-identifier
+    like native-string
+    note <The identifier of the DB cluster to create a snapshot for. This parameter is not case-sensitive.
+
+Constraints:
+
+- Must match the identifier of an existing DBCluster.
+
+Example: `my-cluster1`>
+  take tags
+    like list
+      like tag
+    note <The tags to be assigned to the DB cluster snapshot.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateDBClusterSnapshot>
+
+  find <DBClusterSnapshotIdentifier>, loan db-cluster-snapshot-identifier
+  find <DBClusterIdentifier>, loan db-cluster-identifier
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-db-cluster-snapshot-result
+    note <Success>
+  loot 480
+    seed xml, like db-cluster-snapshot-already-exists-fault
+    note <DBClusterSnapshotAlreadyExistsFault>
+  loot 481
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>
+  loot 482
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>
+  loot 483
+    seed xml, like snapshot-quota-exceeded-fault
+    note <SnapshotQuotaExceededFault>
+  loot 484
+    seed xml, like invalid-db-cluster-snapshot-state-fault
+    note <InvalidDBClusterSnapshotStateFault>

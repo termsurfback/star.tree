@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/describe-availability-monitor-test-output
+  take form describe-availability-monitor-test-output
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-availability-monitor-test, name <DescribeAvailabilityMonitorTest>
+  note <Returns information about the most recent high availability monitoring test that was performed on the host in a cluster. If a test isn't performed, the status and start time in the response would be null.>
+
+  take x-amz-target
+    like native-string
+  take describe-availability-monitor-test-input, like describe-availability-monitor-test-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.DescribeAvailabilityMonitorTest>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-availability-monitor-test-input
+
+  loot 200
+    seed json, like describe-availability-monitor-test-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

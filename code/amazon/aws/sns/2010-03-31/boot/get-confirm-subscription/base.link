@@ -1,0 +1,72 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/confirm-subscription-response
+  take form confirm-subscription-response
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/filter-policy-limit-exceeded-exception
+  take form filter-policy-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/subscription-limit-exceeded-exception
+  take form subscription-limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-confirm-subscription, name <GET_ConfirmSubscription>
+  note <Verifies an endpoint owner's intent to receive messages by validating the token sent to the endpoint by an earlier `Subscribe` action. If the token is valid, the action creates a new subscription and returns its Amazon Resource Name (ARN). This call requires an AWS signature only when the `AuthenticateOnUnsubscribe` flag is set to "true".>
+
+  take topic-arn
+    like native-string
+    note <The ARN of the topic for which you wish to confirm a subscription.>
+  take token
+    like native-string
+    note <Short-lived token sent to an endpoint during the `Subscribe` action.>
+  take authenticate-on-unsubscribe
+    like native-string
+    note <Disallows unauthenticated unsubscribes of the subscription. If the value of this parameter is `true` and the request has an Amazon Web Services signature, then only the topic owner and the subscription owner can unsubscribe the endpoint. The unsubscribe action requires Amazon Web Services authentication.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ConfirmSubscription>
+
+  find <TopicArn>, loan topic-arn
+  find <Token>, loan token
+  find <AuthenticateOnUnsubscribe>, loan authenticate-on-unsubscribe
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like confirm-subscription-response
+    note <Success>
+  loot 480
+    seed xml, like subscription-limit-exceeded-exception
+    note <SubscriptionLimitExceededException>
+  loot 481
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed xml, like not-found-exception
+    note <NotFoundException>
+  loot 483
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 484
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>
+  loot 485
+    seed xml, like filter-policy-limit-exceeded-exception
+    note <FilterPolicyLimitExceededException>

@@ -1,0 +1,86 @@
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/automatic-backup-retention-days
+  take form automatic-backup-retention-days
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/daily-time
+  take form daily-time
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/data-compression-type
+  take form data-compression-type
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/data-repository-configuration
+  take form data-repository-configuration
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/drive-cache-type
+  take form drive-cache-type
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/flag
+  take form flag
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/lustre-deployment-type
+  take form lustre-deployment-type
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/lustre-file-system-mount-name
+  take form lustre-file-system-mount-name
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/per-unit-storage-throughput
+  take form per-unit-storage-throughput
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/weekly-time
+  take form weekly-time
+
+form lustre-file-system-configuration, name <LustreFileSystemConfiguration>
+  note <The configuration for the Amazon FSx for Lustre file system.>
+  take weekly-maintenance-start-time, name <WeeklyMaintenanceStartTime>
+    like weekly-time
+    void take
+    note <The preferred start time to perform weekly maintenance, formatted d:HH:MM in the UTC time zone. d is the weekday number, from 1 through 7, beginning with Monday and ending with Sunday.>
+  take data-repository-configuration, name <DataRepositoryConfiguration>
+    like data-repository-configuration
+    void take
+  take deployment-type, name <DeploymentType>
+    like lustre-deployment-type
+    void take
+    note <The deployment type of the FSX for Lustre file system. _Scratch deployment type_ is designed for temporary storage and shorter-term processing of data.
+
+`SCRATCH_1` and `SCRATCH_2` deployment types are best suited for when you need temporary storage and shorter-term processing of data. The `SCRATCH_2` deployment type provides in-transit encryption of data and higher burst throughput capacity than `SCRATCH_1`.
+
+The `PERSISTENT_1` deployment type is used for longer-term storage and workloads and encryption of data in transit. To learn more about deployment types, see [FSx for Lustre Deployment Options](https://docs.aws.amazon.com/fsx/latest/LustreGuide/lustre-deployment-types.html). (Default = `SCRATCH_1`)>
+  take per-unit-storage-throughput, name <PerUnitStorageThroughput>
+    like per-unit-storage-throughput
+    void take
+    note <Per unit storage throughput represents the megabytes per second of read or write throughput per 1 tebibyte of storage provisioned. File system throughput capacity is equal to Storage capacity (TiB) * PerUnitStorageThroughput (MB/s/TiB). This option is only valid for `PERSISTENT_1` deployment types.
+
+Valid values for SSD storage: 50, 100, 200. Valid values for HDD storage: 12, 40.>
+  take mount-name, name <MountName>
+    like lustre-file-system-mount-name
+    void take
+    note <You use the `MountName` value when mounting the file system.
+
+For the `SCRATCH_1` deployment type, this value is always "`fsx`". For `SCRATCH_2` and `PERSISTENT_1` deployment types, this value is a string that is unique within an Amazon Web Services Region.>
+  take daily-automatic-backup-start-time, name <DailyAutomaticBackupStartTime>
+    like daily-time
+    void take
+  take automatic-backup-retention-days, name <AutomaticBackupRetentionDays>
+    like automatic-backup-retention-days
+    void take
+  take copy-tags-to-backups, name <CopyTagsToBackups>
+    like flag
+    void take
+    note <A boolean flag indicating whether tags on the file system should be copied to backups. If it's set to true, all tags on the file system are copied to all automatic backups and any user-initiated backups where the user doesn't specify any tags. If this value is true, and you specify one or more tags, only the specified tags are copied to backups. If you specify one or more tags when creating a user-initiated backup, no tags are copied from the file system, regardless of this value. (Default = false)>
+  take drive-cache-type, name <DriveCacheType>
+    like drive-cache-type
+    void take
+    note <The type of drive cache used by PERSISTENT_1 file systems that are provisioned with HDD storage devices. This parameter is required when storage type is HDD. Set to `READ`, improve the performance for frequently accessed files and allows 20% of the total storage capacity of the file system to be cached.
+
+This parameter is required when `StorageType` is set to HDD.>
+  take data-compression-type, name <DataCompressionType>
+    like data-compression-type
+    void take
+    note <The data compression configuration for the file system. `DataCompressionType` can have the following values:
+
+- `NONE` - Data compression is turned off for the file system.
+
+- `LZ4` - Data compression is turned on with the LZ4 algorithm.
+
+For more information, see [Lustre data compression](https://docs.aws.amazon.com/fsx/latest/LustreGuide/data-compression.html).>

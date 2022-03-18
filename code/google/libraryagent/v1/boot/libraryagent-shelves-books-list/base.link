@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/libraryagent/v1/base/google-example-libraryagent-v1-list-books-response
+  take form google-example-libraryagent-v1-list-books-response
+
+boot libraryagent-shelves-books-list, name <libraryagent.shelves.books.list>
+  note <Lists books in a shelf. The order is unspecified but deterministic. Newly created books will not necessarily be added to the end of this list. Returns NOT_FOUND if the shelf does not exist.>
+
+  take parent
+    like native-string
+    note <Required. The name of the shelf whose books we'd like to list.>
+  take page-size
+    like native-integer
+    note <Requested page size. Server may return fewer books than requested. If unspecified, server will pick an appropriate default.>
+    void take
+  take page-token
+    like native-string
+    note <A token identifying a page of results the server should return. Typically, this is the value of ListBooksResponse.next_page_token. returned from the previous call to `ListBooks` method.>
+    void take
+
+  line </v1/{parent}/books>
+
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like google-example-libraryagent-v1-list-books-response
+    note <Successful response>

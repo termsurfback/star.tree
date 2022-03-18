@@ -1,0 +1,50 @@
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-pagination-token
+  take form invalid-pagination-token
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/list-vpc-association-authorizations-response
+  take form list-vpc-association-authorizations-response
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/no-such-hosted-zone
+  take form no-such-hosted-zone
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-vpc-association-authorizations, name <ListVPCAssociationAuthorizations>
+  note <Gets a list of the VPCs that were created by other accounts and that can be associated with a specified hosted zone because you've submitted one or more `CreateVPCAssociationAuthorization` requests.
+
+The response includes a `VPCs` element with a `VPC` child element for each VPC that can be associated with the hosted zone.>
+
+  take id
+    like native-string
+    note <The ID of the hosted zone for which you want a list of VPCs that can be associated with the hosted zone.>
+  take nexttoken
+    like native-string
+    note <_Optional_: If a response includes a `NextToken` element, there are more VPCs that can be associated with the specified hosted zone. To get the next page of results, submit another request, and include the value of `NextToken` from the response in the `nexttoken` parameter in another `ListVPCAssociationAuthorizations` request.>
+    void take
+  take maxresults
+    like native-string
+    note <_Optional_: An integer that specifies the maximum number of VPCs that you want Amazon Route 53 to return. If you don't specify a value for `MaxResults`, Route 53 returns up to 50 VPCs per page.>
+    void take
+
+  line </2013-04-01/hostedzone/{id}/authorizevpcassociation>
+
+  find <nexttoken>, loan nexttoken
+  find <maxresults>, loan maxresults
+
+  loot 200
+    seed xml, like list-vpc-association-authorizations-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-hosted-zone
+    note <NoSuchHostedZone>
+  loot 481
+    seed xml, like invalid-input
+    note <InvalidInput>
+  loot 482
+    seed xml, like invalid-pagination-token
+    note <InvalidPaginationToken>

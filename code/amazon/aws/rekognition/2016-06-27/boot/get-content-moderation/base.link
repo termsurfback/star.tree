@@ -1,0 +1,88 @@
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/get-content-moderation-response
+  take form get-content-moderation-response
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/invalid-pagination-token-exception
+  take form invalid-pagination-token-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/provisioned-throughput-exceeded-exception
+  take form provisioned-throughput-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-content-moderation, name <GetContentModeration>
+  note <Gets the inappropriate, unwanted, or offensive content analysis results for a Amazon Rekognition Video analysis started by StartContentModeration. For a list of moderation labels in Amazon Rekognition, see [Using the image and video moderation APIs](https://docs.aws.amazon.com/rekognition/latest/dg/moderation.html#moderation-api).
+
+Amazon Rekognition Video inappropriate or offensive content detection in a stored video is an asynchronous operation. You start analysis by calling StartContentModeration which returns a job identifier (`JobId`). When analysis finishes, Amazon Rekognition Video publishes a completion status to the Amazon Simple Notification Service topic registered in the initial call to `StartContentModeration`. To get the results of the content analysis, first check that the status value published to the Amazon SNS topic is `SUCCEEDED`. If so, call `GetContentModeration` and pass the job identifier (`JobId`) from the initial call to `StartContentModeration`.
+
+For more information, see Working with Stored Videos in the Amazon Rekognition Devlopers Guide.
+
+`GetContentModeration` returns detected inappropriate, unwanted, or offensive content moderation labels, and the time they are detected, in an array, `ModerationLabels`, of ContentModerationDetection objects.
+
+By default, the moderated labels are returned sorted by time, in milliseconds from the start of the video. You can also sort them by moderated label by specifying `NAME` for the `SortBy` input parameter.
+
+Since video analysis can return a large number of results, use the `MaxResults` parameter to limit the number of labels returned in a single call to `GetContentModeration`. If there are more results than specified in `MaxResults`, the value of `NextToken` in the operation response contains a pagination token for getting the next set of results. To get the next page of results, call `GetContentModeration` and populate the `NextToken` request parameter with the value of `NextToken` returned from the previous call to `GetContentModeration`.
+
+For more information, see Content moderation in the Amazon Rekognition Developer Guide.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-content-moderation-request, like get-content-moderation-request
+
+  line </#X-Amz-Target=RekognitionService.GetContentModeration>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan get-content-moderation-request
+
+  loot 200
+    seed json, like get-content-moderation-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 483
+    seed json, like invalid-pagination-token-exception
+    note <InvalidPaginationTokenException>
+  loot 484
+    seed json, like provisioned-throughput-exceeded-exception
+    note <ProvisionedThroughputExceededException>
+  loot 485
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 486
+    seed json, like throttling-exception
+    note <ThrottlingException>

@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/kafka/2018-11-14/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/kafka/2018-11-14/base/forbidden-exception
+  take form forbidden-exception
+
+load @drumwork/snow/amazonaws.com/kafka/2018-11-14/base/internal-server-error-exception
+  take form internal-server-error-exception
+
+load @drumwork/snow/amazonaws.com/kafka/2018-11-14/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/kafka/2018-11-14/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/amazonaws.com/kafka/2018-11-14/base/update-monitoring-body
+  take form update-monitoring-body
+
+load @drumwork/snow/amazonaws.com/kafka/2018-11-14/base/update-monitoring-response
+  take form update-monitoring-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-monitoring, name <UpdateMonitoring>
+  note <Updates the monitoring settings for the cluster. You can use this operation to specify which Apache Kafka metrics you want Amazon MSK to send to Amazon CloudWatch. You can also specify settings for open monitoring with Prometheus.>
+
+  take cluster-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) that uniquely identifies the cluster.>
+  take update-monitoring-body, like update-monitoring-body
+
+  line </v1/clusters/{cluster-arn}/monitoring>
+
+  seed json, loan update-monitoring-body
+
+  loot 200
+    seed json, like update-monitoring-response
+    note <Success>
+  loot 480
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 481
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 482
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 483
+    seed json, like internal-server-error-exception
+    note <InternalServerErrorException>
+  loot 484
+    seed json, like forbidden-exception
+    note <ForbiddenException>

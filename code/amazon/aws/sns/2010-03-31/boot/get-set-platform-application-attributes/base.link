@@ -1,0 +1,72 @@
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/authorization-error-exception
+  take form authorization-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/sns/2010-03-31/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-set-platform-application-attributes, name <GET_SetPlatformApplicationAttributes>
+  note <Sets the attributes of the platform application object for the supported push notification services, such as APNS and GCM (Firebase Cloud Messaging). For more information, see [Using Amazon SNS Mobile Push Notifications](https://docs.aws.amazon.com/sns/latest/dg/SNSMobilePush.html). For information on configuring attributes for message delivery status, see [Using Amazon SNS Application Attributes for Message Delivery Status](https://docs.aws.amazon.com/sns/latest/dg/sns-msg-status.html).>
+
+  take platform-application-arn
+    like native-string
+    note <PlatformApplicationArn for SetPlatformApplicationAttributes action.>
+  take attributes
+    like form
+    note <A map of the platform application attributes. Attributes in this map include the following:
+
+- `PlatformCredential` - The credential received from the notification service. For `APNS` and `APNS_SANDBOX`, `PlatformCredential` is `private key`. For `GCM` (Firebase Cloud Messaging), `PlatformCredential` is `API key`. For `ADM`, `PlatformCredential` is `client secret`.
+
+- `PlatformPrincipal` - The principal received from the notification service. For `APNS` and `APNS_SANDBOX`, `PlatformPrincipal` is `SSL certificate`. For `GCM` (Firebase Cloud Messaging), there is no `PlatformPrincipal`. For `ADM`, `PlatformPrincipal` is `client id`.
+
+- `EventEndpointCreated` - Topic ARN to which `EndpointCreated` event notifications are sent.
+
+- `EventEndpointDeleted` - Topic ARN to which `EndpointDeleted` event notifications are sent.
+
+- `EventEndpointUpdated` - Topic ARN to which `EndpointUpdate` event notifications are sent.
+
+- `EventDeliveryFailure` - Topic ARN to which `DeliveryFailure` event notifications are sent upon Direct Publish delivery failure (permanent) to one of the application's endpoints.
+
+- `SuccessFeedbackRoleArn` - IAM role ARN used to give Amazon SNS write access to use CloudWatch Logs on your behalf.
+
+- `FailureFeedbackRoleArn` - IAM role ARN used to give Amazon SNS write access to use CloudWatch Logs on your behalf.
+
+- `SuccessFeedbackSampleRate` - Sample rate percentage (0-100) of successfully delivered messages.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=SetPlatformApplicationAttributes>
+
+  find <PlatformApplicationArn>, loan platform-application-arn
+  find <Attributes>, loan attributes
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed xml, like internal-error-exception
+    note <InternalErrorException>
+  loot 482
+    seed xml, like authorization-error-exception
+    note <AuthorizationErrorException>
+  loot 483
+    seed xml, like not-found-exception
+    note <NotFoundException>

@@ -1,0 +1,72 @@
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/create-dashboard-body
+  take form create-dashboard-body
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/create-dashboard-response
+  take form create-dashboard-response
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/resource-exists-exception
+  take form resource-exists-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/unsupported-user-edition-exception
+  take form unsupported-user-edition-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-dashboard, name <CreateDashboard>
+  note <Creates a dashboard from a template. To first create a template, see the `CreateTemplate` API operation.
+
+A dashboard is an entity in Amazon QuickSight that identifies Amazon QuickSight reports, created from analyses. You can share Amazon QuickSight dashboards. With the right permissions, you can create scheduled email reports from them. If you have the correct permissions, you can create a dashboard from a template that exists in a different Amazon Web Services account.>
+
+  take aws-account-id
+    like native-string
+    note <The ID of the Amazon Web Services account where you want to create the dashboard.>
+  take dashboard-id
+    like native-string
+    note <The ID for the dashboard, also added to the IAMpolicy.>
+  take create-dashboard-body, like create-dashboard-body
+
+  line </accounts/{aws-account-id}/dashboards/{dashboard-id}>
+
+  seed json, loan create-dashboard-body
+
+  loot 200
+    seed json, like create-dashboard-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like resource-exists-exception
+    note <ResourceExistsException>
+  loot 484
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 485
+    seed json, like unsupported-user-edition-exception
+    note <UnsupportedUserEditionException>
+  loot 486
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

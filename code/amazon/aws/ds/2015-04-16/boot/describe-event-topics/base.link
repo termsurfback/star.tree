@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/describe-event-topics-result
+  take form describe-event-topics-result
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/entity-does-not-exist-exception
+  take form entity-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-event-topics, name <DescribeEventTopics>
+  note <Obtains information about which Amazon SNS topics receive status messages from the specified directory.
+
+If no input parameters are provided, such as DirectoryId or TopicName, this request describes all of the associations in the account.>
+
+  take x-amz-target
+    like native-string
+  take describe-event-topics-request, like describe-event-topics-request
+
+  line </#X-Amz-Target=DirectoryService_20150416.DescribeEventTopics>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-event-topics-request
+
+  loot 200
+    seed json, like describe-event-topics-result
+    note <Success>
+  loot 480
+    seed json, like entity-does-not-exist-exception
+    note <EntityDoesNotExistException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like client-exception
+    note <ClientException>
+  loot 483
+    seed json, like service-exception
+    note <ServiceException>

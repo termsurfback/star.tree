@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/create-health-check-body
+  take form create-health-check-body
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/create-health-check-response
+  take form create-health-check-response
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/health-check-already-exists
+  take form health-check-already-exists
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/too-many-health-checks
+  take form too-many-health-checks
+
+boot create-health-check, name <CreateHealthCheck>
+  note <Creates a new health check.
+
+For information about adding health checks to resource record sets, see [HealthCheckId](https://docs.aws.amazon.com/Route53/latest/APIReference/API_ResourceRecordSet.html#Route53-Type-ResourceRecordSet-HealthCheckId) in [ChangeResourceRecordSets](https://docs.aws.amazon.com/Route53/latest/APIReference/API_ChangeResourceRecordSets.html).
+
+**ELB Load Balancers** If you're registering EC2 instances with an Elastic Load Balancing (ELB) load balancer, do not create Amazon Route 53 health checks for the EC2 instances. When you register an EC2 instance with a load balancer, you configure settings for an ELB health check, which performs a similar function to a Route 53 health check.
+
+**Private Hosted Zones** You can associate health checks with failover resource record sets in a private hosted zone. Note the following:
+
+- Route 53 health checkers are outside the VPC. To check the health of an endpoint within a VPC by IP address, you must assign a public IP address to the instance in the VPC.
+
+- You can configure a health checker to check the health of an external resource that the instance relies on, such as a database server.
+
+- You can create a CloudWatch metric, associate an alarm with the metric, and then create a health check that is based on the state of the alarm. For example, you might create a CloudWatch metric that checks the status of the Amazon EC2 `StatusCheckFailed` metric, add an alarm to the metric, and then create a health check that is based on the state of the alarm. For information about creating CloudWatch metrics and alarms by using the CloudWatch console, see the [Amazon CloudWatch User Guide](https://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/WhatIsCloudWatch.html).>
+
+  take create-health-check-body, like create-health-check-body
+
+  line </2013-04-01/healthcheck>
+
+  seed xml, loan create-health-check-body
+
+  loot 201
+    seed xml, like create-health-check-response
+    note <Success>
+  loot 480
+    seed xml, like too-many-health-checks
+    note <TooManyHealthChecks>
+  loot 481
+    seed xml, like health-check-already-exists
+    note <HealthCheckAlreadyExists>
+  loot 482
+    seed xml, like invalid-input
+    note <InvalidInput>

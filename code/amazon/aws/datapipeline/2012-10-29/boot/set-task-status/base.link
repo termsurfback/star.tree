@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/pipeline-deleted-exception
+  take form pipeline-deleted-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/pipeline-not-found-exception
+  take form pipeline-not-found-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/set-task-status-output
+  take form set-task-status-output
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/task-not-found-exception
+  take form task-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot set-task-status, name <SetTaskStatus>
+  note <Task runners call `SetTaskStatus` to notify AWS Data Pipeline that a task is completed and provide information about the final status. A task runner makes this call regardless of whether the task was sucessful. A task runner does not need to call `SetTaskStatus` for tasks that are canceled by the web service during a call to ReportTaskProgress.>
+
+  take x-amz-target
+    like native-string
+  take set-task-status-input, like set-task-status-input
+
+  line </#X-Amz-Target=DataPipeline.SetTaskStatus>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan set-task-status-input
+
+  loot 200
+    seed json, like set-task-status-output
+    note <Success>
+  loot 480
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 481
+    seed json, like task-not-found-exception
+    note <TaskNotFoundException>
+  loot 482
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 483
+    seed json, like pipeline-not-found-exception
+    note <PipelineNotFoundException>
+  loot 484
+    seed json, like pipeline-deleted-exception
+    note <PipelineDeletedException>

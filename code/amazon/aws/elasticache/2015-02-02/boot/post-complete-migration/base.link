@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/complete-migration-response
+  take form complete-migration-response
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-replication-group-state-fault
+  take form invalid-replication-group-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/replication-group-not-found-fault
+  take form replication-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/replication-group-not-under-migration-fault
+  take form replication-group-not-under-migration-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-complete-migration, name <POST_CompleteMigration>
+  note <Complete the migration of data.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take complete-migration-message, like complete-migration-message
+    void take
+
+  line </#Action=CompleteMigration>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan complete-migration-message
+
+  loot 200
+    seed xml, like complete-migration-response
+    note <Success>
+  loot 480
+    seed xml, like replication-group-not-found-fault
+    note <ReplicationGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-replication-group-state-fault
+    note <InvalidReplicationGroupStateFault>
+  loot 482
+    seed xml, like replication-group-not-under-migration-fault
+    note <ReplicationGroupNotUnderMigrationFault>

@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/invalid-user-status-exception
+  take form invalid-user-status-exception
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/alexaforbusiness/2017-11-09/base/send-invitation-response
+  take form send-invitation-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot send-invitation, name <SendInvitation>
+  note <Sends an enrollment invitation email with a URL to a user. The URL is valid for 30 days or until you call this operation again, whichever comes first.>
+
+  take x-amz-target
+    like native-string
+  take send-invitation-request, like send-invitation-request
+
+  line </#X-Amz-Target=AlexaForBusiness.SendInvitation>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan send-invitation-request
+
+  loot 200
+    seed json, like send-invitation-response
+    note <Success>
+  loot 480
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 481
+    seed json, like invalid-user-status-exception
+    note <InvalidUserStatusException>
+  loot 482
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>

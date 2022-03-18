@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/copy-product-output
+  take form copy-product-output
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/invalid-parameters-exception
+  take form invalid-parameters-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot copy-product, name <CopyProduct>
+  note <Copies the specified source product to the specified target product or a new product.
+
+You can copy a product to the same account or another account. You can copy a product to the same region or another region.
+
+This operation is performed asynchronously. To track the progress of the operation, use DescribeCopyProductStatus.>
+
+  take x-amz-target
+    like native-string
+  take copy-product-input, like copy-product-input
+
+  line </#X-Amz-Target=AWS242ServiceCatalogService.CopyProduct>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan copy-product-input
+
+  loot 200
+    seed json, like copy-product-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-parameters-exception
+    note <InvalidParametersException>

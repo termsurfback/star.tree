@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/get-ssh-public-key-response
+  take form get-ssh-public-key-response
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/unrecognized-public-key-encoding-exception
+  take form unrecognized-public-key-encoding-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-get-ssh-public-key, name <POST_GetSSHPublicKey>
+  note <Retrieves the specified SSH public key, including metadata about the key.
+
+The SSH public key retrieved by this operation is used only for authenticating the associated IAM user to an CodeCommit repository. For more information about using SSH keys to authenticate to an CodeCommit repository, see [Set up CodeCommit for SSH connections](https://docs.aws.amazon.com/codecommit/latest/userguide/setting-up-credentials-ssh.html) in the _CodeCommit User Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take get-ssh-public-key-request, like get-ssh-public-key-request
+    void take
+
+  line </#Action=GetSSHPublicKey>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan get-ssh-public-key-request
+
+  loot 200
+    seed xml, like get-ssh-public-key-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like unrecognized-public-key-encoding-exception
+    note <UnrecognizedPublicKeyEncodingException>

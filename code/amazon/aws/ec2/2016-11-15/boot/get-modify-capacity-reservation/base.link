@@ -1,0 +1,66 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/modify-capacity-reservation-result
+  take form modify-capacity-reservation-result
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-modify-capacity-reservation, name <GET_ModifyCapacityReservation>
+  note <Modifies a Capacity Reservation's capacity and the conditions under which it is to be released. You cannot change a Capacity Reservation's instance type, EBS optimization, instance store settings, platform, Availability Zone, or instance eligibility. If you need to modify any of these attributes, we recommend that you cancel the Capacity Reservation, and then create a new one with the required attributes.>
+
+  take capacity-reservation-id
+    like native-string
+    note <The ID of the Capacity Reservation.>
+  take instance-count
+    like native-integer
+    note <The number of instances for which to reserve capacity. The number of instances can't be increased or decreased by more than `1000` in a single request.>
+    void take
+  take end-date
+    like native-string
+    note <The date and time at which the Capacity Reservation expires. When a Capacity Reservation expires, the reserved capacity is released and you can no longer launch instances into it. The Capacity Reservation's state changes to `expired` when it reaches its end date and time.
+
+The Capacity Reservation is cancelled within an hour from the specified time. For example, if you specify 5/31/2019, 13:30:55, the Capacity Reservation is guaranteed to end between 13:30:55 and 14:30:55 on 5/31/2019.
+
+You must provide an `EndDate` value if `EndDateType` is `limited`. Omit `EndDate` if `EndDateType` is `unlimited`.>
+    void take
+  take end-date-type
+    like native-string
+    note <Indicates the way in which the Capacity Reservation ends. A Capacity Reservation can have one of the following end types:
+
+- `unlimited` - The Capacity Reservation remains active until you explicitly cancel it. Do not provide an `EndDate` value if `EndDateType` is `unlimited`.
+
+- `limited` - The Capacity Reservation expires automatically at a specified date and time. You must provide an `EndDate` value if `EndDateType` is `limited`.>
+    void take
+  take accept
+    like native-boolean
+    note <Reserved. Capacity Reservations you have created are accepted by default.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyCapacityReservation>
+
+  find <CapacityReservationId>, loan capacity-reservation-id
+  find <InstanceCount>, loan instance-count
+  find <EndDate>, loan end-date
+  find <EndDateType>, loan end-date-type
+  find <Accept>, loan accept
+  find <DryRun>, loan dry-run
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-capacity-reservation-result
+    note <Success>

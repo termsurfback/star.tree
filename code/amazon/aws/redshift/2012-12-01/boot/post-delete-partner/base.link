@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/partner-integration-output-message
+  take form partner-integration-output-message
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/partner-not-found-fault
+  take form partner-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unauthorized-partner-integration-fault
+  take form unauthorized-partner-integration-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-partner, name <POST_DeletePartner>
+  note <Deletes a partner integration from a cluster. Data can still flow to the cluster until the integration is deleted at the partner's website.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take partner-integration-input-message, like partner-integration-input-message
+    void take
+
+  line </#Action=DeletePartner>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan partner-integration-input-message
+
+  loot 200
+    seed xml, like partner-integration-output-message
+    note <Success>
+  loot 480
+    seed xml, like partner-not-found-fault
+    note <PartnerNotFoundFault>
+  loot 481
+    seed xml, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 482
+    seed xml, like unauthorized-partner-integration-fault
+    note <UnauthorizedPartnerIntegrationFault>

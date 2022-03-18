@@ -1,0 +1,43 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/balance-transaction
+  take form balance-transaction
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-balance-transactions-id-body
+  take form get-balance-transactions-id-body
+
+boot get-balance-transactions-id, name <GetBalanceTransactionsId>
+  note <Retrieves the balance transaction with the given ID.
+
+Note that this endpoint previously used the path `/v1/balance/history/:id`.>
+
+  take id
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-balance-transactions-id-body, like get-balance-transactions-id-body
+    void take
+
+  line </v1/balance_transactions/{id}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-balance-transactions-id-body
+
+  loot 200
+    seed json, like balance-transaction
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

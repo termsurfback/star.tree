@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/redis/v1/base/list-instances-response
+  take form list-instances-response
+
+boot redis-projects-locations-instances-list, name <redis.projects.locations.instances.list>
+  note <Lists all Redis instances owned by a project in either the specified location (region) or all locations. The location should have the following format: * `projects/{project_id}/locations/{location_id}` If `location_id` is specified as `-` (wildcard), then all regions available to the project are queried, and the results are aggregated.>
+
+  take parent
+    like native-string
+    note <Required. The resource name of the instance location using the form: `projects/{project_id}/locations/{location_id}` where `location_id` refers to a GCP region.>
+  take page-size
+    like native-integer
+    note <The maximum number of items to return. If not specified, a default value of 1000 will be used by the service. Regardless of the page_size value, the response may include a partial list and a caller should only rely on response's `next_page_token` to determine if there are more instances left to be queried.>
+    void take
+  take page-token
+    like native-string
+    note <The `next_page_token` value returned from a previous ListInstances request, if any.>
+    void take
+
+  line </v1/{parent}/instances>
+
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-instances-response
+    note <Successful response>

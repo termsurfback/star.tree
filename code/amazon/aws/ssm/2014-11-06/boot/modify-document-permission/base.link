@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/document-limit-exceeded
+  take form document-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/document-permission-limit
+  take form document-permission-limit
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-document
+  take form invalid-document
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-permission-type
+  take form invalid-permission-type
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/modify-document-permission-response
+  take form modify-document-permission-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot modify-document-permission, name <ModifyDocumentPermission>
+  note <Shares a Amazon Web Services Systems Manager document (SSM document)publicly or privately. If you share a document privately, you must specify the Amazon Web Services user account IDs for those people who can use the document. If you share a document publicly, you must specify _All_ as the account ID.>
+
+  take x-amz-target
+    like native-string
+  take modify-document-permission-request, like modify-document-permission-request
+
+  line </#X-Amz-Target=AmazonSSM.ModifyDocumentPermission>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan modify-document-permission-request
+
+  loot 200
+    seed json, like modify-document-permission-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like invalid-document
+    note <InvalidDocument>
+  loot 482
+    seed json, like invalid-permission-type
+    note <InvalidPermissionType>
+  loot 483
+    seed json, like document-permission-limit
+    note <DocumentPermissionLimit>
+  loot 484
+    seed json, like document-limit-exceeded
+    note <DocumentLimitExceeded>

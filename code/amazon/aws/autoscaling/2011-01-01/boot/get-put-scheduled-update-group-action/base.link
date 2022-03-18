@@ -1,0 +1,102 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/already-exists-fault
+  take form already-exists-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/limit-exceeded-fault
+  take form limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-put-scheduled-update-group-action, name <GET_PutScheduledUpdateGroupAction>
+  note <Creates or updates a scheduled scaling action for an Auto Scaling group.
+
+For more information, see [Scheduled scaling](https://docs.aws.amazon.com/autoscaling/ec2/userguide/schedule_time.html) in the _Amazon EC2 Auto Scaling User Guide_.
+
+You can view the scheduled actions for an Auto Scaling group using the DescribeScheduledActions API call. If you are no longer using a scheduled action, you can delete it by calling the DeleteScheduledAction API.>
+
+  take auto-scaling-group-name
+    like native-string
+    note <The name of the Auto Scaling group.>
+  take scheduled-action-name
+    like native-string
+    note <The name of this scaling action.>
+  take time
+    like native-string
+    note <This parameter is no longer used.>
+    void take
+  take start-time
+    like native-string
+    note <The date and time for this action to start, in YYYY-MM-DDThh:mm:ssZ format in UTC/GMT only and in quotes (for example, `"2019-06-01T00:00:00Z"`).
+
+If you specify `Recurrence` and `StartTime`, Amazon EC2 Auto Scaling performs the action at this time, and then performs the action based on the specified recurrence.
+
+If you try to schedule your action in the past, Amazon EC2 Auto Scaling returns an error message.>
+    void take
+  take end-time
+    like native-string
+    note <The date and time for the recurring schedule to end, in UTC.>
+    void take
+  take recurrence
+    like native-string
+    note <The recurring schedule for this action. This format consists of five fields separated by white spaces: [Minute] [Hour] [Day_of_Month] [Month_of_Year] [Day_of_Week]. The value must be in quotes (for example, `"30 0 1 1,6,12 *"`). For more information about this format, see [Crontab](http://crontab.org).
+
+When `StartTime` and `EndTime` are specified with `Recurrence`, they form the boundaries of when the recurring action starts and stops.
+
+Cron expressions use Universal Coordinated Time (UTC) by default.>
+    void take
+  take min-size
+    like native-integer
+    note <The minimum size of the Auto Scaling group.>
+    void take
+  take max-size
+    like native-integer
+    note <The maximum size of the Auto Scaling group.>
+    void take
+  take desired-capacity
+    like native-integer
+    note <The desired capacity is the initial capacity of the Auto Scaling group after the scheduled action runs and the capacity it attempts to maintain. It can scale beyond this capacity if you add more scaling conditions.>
+    void take
+  take time-zone
+    like native-string
+    note <Specifies the time zone for a cron expression. If a time zone is not provided, UTC is used by default.
+
+Valid values are the canonical names of the IANA time zones, derived from the IANA Time Zone Database (such as `Etc/GMT+9` or `Pacific/Tahiti`). For more information, see [https://en.wikipedia.org/wiki/List_of_tz_database_time_zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=PutScheduledUpdateGroupAction>
+
+  find <AutoScalingGroupName>, loan auto-scaling-group-name
+  find <ScheduledActionName>, loan scheduled-action-name
+  find <Time>, loan time
+  find <StartTime>, loan start-time
+  find <EndTime>, loan end-time
+  find <Recurrence>, loan recurrence
+  find <MinSize>, loan min-size
+  find <MaxSize>, loan max-size
+  find <DesiredCapacity>, loan desired-capacity
+  find <TimeZone>, loan time-zone
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like already-exists-fault
+    note <AlreadyExistsFault>
+  loot 481
+    seed xml, like limit-exceeded-fault
+    note <LimitExceededFault>
+  loot 482
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

@@ -1,0 +1,99 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/reserved-db-instances-offering-message
+  take form reserved-db-instances-offering-message
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/reserved-db-instances-offering-not-found-fault
+  take form reserved-db-instances-offering-not-found-fault
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-reserved-db-instances-offerings, name <GET_DescribeReservedDBInstancesOfferings>
+  note <Lists available reserved DB instance offerings.>
+
+  take reserved-db-instances-offering-id
+    like native-string
+    note <The offering identifier filter value. Specify this parameter to show only the available offering that matches the specified reservation identifier.
+
+Example: `438012d3-4052-4cc7-b2e3-8d3372e0e706`>
+    void take
+  take db-instance-class
+    like native-string
+    note <The DB instance class filter value. Specify this parameter to show only the available offerings matching the specified DB instance class.>
+    void take
+  take duration
+    like native-string
+    note <Duration filter value, specified in years or seconds. Specify this parameter to show only reservations for this duration.
+
+Valid Values: `1 | 3 | 31536000 | 94608000`>
+    void take
+  take product-description
+    like native-string
+    note <Product description filter value. Specify this parameter to show only the available offerings that contain the specified product description.
+
+The results show offerings that partially match the filter value.>
+    void take
+  take offering-type
+    like native-string
+    note <The offering type filter value. Specify this parameter to show only the available offerings matching the specified offering type.
+
+Valid Values: `"Partial Upfront" | "All Upfront" | "No Upfront"`>
+    void take
+  take multi-az
+    like native-boolean
+    note <A value that indicates whether to show only those reservations that support Multi-AZ.>
+    void take
+  take filters
+    like list
+      like filter
+    note <This parameter isn't currently supported.>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of records to include in the response. If more than the `MaxRecords` value is available, a pagination token called a marker is included in the response so you can retrieve the remaining results.
+
+Default: 100
+
+Constraints: Minimum 20, maximum 100.>
+    void take
+  take marker
+    like native-string
+    note <An optional pagination token provided by a previous request. If this parameter is specified, the response includes only records beyond the marker, up to the value specified by `MaxRecords`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeReservedDBInstancesOfferings>
+
+  find <ReservedDBInstancesOfferingId>, loan reserved-db-instances-offering-id
+  find <DBInstanceClass>, loan db-instance-class
+  find <Duration>, loan duration
+  find <ProductDescription>, loan product-description
+  find <OfferingType>, loan offering-type
+  find <MultiAZ>, loan multi-az
+  find <Filters>, loan filters
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like reserved-db-instances-offering-message
+    note <Success>
+  loot 480
+    seed xml, like reserved-db-instances-offering-not-found-fault
+    note <ReservedDBInstancesOfferingNotFoundFault>

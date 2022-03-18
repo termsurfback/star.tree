@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/data-unavailable-exception
+  take form data-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/get-cost-forecast-response
+  take form get-cost-forecast-response
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-cost-forecast, name <GetCostForecast>
+  note <Retrieves a forecast for how much Amazon Web Services predicts that you will spend over the forecast time period that you select, based on your past costs.>
+
+  take x-amz-target
+    like native-string
+  take get-cost-forecast-request, like get-cost-forecast-request
+
+  line </#X-Amz-Target=AWSInsightsIndexService.GetCostForecast>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-cost-forecast-request
+
+  loot 200
+    seed json, like get-cost-forecast-response
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed json, like data-unavailable-exception
+    note <DataUnavailableException>

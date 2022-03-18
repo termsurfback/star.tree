@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/list-volume-initiators-output
+  take form list-volume-initiators-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-volume-initiators, name <ListVolumeInitiators>
+  note <Lists iSCSI initiators that are connected to a volume. You can use this operation to determine whether a volume is being used or not. This operation is only supported in the cached volume and stored volume gateway types.>
+
+  take x-amz-target
+    like native-string
+  take list-volume-initiators-input, like list-volume-initiators-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.ListVolumeInitiators>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-volume-initiators-input
+
+  loot 200
+    seed json, like list-volume-initiators-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

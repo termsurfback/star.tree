@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/create-graph-body
+  take form create-graph-body
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/create-graph-response
+  take form create-graph-response
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/service-quota-exceeded-exception
+  take form service-quota-exceeded-exception
+
+boot create-graph, name <CreateGraph>
+  note <Creates a new behavior graph for the calling account, and sets that account as the administrator account. This operation is called by the account that is enabling Detective.
+
+Before you try to enable Detective, make sure that your account has been enrolled in Amazon GuardDuty for at least 48 hours. If you do not meet this requirement, you cannot enable Detective. If you do meet the GuardDuty prerequisite, then when you make the request to enable Detective, it checks whether your data volume is within the Detective quota. If it exceeds the quota, then you cannot enable Detective.
+
+The operation also enables Detective for the calling account in the currently selected Region. It returns the ARN of the new behavior graph.
+
+`CreateGraph` triggers a process to create the corresponding data tables for the new behavior graph.
+
+An account can only be the administrator account for one behavior graph within a Region. If the same account calls `CreateGraph` with the same administrator account, it always returns the same behavior graph ARN. It does not create a new behavior graph.>
+
+  take create-graph-body, like create-graph-body
+
+  line </graph>
+
+  seed json, loan create-graph-body
+
+  loot 200
+    seed json, like create-graph-response
+    note <Success>
+  loot 480
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like service-quota-exceeded-exception
+    note <ServiceQuotaExceededException>

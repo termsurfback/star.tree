@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/external-account
+  take form external-account
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-account-bank-accounts-id-body
+  take form get-account-bank-accounts-id-body
+
+boot get-account-bank-accounts-id, name <GetAccountBankAccountsId>
+  note <Retrieve a specified external account for a given account.>
+
+  take id
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-account-bank-accounts-id-body, like get-account-bank-accounts-id-body
+    void take
+
+  line </v1/account/bank_accounts/{id}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-account-bank-accounts-id-body
+
+  loot 200
+    seed json, like external-account
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

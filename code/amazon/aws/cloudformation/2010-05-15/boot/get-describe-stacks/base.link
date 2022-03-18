@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/describe-stacks-output
+  take form describe-stacks-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-stacks, name <GET_DescribeStacks>
+  note <Returns the description for the specified stack; if no stack name was specified, then it returns the description for all the stacks created.
+
+If the stack does not exist, an `ValidationError` is returned.>
+
+  take stack-name
+    like native-string
+    note <The name or the unique stack ID that is associated with the stack, which are not always interchangeable:
+
+- Running stacks: You can specify either the stack's name or its unique stack ID.
+
+- Deleted stacks: You must specify the unique stack ID.
+
+Default: There is no default value.>
+    void take
+  take next-token
+    like native-string
+    note <A string that identifies the next page of stacks that you want to retrieve.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeStacks>
+
+  find <StackName>, loan stack-name
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-stacks-output
+    note <Success>

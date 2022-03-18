@@ -1,0 +1,68 @@
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/concurrent-update-exception
+  take form concurrent-update-exception
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/describe-scaling-policies-response
+  take form describe-scaling-policies-response
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/failed-resource-access-exception
+  take form failed-resource-access-exception
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-scaling-policies, name <DescribeScalingPolicies>
+  note <Describes the Application Auto Scaling scaling policies for the specified service namespace.
+
+You can filter the results using `ResourceId`, `ScalableDimension`, and `PolicyNames`.
+
+For more information, see [Target tracking scaling policies](https://docs.aws.amazon.com/autoscaling/application/userguide/application-auto-scaling-target-tracking.html) and [Step scaling policies](https://docs.aws.amazon.com/autoscaling/application/userguide/application-auto-scaling-step-scaling-policies.html) in the _Application Auto Scaling User Guide_.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-scaling-policies-request, like describe-scaling-policies-request
+
+  line </#X-Amz-Target=AnyScaleFrontendService.DescribeScalingPolicies>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-scaling-policies-request
+
+  loot 200
+    seed json, like describe-scaling-policies-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like failed-resource-access-exception
+    note <FailedResourceAccessException>
+  loot 482
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 483
+    seed json, like concurrent-update-exception
+    note <ConcurrentUpdateException>
+  loot 484
+    seed json, like internal-service-exception
+    note <InternalServiceException>

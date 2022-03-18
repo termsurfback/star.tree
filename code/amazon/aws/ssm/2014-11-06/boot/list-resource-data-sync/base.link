@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/list-resource-data-sync-result
+  take form list-resource-data-sync-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/resource-data-sync-invalid-configuration-exception
+  take form resource-data-sync-invalid-configuration-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-resource-data-sync, name <ListResourceDataSync>
+  note <Lists your resource data sync configurations. Includes information about the last time a sync attempted to start, the last sync status, and the last time a sync successfully completed.
+
+The number of sync configurations might be too large to return using a single call to `ListResourceDataSync`. You can limit the number of sync configurations returned by using the `MaxResults` parameter. To determine whether there are more sync configurations to list, check the value of `NextToken` in the output. If there are more sync configurations to list, you can request them by specifying the `NextToken` returned in the call to the parameter of a subsequent call.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-resource-data-sync-request, like list-resource-data-sync-request
+
+  line </#X-Amz-Target=AmazonSSM.ListResourceDataSync>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-resource-data-sync-request
+
+  loot 200
+    seed json, like list-resource-data-sync-result
+    note <Success>
+  loot 480
+    seed json, like resource-data-sync-invalid-configuration-exception
+    note <ResourceDataSyncInvalidConfigurationException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 482
+    seed json, like invalid-next-token
+    note <InvalidNextToken>

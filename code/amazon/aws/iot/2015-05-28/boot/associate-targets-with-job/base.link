@@ -1,0 +1,75 @@
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/associate-targets-with-job-body
+  take form associate-targets-with-job-body
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/associate-targets-with-job-response
+  take form associate-targets-with-job-response
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot associate-targets-with-job, name <AssociateTargetsWithJob>
+  note <Associates a group with a continuous job. The following criteria must be met:
+
+- The job must have been created with the `targetSelection` field set to "CONTINUOUS".
+
+- The job status must currently be "IN_PROGRESS".
+
+- The total number of targets associated with a job must not exceed 100.
+
+Requires permission to access the [AssociateTargetsWithJob](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiot.html#awsiot-actions-as-permissions) action.>
+
+  take job-id
+    like native-string
+    note <The unique identifier you assigned to this job when it was created.>
+  take namespace-id
+    like native-string
+    note <The namespace used to indicate that a job is a customer-managed job.
+
+When you specify a value for this parameter, Amazon Web Services IoT Core sends jobs notifications to MQTT topics that contain the value in the following format.
+
+`$aws/things/_THING_NAME_/jobs/_JOB_ID_/notify-namespace-_NAMESPACE_ID_/`
+
+The `namespaceId` feature is in public preview.>
+    void take
+  take associate-targets-with-job-body, like associate-targets-with-job-body
+
+  line </jobs/{job-id}/targets>
+
+  find <namespaceId>, loan namespace-id
+
+  seed json, loan associate-targets-with-job-body
+
+  loot 200
+    seed json, like associate-targets-with-job-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

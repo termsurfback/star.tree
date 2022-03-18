@@ -1,0 +1,31 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-subscription-schedules-schedule-cancel-body
+  take form post-subscription-schedules-schedule-cancel-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/subscription-schedule
+  take form subscription-schedule
+
+boot post-subscription-schedules-schedule-cancel, name <PostSubscriptionSchedulesScheduleCancel>
+  note <Cancels a subscription schedule and its associated subscription immediately (if the subscription schedule has an active subscription). A subscription schedule can only be canceled if its status is `not_started` or `active`.>
+
+  take schedule
+    like native-string
+  take post-subscription-schedules-schedule-cancel-body, like post-subscription-schedules-schedule-cancel-body
+    void take
+
+  line </v1/subscription_schedules/{schedule}/cancel>
+
+  seed x-www-form-urlencoded, loan post-subscription-schedules-schedule-cancel-body
+
+  loot 200
+    seed json, like subscription-schedule
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

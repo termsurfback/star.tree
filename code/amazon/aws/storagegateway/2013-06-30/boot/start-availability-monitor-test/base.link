@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/start-availability-monitor-test-output
+  take form start-availability-monitor-test-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-availability-monitor-test, name <StartAvailabilityMonitorTest>
+  note <Start a test that verifies that the specified gateway is configured for High Availability monitoring in your host environment. This request only initiates the test and that a successful response only indicates that the test was started. It doesn't indicate that the test passed. For the status of the test, invoke the `DescribeAvailabilityMonitorTest` API.
+
+Starting this test will cause your gateway to go offline for a brief period.>
+
+  take x-amz-target
+    like native-string
+  take start-availability-monitor-test-input, like start-availability-monitor-test-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.StartAvailabilityMonitorTest>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan start-availability-monitor-test-input
+
+  loot 200
+    seed json, like start-availability-monitor-test-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

@@ -1,0 +1,144 @@
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/comparison-operator-type
+  take form comparison-operator-type
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/double
+  take form double
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/fleet-arn
+  take form fleet-arn
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/fleet-id
+  take form fleet-id
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/location-string-model
+  take form location-string-model
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/location-update-status
+  take form location-update-status
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/metric-name
+  take form metric-name
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/non-zero-and-max-string
+  take form non-zero-and-max-string
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/policy-type
+  take form policy-type
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/positive-integer
+  take form positive-integer
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/scaling-adjustment-type
+  take form scaling-adjustment-type
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/scaling-status-type
+  take form scaling-status-type
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/target-configuration
+  take form target-configuration
+
+load @drumwork/snow/base/integer
+  take form integer
+
+form scaling-policy, name <ScalingPolicy>
+  note <Rule that controls how a fleet is scaled. Scaling policies are uniquely identified by the combination of name and fleet ID.
+
+**Related actions** DescribeFleetCapacity | UpdateFleetCapacity | DescribeEC2InstanceLimits | PutScalingPolicy | DescribeScalingPolicies | DeleteScalingPolicy | StopFleetActions | StartFleetActions | [All APIs by task](https://docs.aws.amazon.com/gamelift/latest/developerguide/reference-awssdk.html#reference-awssdk-resources-fleets)>
+  take fleet-id, name <FleetId>
+    like fleet-id
+    void take
+    note <A unique identifier for the fleet that is associated with this scaling policy.>
+  take fleet-arn, name <FleetArn>
+    like fleet-arn
+    void take
+    note <The Amazon Resource Name ([ARN](https://docs.aws.amazon.com/AmazonS3/latest/dev/s3-arn-format.html)) that is assigned to a GameLift fleet resource and uniquely identifies it. ARNs are unique across all Regions. Format is `arn:aws:gamelift:&lt;region&gt;::fleet/fleet-a1234567-b8c9-0d1e-2fa3-b45c6d7e8912`.>
+  take name, name <Name>
+    like non-zero-and-max-string
+    void take
+    note <A descriptive label that is associated with a fleet's scaling policy. Policy names do not need to be unique.>
+  take status, name <Status>
+    like scaling-status-type
+    void take
+    note <Current status of the scaling policy. The scaling policy can be in force only when in an `ACTIVE` status. Scaling policies can be suspended for individual fleets (see StopFleetActions; if suspended for a fleet, the policy status does not change. View a fleet's stopped actions by calling DescribeFleetCapacity.
+
+- **ACTIVE** -- The scaling policy can be used for auto-scaling a fleet.
+
+- **UPDATE_REQUESTED** -- A request to update the scaling policy has been received.
+
+- **UPDATING** -- A change is being made to the scaling policy.
+
+- **DELETE_REQUESTED** -- A request to delete the scaling policy has been received.
+
+- **DELETING** -- The scaling policy is being deleted.
+
+- **DELETED** -- The scaling policy has been deleted.
+
+- **ERROR** -- An error occurred in creating the policy. It should be removed and recreated.>
+  take scaling-adjustment, name <ScalingAdjustment>
+    like integer
+    void take
+    note <Amount of adjustment to make, based on the scaling adjustment type.>
+  take scaling-adjustment-type, name <ScalingAdjustmentType>
+    like scaling-adjustment-type
+    void take
+    note <The type of adjustment to make to a fleet's instance count (see FleetCapacity):
+
+- **ChangeInCapacity** -- add (or subtract) the scaling adjustment value from the current instance count. Positive values scale up while negative values scale down.
+
+- **ExactCapacity** -- set the instance count to the scaling adjustment value.
+
+- **PercentChangeInCapacity** -- increase or reduce the current instance count by the scaling adjustment, read as a percentage. Positive values scale up while negative values scale down.>
+  take comparison-operator, name <ComparisonOperator>
+    like comparison-operator-type
+    void take
+    note <Comparison operator to use when measuring a metric against the threshold value.>
+  take threshold, name <Threshold>
+    like double
+    void take
+    note <Metric value used to trigger a scaling event.>
+  take evaluation-periods, name <EvaluationPeriods>
+    like positive-integer
+    void take
+    note <Length of time (in minutes) the metric must be at or beyond the threshold before a scaling event is triggered.>
+  take metric-name, name <MetricName>
+    like metric-name
+    void take
+    note <Name of the Amazon GameLift-defined metric that is used to trigger a scaling adjustment. For detailed descriptions of fleet metrics, see [Monitor Amazon GameLift with Amazon CloudWatch](https://docs.aws.amazon.com/gamelift/latest/developerguide/monitoring-cloudwatch.html).
+
+- **ActivatingGameSessions** -- Game sessions in the process of being created.
+
+- **ActiveGameSessions** -- Game sessions that are currently running.
+
+- **ActiveInstances** -- Fleet instances that are currently running at least one game session.
+
+- **AvailableGameSessions** -- Additional game sessions that fleet could host simultaneously, given current capacity.
+
+- **AvailablePlayerSessions** -- Empty player slots in currently active game sessions. This includes game sessions that are not currently accepting players. Reserved player slots are not included.
+
+- **CurrentPlayerSessions** -- Player slots in active game sessions that are being used by a player or are reserved for a player.
+
+- **IdleInstances** -- Active instances that are currently hosting zero game sessions.
+
+- **PercentAvailableGameSessions** -- Unused percentage of the total number of game sessions that a fleet could host simultaneously, given current capacity. Use this metric for a target-based scaling policy.
+
+- **PercentIdleInstances** -- Percentage of the total number of active instances that are hosting zero game sessions.
+
+- **QueueDepth** -- Pending game session placement requests, in any queue, where the current fleet is the top-priority destination.
+
+- **WaitTime** -- Current wait time for pending game session placement requests, in any queue, where the current fleet is the top-priority destination.>
+  take policy-type, name <PolicyType>
+    like policy-type
+    void take
+    note <The type of scaling policy to create. For a target-based policy, set the parameter _MetricName_ to 'PercentAvailableGameSessions' and specify a _TargetConfiguration_. For a rule-based policy set the following parameters: _MetricName_, _ComparisonOperator_, _Threshold_, _EvaluationPeriods_, _ScalingAdjustmentType_, and _ScalingAdjustment_.>
+  take target-configuration, name <TargetConfiguration>
+    like target-configuration
+    void take
+    note <An object that contains settings for a target-based scaling policy.>
+  take update-status, name <UpdateStatus>
+    like location-update-status
+    void take
+    note <The current status of the fleet's scaling policies in a requested fleet location. The status `PENDING_UPDATE` indicates that an update was requested for the fleet but has not yet been completed for the location.>
+  take location, name <Location>
+    like location-string-model
+    void take

@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/get-anomaly-monitors-response
+  take form get-anomaly-monitors-response
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/unknown-monitor-exception
+  take form unknown-monitor-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-anomaly-monitors, name <GetAnomalyMonitors>
+  note <Retrieves the cost anomaly monitor definitions for your account. You can filter using a list of cost anomaly monitor Amazon Resource Names (ARNs).>
+
+  take x-amz-target
+    like native-string
+  take get-anomaly-monitors-request, like get-anomaly-monitors-request
+
+  line </#X-Amz-Target=AWSInsightsIndexService.GetAnomalyMonitors>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-anomaly-monitors-request
+
+  loot 200
+    seed json, like get-anomaly-monitors-response
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed json, like unknown-monitor-exception
+    note <UnknownMonitorException>
+  loot 482
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>

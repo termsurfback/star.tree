@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-limit-exceeded
+  take form resource-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-not-found
+  take form resource-not-found
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/start-pipeline-execution-response
+  take form start-pipeline-execution-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-pipeline-execution, name <StartPipelineExecution>
+  note <Starts a pipeline execution.>
+
+  take x-amz-target
+    like native-string
+  take start-pipeline-execution-request, like start-pipeline-execution-request
+
+  line </#X-Amz-Target=SageMaker.StartPipelineExecution>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan start-pipeline-execution-request
+
+  loot 200
+    seed json, like start-pipeline-execution-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found
+    note <ResourceNotFound>
+  loot 481
+    seed json, like resource-limit-exceeded
+    note <ResourceLimitExceeded>

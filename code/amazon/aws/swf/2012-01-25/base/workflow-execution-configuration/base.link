@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/arn
+  take form arn
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/child-policy
+  take form child-policy
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/duration-in-seconds
+  take form duration-in-seconds
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/task-list
+  take form task-list
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/task-priority
+  take form task-priority
+
+form workflow-execution-configuration, name <WorkflowExecutionConfiguration>
+  note <The configuration settings for a workflow execution including timeout values, tasklist etc. These configuration settings are determined from the defaults specified when registering the workflow type and those specified when starting the workflow execution.>
+  take task-start-to-close-timeout, name <taskStartToCloseTimeout>
+    like duration-in-seconds
+    note <The maximum duration allowed for decision tasks for this workflow execution.
+
+The duration is specified in seconds, an integer greater than or equal to `0`. You can use `NONE` to specify unlimited duration.>
+  take execution-start-to-close-timeout, name <executionStartToCloseTimeout>
+    like duration-in-seconds
+    note <The total duration for this workflow execution.
+
+The duration is specified in seconds, an integer greater than or equal to `0`. You can use `NONE` to specify unlimited duration.>
+  take task-list, name <taskList>
+    like task-list
+    note <The task list used for the decision tasks generated for this workflow execution.>
+  take task-priority, name <taskPriority>
+    like task-priority
+    void take
+    note <The priority assigned to decision tasks for this workflow execution. Valid values are integers that range from Java's `Integer.MIN_VALUE` (-2147483648) to `Integer.MAX_VALUE` (2147483647). Higher numbers indicate higher priority.
+
+For more information about setting task priority, see [Setting Task Priority](https://docs.aws.amazon.com/amazonswf/latest/developerguide/programming-priority.html) in the _Amazon SWF Developer Guide_.>
+  take child-policy, name <childPolicy>
+    like child-policy
+    note <The policy to use for the child workflow executions if this workflow execution is terminated, by calling the TerminateWorkflowExecution action explicitly or due to an expired timeout.
+
+The supported child policies are:
+
+- `TERMINATE` - The child executions are terminated.
+
+- `REQUEST_CANCEL` - A request to cancel is attempted for each child execution by recording a `WorkflowExecutionCancelRequested` event in its history. It is up to the decider to take appropriate actions when it receives an execution history with this event.
+
+- `ABANDON` - No action is taken. The child executions continue to run.>
+  take lambda-role, name <lambdaRole>
+    like arn
+    void take
+    note <The IAM role attached to the child workflow execution.>

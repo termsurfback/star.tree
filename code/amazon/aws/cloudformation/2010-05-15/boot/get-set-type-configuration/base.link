@@ -1,0 +1,75 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/cfn-registry-exception
+  take form cfn-registry-exception
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/set-type-configuration-output
+  take form set-type-configuration-output
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/type-not-found-exception
+  take form type-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-set-type-configuration, name <GET_SetTypeConfiguration>
+  note <Specifies the configuration data for a registered CloudFormation extension, in the given account and region.
+
+To view the current configuration data for an extension, refer to the `ConfigurationSchema` element of [DescribeType](AWSCloudFormation/latest/APIReference/API_DescribeType.html). For more information, see [Configuring extensions at the account level](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/registry-register.html#registry-set-configuration) in the _CloudFormation User Guide_.
+
+It is strongly recommended that you use dynamic references to restrict sensitive configuration definitions, such as third-party credentials. For more details on dynamic references, see [Using dynamic references to specify template values](https://docs.aws.amazon.com/) in the _CloudFormation User Guide_.>
+
+  take type-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) for the extension, in this account and region.
+
+For public extensions, this will be the ARN assigned when you [activate the type](https://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_ActivateType.html) in this account and region. For private extensions, this will be the ARN assigned when you [register the type](https://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_RegisterType.html) in this account and region.
+
+Do not include the extension versions suffix at the end of the ARN. You can set the configuration for an extension, but not for a specific extension version.>
+    void take
+  take configuration
+    like native-string
+    note <The configuration data for the extension, in this account and region.
+
+The configuration data must be formatted as JSON, and validate against the schema returned in the `ConfigurationSchema` response element of [API_DescribeType](AWSCloudFormation/latest/APIReference/API_DescribeType.html). For more information, see [Defining account-level configuration data for an extension](https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-type-model.html#resource-type-howto-configuration) in the _CloudFormation CLI User Guide_.>
+  take configuration-alias
+    like native-string
+    note <An alias by which to refer to this extension configuration data.
+
+Conditional: Specifying a configuration alias is required when setting a configuration for a resource type extension.>
+    void take
+  take type-name
+    like native-string
+    note <The name of the extension.
+
+Conditional: You must specify `ConfigurationArn`, or `Type` and `TypeName`.>
+    void take
+  take type
+    like native-string
+    note <The type of extension.
+
+Conditional: You must specify `ConfigurationArn`, or `Type` and `TypeName`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=SetTypeConfiguration>
+
+  find <TypeArn>, loan type-arn
+  find <Configuration>, loan configuration
+  find <ConfigurationAlias>, loan configuration-alias
+  find <TypeName>, loan type-name
+  find <Type>, loan type
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like set-type-configuration-output
+    note <Success>
+  loot 480
+    seed xml, like cfn-registry-exception
+    note <CFNRegistryException>
+  loot 481
+    seed xml, like type-not-found-exception
+    note <TypeNotFoundException>

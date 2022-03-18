@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/check-domain-transferability-response
+  take form check-domain-transferability-response
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/unsupported-tld
+  take form unsupported-tld
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot check-domain-transferability, name <CheckDomainTransferability>
+  note <Checks whether a domain name can be transferred to Amazon Route 53.>
+
+  take x-amz-target
+    like native-string
+  take check-domain-transferability-request, like check-domain-transferability-request
+
+  line </#X-Amz-Target=Route53Domains_v20140515.CheckDomainTransferability>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan check-domain-transferability-request
+
+  loot 200
+    seed json, like check-domain-transferability-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input
+    note <InvalidInput>
+  loot 481
+    seed json, like unsupported-tld
+    note <UnsupportedTLD>

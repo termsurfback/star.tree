@@ -1,0 +1,27 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_preview/1.10.0/base/create-field-body
+  take form create-field-body
+
+load @drumwork/snow/twilio.com/twilio_preview/1.10.0/base/preview-understand-assistant-task-field
+  take form preview-understand-assistant-task-field
+
+boot create-field, name <CreateField>
+  take assistant-sid
+    like native-string
+    note <The unique ID of the parent Assistant.>
+  take task-sid
+    like native-string
+    note <The unique ID of the Task associated with this Field.>
+  take create-field-body, like create-field-body
+    void take
+
+  line </understand/Assistants/{assistant-sid}/Tasks/{task-sid}/Fields>
+
+  seed x-www-form-urlencoded, loan create-field-body
+
+  loot 201
+    seed json, like preview-understand-assistant-task-field
+    note <Created>

@@ -1,0 +1,76 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/application-description-message
+  take form application-description-message
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/application-version-lifecycle-config
+  take form application-version-lifecycle-config
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/tag
+  take form tag
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/too-many-applications-exception
+  take form too-many-applications-exception
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-create-application, name <GET_CreateApplication>
+  note <Creates an application that has one configuration template named `default` and no application versions.>
+
+  take application-name
+    like native-string
+    note <The name of the application. Must be unique within your account.>
+  take description
+    like native-string
+    note <Your description of the application.>
+    void take
+  take resource-lifecycle-config
+    like form
+      take service-role, name <ServiceRole>
+        like string
+        void take
+        note <The ARN of an IAM service role that Elastic Beanstalk has permission to assume.
+
+The `ServiceRole` property is required the first time that you provide a `VersionLifecycleConfig` for the application in one of the supporting calls (`CreateApplication` or `UpdateApplicationResourceLifecycle`). After you provide it once, in either one of the calls, Elastic Beanstalk persists the Service Role with the application, and you don't need to specify it again in subsequent `UpdateApplicationResourceLifecycle` calls. You can, however, specify it in subsequent calls to change the Service Role to another value.>
+      take version-lifecycle-config, name <VersionLifecycleConfig>
+        like application-version-lifecycle-config
+        void take
+        note <Defines lifecycle settings for application versions.>
+    note <Specifies an application resource lifecycle configuration to prevent your application from accumulating too many versions.>
+    void take
+  take tags
+    like list
+      like tag
+    note <Specifies the tags applied to the application.
+
+Elastic Beanstalk applies these tags only to the application. Environments that you create in the application don't inherit the tags.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateApplication>
+
+  find <ApplicationName>, loan application-name
+  find <Description>, loan description
+  find <ResourceLifecycleConfig>, loan resource-lifecycle-config
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like application-description-message
+    note <Success>
+  loot 480
+    seed xml, like too-many-applications-exception
+    note <TooManyApplicationsException>

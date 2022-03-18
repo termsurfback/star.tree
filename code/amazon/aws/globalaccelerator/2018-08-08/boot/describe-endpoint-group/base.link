@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/describe-endpoint-group-response
+  take form describe-endpoint-group-response
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/endpoint-group-not-found-exception
+  take form endpoint-group-not-found-exception
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/invalid-argument-exception
+  take form invalid-argument-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-endpoint-group, name <DescribeEndpointGroup>
+  note <Describe an endpoint group.>
+
+  take x-amz-target
+    like native-string
+  take describe-endpoint-group-request, like describe-endpoint-group-request
+
+  line </#X-Amz-Target=GlobalAccelerator_V20180706.DescribeEndpointGroup>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-endpoint-group-request
+
+  loot 200
+    seed json, like describe-endpoint-group-response
+    note <Success>
+  loot 480
+    seed json, like invalid-argument-exception
+    note <InvalidArgumentException>
+  loot 481
+    seed json, like endpoint-group-not-found-exception
+    note <EndpointGroupNotFoundException>
+  loot 482
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>

@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/export-task
+  take form export-task
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/export-task-not-found-fault
+  take form export-task-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-export-task-state-fault
+  take form invalid-export-task-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-cancel-export-task, name <GET_CancelExportTask>
+  note <Cancels an export task in progress that is exporting a snapshot to Amazon S3. Any data that has already been written to the S3 bucket isn't removed.>
+
+  take export-task-identifier
+    like native-string
+    note <The identifier of the snapshot export task to cancel.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CancelExportTask>
+
+  find <ExportTaskIdentifier>, loan export-task-identifier
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like export-task
+    note <Success>
+  loot 480
+    seed xml, like export-task-not-found-fault
+    note <ExportTaskNotFoundFault>
+  loot 481
+    seed xml, like invalid-export-task-state-fault
+    note <InvalidExportTaskStateFault>

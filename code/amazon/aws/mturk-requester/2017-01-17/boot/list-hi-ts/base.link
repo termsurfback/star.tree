@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/list-hi-ts-response
+  take form list-hi-ts-response
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/request-error
+  take form request-error
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/service-fault
+  take form service-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-hi-ts, name <ListHITs>
+  note <The `ListHITs` operation returns all of a Requester's HITs. The operation returns HITs of any status, except for HITs that have been deleted of with the DeleteHIT operation or that have been auto-deleted.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-hi-ts-request, like list-hi-ts-request
+
+  line </#X-Amz-Target=MTurkRequesterServiceV20170117.ListHITs>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-hi-ts-request
+
+  loot 200
+    seed json, like list-hi-ts-response
+    note <Success>
+  loot 480
+    seed json, like service-fault
+    note <ServiceFault>
+  loot 481
+    seed json, like request-error
+    note <RequestError>

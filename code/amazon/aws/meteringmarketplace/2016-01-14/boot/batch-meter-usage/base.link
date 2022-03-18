@@ -1,0 +1,87 @@
+
+load @drumwork/snow/amazonaws.com/meteringmarketplace/2016-01-14/base/batch-meter-usage-result
+  take form batch-meter-usage-result
+
+load @drumwork/snow/amazonaws.com/meteringmarketplace/2016-01-14/base/disabled-api-exception
+  take form disabled-api-exception
+
+load @drumwork/snow/amazonaws.com/meteringmarketplace/2016-01-14/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/meteringmarketplace/2016-01-14/base/invalid-customer-identifier-exception
+  take form invalid-customer-identifier-exception
+
+load @drumwork/snow/amazonaws.com/meteringmarketplace/2016-01-14/base/invalid-product-code-exception
+  take form invalid-product-code-exception
+
+load @drumwork/snow/amazonaws.com/meteringmarketplace/2016-01-14/base/invalid-tag-exception
+  take form invalid-tag-exception
+
+load @drumwork/snow/amazonaws.com/meteringmarketplace/2016-01-14/base/invalid-usage-allocations-exception
+  take form invalid-usage-allocations-exception
+
+load @drumwork/snow/amazonaws.com/meteringmarketplace/2016-01-14/base/invalid-usage-dimension-exception
+  take form invalid-usage-dimension-exception
+
+load @drumwork/snow/amazonaws.com/meteringmarketplace/2016-01-14/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/meteringmarketplace/2016-01-14/base/timestamp-out-of-bounds-exception
+  take form timestamp-out-of-bounds-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot batch-meter-usage, name <BatchMeterUsage>
+  note <BatchMeterUsage is called from a SaaS application listed on the AWS Marketplace to post metering records for a set of customers.
+
+For identical requests, the API is idempotent; requests can be retried with the same records or a subset of the input records.
+
+Every request to BatchMeterUsage is for one product. If you need to meter usage for multiple products, you must make multiple calls to BatchMeterUsage.
+
+BatchMeterUsage can process up to 25 UsageRecords at a time.
+
+A UsageRecord can optionally include multiple usage allocations, to provide customers with usagedata split into buckets by tags that you define (or allow the customer to define).
+
+BatchMeterUsage requests must be less than 1MB in size.>
+
+  take x-amz-target
+    like native-string
+  take batch-meter-usage-request, like batch-meter-usage-request
+
+  line </#X-Amz-Target=AWSMPMeteringService.BatchMeterUsage>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan batch-meter-usage-request
+
+  loot 200
+    seed json, like batch-meter-usage-result
+    note <Success>
+  loot 480
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>
+  loot 481
+    seed json, like invalid-product-code-exception
+    note <InvalidProductCodeException>
+  loot 482
+    seed json, like invalid-usage-dimension-exception
+    note <InvalidUsageDimensionException>
+  loot 483
+    seed json, like invalid-tag-exception
+    note <InvalidTagException>
+  loot 484
+    seed json, like invalid-usage-allocations-exception
+    note <InvalidUsageAllocationsException>
+  loot 485
+    seed json, like invalid-customer-identifier-exception
+    note <InvalidCustomerIdentifierException>
+  loot 486
+    seed json, like timestamp-out-of-bounds-exception
+    note <TimestampOutOfBoundsException>
+  loot 487
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 488
+    seed json, like disabled-api-exception
+    note <DisabledApiException>

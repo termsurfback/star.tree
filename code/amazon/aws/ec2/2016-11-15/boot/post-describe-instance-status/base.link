@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-instance-status-result
+  take form describe-instance-status-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-instance-status, name <POST_DescribeInstanceStatus>
+  note <Describes the status of the specified instances or all of your instances. By default, only running instances are described, unless you specifically indicate to return the status of all instances.
+
+Instance status includes the following components:
+
+- **Status checks** - Amazon EC2 performs status checks on running EC2 instances to identify hardware and software issues. For more information, see [Status checks for your instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/monitoring-system-instance-status-check.html) and [Troubleshooting instances with failed status checks](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/TroubleshootingInstances.html) in the _Amazon EC2 User Guide_.
+
+- **Scheduled events** - Amazon EC2 can schedule events (such as reboot, stop, or terminate) for your instances related to hardware issues, software updates, or system maintenance. For more information, see [Scheduled events for your instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/monitoring-instances-status-check_sched.html) in the _Amazon EC2 User Guide_.
+
+- **Instance state** - You can manage your instances from the moment you launch them through their termination. For more information, see [Instance lifecycle](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-lifecycle.html) in the _Amazon EC2 User Guide_.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-instance-status-request, like describe-instance-status-request
+    void take
+
+  line </#Action=DescribeInstanceStatus>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-instance-status-request
+
+  loot 200
+    seed xml, like describe-instance-status-result
+    note <Success>

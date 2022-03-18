@@ -1,0 +1,43 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/versionhistory/v1/base/list-versions-response
+  take form list-versions-response
+
+boot versionhistory-platforms-channels-versions-list, name <versionhistory.platforms.channels.versions.list>
+  note <Returns list of version for the given platform/channel.>
+
+  take parent
+    like native-string
+    note <Required. The channel, which owns this collection of versions. Format: {product}/platforms/{platform}/channels/{channel}>
+  take filter
+    like native-string
+    note <Optional. Filter string. Format is a comma separated list of All comma separated filter clauses are conjoined with a logical "and". Valid field_names are "version", "name", "platform", and "channel". Valid operators are "&lt;", "&lt;=", "=", "&gt;=", and "&gt;". Channel comparison is done by distance from stable. Ex) stable &lt; beta, beta &lt; dev, canary &lt; canary_asan. Version comparison is done numerically. If version is not entirely written, the version will be appended with 0 in missing fields. Ex) version &gt; 80 becoms version &gt; 80.0.0.0 Name and platform are filtered by string comparison. Ex) "...?filter=channel&lt;=beta, version &gt;= 80 Ex) "...?filter=version &gt; 80, version &lt; 81>
+    void take
+  take order-by
+    like native-string
+    note <Optional. Ordering string. Valid order_by strings are "version", "name", "platform", and "channel". Optionally, you can append " desc" or " asc" to specify the sorting order. Multiple order_by strings can be used in a comma separated list. Ordering by channel will sort by distance from the stable channel (not alphabetically). A list of channels sorted in this order is: stable, beta, dev, canary, and canary_asan. Sorting by name may cause unexpected behaviour as it is a naive string sort. For example, 1.0.0.8 will be before 1.0.0.10 in descending order. If order_by is not specified the response will be sorted by version in descending order. Ex) "...?order_by=version asc" Ex) "...?order_by=platform desc, channel, version">
+    void take
+  take page-size
+    like native-integer
+    note <Optional. Optional limit on the number of versions to include in the response. If unspecified, the server will pick an appropriate default.>
+    void take
+  take page-token
+    like native-string
+    note <Optional. A page token, received from a previous `ListVersions` call. Provide this to retrieve the subsequent page.>
+    void take
+
+  line </v1/{parent}/versions>
+
+  find <filter>, loan filter
+  find <orderBy>, loan order-by
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-versions-response
+    note <Successful response>

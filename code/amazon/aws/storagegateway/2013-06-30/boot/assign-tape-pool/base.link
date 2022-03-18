@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/assign-tape-pool-output
+  take form assign-tape-pool-output
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot assign-tape-pool, name <AssignTapePool>
+  note <Assigns a tape to a tape pool for archiving. The tape assigned to a pool is archived in the S3 storage class that is associated with the pool. When you use your backup application to eject the tape, the tape is archived directly into the S3 storage class (S3 Glacier or S3 Glacier Deep Archive) that corresponds to the pool.
+
+Valid Values: `GLACIER` | `DEEP_ARCHIVE`>
+
+  take x-amz-target
+    like native-string
+  take assign-tape-pool-input, like assign-tape-pool-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.AssignTapePool>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan assign-tape-pool-input
+
+  loot 200
+    seed json, like assign-tape-pool-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

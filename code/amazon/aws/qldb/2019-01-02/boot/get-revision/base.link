@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/get-revision-body
+  take form get-revision-body
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/get-revision-response
+  take form get-revision-response
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/resource-precondition-not-met-exception
+  take form resource-precondition-not-met-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-revision, name <GetRevision>
+  note <Returns a revision data object for a specified document ID and block address. Also returns a proof of the specified revision for verification if `DigestTipAddress` is provided.>
+
+  take name
+    like native-string
+    note <The name of the ledger.>
+  take get-revision-body, like get-revision-body
+
+  line </ledgers/{name}/revision>
+
+  seed json, loan get-revision-body
+
+  loot 200
+    seed json, like get-revision-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like resource-precondition-not-met-exception
+    note <ResourcePreconditionNotMetException>

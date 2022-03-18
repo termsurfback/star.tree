@@ -1,0 +1,36 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/sqladmin/v1/base/backup-runs-list-response
+  take form backup-runs-list-response
+
+boot sql-backup-runs-list, name <sql.backupRuns.list>
+  note <Lists all backup runs associated with the project or a given instance and configuration in the reverse chronological order of the backup initiation time.>
+
+  take project
+    like native-string
+    note <Project ID of the project that contains the instance.>
+  take instance
+    like native-string
+    note <Cloud SQL instance ID, or "-" for all instances. This does not include the project ID.>
+  take max-results
+    like native-integer
+    note <Maximum number of backup runs per response.>
+    void take
+  take page-token
+    like native-string
+    note <A previously-returned page token representing part of the larger set of results to view.>
+    void take
+
+  line </v1/projects/{project}/instances/{instance}/backupRuns>
+
+  find <maxResults>, loan max-results
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like backup-runs-list-response
+    note <Successful response>

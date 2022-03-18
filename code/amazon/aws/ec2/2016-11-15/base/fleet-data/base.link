@@ -1,0 +1,179 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/date-time
+  take form date-time
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-fleets-error-set
+  take form describe-fleets-error-set
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-fleets-instances-set
+  take form describe-fleets-instances-set
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/double
+  take form double
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/fleet-activity-status
+  take form fleet-activity-status
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/fleet-excess-capacity-termination-policy
+  take form fleet-excess-capacity-termination-policy
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/fleet-id
+  take form fleet-id
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/fleet-launch-template-config-list
+  take form fleet-launch-template-config-list
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/fleet-state-code
+  take form fleet-state-code
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/fleet-type
+  take form fleet-type
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/on-demand-options
+  take form on-demand-options
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/spot-options
+  take form spot-options
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/tag-list
+  take form tag-list
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/target-capacity-specification
+  take form target-capacity-specification
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+load @drumwork/snow/base/string
+  take form string
+
+form fleet-data, name <FleetData>
+  note <Describes an EC2 Fleet.>
+  take activity-status, name <ActivityStatus>
+    like fleet-activity-status
+    void take
+    note <The progress of the EC2 Fleet. If there is an error, the status is `error`. After all requests are placed, the status is `pending_fulfillment`. If the size of the EC2 Fleet is equal to or greater than its target capacity, the status is `fulfilled`. If the size of the EC2 Fleet is decreased, the status is `pending_termination` while instances are terminating.>
+    host xml
+      host name, text <activityStatus>
+  take create-time, name <CreateTime>
+    like date-time
+    void take
+    note <The creation date and time of the EC2 Fleet.>
+    host xml
+      host name, text <createTime>
+  take fleet-id, name <FleetId>
+    like fleet-id
+    void take
+    note <The ID of the EC2 Fleet.>
+    host xml
+      host name, text <fleetId>
+  take fleet-state, name <FleetState>
+    like fleet-state-code
+    void take
+    note <The state of the EC2 Fleet.>
+    host xml
+      host name, text <fleetState>
+  take client-token, name <ClientToken>
+    like string
+    void take
+    note <Unique, case-sensitive identifier that you provide to ensure the idempotency of the request. For more information, see [Ensuring Idempotency](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/Run_Instance_Idempotency.html).
+
+Constraints: Maximum 64 ASCII characters>
+    host xml
+      host name, text <clientToken>
+  take excess-capacity-termination-policy, name <ExcessCapacityTerminationPolicy>
+    like fleet-excess-capacity-termination-policy
+    void take
+    note <Indicates whether running instances should be terminated if the target capacity of the EC2 Fleet is decreased below the current size of the EC2 Fleet.>
+    host xml
+      host name, text <excessCapacityTerminationPolicy>
+  take fulfilled-capacity, name <FulfilledCapacity>
+    like double
+    void take
+    note <The number of units fulfilled by this request compared to the set target capacity.>
+    host xml
+      host name, text <fulfilledCapacity>
+  take fulfilled-on-demand-capacity, name <FulfilledOnDemandCapacity>
+    like double
+    void take
+    note <The number of units fulfilled by this request compared to the set target On-Demand capacity.>
+    host xml
+      host name, text <fulfilledOnDemandCapacity>
+  take launch-template-configs, name <LaunchTemplateConfigs>
+    like fleet-launch-template-config-list
+    void take
+    note <The launch template and overrides.>
+    host xml
+      host name, text <launchTemplateConfigs>
+  take target-capacity-specification, name <TargetCapacitySpecification>
+    like target-capacity-specification
+    void take
+    note <The number of units to request. You can choose to set the target capacity in terms of instances or a performance characteristic that is important to your application workload, such as vCPUs, memory, or I/O. If the request type is `maintain`, you can specify a target capacity of 0 and add capacity later.>
+    host xml
+      host name, text <targetCapacitySpecification>
+  take terminate-instances-with-expiration, name <TerminateInstancesWithExpiration>
+    like boolean
+    void take
+    note <Indicates whether running instances should be terminated when the EC2 Fleet expires.>
+    host xml
+      host name, text <terminateInstancesWithExpiration>
+  take type, name <Type>
+    like fleet-type
+    void take
+    note <The type of request. Indicates whether the EC2 Fleet only `requests` the target capacity, or also attempts to `maintain` it. If you request a certain target capacity, EC2 Fleet only places the required requests; it does not attempt to replenish instances if capacity is diminished, and it does not submit requests in alternative capacity pools if capacity is unavailable. To maintain a certain target capacity, EC2 Fleet places the required requests to meet this target capacity. It also automatically replenishes any interrupted Spot Instances. Default: `maintain`.>
+    host xml
+      host name, text <type>
+  take valid-from, name <ValidFrom>
+    like date-time
+    void take
+    note <The start date and time of the request, in UTC format (for example, _YYYY_-_MM_-_DD_T_HH_:_MM_:_SS_Z). The default is to start fulfilling the request immediately.>
+    host xml
+      host name, text <validFrom>
+  take valid-until, name <ValidUntil>
+    like date-time
+    void take
+    note <The end date and time of the request, in UTC format (for example, _YYYY_-_MM_-_DD_T_HH_:_MM_:_SS_Z). At this point, no new instance requests are placed or able to fulfill the request. The default end date is 7 days from the current date.>
+    host xml
+      host name, text <validUntil>
+  take replace-unhealthy-instances, name <ReplaceUnhealthyInstances>
+    like boolean
+    void take
+    note <Indicates whether EC2 Fleet should replace unhealthy Spot Instances. Supported only for fleets of type `maintain`. For more information, see [EC2 Fleet health checks](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/manage-ec2-fleet.html#ec2-fleet-health-checks) in the _Amazon EC2 User Guide_.>
+    host xml
+      host name, text <replaceUnhealthyInstances>
+  take spot-options, name <SpotOptions>
+    like spot-options
+    void take
+    note <The configuration of Spot Instances in an EC2 Fleet.>
+    host xml
+      host name, text <spotOptions>
+  take on-demand-options, name <OnDemandOptions>
+    like on-demand-options
+    void take
+    note <The allocation strategy of On-Demand Instances in an EC2 Fleet.>
+    host xml
+      host name, text <onDemandOptions>
+  take tags, name <Tags>
+    like tag-list
+    void take
+    note <The tags for an EC2 Fleet resource.>
+    host xml
+      host name, text <tagSet>
+  take errors, name <Errors>
+    like describe-fleets-error-set
+    void take
+    note <Information about the instances that could not be launched by the fleet. Valid only when **Type** is set to `instant`.>
+    host xml
+      host name, text <errorSet>
+  take instances, name <Instances>
+    like describe-fleets-instances-set
+    void take
+    note <Information about the instances that were launched by the fleet. Valid only when **Type** is set to `instant`.>
+    host xml
+      host name, text <fleetInstanceSet>
+  take context, name <Context>
+    like string
+    void take
+    note <Reserved.>
+    host xml
+      host name, text <context>

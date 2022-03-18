@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/describe-compute-environments-body
+  take form describe-compute-environments-body
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/describe-compute-environments-response
+  take form describe-compute-environments-response
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-compute-environments, name <DescribeComputeEnvironments>
+  note <Describes one or more of your compute environments.
+
+If you're using an unmanaged compute environment, you can use the `DescribeComputeEnvironment` operation to determine the `ecsClusterArn` that you should launch your Amazon ECS container instances into.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-compute-environments-body, like describe-compute-environments-body
+
+  line </v1/describecomputeenvironments>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan describe-compute-environments-body
+
+  loot 200
+    seed json, like describe-compute-environments-response
+    note <Success>
+  loot 480
+    seed json, like client-exception
+    note <ClientException>
+  loot 481
+    seed json, like server-exception
+    note <ServerException>

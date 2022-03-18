@@ -1,0 +1,43 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/card
+  take form card
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-customers-customer-cards-id-body
+  take form get-customers-customer-cards-id-body
+
+boot get-customers-customer-cards-id, name <GetCustomersCustomerCardsId>
+  note <You can always see the 10 most recent cards directly on a customer; this method lets you retrieve details about a specific card stored on the customer.>
+
+  take customer
+    like native-string
+  take id
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-customers-customer-cards-id-body, like get-customers-customer-cards-id-body
+    void take
+
+  line </v1/customers/{customer}/cards/{id}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-customers-customer-cards-id-body
+
+  loot 200
+    seed json, like card
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

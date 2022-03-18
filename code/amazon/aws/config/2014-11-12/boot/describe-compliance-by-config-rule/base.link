@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/describe-compliance-by-config-rule-response
+  take form describe-compliance-by-config-rule-response
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/no-such-config-rule-exception
+  take form no-such-config-rule-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-compliance-by-config-rule, name <DescribeComplianceByConfigRule>
+  note <Indicates whether the specified Config rules are compliant. If a rule is noncompliant, this action returns the number of Amazon Web Services resources that do not comply with the rule.
+
+A rule is compliant if all of the evaluated resources comply with it. It is noncompliant if any of these resources do not comply.
+
+If Config has no current evaluation results for the rule, it returns `INSUFFICIENT_DATA`. This result might indicate one of the following conditions:
+
+- Config has never invoked an evaluation for the rule. To check whether it has, use the `DescribeConfigRuleEvaluationStatus` action to get the `LastSuccessfulInvocationTime` and `LastFailedInvocationTime`.
+
+- The rule's Lambda function is failing to send evaluation results to Config. Verify that the role you assigned to your configuration recorder includes the `config:PutEvaluations` permission. If the rule is a custom rule, verify that the Lambda execution role includes the `config:PutEvaluations` permission.
+
+- The rule's Lambda function has returned `NOT_APPLICABLE` for all evaluation results. This can occur if the resources were deleted or removed from the rule's scope.>
+
+  take x-amz-target
+    like native-string
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-compliance-by-config-rule-request, like describe-compliance-by-config-rule-request
+
+  line </#X-Amz-Target=StarlingDoveService.DescribeComplianceByConfigRule>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-compliance-by-config-rule-request
+
+  loot 200
+    seed json, like describe-compliance-by-config-rule-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 481
+    seed json, like no-such-config-rule-exception
+    note <NoSuchConfigRuleException>
+  loot 482
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>

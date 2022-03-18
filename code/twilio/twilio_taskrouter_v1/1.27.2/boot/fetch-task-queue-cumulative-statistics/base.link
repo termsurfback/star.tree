@@ -1,0 +1,49 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_taskrouter_v1/1.27.2/base/taskrouter-v1-workspace-task-queue-task-queue-cumulative-statistics
+  take form taskrouter-v1-workspace-task-queue-task-queue-cumulative-statistics
+
+boot fetch-task-queue-cumulative-statistics, name <FetchTaskQueueCumulativeStatistics>
+  take workspace-sid
+    like native-string
+    note <The SID of the Workspace with the TaskQueue to fetch.>
+  take task-queue-sid
+    like native-string
+    note <The SID of the TaskQueue for which to fetch statistics.>
+  take end-date
+    like native-string
+    note <Only calculate statistics from this date and time and earlier, specified in GMT as an \[ISO 8601\](https://en.wikipedia.org/wiki/ISO\_8601) date-time.>
+    void take
+  take minutes
+    like native-integer
+    note <Only calculate statistics since this many minutes in the past. The default is 15 minutes.>
+    void take
+  take start-date
+    like native-string
+    note <Only calculate statistics from this date and time and later, specified in \[ISO 8601\](https://en.wikipedia.org/wiki/ISO\_8601) format.>
+    void take
+  take task-channel
+    like native-string
+    note <Only calculate cumulative statistics on this TaskChannel. Can be the TaskChannel&#39;s SID or its \`unique\_name\`, such as \`voice\`, \`sms\`, or \`default\`.>
+    void take
+  take split-by-wait-time
+    like native-string
+    note <A comma separated list of values that describes the thresholds, in seconds, to calculate statistics on. For each threshold specified, the number of Tasks canceled and reservations accepted above and below the specified thresholds in seconds are computed.>
+    void take
+
+  line </v1/Workspaces/{workspace-sid}/TaskQueues/{task-queue-sid}/CumulativeStatistics>
+
+  find <EndDate>, loan end-date
+  find <Minutes>, loan minutes
+  find <StartDate>, loan start-date
+  find <TaskChannel>, loan task-channel
+  find <SplitByWaitTime>, loan split-by-wait-time
+
+  loot 200
+    seed json, like taskrouter-v1-workspace-task-queue-task-queue-cumulative-statistics
+    note <OK>

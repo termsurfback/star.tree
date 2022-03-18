@@ -1,0 +1,33 @@
+
+load @drumwork/snow/stripe.com/2020-08-27/base/credit-note
+  take form credit-note
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-credit-notes-body
+  take form post-credit-notes-body
+
+boot post-credit-notes, name <PostCreditNotes>
+  note <Issue a credit note to adjust the amount of a finalized invoice. For a `status=open` invoice, a credit note reduces its `amount_due`. For a `status=paid` invoice, a credit note does not affect its `amount_due`. Instead, it can result in any combination of the following:
+
+- Refund: create a new refund (using `refund_amount`) or link an existing refund (using `refund`).
+- Customer balance credit: credit the customer’s balance (using `credit_amount`) which will be automatically applied to their next invoice when it’s finalized.
+- Outside of Stripe credit: record the amount that is or will be credited outside of Stripe (using `out_of_band_amount`).
+
+For post-payment credit notes the sum of the refund, credit and outside of Stripe amounts must equal the credit note total.
+
+You may issue multiple credit notes for an invoice. Each credit note will increment the invoice’s `pre_payment_credit_notes_amount` or `post_payment_credit_notes_amount` depending on its `status` at the time of credit note creation.>
+
+  take post-credit-notes-body, like post-credit-notes-body
+
+  line </v1/credit_notes>
+
+  seed x-www-form-urlencoded, loan post-credit-notes-body
+
+  loot 200
+    seed json, like credit-note
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

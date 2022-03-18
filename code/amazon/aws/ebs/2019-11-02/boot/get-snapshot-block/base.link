@@ -1,0 +1,70 @@
+
+load @drumwork/snow/amazonaws.com/ebs/2019-11-02/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/ebs/2019-11-02/base/get-snapshot-block-response
+  take form get-snapshot-block-response
+
+load @drumwork/snow/amazonaws.com/ebs/2019-11-02/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/ebs/2019-11-02/base/request-throttled-exception
+  take form request-throttled-exception
+
+load @drumwork/snow/amazonaws.com/ebs/2019-11-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ebs/2019-11-02/base/service-quota-exceeded-exception
+  take form service-quota-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/ebs/2019-11-02/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-snapshot-block, name <GetSnapshotBlock>
+  note <Returns the data in a block in an Amazon Elastic Block Store snapshot.>
+
+  take snapshot-id
+    like native-string
+    note <The ID of the snapshot containing the block from which to get data.>
+  take block-index
+    like native-integer
+    note <The block index of the block from which to get data.
+
+Obtain the `BlockIndex` by running the `ListChangedBlocks` or `ListSnapshotBlocks` operations.>
+  take block-token
+    like native-string
+    note <The block token of the block from which to get data.
+
+Obtain the `BlockToken` by running the `ListChangedBlocks` or `ListSnapshotBlocks` operations.>
+
+  line </snapshots/{snapshot-id}/blocks/{block-index}#blockToken>
+
+  find <blockToken>, loan block-token
+
+  loot 200
+    seed json, like get-snapshot-block-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like request-throttled-exception
+    note <RequestThrottledException>
+  loot 484
+    seed json, like service-quota-exceeded-exception
+    note <ServiceQuotaExceededException>
+  loot 485
+    seed json, like internal-server-exception
+    note <InternalServerException>

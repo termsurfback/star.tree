@@ -1,0 +1,89 @@
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/contact-flow-type
+  take form contact-flow-type
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/list-contact-flows-response
+  take form list-contact-flows-response
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/connect/2017-08-08/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-contact-flows, name <ListContactFlows>
+  note <Provides information about the contact flows for the specified Amazon Connect instance.
+
+You can also create and update contact flows using the [Amazon Connect Flow language](https://docs.aws.amazon.com/connect/latest/adminguide/flow-language.html).
+
+For more information about contact flows, see [Contact Flows](https://docs.aws.amazon.com/connect/latest/adminguide/concepts-contact-flows.html) in the _Amazon Connect Administrator Guide_.>
+
+  take instance-id
+    like native-string
+    note <The identifier of the Amazon Connect instance. You can find the instanceId in the ARN of the instance.>
+  take contact-flow-types
+    like list
+      like contact-flow-type
+    note <The type of contact flow.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next set of results. Use the value returned in the previous response in the next request to retrieve the next set of results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return per page.>
+    void take
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+
+  line </contact-flows-summary/{instance-id}>
+
+  find <contactFlowTypes>, loan contact-flow-types
+  find <nextToken>, loan next-token
+  find <maxResults>, loan max-results
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like list-contact-flows-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like internal-service-exception
+    note <InternalServiceException>

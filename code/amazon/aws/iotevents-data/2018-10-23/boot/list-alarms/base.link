@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/iotevents-data/2018-10-23/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iotevents-data/2018-10-23/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iotevents-data/2018-10-23/base/list-alarms-response
+  take form list-alarms-response
+
+load @drumwork/snow/amazonaws.com/iotevents-data/2018-10-23/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iotevents-data/2018-10-23/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/iotevents-data/2018-10-23/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-alarms, name <ListAlarms>
+  note <Lists one or more alarms. The operation returns only the metadata associated with each alarm.>
+
+  take alarm-model-name
+    like native-string
+    note <The name of the alarm model.>
+  take next-token
+    like native-string
+    note <The token that you can use to return the next set of results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to be returned per request.>
+    void take
+
+  line </alarms/{alarm-model-name}>
+
+  find <nextToken>, loan next-token
+  find <maxResults>, loan max-results
+
+  loot 200
+    seed json, like list-alarms-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 484
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

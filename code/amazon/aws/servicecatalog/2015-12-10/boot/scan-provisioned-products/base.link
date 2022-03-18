@@ -1,0 +1,31 @@
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/invalid-parameters-exception
+  take form invalid-parameters-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/scan-provisioned-products-output
+  take form scan-provisioned-products-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot scan-provisioned-products, name <ScanProvisionedProducts>
+  note <Lists the provisioned products that are available (not terminated).
+
+To use additional filtering, see SearchProvisionedProducts.>
+
+  take x-amz-target
+    like native-string
+  take scan-provisioned-products-input, like scan-provisioned-products-input
+
+  line </#X-Amz-Target=AWS242ServiceCatalogService.ScanProvisionedProducts>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan scan-provisioned-products-input
+
+  loot 200
+    seed json, like scan-provisioned-products-output
+    note <Success>
+  loot 480
+    seed json, like invalid-parameters-exception
+    note <InvalidParametersException>

@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/resource-precondition-not-met-exception
+  take form resource-precondition-not-met-exception
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/stream-journal-to-kinesis-body
+  take form stream-journal-to-kinesis-body
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/stream-journal-to-kinesis-response
+  take form stream-journal-to-kinesis-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot stream-journal-to-kinesis, name <StreamJournalToKinesis>
+  note <Creates a journal stream for a given Amazon QLDB ledger. The stream captures every document revision that is committed to the ledger's journal and delivers the data to a specified Amazon Kinesis Data Streams resource.>
+
+  take name
+    like native-string
+    note <The name of the ledger.>
+  take stream-journal-to-kinesis-body, like stream-journal-to-kinesis-body
+
+  line </ledgers/{name}/journal-kinesis-streams>
+
+  seed json, loan stream-journal-to-kinesis-body
+
+  loot 200
+    seed json, like stream-journal-to-kinesis-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like resource-precondition-not-met-exception
+    note <ResourcePreconditionNotMetException>

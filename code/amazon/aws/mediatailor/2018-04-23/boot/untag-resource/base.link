@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/mediatailor/2018-04-23/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot untag-resource, name <UntagResource>
+  note <Removes tags from the specified playback configuration resource. You can specify one or more tags to remove.>
+
+  take resource-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) for the playback configuration. You can get this from the response to any playback configuration request.>
+  take tag-keys
+    like list
+      like string
+    note <A comma-separated list of the tag keys to remove from the playback configuration.>
+
+  line </tags/{resource-arn}#tagKeys>
+
+  find <tagKeys>, loan tag-keys
+
+  loot 204
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>

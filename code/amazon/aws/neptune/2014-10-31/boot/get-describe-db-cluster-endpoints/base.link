@@ -1,0 +1,70 @@
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-endpoint-message
+  take form db-cluster-endpoint-message
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/filter
+  take form filter
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-db-cluster-endpoints, name <GET_DescribeDBClusterEndpoints>
+  note <Returns information about endpoints for an Amazon Neptune DB cluster.
+
+This operation can also return information for Amazon RDS clusters and Amazon DocDB clusters.>
+
+  take db-cluster-identifier
+    like native-string
+    note <The DB cluster identifier of the DB cluster associated with the endpoint. This parameter is stored as a lowercase string.>
+    void take
+  take db-cluster-endpoint-identifier
+    like native-string
+    note <The identifier of the endpoint to describe. This parameter is stored as a lowercase string.>
+    void take
+  take filters
+    like list
+      like filter
+    note <A set of name-value pairs that define which endpoints to include in the output. The filters are specified as name-value pairs, in the format `Name=_endpoint_type_,Values=_endpoint_type1_,_endpoint_type2_,...`. `Name` can be one of: `db-cluster-endpoint-type`, `db-cluster-endpoint-custom-type`, `db-cluster-endpoint-id`, `db-cluster-endpoint-status`. `Values` for the `db-cluster-endpoint-type` filter can be one or more of: `reader`, `writer`, `custom`. `Values` for the `db-cluster-endpoint-custom-type` filter can be one or more of: `reader`, `any`. `Values` for the `db-cluster-endpoint-status` filter can be one or more of: `available`, `creating`, `deleting`, `inactive`, `modifying`.>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of records to include in the response. If more records exist than the specified `MaxRecords` value, a pagination token called a marker is included in the response so you can retrieve the remaining results.
+
+Default: 100
+
+Constraints: Minimum 20, maximum 100.>
+    void take
+  take marker
+    like native-string
+    note <An optional pagination token provided by a previous `DescribeDBClusterEndpoints` request. If this parameter is specified, the response includes only records beyond the marker, up to the value specified by `MaxRecords`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeDBClusterEndpoints>
+
+  find <DBClusterIdentifier>, loan db-cluster-identifier
+  find <DBClusterEndpointIdentifier>, loan db-cluster-endpoint-identifier
+  find <Filters>, loan filters
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like db-cluster-endpoint-message
+    note <Success>
+  loot 480
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>

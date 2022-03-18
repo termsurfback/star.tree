@@ -1,0 +1,67 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-network-interface-permissions-result
+  take form describe-network-interface-permissions-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/network-interface-permission-id
+  take form network-interface-permission-id
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-network-interface-permissions, name <GET_DescribeNetworkInterfacePermissions>
+  note <Describes the permissions for your network interfaces.>
+
+  take network-interface-permission-id
+    like list
+      like network-interface-permission-id
+    note <One or more network interface permission IDs.>
+    void take
+  take filter
+    like list
+      like filter
+    note <One or more filters.
+
+- `network-interface-permission.network-interface-permission-id` - The ID of the permission.
+
+- `network-interface-permission.network-interface-id` - The ID of the network interface.
+
+- `network-interface-permission.aws-account-id` - The Amazon Web Services account ID.
+
+- `network-interface-permission.aws-service` - The Amazon Web Service.
+
+- `network-interface-permission.permission` - The type of permission (`INSTANCE-ATTACH` | `EIP-ASSOCIATE`).>
+    void take
+  take next-token
+    like native-string
+    note <The token to request the next page of results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return in a single call. To retrieve the remaining results, make another call with the returned `NextToken` value. If this parameter is not specified, up to 50 results are returned by default.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeNetworkInterfacePermissions>
+
+  find <NetworkInterfacePermissionId>, loan network-interface-permission-id
+  find <Filter>, loan filter
+  find <NextToken>, loan next-token
+  find <MaxResults>, loan max-results
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-network-interface-permissions-result
+    note <Success>

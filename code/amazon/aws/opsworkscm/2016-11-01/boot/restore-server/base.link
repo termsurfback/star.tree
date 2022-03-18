@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/invalid-state-exception
+  take form invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/restore-server-response
+  take form restore-server-response
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot restore-server, name <RestoreServer>
+  note <Restores a backup to a server that is in a `CONNECTION_LOST`, `HEALTHY`, `RUNNING`, `UNHEALTHY`, or `TERMINATED` state. When you run RestoreServer, the server's EC2 instance is deleted, and a new EC2 instance is configured. RestoreServer maintains the existing server endpoint, so configuration management of the server's client devices (nodes) should continue to work.
+
+Restoring from a backup is performed by creating a new EC2 instance. If restoration is successful, and the server is in a `HEALTHY` state, AWS OpsWorks CM switches traffic over to the new instance. After restoration is finished, the old EC2 instance is maintained in a `Running` or `Stopped` state, but is eventually terminated.
+
+This operation is asynchronous.
+
+An `InvalidStateException` is thrown when the server is not in a valid state. A `ResourceNotFoundException` is thrown when the server does not exist. A `ValidationException` is raised when parameters of the request are not valid.>
+
+  take x-amz-target
+    like native-string
+  take restore-server-request, like restore-server-request
+
+  line </#X-Amz-Target=OpsWorksCM_V2016_11_01.RestoreServer>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan restore-server-request
+
+  loot 200
+    seed json, like restore-server-response
+    note <Success>
+  loot 480
+    seed json, like invalid-state-exception
+    note <InvalidStateException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>

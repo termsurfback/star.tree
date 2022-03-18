@@ -1,0 +1,141 @@
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/dns-name
+  take form dns-name
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/game-property-list
+  take form game-property-list
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/game-session-placement-state
+  take form game-session-placement-state
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/game-session-queue-name
+  take form game-session-queue-name
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/id-string-model
+  take form id-string-model
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/ip-address
+  take form ip-address
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/large-game-session-data
+  take form large-game-session-data
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/matchmaker-data
+  take form matchmaker-data
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/non-zero-and-max-string
+  take form non-zero-and-max-string
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/placed-player-session-list
+  take form placed-player-session-list
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/player-latency-list
+  take form player-latency-list
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/port-number
+  take form port-number
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/timestamp
+  take form timestamp
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/whole-number
+  take form whole-number
+
+form game-session-placement, name <GameSessionPlacement>
+  note <Object that describes a StartGameSessionPlacement request. This object includes the full details of the original request plus the current status and start/end time stamps.
+
+Game session placement-related operations include:
+
+- StartGameSessionPlacement
+
+- DescribeGameSessionPlacement
+
+- StopGameSessionPlacement>
+  take placement-id, name <PlacementId>
+    like id-string-model
+    void take
+    note <A unique identifier for a game session placement.>
+  take game-session-queue-name, name <GameSessionQueueName>
+    like game-session-queue-name
+    void take
+    note <A descriptive label that is associated with game session queue. Queue names must be unique within each Region.>
+  take status, name <Status>
+    like game-session-placement-state
+    void take
+    note <Current status of the game session placement request.
+
+- **PENDING** -- The placement request is currently in the queue waiting to be processed.
+
+- **FULFILLED** -- A new game session and player sessions (if requested) have been successfully created. Values for _GameSessionArn_ and _GameSessionRegion_ are available.
+
+- **CANCELLED** -- The placement request was canceled with a call to StopGameSessionPlacement.
+
+- **TIMED_OUT** -- A new game session was not successfully created before the time limit expired. You can resubmit the placement request as needed.
+
+- **FAILED** -- GameLift is not able to complete the process of placing the game session. Common reasons are the game session terminated before the placement process was completed, or an unexpected internal error.>
+  take game-properties, name <GameProperties>
+    like game-property-list
+    void take
+    note <A set of custom properties for a game session, formatted as key:value pairs. These properties are passed to a game server process in the GameSession object with a request to start a new game session (see [Start a Game Session](https://docs.aws.amazon.com/gamelift/latest/developerguide/gamelift-sdk-server-api.html#gamelift-sdk-server-startsession)).>
+  take maximum-player-session-count, name <MaximumPlayerSessionCount>
+    like whole-number
+    void take
+    note <The maximum number of players that can be connected simultaneously to the game session.>
+  take game-session-name, name <GameSessionName>
+    like non-zero-and-max-string
+    void take
+    note <A descriptive label that is associated with a game session. Session names do not need to be unique.>
+  take game-session-id, name <GameSessionId>
+    like non-zero-and-max-string
+    void take
+    note <A unique identifier for the game session. This value is set once the new game session is placed (placement status is `FULFILLED`).>
+  take game-session-arn, name <GameSessionArn>
+    like non-zero-and-max-string
+    void take
+    note <Identifier for the game session created by this placement request. This value is set once the new game session is placed (placement status is `FULFILLED`). This identifier is unique across all Regions. You can use this value as a `GameSessionId` value as needed.>
+  take game-session-region, name <GameSessionRegion>
+    like non-zero-and-max-string
+    void take
+    note <Name of the Region where the game session created by this placement request is running. This value is set once the new game session is placed (placement status is `FULFILLED`).>
+  take player-latencies, name <PlayerLatencies>
+    like player-latency-list
+    void take
+    note <A set of values, expressed in milliseconds, that indicates the amount of latency that a player experiences when connected to AWS Regions.>
+  take start-time, name <StartTime>
+    like timestamp
+    void take
+    note <Time stamp indicating when this request was placed in the queue. Format is a number expressed in Unix time as milliseconds (for example `"1469498468.057"`).>
+  take end-time, name <EndTime>
+    like timestamp
+    void take
+    note <Time stamp indicating when this request was completed, canceled, or timed out.>
+  take ip-address, name <IpAddress>
+    like ip-address
+    void take
+    note <The IP address of the game session. To connect to a GameLift game server, an app needs both the IP address and port number. This value is set once the new game session is placed (placement status is `FULFILLED`).>
+  take dns-name, name <DnsName>
+    like dns-name
+    void take
+    note <The DNS identifier assigned to the instance that is running the game session. Values have the following format:
+
+- TLS-enabled fleets: `&lt;unique identifier&gt;.&lt;region identifier&gt;.amazongamelift.com`.
+
+- Non-TLS-enabled fleets: `ec2-&lt;unique identifier&gt;.compute.amazonaws.com`. (See [Amazon EC2 Instance IP Addressing](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-instance-addressing.html#concepts-public-addresses).)
+
+When connecting to a game session that is running on a TLS-enabled fleet, you must use the DNS name, not the IP address.>
+  take port, name <Port>
+    like port-number
+    void take
+    note <The port number for the game session. To connect to a GameLift game server, an app needs both the IP address and port number. This value is set once the new game session is placed (placement status is `FULFILLED`).>
+  take placed-player-sessions, name <PlacedPlayerSessions>
+    like placed-player-session-list
+    void take
+    note <A collection of information on player sessions created in response to the game session placement request. These player sessions are created only once a new game session is successfully placed (placement status is `FULFILLED`). This information includes the player ID (as provided in the placement request) and the corresponding player session ID. Retrieve full player sessions by calling DescribePlayerSessions with the player session ID.>
+  take game-session-data, name <GameSessionData>
+    like large-game-session-data
+    void take
+    note <A set of custom game session properties, formatted as a single string value. This data is passed to a game server process in the GameSession object with a request to start a new game session (see [Start a Game Session](https://docs.aws.amazon.com/gamelift/latest/developerguide/gamelift-sdk-server-api.html#gamelift-sdk-server-startsession)).>
+  take matchmaker-data, name <MatchmakerData>
+    like matchmaker-data
+    void take
+    note <Information on the matchmaking process for this game. Data is in JSON syntax, formatted as a string. It identifies the matchmaking configuration used to create the match, and contains data on all players assigned to the match, including player attributes and team assignments. For more details on matchmaker data, see [Match Data](https://docs.aws.amazon.com/gamelift/latest/flexmatchguide/match-server.html#match-server-data).>

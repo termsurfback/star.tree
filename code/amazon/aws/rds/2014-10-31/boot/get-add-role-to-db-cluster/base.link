@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-role-already-exists-fault
+  take form db-cluster-role-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-role-quota-exceeded-fault
+  take form db-cluster-role-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-add-role-to-db-cluster, name <GET_AddRoleToDBCluster>
+  note <Associates an Identity and Access Management (IAM) role from an Amazon Aurora DB cluster. For more information, see [Authorizing Amazon Aurora MySQL to Access Other Amazon Web Services Services on Your Behalf](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Integrating.Authorizing.html) in the _Amazon Aurora User Guide_.
+
+This action only applies to Aurora DB clusters.>
+
+  take db-cluster-identifier
+    like native-string
+    note <The name of the DB cluster to associate the IAM role with.>
+  take role-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the IAM role to associate with the Aurora DB cluster, for example, `arn:aws:iam::123456789012:role/AuroraAccessRole`.>
+  take feature-name
+    like native-string
+    note <The name of the feature for the DB cluster that the IAM role is to be associated with. For the list of supported feature names, see DBEngineVersion.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=AddRoleToDBCluster>
+
+  find <DBClusterIdentifier>, loan db-cluster-identifier
+  find <RoleArn>, loan role-arn
+  find <FeatureName>, loan feature-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>
+  loot 481
+    seed xml, like db-cluster-role-already-exists-fault
+    note <DBClusterRoleAlreadyExistsFault>
+  loot 482
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>
+  loot 483
+    seed xml, like db-cluster-role-quota-exceeded-fault
+    note <DBClusterRoleQuotaExceededFault>

@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/describe-task-definition-response
+  take form describe-task-definition-response
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-task-definition, name <DescribeTaskDefinition>
+  note <Describes a task definition. You can specify a `family` and `revision` to find information about a specific task definition, or you can simply specify the family to find the latest `ACTIVE` revision in that family.
+
+You can only describe `INACTIVE` task definitions while an active task or service references them.>
+
+  take x-amz-target
+    like native-string
+  take describe-task-definition-request, like describe-task-definition-request
+
+  line </#X-Amz-Target=AmazonEC2ContainerServiceV20141113.DescribeTaskDefinition>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-task-definition-request
+
+  loot 200
+    seed json, like describe-task-definition-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like client-exception
+    note <ClientException>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>

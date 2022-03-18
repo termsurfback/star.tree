@@ -1,0 +1,133 @@
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/cloud-hsm-cluster-invalid-configuration-exception
+  take form cloud-hsm-cluster-invalid-configuration-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/create-key-response
+  take form create-key-response
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/custom-key-store-invalid-state-exception
+  take form custom-key-store-invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/custom-key-store-not-found-exception
+  take form custom-key-store-not-found-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/dependency-timeout-exception
+  take form dependency-timeout-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-arn-exception
+  take form invalid-arn-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-internal-exception
+  take form kms-internal-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/malformed-policy-document-exception
+  take form malformed-policy-document-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/tag-exception
+  take form tag-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/unsupported-operation-exception
+  take form unsupported-operation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-key, name <CreateKey>
+  note <Creates a unique customer managed [KMS key](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#kms-keys) in your Amazon Web Services account and Region.
+
+KMS is replacing the term _customer master key (CMK)_ with _KMS key_ and _KMS key_. The concept has not changed. To prevent breaking changes, KMS is keeping some variations of this term.
+
+You can use the `CreateKey` operation to create symmetric or asymmetric KMS keys.
+
+- **Symmetric KMS keys** contain a 256-bit symmetric key that never leaves KMS unencrypted. To use the KMS key, you must call KMS. You can use a symmetric KMS key to encrypt and decrypt small amounts of data, but they are typically used to generate [data keys](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#data-keys) and [data keys pairs](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#data-key-pairs). For details, see GenerateDataKey and GenerateDataKeyPair.
+
+- **Asymmetric KMS keys** can contain an RSA key pair or an Elliptic Curve (ECC) key pair. The private key in an asymmetric KMS key never leaves KMS unencrypted. However, you can use the GetPublicKey operation to download the public key so it can be used outside of KMS. KMS keys with RSA key pairs can be used to encrypt or decrypt data or sign and verify messages (but not both). KMS keys with ECC key pairs can be used only to sign and verify messages.
+
+For information about symmetric and asymmetric KMS keys, see [Using Symmetric and Asymmetric KMS keys](https://docs.aws.amazon.com/kms/latest/developerguide/symmetric-asymmetric.html) in the _Key Management Service Developer Guide_.
+
+To create different types of KMS keys, use the following guidance:
+
+Asymmetric KMS keys
+
+To create an asymmetric KMS key, use the `KeySpec` parameter to specify the type of key material in the KMS key. Then, use the `KeyUsage` parameter to determine whether the KMS key will be used to encrypt and decrypt or sign and verify. You can't change these properties after the KMS key is created.
+
+Symmetric KMS keys
+
+When creating a symmetric KMS key, you don't need to specify the `KeySpec` or `KeyUsage` parameters. The default value for `KeySpec`, `SYMMETRIC_DEFAULT`, and the default value for `KeyUsage`, `ENCRYPT_DECRYPT`, are the only valid values for symmetric KMS keys.
+
+Multi-Region primary keys
+
+Imported key material
+
+To create a multi-Region _primary key_ in the local Amazon Web Services Region, use the `MultiRegion` parameter with a value of `True`. To create a multi-Region _replica key_, that is, a KMS key with the same key ID and key material as a primary key, but in a different Amazon Web Services Region, use the ReplicateKey operation. To change a replica key to a primary key, and its primary key to a replica key, use the UpdatePrimaryRegion operation.
+
+This operation supports _multi-Region keys_, an KMS feature that lets you create multiple interoperable KMS keys in different Amazon Web Services Regions. Because these KMS keys have the same key ID, key material, and other metadata, you can use them interchangeably to encrypt data in one Amazon Web Services Region and decrypt it in a different Amazon Web Services Region without re-encrypting the data or making a cross-Region call. For more information about multi-Region keys, see [Using multi-Region keys](https://docs.aws.amazon.com/kms/latest/developerguide/multi-region-keys-overview.html) in the _Key Management Service Developer Guide_.
+
+You can create symmetric and asymmetric multi-Region keys and multi-Region keys with imported key material. You cannot create multi-Region keys in a custom key store.
+
+To import your own key material, begin by creating a symmetric KMS key with no key material. To do this, use the `Origin` parameter of `CreateKey` with a value of `EXTERNAL`. Next, use GetParametersForImport operation to get a public key and import token, and use the public key to encrypt your key material. Then, use ImportKeyMaterial with your import token to import the key material. For step-by-step instructions, see [Importing Key Material](https://docs.aws.amazon.com/kms/latest/developerguide/importing-keys.html) in the __Key Management Service Developer Guide__ . You cannot import the key material into an asymmetric KMS key.
+
+To create a multi-Region primary key with imported key material, use the `Origin` parameter of `CreateKey` with a value of `EXTERNAL` and the `MultiRegion` parameter with a value of `True`. To create replicas of the multi-Region primary key, use the ReplicateKey operation. For more information about multi-Region keys, see [Using multi-Region keys](https://docs.aws.amazon.com/kms/latest/developerguide/multi-region-keys-overview.html) in the _Key Management Service Developer Guide_.
+
+Custom key store
+
+To create a symmetric KMS key in a [custom key store](https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html), use the `CustomKeyStoreId` parameter to specify the custom key store. You must also use the `Origin` parameter with a value of `AWS_CLOUDHSM`. The CloudHSM cluster that is associated with the custom key store must have at least two active HSMs in different Availability Zones in the Amazon Web Services Region.
+
+You cannot create an asymmetric KMS key in a custom key store. For information about custom key stores in KMS see [Using Custom Key Stores](https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html) in the __Key Management Service Developer Guide__ .
+
+**Cross-account use**: No. You cannot use this operation to create a KMS key in a different Amazon Web Services account.
+
+**Required permissions**: [kms:CreateKey](https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html) (IAM policy). To use the `Tags` parameter, [kms:TagResource](https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html) (IAM policy). For examples and information about related permissions, see [Allow a user to create KMS keys](https://docs.aws.amazon.com/kms/latest/developerguide/iam-policies.html#iam-policy-example-create-key) in the _Key Management Service Developer Guide_.
+
+**Related operations:** - DescribeKey
+
+- ListKeys
+
+- ScheduleKeyDeletion>
+
+  take x-amz-target
+    like native-string
+  take create-key-request, like create-key-request
+
+  line </#X-Amz-Target=TrentService.CreateKey>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-key-request
+
+  loot 200
+    seed json, like create-key-response
+    note <Success>
+  loot 480
+    seed json, like malformed-policy-document-exception
+    note <MalformedPolicyDocumentException>
+  loot 481
+    seed json, like dependency-timeout-exception
+    note <DependencyTimeoutException>
+  loot 482
+    seed json, like invalid-arn-exception
+    note <InvalidArnException>
+  loot 483
+    seed json, like unsupported-operation-exception
+    note <UnsupportedOperationException>
+  loot 484
+    seed json, like kms-internal-exception
+    note <KMSInternalException>
+  loot 485
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 486
+    seed json, like tag-exception
+    note <TagException>
+  loot 487
+    seed json, like custom-key-store-not-found-exception
+    note <CustomKeyStoreNotFoundException>
+  loot 488
+    seed json, like custom-key-store-invalid-state-exception
+    note <CustomKeyStoreInvalidStateException>
+  loot 489
+    seed json, like cloud-hsm-cluster-invalid-configuration-exception
+    note <CloudHsmClusterInvalidConfigurationException>

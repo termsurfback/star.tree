@@ -1,0 +1,42 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/manufacturers/v1/base/list-products-response
+  take form list-products-response
+
+boot manufacturers-accounts-products-list, name <manufacturers.accounts.products.list>
+  note <Lists all the products in a Manufacturer Center account.>
+
+  take parent
+    like native-string
+    note <Parent ID in the format `accounts/{account_id}`. `account_id` - The ID of the Manufacturer Center account.>
+  take include
+    like list
+      like native-string
+    note <The information to be included in the response. Only sections listed here will be returned.>
+    void take
+  take page-size
+    like native-integer
+    note <Maximum number of product statuses to return in the response, used for paging.>
+    void take
+  take page-token
+    like native-string
+    note <The token returned by the previous request.>
+    void take
+
+  line </v1/{parent}/products>
+
+  find <include>, loan include
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-products-response
+    note <Successful response>

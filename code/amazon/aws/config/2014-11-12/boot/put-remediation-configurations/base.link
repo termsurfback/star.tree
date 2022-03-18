@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/insufficient-permissions-exception
+  take form insufficient-permissions-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/put-remediation-configurations-response
+  take form put-remediation-configurations-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-remediation-configurations, name <PutRemediationConfigurations>
+  note <Adds or updates the remediation configuration with a specific Config rule with the selected target or action. The API creates the `RemediationConfiguration` object for the Config rule. The Config rule must already exist for you to add a remediation configuration. The target (SSM document) must exist and have permissions to use the target.
+
+If you make backward incompatible changes to the SSM document, you must call this again to ensure the remediations can run.
+
+This API does not support adding remediation configurations for service-linked Config Rules such as Organization Config rules, the rules deployed by conformance packs, and rules deployed by Amazon Web Services Security Hub.>
+
+  take x-amz-target
+    like native-string
+  take put-remediation-configurations-request, like put-remediation-configurations-request
+
+  line </#X-Amz-Target=StarlingDoveService.PutRemediationConfigurations>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan put-remediation-configurations-request
+
+  loot 200
+    seed json, like put-remediation-configurations-response
+    note <Success>
+  loot 480
+    seed json, like insufficient-permissions-exception
+    note <InsufficientPermissionsException>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>

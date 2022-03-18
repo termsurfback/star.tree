@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/pipeline-deleted-exception
+  take form pipeline-deleted-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/pipeline-not-found-exception
+  take form pipeline-not-found-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/report-task-progress-output
+  take form report-task-progress-output
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/task-not-found-exception
+  take form task-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot report-task-progress, name <ReportTaskProgress>
+  note <Task runners call `ReportTaskProgress` when assigned a task to acknowledge that it has the task. If the web service does not receive this acknowledgement within 2 minutes, it assigns the task in a subsequent PollForTask call. After this initial acknowledgement, the task runner only needs to report progress every 15 minutes to maintain its ownership of the task. You can change this reporting time from 15 minutes by specifying a `reportProgressTimeout` field in your pipeline.
+
+If a task runner does not report its status after 5 minutes, AWS Data Pipeline assumes that the task runner is unable to process the task and reassigns the task in a subsequent response to PollForTask. Task runners should call `ReportTaskProgress` every 60 seconds.>
+
+  take x-amz-target
+    like native-string
+  take report-task-progress-input, like report-task-progress-input
+
+  line </#X-Amz-Target=DataPipeline.ReportTaskProgress>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan report-task-progress-input
+
+  loot 200
+    seed json, like report-task-progress-output
+    note <Success>
+  loot 480
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like task-not-found-exception
+    note <TaskNotFoundException>
+  loot 483
+    seed json, like pipeline-not-found-exception
+    note <PipelineNotFoundException>
+  loot 484
+    seed json, like pipeline-deleted-exception
+    note <PipelineDeletedException>

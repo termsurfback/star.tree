@@ -1,0 +1,39 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/identity-verification-session
+  take form identity-verification-session
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-identity-verification-sessions-session-redact-body
+  take form post-identity-verification-sessions-session-redact-body
+
+boot post-identity-verification-sessions-session-redact, name <PostIdentityVerificationSessionsSessionRedact>
+  note <Redact a VerificationSession to remove all collected information from Stripe. This will redact the VerificationSession and all objects related to it, including VerificationReports, Events, request logs, etc.
+
+A VerificationSession object can be redacted when it is in `requires_input` or `verified` [status](/docs/identity/how-sessions-work). Redacting a VerificationSession in `requires_action` state will automatically cancel it.
+
+The redaction process may take up to four days. When the redaction process is in progress, the VerificationSession’s `redaction.status` field will be set to `processing`; when the process is finished, it will change to `redacted` and an `identity.verification_session.redacted` event will be emitted.
+
+Redaction is irreversible. Redacted objects are still accessible in the Stripe API, but all the fields that contain personal data will be replaced by the string `[redacted]` or a similar placeholder. The `metadata` field will also be erased. Redacted objects cannot be updated or used for any purpose.
+
+[Learn more](/docs/identity/verification-sessions#redact).>
+
+  take session
+    like native-string
+  take post-identity-verification-sessions-session-redact-body, like post-identity-verification-sessions-session-redact-body
+    void take
+
+  line </v1/identity/verification_sessions/{session}/redact>
+
+  seed x-www-form-urlencoded, loan post-identity-verification-sessions-session-redact-body
+
+  loot 200
+    seed json, like identity-verification-session
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

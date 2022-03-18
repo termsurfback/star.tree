@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/imagebuilder/2019-12-02/base/image-tests-timeout-minutes
+  take form image-tests-timeout-minutes
+
+load @drumwork/snow/amazonaws.com/imagebuilder/2019-12-02/base/non-empty-string
+  take form non-empty-string
+
+load @drumwork/snow/amazonaws.com/imagebuilder/2019-12-02/base/nullable-boolean
+  take form nullable-boolean
+
+load @drumwork/snow/amazonaws.com/imagebuilder/2019-12-02/base/pipeline-execution-start-condition
+  take form pipeline-execution-start-condition
+
+load @drumwork/snow/amazonaws.com/imagebuilder/2019-12-02/base/timezone
+  take form timezone
+
+form create-image-pipeline-body
+  take name, name <name>
+  take description, name <description>
+    void take
+  take image-recipe-arn, name <imageRecipeArn>
+    void take
+  take container-recipe-arn, name <containerRecipeArn>
+    void take
+  take infrastructure-configuration-arn, name <infrastructureConfigurationArn>
+  take distribution-configuration-arn, name <distributionConfigurationArn>
+    void take
+  take image-tests-configuration, name <imageTestsConfiguration>
+    like form
+      take image-tests-enabled, name <imageTestsEnabled>
+        like nullable-boolean
+        void take
+        note <Defines if tests should be executed when building this image.>
+      take timeout-minutes, name <timeoutMinutes>
+        like image-tests-timeout-minutes
+        void take
+        note <The maximum time in minutes that tests are permitted to run.>
+    void take
+  take enhanced-image-metadata-enabled, name <enhancedImageMetadataEnabled>
+    void take
+  take schedule, name <schedule>
+    like form
+      take schedule-expression, name <scheduleExpression>
+        like non-empty-string
+        void take
+        note <The cron expression determines how often EC2 Image Builder evaluates your `pipelineExecutionStartCondition`.
+
+For information on how to format a cron expression in Image Builder, see [Use cron expressions in EC2 Image Builder](https://docs.aws.amazon.com/imagebuilder/latest/userguide/image-builder-cron.html).>
+      take timezone, name <timezone>
+        like timezone
+        void take
+        note <The timezone that applies to the scheduling expression. For example, "Etc/UTC", "America/Los_Angeles" in the [IANA timezone format](https://www.joda.org/joda-time/timezones.html). If not specified this defaults to UTC.>
+      take pipeline-execution-start-condition, name <pipelineExecutionStartCondition>
+        like pipeline-execution-start-condition
+        void take
+        note <The condition configures when the pipeline should trigger a new image build. When the `pipelineExecutionStartCondition` is set to `EXPRESSION_MATCH_AND_DEPENDENCY_UPDATES_AVAILABLE`, and you use semantic version filters on the source image or components in your image recipe, EC2 Image Builder will build a new image only when there are new versions of the image or components in your recipe that match the semantic version filter. When it is set to `EXPRESSION_MATCH_ONLY`, it will build a new image every time the CRON expression matches the current time. For semantic version syntax, see [CreateComponent](https://docs.aws.amazon.com/imagebuilder/latest/APIReference/API_CreateComponent.html) in the _EC2 Image Builder API Reference_.>
+    void take
+  take status, name <status>
+    void take
+  take tags, name <tags>
+    void take
+  take client-token, name <clientToken>

@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/list-associations-response
+  take form list-associations-response
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-not-found
+  take form resource-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-associations, name <ListAssociations>
+  note <Lists the associations in your account and their properties.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-associations-request, like list-associations-request
+
+  line </#X-Amz-Target=SageMaker.ListAssociations>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-associations-request
+
+  loot 200
+    seed json, like list-associations-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found
+    note <ResourceNotFound>

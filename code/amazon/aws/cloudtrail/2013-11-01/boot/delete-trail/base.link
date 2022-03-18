@@ -1,0 +1,71 @@
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/delete-trail-response
+  take form delete-trail-response
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/insufficient-dependency-service-access-permission-exception
+  take form insufficient-dependency-service-access-permission-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/invalid-home-region-exception
+  take form invalid-home-region-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/invalid-trail-name-exception
+  take form invalid-trail-name-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/not-organization-master-account-exception
+  take form not-organization-master-account-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/operation-not-permitted-exception
+  take form operation-not-permitted-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/trail-not-found-exception
+  take form trail-not-found-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/unsupported-operation-exception
+  take form unsupported-operation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-trail, name <DeleteTrail>
+  note <Deletes a trail. This operation must be called from the region in which the trail was created. `DeleteTrail` cannot be called on the shadow trails (replicated trails in other regions) of a trail that is enabled in all regions.>
+
+  take x-amz-target
+    like native-string
+  take delete-trail-request, like delete-trail-request
+
+  line </#X-Amz-Target=com.amazonaws.cloudtrail.v20131101.CloudTrail_20131101.DeleteTrail>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-trail-request
+
+  loot 200
+    seed json, like delete-trail-response
+    note <Success>
+  loot 480
+    seed json, like trail-not-found-exception
+    note <TrailNotFoundException>
+  loot 481
+    seed json, like invalid-trail-name-exception
+    note <InvalidTrailNameException>
+  loot 482
+    seed json, like invalid-home-region-exception
+    note <InvalidHomeRegionException>
+  loot 483
+    seed json, like unsupported-operation-exception
+    note <UnsupportedOperationException>
+  loot 484
+    seed json, like operation-not-permitted-exception
+    note <OperationNotPermittedException>
+  loot 485
+    seed json, like not-organization-master-account-exception
+    note <NotOrganizationMasterAccountException>
+  loot 486
+    seed json, like insufficient-dependency-service-access-permission-exception
+    note <InsufficientDependencyServiceAccessPermissionException>
+  loot 487
+    seed json, like conflict-exception
+    note <ConflictException>

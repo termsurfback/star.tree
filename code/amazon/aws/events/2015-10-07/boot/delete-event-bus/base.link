@@ -1,0 +1,31 @@
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-event-bus, name <DeleteEventBus>
+  note <Deletes the specified custom event bus or partner event bus. All rules associated with this event bus need to be deleted. You can't delete your account's default event bus.>
+
+  take x-amz-target
+    like native-string
+  take delete-event-bus-request, like delete-event-bus-request
+
+  line </#X-Amz-Target=AWSEvents.DeleteEventBus>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-event-bus-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like internal-exception
+    note <InternalException>
+  loot 481
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>

@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/invalid-operation-exception
+  take form invalid-operation-exception
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/list-attacks-response
+  take form list-attacks-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-attacks, name <ListAttacks>
+  note <Returns all ongoing DDoS attacks or all DDoS attacks during a specified time period.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-attacks-request, like list-attacks-request
+
+  line </#X-Amz-Target=AWSShield_20160616.ListAttacks>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-attacks-request
+
+  loot 200
+    seed json, like list-attacks-response
+    note <Success>
+  loot 480
+    seed json, like internal-error-exception
+    note <InternalErrorException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like invalid-operation-exception
+    note <InvalidOperationException>

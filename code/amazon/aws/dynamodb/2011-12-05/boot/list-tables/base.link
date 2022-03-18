@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/dynamodb/2011-12-05/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/dynamodb/2011-12-05/base/list-tables-output
+  take form list-tables-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-tables, name <ListTables>
+  note <Retrieves a paginated list of table names created by the AWS Account of the caller in the AWS Region (e.g. `us-east-1`).>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take exclusive-start-table-name
+    like native-string
+    note <Pagination token>
+    void take
+  take list-tables-input, like list-tables-input
+
+  line </#X-Amz-Target=DynamoDB_20111205.ListTables>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <Limit>, loan limit
+  find <ExclusiveStartTableName>, loan exclusive-start-table-name
+
+  seed json, loan list-tables-input
+
+  loot 200
+    seed json, like list-tables-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>

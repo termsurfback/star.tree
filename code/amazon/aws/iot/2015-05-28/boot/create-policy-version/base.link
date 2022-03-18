@@ -1,0 +1,86 @@
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/create-policy-version-body
+  take form create-policy-version-body
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/create-policy-version-response
+  take form create-policy-version-response
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/malformed-policy-exception
+  take form malformed-policy-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/versions-limit-exceeded-exception
+  take form versions-limit-exceeded-exception
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-policy-version, name <CreatePolicyVersion>
+  note <Creates a new version of the specified IoT policy. To update a policy, create a new policy version. A managed policy can have up to five versions. If the policy has five versions, you must use DeletePolicyVersion to delete an existing version before you create a new one.
+
+Optionally, you can set the new version as the policy's default version. The default version is the operative version (that is, the version that is in effect for the certificates to which the policy is attached).
+
+Requires permission to access the [CreatePolicyVersion](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiot.html#awsiot-actions-as-permissions) action.>
+
+  take policy-name
+    like native-string
+    note <The policy name.>
+  take set-as-default
+    like native-boolean
+    note <Specifies whether the policy version is set as the default. When this parameter is true, the new policy version becomes the operative version (that is, the version that is in effect for the certificates to which the policy is attached).>
+    void take
+  take create-policy-version-body, like create-policy-version-body
+
+  line </policies/{policy-name}/version>
+
+  find <setAsDefault>, loan set-as-default
+
+  seed json, loan create-policy-version-body
+
+  loot 200
+    seed json, like create-policy-version-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like malformed-policy-exception
+    note <MalformedPolicyException>
+  loot 482
+    seed json, like versions-limit-exceeded-exception
+    note <VersionsLimitExceededException>
+  loot 483
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 484
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 485
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 486
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 487
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

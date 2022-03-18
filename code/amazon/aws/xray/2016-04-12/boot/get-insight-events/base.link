@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/xray/2016-04-12/base/get-insight-events-body
+  take form get-insight-events-body
+
+load @drumwork/snow/amazonaws.com/xray/2016-04-12/base/get-insight-events-result
+  take form get-insight-events-result
+
+load @drumwork/snow/amazonaws.com/xray/2016-04-12/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/xray/2016-04-12/base/throttled-exception
+  take form throttled-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-insight-events, name <GetInsightEvents>
+  note <X-Ray reevaluates insights periodically until they're resolved, and records each intermediate state as an event. You can review an insight's events in the Impact Timeline on the Inspect page in the X-Ray console.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-insight-events-body, like get-insight-events-body
+
+  line </InsightEvents>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan get-insight-events-body
+
+  loot 200
+    seed json, like get-insight-events-result
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like throttled-exception
+    note <ThrottledException>

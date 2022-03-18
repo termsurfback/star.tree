@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/ssm-contacts/2021-05-03/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/ssm-contacts/2021-05-03/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/ssm-contacts/2021-05-03/base/list-contacts-result
+  take form list-contacts-result
+
+load @drumwork/snow/amazonaws.com/ssm-contacts/2021-05-03/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/ssm-contacts/2021-05-03/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-contacts, name <ListContacts>
+  note <Lists all contacts and escalation plans in Incident Manager.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-contacts-request, like list-contacts-request
+
+  line </#X-Amz-Target=SSMContacts.ListContacts>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-contacts-request
+
+  loot 200
+    seed json, like list-contacts-result
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like validation-exception
+    note <ValidationException>

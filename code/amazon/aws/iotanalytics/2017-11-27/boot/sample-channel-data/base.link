@@ -1,0 +1,68 @@
+
+load @drumwork/snow/amazonaws.com/iotanalytics/2017-11-27/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iotanalytics/2017-11-27/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iotanalytics/2017-11-27/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iotanalytics/2017-11-27/base/sample-channel-data-response
+  take form sample-channel-data-response
+
+load @drumwork/snow/amazonaws.com/iotanalytics/2017-11-27/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/iotanalytics/2017-11-27/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot sample-channel-data, name <SampleChannelData>
+  note <Retrieves a sample of messages from the specified channel ingested during the specified timeframe. Up to 10 messages can be retrieved.>
+
+  take channel-name
+    like native-string
+    note <The name of the channel whose message samples are retrieved.>
+  take max-messages
+    like native-integer
+    note <The number of sample messages to be retrieved. The limit is 10. The default is also 10.>
+    void take
+  take start-time
+    like native-string
+    note <The start of the time window from which sample messages are retrieved.>
+    void take
+  take end-time
+    like native-string
+    note <The end of the time window from which sample messages are retrieved.>
+    void take
+
+  line </channels/{channel-name}/sample>
+
+  find <maxMessages>, loan max-messages
+  find <startTime>, loan start-time
+  find <endTime>, loan end-time
+
+  loot 200
+    seed json, like sample-channel-data-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 484
+    seed json, like throttling-exception
+    note <ThrottlingException>

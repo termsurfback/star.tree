@@ -1,0 +1,95 @@
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/cluster-limit-exceeded-exception
+  take form cluster-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/create-job-result
+  take form create-job-result
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/ec2-request-failed-exception
+  take form ec2-request-failed-exception
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/invalid-input-combination-exception
+  take form invalid-input-combination-exception
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/invalid-resource-exception
+  take form invalid-resource-exception
+
+load @drumwork/snow/amazonaws.com/snowball/2016-06-30/base/kms-request-failed-exception
+  take form kms-request-failed-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-job, name <CreateJob>
+  note <Creates a job to import or export data between Amazon S3 and your on-premises data center. Your AWS account must have the right trust policies and permissions in place to create a job for a Snow device. If you're creating a job for a node in a cluster, you only need to provide the `clusterId` value; the other job attributes are inherited from the cluster.
+
+Only the Snowball; Edge device type is supported when ordering clustered jobs.
+
+The device capacity is optional.
+
+Availability of device types differ by AWS Region. For more information about Region availability, see [AWS Regional Services](https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/?p=ngi&loc=4).
+
+**AWS Snow Family device types and their capacities.** - Snow Family device type: **SNC1_SSD** - Capacity: T14
+
+  - Description: Snowcone
+
+- Snow Family device type: **SNC1_HDD** - Capacity: T8
+
+  - Description: Snowcone
+
+- Device type: **EDGE_S** - Capacity: T98
+
+  - Description: Snowball Edge Storage Optimized for data transfer only
+
+- Device type: **EDGE_CG** - Capacity: T42
+
+  - Description: Snowball Edge Compute Optimized with GPU
+
+- Device type: **EDGE_C** - Capacity: T42
+
+  - Description: Snowball Edge Compute Optimized without GPU
+
+- Device type: **EDGE** - Capacity: T100
+
+  - Description: Snowball Edge Storage Optimized with EC2 Compute
+
+- Device type: **STANDARD** - Capacity: T50
+
+  - Description: Original Snowball device
+
+    This device is only available in the Ningxia, Beijing, and Singapore AWS Regions.
+
+- Device type: **STANDARD** - Capacity: T80
+
+  - Description: Original Snowball device
+
+    This device is only available in the Ningxia, Beijing, and Singapore AWS Regions.>
+
+  take x-amz-target
+    like native-string
+  take create-job-request, like create-job-request
+
+  line </#X-Amz-Target=AWSIESnowballJobManagementService.CreateJob>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-job-request
+
+  loot 200
+    seed json, like create-job-result
+    note <Success>
+  loot 480
+    seed json, like invalid-resource-exception
+    note <InvalidResourceException>
+  loot 481
+    seed json, like kms-request-failed-exception
+    note <KMSRequestFailedException>
+  loot 482
+    seed json, like invalid-input-combination-exception
+    note <InvalidInputCombinationException>
+  loot 483
+    seed json, like cluster-limit-exceeded-exception
+    note <ClusterLimitExceededException>
+  loot 484
+    seed json, like ec2-request-failed-exception
+    note <Ec2RequestFailedException>

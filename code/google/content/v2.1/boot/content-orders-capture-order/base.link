@@ -1,0 +1,26 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/content/v2.1/base/capture-order-response
+  take form capture-order-response
+
+boot content-orders-capture-order, name <content.orders.captureOrder>
+  note <Capture funds from the customer for the current order total. This method should be called after the merchant verifies that they are able and ready to start shipping the order. This method blocks until a response is received from the payment processsor. If this method succeeds, the merchant is guaranteed to receive funds for the order after shipment. If the request fails, it can be retried or the order may be cancelled. This method cannot be called after the entire order is already shipped. A rejected error code is returned when the payment service provider has declined the charge. This indicates a problem between the PSP and either the merchant's or customer's account. Sometimes this error will be resolved by the customer. We recommend retrying these errors once per day or cancelling the order with reason `failedToCaptureFunds` if the items cannot be held.>
+
+  take merchant-id
+    like native-string
+    note <Required. The ID of the account that manages the order. This cannot be a multi-client account.>
+  take order-id
+    like native-string
+    note <Required. The ID of the Order.>
+  take capture-order-request, like capture-order-request
+    void take
+
+  line </{merchant-id}/orders/{order-id}/captureOrder>
+
+  seed json, loan capture-order-request
+
+  loot 200
+    seed json, like capture-order-response
+    note <Successful response>

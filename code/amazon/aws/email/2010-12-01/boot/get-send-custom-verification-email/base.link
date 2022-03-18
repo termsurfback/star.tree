@@ -1,0 +1,70 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/configuration-set-does-not-exist-exception
+  take form configuration-set-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/custom-verification-email-template-does-not-exist-exception
+  take form custom-verification-email-template-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/from-email-address-not-verified-exception
+  take form from-email-address-not-verified-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/message-rejected
+  take form message-rejected
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/production-access-not-granted-exception
+  take form production-access-not-granted-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/send-custom-verification-email-response
+  take form send-custom-verification-email-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-send-custom-verification-email, name <GET_SendCustomVerificationEmail>
+  note <Adds an email address to the list of identities for your Amazon SES account in the current AWS Region and attempts to verify it. As a result of executing this operation, a customized verification email is sent to the specified address.
+
+To use this operation, you must first create a custom verification email template. For more information about creating and using custom verification email templates, see [Using Custom Verification Email Templates](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/custom-verification-emails.html) in the _Amazon SES Developer Guide_.
+
+You can execute this operation no more than once per second.>
+
+  take email-address
+    like native-string
+    note <The email address to verify.>
+  take template-name
+    like native-string
+    note <The name of the custom verification email template to use when sending the verification email.>
+  take configuration-set-name
+    like native-string
+    note <Name of a configuration set to use when sending the verification email.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=SendCustomVerificationEmail>
+
+  find <EmailAddress>, loan email-address
+  find <TemplateName>, loan template-name
+  find <ConfigurationSetName>, loan configuration-set-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like send-custom-verification-email-response
+    note <Success>
+  loot 480
+    seed xml, like message-rejected
+    note <MessageRejected>
+  loot 481
+    seed xml, like configuration-set-does-not-exist-exception
+    note <ConfigurationSetDoesNotExistException>
+  loot 482
+    seed xml, like custom-verification-email-template-does-not-exist-exception
+    note <CustomVerificationEmailTemplateDoesNotExistException>
+  loot 483
+    seed xml, like from-email-address-not-verified-exception
+    note <FromEmailAddressNotVerifiedException>
+  loot 484
+    seed xml, like production-access-not-granted-exception
+    note <ProductionAccessNotGrantedException>

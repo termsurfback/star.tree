@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/account
+  take form account
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-accounts-account-body
+  take form post-accounts-account-body
+
+boot post-accounts-account, name <PostAccountsAccount>
+  note <Updates a [connected account](/docs/connect/accounts) by setting the values of the parameters passed. Any parameters not provided are left unchanged. Most parameters can be changed only for Custom accounts. (These are marked **Custom Only** below.) Parameters marked **Custom and Express** are not supported for Standard accounts.
+
+To update your own account, use the [Dashboard](https://dashboard.stripe.com/account). Refer to our [Connect](/docs/connect/updating-accounts) documentation to learn more about updating accounts.>
+
+  take account
+    like native-string
+  take post-accounts-account-body, like post-accounts-account-body
+    void take
+
+  line </v1/accounts/{account}>
+
+  seed x-www-form-urlencoded, loan post-accounts-account-body
+
+  loot 200
+    seed json, like account
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

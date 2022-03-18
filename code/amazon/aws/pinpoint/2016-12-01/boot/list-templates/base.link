@@ -1,0 +1,67 @@
+
+load @drumwork/snow/amazonaws.com/pinpoint/2016-12-01/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/pinpoint/2016-12-01/base/forbidden-exception
+  take form forbidden-exception
+
+load @drumwork/snow/amazonaws.com/pinpoint/2016-12-01/base/internal-server-error-exception
+  take form internal-server-error-exception
+
+load @drumwork/snow/amazonaws.com/pinpoint/2016-12-01/base/list-templates-response
+  take form list-templates-response
+
+load @drumwork/snow/amazonaws.com/pinpoint/2016-12-01/base/method-not-allowed-exception
+  take form method-not-allowed-exception
+
+load @drumwork/snow/amazonaws.com/pinpoint/2016-12-01/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-templates, name <ListTemplates>
+  note <Retrieves information about all the message templates that are associated with your Amazon Pinpoint account.>
+
+  take next-token
+    like native-string
+    note <The string that specifies which page of results to return in a paginated response. This parameter is not supported for application, campaign, and journey metrics.>
+    void take
+  take page-size
+    like native-string
+    note <The maximum number of items to include in each page of a paginated response. This parameter is not supported for application, campaign, and journey metrics.>
+    void take
+  take prefix
+    like native-string
+    note <The substring to match in the names of the message templates to include in the results. If you specify this value, Amazon Pinpoint returns only those templates whose names begin with the value that you specify.>
+    void take
+  take template-type
+    like native-string
+    note <The type of message template to include in the results. Valid values are: EMAIL, PUSH, SMS, and VOICE. To include all types of templates in the results, don't include this parameter in your request.>
+    void take
+
+  line </v1/templates>
+
+  find <next-token>, loan next-token
+  find <page-size>, loan page-size
+  find <prefix>, loan prefix
+  find <template-type>, loan template-type
+
+  loot 200
+    seed json, like list-templates-response
+    note <Success>
+  loot 480
+    seed json, like method-not-allowed-exception
+    note <MethodNotAllowedException>
+  loot 481
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 482
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 483
+    seed json, like internal-server-error-exception
+    note <InternalServerErrorException>
+  loot 484
+    seed json, like forbidden-exception
+    note <ForbiddenException>

@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/get-resource-policy-response
+  take form get-resource-policy-response
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-resource-policy, name <GetResourcePolicy>
+  note <Retrieves the JSON text of the resource-based policy document attached to the specified secret. The JSON request string input and response output displays formatted code with white space and line breaks for better readability. Submit your input as a single line JSON string.
+
+**Minimum permissions** To run this command, you must have the following permissions:
+
+- secretsmanager:GetResourcePolicy
+
+**Related operations** - To attach a resource policy to a secret, use PutResourcePolicy.
+
+- To delete the resource-based policy attached to a secret, use DeleteResourcePolicy.
+
+- To list all of the currently available secrets, use ListSecrets.>
+
+  take x-amz-target
+    like native-string
+  take get-resource-policy-request, like get-resource-policy-request
+
+  line </#X-Amz-Target=secretsmanager.GetResourcePolicy>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-resource-policy-request
+
+  loot 200
+    seed json, like get-resource-policy-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 482
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 483
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>

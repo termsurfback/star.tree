@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/wellarchitected/2020-03-31/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/wellarchitected/2020-03-31/base/get-lens-review-report-output
+  take form get-lens-review-report-output
+
+load @drumwork/snow/amazonaws.com/wellarchitected/2020-03-31/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/wellarchitected/2020-03-31/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/wellarchitected/2020-03-31/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/wellarchitected/2020-03-31/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-lens-review-report, name <GetLensReviewReport>
+  note <Get lens review report.>
+
+  take workload-id
+    like native-string
+  take lens-alias
+    like native-string
+  take milestone-number
+    like native-integer
+    void take
+
+  line </workloads/{workload-id}/lensReviews/{lens-alias}/report>
+
+  find <MilestoneNumber>, loan milestone-number
+
+  loot 200
+    seed json, like get-lens-review-report-output
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 483
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 484
+    seed json, like throttling-exception
+    note <ThrottlingException>

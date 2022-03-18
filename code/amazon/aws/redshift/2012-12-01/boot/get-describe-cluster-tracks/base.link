@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-track-fault
+  take form invalid-cluster-track-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/track-list-message
+  take form track-list-message
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unauthorized-operation
+  take form unauthorized-operation
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-cluster-tracks, name <GET_DescribeClusterTracks>
+  note <Returns a list of all the available maintenance tracks.>
+
+  take maintenance-track-name
+    like native-string
+    note <The name of the maintenance track.>
+    void take
+  take max-records
+    like native-integer
+    note <An integer value for the maximum number of maintenance tracks to return.>
+    void take
+  take marker
+    like native-string
+    note <An optional parameter that specifies the starting point to return a set of response records. When the results of a `DescribeClusterTracks` request exceed the value specified in `MaxRecords`, Amazon Redshift returns a value in the `Marker` field of the response. You can retrieve the next set of response records by providing the returned marker value in the `Marker` parameter and retrying the request.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeClusterTracks>
+
+  find <MaintenanceTrackName>, loan maintenance-track-name
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like track-list-message
+    note <Success>
+  loot 480
+    seed xml, like invalid-cluster-track-fault
+    note <InvalidClusterTrackFault>
+  loot 481
+    seed xml, like unauthorized-operation
+    note <UnauthorizedOperation>

@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/byoip-cidr-not-found-exception
+  take form byoip-cidr-not-found-exception
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/incorrect-cidr-state-exception
+  take form incorrect-cidr-state-exception
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/invalid-argument-exception
+  take form invalid-argument-exception
+
+load @drumwork/snow/amazonaws.com/globalaccelerator/2018-08-08/base/withdraw-byoip-cidr-response
+  take form withdraw-byoip-cidr-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot withdraw-byoip-cidr, name <WithdrawByoipCidr>
+  note <Stops advertising an address range that is provisioned as an address pool. You can perform this operation at most once every 10 seconds, even if you specify different address ranges each time.
+
+It can take a few minutes before traffic to the specified addresses stops routing to AWS because of propagation delays.
+
+For more information, see [Bring Your Own IP Addresses (BYOIP)](https://docs.aws.amazon.com/global-accelerator/latest/dg/using-byoip.html) in the _AWS Global Accelerator Developer Guide_.>
+
+  take x-amz-target
+    like native-string
+  take withdraw-byoip-cidr-request, like withdraw-byoip-cidr-request
+
+  line </#X-Amz-Target=GlobalAccelerator_V20180706.WithdrawByoipCidr>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan withdraw-byoip-cidr-request
+
+  loot 200
+    seed json, like withdraw-byoip-cidr-response
+    note <Success>
+  loot 480
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>
+  loot 481
+    seed json, like invalid-argument-exception
+    note <InvalidArgumentException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 483
+    seed json, like byoip-cidr-not-found-exception
+    note <ByoipCidrNotFoundException>
+  loot 484
+    seed json, like incorrect-cidr-state-exception
+    note <IncorrectCidrStateException>

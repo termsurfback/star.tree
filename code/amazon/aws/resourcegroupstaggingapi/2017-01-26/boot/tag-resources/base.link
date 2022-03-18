@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/resourcegroupstaggingapi/2017-01-26/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/resourcegroupstaggingapi/2017-01-26/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/resourcegroupstaggingapi/2017-01-26/base/tag-resources-output
+  take form tag-resources-output
+
+load @drumwork/snow/amazonaws.com/resourcegroupstaggingapi/2017-01-26/base/throttled-exception
+  take form throttled-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot tag-resources, name <TagResources>
+  note <Applies one or more tags to the specified resources. Note the following:
+
+- Not all resources can have tags. For a list of services with resources that support tagging using this operation, see [Services that support the Resource Groups Tagging API](https://docs.aws.amazon.com/resourcegroupstagging/latest/APIReference/supported-services.html).
+
+- Each resource can have up to 50 tags. For other limits, see [Tag Naming and Usage Conventions](https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions) in the _AWS General Reference._
+
+- You can only tag resources that are located in the specified AWS Region for the AWS account.
+
+- To add tags to a resource, you need the necessary permissions for the service that the resource belongs to as well as permissions for adding tags. For more information, see the documentation for each service.
+
+Do not store personally identifiable information (PII) or other confidential or sensitive information in tags. We use tags to provide you with billing and administration services. Tags are not intended to be used for private or sensitive data.>
+
+  take x-amz-target
+    like native-string
+  take tag-resources-input, like tag-resources-input
+
+  line </#X-Amz-Target=ResourceGroupsTaggingAPI_20170126.TagResources>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan tag-resources-input
+
+  loot 200
+    seed json, like tag-resources-output
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like throttled-exception
+    note <ThrottledException>
+  loot 482
+    seed json, like internal-service-exception
+    note <InternalServiceException>

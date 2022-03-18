@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/access-denied-fault
+  take form access-denied-fault
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/invalid-resource-state-fault
+  take form invalid-resource-state-fault
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/kms-key-not-accessible-fault
+  take form kms-key-not-accessible-fault
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/modify-endpoint-response
+  take form modify-endpoint-response
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/resource-already-exists-fault
+  take form resource-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/resource-not-found-fault
+  take form resource-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot modify-endpoint, name <ModifyEndpoint>
+  note <Modifies the specified endpoint.
+
+For a MySQL source or target endpoint, don't explicitly specify the database using the `DatabaseName` request parameter on the `ModifyEndpoint` API call. Specifying `DatabaseName` when you modify a MySQL endpoint replicates all the task tables to this single database. For MySQL endpoints, you specify the database only when you specify the schema in the table-mapping rules of the DMS task.>
+
+  take x-amz-target
+    like native-string
+  take modify-endpoint-message, like modify-endpoint-message
+
+  line </#X-Amz-Target=AmazonDMSv20160101.ModifyEndpoint>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan modify-endpoint-message
+
+  loot 200
+    seed json, like modify-endpoint-response
+    note <Success>
+  loot 480
+    seed json, like invalid-resource-state-fault
+    note <InvalidResourceStateFault>
+  loot 481
+    seed json, like resource-not-found-fault
+    note <ResourceNotFoundFault>
+  loot 482
+    seed json, like resource-already-exists-fault
+    note <ResourceAlreadyExistsFault>
+  loot 483
+    seed json, like kms-key-not-accessible-fault
+    note <KMSKeyNotAccessibleFault>
+  loot 484
+    seed json, like access-denied-fault
+    note <AccessDeniedFault>

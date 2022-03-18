@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/describe-subnet-groups-response
+  take form describe-subnet-groups-response
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/service-linked-role-not-found-fault
+  take form service-linked-role-not-found-fault
+
+load @drumwork/snow/amazonaws.com/dax/2017-04-19/base/subnet-group-not-found-fault
+  take form subnet-group-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-subnet-groups, name <DescribeSubnetGroups>
+  note <Returns a list of subnet group descriptions. If a subnet group name is specified, the list will contain only the description of that group.>
+
+  take x-amz-target
+    like native-string
+  take describe-subnet-groups-request, like describe-subnet-groups-request
+
+  line </#X-Amz-Target=AmazonDAXV3.DescribeSubnetGroups>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-subnet-groups-request
+
+  loot 200
+    seed json, like describe-subnet-groups-response
+    note <Success>
+  loot 480
+    seed json, like subnet-group-not-found-fault
+    note <SubnetGroupNotFoundFault>
+  loot 481
+    seed json, like service-linked-role-not-found-fault
+    note <ServiceLinkedRoleNotFoundFault>

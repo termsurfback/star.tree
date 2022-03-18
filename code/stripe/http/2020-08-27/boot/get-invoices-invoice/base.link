@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-invoices-invoice-body
+  take form get-invoices-invoice-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/invoice
+  take form invoice
+
+boot get-invoices-invoice, name <GetInvoicesInvoice>
+  note <Retrieves the invoice with the given ID.>
+
+  take invoice
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-invoices-invoice-body, like get-invoices-invoice-body
+    void take
+
+  line </v1/invoices/{invoice}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-invoices-invoice-body
+
+  loot 200
+    seed json, like invoice
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/create-partner-event-source-response
+  take form create-partner-event-source-response
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/operation-disabled-exception
+  take form operation-disabled-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/resource-already-exists-exception
+  take form resource-already-exists-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-partner-event-source, name <CreatePartnerEventSource>
+  note <Called by an SaaS partner to create a partner event source. This operation is not used by Amazon Web Services customers.
+
+Each partner event source can be used by one Amazon Web Services account to create a matching partner event bus in that Amazon Web Services account. A SaaS partner must create one partner event source for each Amazon Web Services account that wants to receive those event types.
+
+A partner event source creates events based on resources within the SaaS partner's service or application.
+
+An Amazon Web Services account that creates a partner event bus that matches the partner event source can use that event bus to receive events from the partner, and then process them using Amazon Web Services Events rules and targets.
+
+Partner event source names follow this format:
+
+`_partner_name_/_event_namespace_/_event_name_`
+
+_partner_name_ is determined during partner registration and identifies the partner to Amazon Web Services customers. _event_namespace_ is determined by the partner and is a way for the partner to categorize their events. _event_name_ is determined by the partner, and should uniquely identify an event-generating resource within the partner system. The combination of _event_namespace_ and _event_name_ should help Amazon Web Services customers decide whether to create an event bus to receive these events.>
+
+  take x-amz-target
+    like native-string
+  take create-partner-event-source-request, like create-partner-event-source-request
+
+  line </#X-Amz-Target=AWSEvents.CreatePartnerEventSource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-partner-event-source-request
+
+  loot 200
+    seed json, like create-partner-event-source-response
+    note <Success>
+  loot 480
+    seed json, like resource-already-exists-exception
+    note <ResourceAlreadyExistsException>
+  loot 481
+    seed json, like internal-exception
+    note <InternalException>
+  loot 482
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>
+  loot 483
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 484
+    seed json, like operation-disabled-exception
+    note <OperationDisabledException>

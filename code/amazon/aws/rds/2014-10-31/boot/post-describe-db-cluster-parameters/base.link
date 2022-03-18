@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-parameter-group-details
+  take form db-cluster-parameter-group-details
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-parameter-group-not-found-fault
+  take form db-parameter-group-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-db-cluster-parameters, name <POST_DescribeDBClusterParameters>
+  note <Returns the detailed parameter list for a particular DB cluster parameter group.
+
+For more information on Amazon Aurora, see [What Is Amazon Aurora?](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_AuroraOverview.html) in the _Amazon Aurora User Guide._
+
+This action only applies to Aurora DB clusters.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-db-cluster-parameters-message, like describe-db-cluster-parameters-message
+    void take
+
+  line </#Action=DescribeDBClusterParameters>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-db-cluster-parameters-message
+
+  loot 200
+    seed xml, like db-cluster-parameter-group-details
+    note <Success>
+  loot 480
+    seed xml, like db-parameter-group-not-found-fault
+    note <DBParameterGroupNotFoundFault>

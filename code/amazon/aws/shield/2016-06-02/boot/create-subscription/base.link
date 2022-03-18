@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/create-subscription-response
+  take form create-subscription-response
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/shield/2016-06-02/base/resource-already-exists-exception
+  take form resource-already-exists-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-subscription, name <CreateSubscription>
+  note <Activates Shield Advanced for an account.
+
+When you initally create a subscription, your subscription is set to be automatically renewed at the end of the existing subscription period. You can change this by submitting an `UpdateSubscription` request.>
+
+  take x-amz-target
+    like native-string
+  take create-subscription-request, like create-subscription-request
+
+  line </#X-Amz-Target=AWSShield_20160616.CreateSubscription>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-subscription-request
+
+  loot 200
+    seed json, like create-subscription-response
+    note <Success>
+  loot 480
+    seed json, like internal-error-exception
+    note <InternalErrorException>
+  loot 481
+    seed json, like resource-already-exists-exception
+    note <ResourceAlreadyExistsException>

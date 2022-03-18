@@ -1,0 +1,72 @@
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/get-geo-location-response
+  take form get-geo-location-response
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/no-such-geo-location
+  take form no-such-geo-location
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-geo-location, name <GetGeoLocation>
+  note <Gets information about whether a specified geographic location is supported for Amazon Route 53 geolocation resource record sets.
+
+Route 53 does not perform authorization for this API because it retrieves information that is already available to the public.
+
+Use the following syntax to determine whether a continent is supported for geolocation:
+
+`GET /2013-04-01/geolocation?continentcode=_two-letter abbreviation for a continent_`
+
+Use the following syntax to determine whether a country is supported for geolocation:
+
+`GET /2013-04-01/geolocation?countrycode=_two-character country code_`
+
+Use the following syntax to determine whether a subdivision of a country is supported for geolocation:
+
+`GET /2013-04-01/geolocation?countrycode=_two-character country code_&subdivisioncode=_subdivision code_`>
+
+  take continentcode
+    like native-string
+    note <For geolocation resource record sets, a two-letter abbreviation that identifies a continent. Amazon Route 53 supports the following continent codes:
+
+- **AF**: Africa
+
+- **AN**: Antarctica
+
+- **AS**: Asia
+
+- **EU**: Europe
+
+- **OC**: Oceania
+
+- **NA**: North America
+
+- **SA**: South America>
+    void take
+  take countrycode
+    like native-string
+    note <Amazon Route 53 uses the two-letter country codes that are specified in [ISO standard 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).>
+    void take
+  take subdivisioncode
+    like native-string
+    note <The code for the subdivision, such as a particular state within the United States. For a list of US state abbreviations, see [Appendix B: Two-Letter State and Possession Abbreviations](https://pe.usps.com/text/pub28/28apb.htm) on the United States Postal Service website. For a list of all supported subdivision codes, use the [ListGeoLocations](https://docs.aws.amazon.com/Route53/latest/APIReference/API_ListGeoLocations.html) API.>
+    void take
+
+  line </2013-04-01/geolocation>
+
+  find <continentcode>, loan continentcode
+  find <countrycode>, loan countrycode
+  find <subdivisioncode>, loan subdivisioncode
+
+  loot 200
+    seed xml, like get-geo-location-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-geo-location
+    note <NoSuchGeoLocation>
+  loot 481
+    seed xml, like invalid-input
+    note <InvalidInput>

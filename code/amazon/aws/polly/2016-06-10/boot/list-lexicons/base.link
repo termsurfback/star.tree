@@ -1,0 +1,34 @@
+
+load @drumwork/snow/amazonaws.com/polly/2016-06-10/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/polly/2016-06-10/base/list-lexicons-output
+  take form list-lexicons-output
+
+load @drumwork/snow/amazonaws.com/polly/2016-06-10/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-lexicons, name <ListLexicons>
+  note <Returns a list of pronunciation lexicons stored in an Amazon Web Services Region. For more information, see [Managing Lexicons](https://docs.aws.amazon.com/polly/latest/dg/managing-lexicons.html).>
+
+  take next-token
+    like native-string
+    note <An opaque pagination token returned from previous `ListLexicons` operation. If present, indicates where to continue the list of lexicons.>
+    void take
+
+  line </v1/lexicons>
+
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like list-lexicons-output
+    note <Success>
+  loot 480
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 481
+    seed json, like service-failure-exception
+    note <ServiceFailureException>

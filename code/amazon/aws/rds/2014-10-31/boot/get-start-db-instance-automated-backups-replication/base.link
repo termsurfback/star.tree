@@ -1,0 +1,77 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-instance-automated-backup-quota-exceeded-fault
+  take form db-instance-automated-backup-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-instance-state-fault
+  take form invalid-db-instance-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/kms-key-not-accessible-fault
+  take form kms-key-not-accessible-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/start-db-instance-automated-backups-replication-result
+  take form start-db-instance-automated-backups-replication-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/storage-type-not-supported-fault
+  take form storage-type-not-supported-fault
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-start-db-instance-automated-backups-replication, name <GET_StartDBInstanceAutomatedBackupsReplication>
+  note <Enables replication of automated backups to a different Amazon Web Services Region.
+
+For more information, see [Replicating Automated Backups to Another Amazon Web Services Region](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ReplicateBackups.html) in the _Amazon RDS User Guide._>
+
+  take source-db-instance-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the source DB instance for the replicated automated backups, for example, `arn:aws:rds:us-west-2:123456789012:db:mydatabase`.>
+  take backup-retention-period
+    like native-integer
+    note <The retention period for the replicated automated backups.>
+    void take
+  take kms-key-id
+    like native-string
+    note <The Amazon Web Services KMS key identifier for encryption of the replicated automated backups. The KMS key ID is the Amazon Resource Name (ARN) for the KMS encryption key in the destination Amazon Web Services Region, for example, `arn:aws:kms:us-east-1:123456789012:key/AKIAIOSFODNN7EXAMPLE`.>
+    void take
+  take pre-signed-url
+    like native-string
+    note <A URL that contains a Signature Version 4 signed request for the StartDBInstanceAutomatedBackupsReplication action to be called in the Amazon Web Services Region of the source DB instance. The presigned URL must be a valid request for the StartDBInstanceAutomatedBackupsReplication API action that can be executed in the Amazon Web Services Region that contains the source DB instance.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=StartDBInstanceAutomatedBackupsReplication>
+
+  find <SourceDBInstanceArn>, loan source-db-instance-arn
+  find <BackupRetentionPeriod>, loan backup-retention-period
+  find <KmsKeyId>, loan kms-key-id
+  find <PreSignedUrl>, loan pre-signed-url
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like start-db-instance-automated-backups-replication-result
+    note <Success>
+  loot 480
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>
+  loot 481
+    seed xml, like invalid-db-instance-state-fault
+    note <InvalidDBInstanceStateFault>
+  loot 482
+    seed xml, like kms-key-not-accessible-fault
+    note <KMSKeyNotAccessibleFault>
+  loot 483
+    seed xml, like db-instance-automated-backup-quota-exceeded-fault
+    note <DBInstanceAutomatedBackupQuotaExceededFault>
+  loot 484
+    seed xml, like storage-type-not-supported-fault
+    note <StorageTypeNotSupportedFault>

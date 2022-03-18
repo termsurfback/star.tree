@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/sesv2/2019-09-27/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/sesv2/2019-09-27/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/sesv2/2019-09-27/base/test-render-email-template-body
+  take form test-render-email-template-body
+
+load @drumwork/snow/amazonaws.com/sesv2/2019-09-27/base/test-render-email-template-response
+  take form test-render-email-template-response
+
+load @drumwork/snow/amazonaws.com/sesv2/2019-09-27/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot test-render-email-template, name <TestRenderEmailTemplate>
+  note <Creates a preview of the MIME content of an email when provided with a template and a set of replacement data.
+
+You can execute this operation no more than once per second.>
+
+  take template-name
+    like native-string
+    note <The name of the template that you want to render.>
+  take test-render-email-template-body, like test-render-email-template-body
+
+  line </v2/email/templates/{template-name}/render>
+
+  seed json, loan test-render-email-template-body
+
+  loot 200
+    seed json, like test-render-email-template-response
+    note <Success>
+  loot 480
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 481
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 482
+    seed json, like bad-request-exception
+    note <BadRequestException>

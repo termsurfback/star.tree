@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-instance-automated-backup-message
+  take form db-instance-automated-backup-message
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-instance-automated-backup-not-found-fault
+  take form db-instance-automated-backup-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-db-instance-automated-backups, name <POST_DescribeDBInstanceAutomatedBackups>
+  note <Displays backups for both current and deleted instances. For example, use this operation to find details about automated backups for previously deleted instances. Current instances with retention periods greater than zero (0) are returned for both the `DescribeDBInstanceAutomatedBackups` and `DescribeDBInstances` operations.
+
+All parameters are optional.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-db-instance-automated-backups-message, like describe-db-instance-automated-backups-message
+    void take
+
+  line </#Action=DescribeDBInstanceAutomatedBackups>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-db-instance-automated-backups-message
+
+  loot 200
+    seed xml, like db-instance-automated-backup-message
+    note <Success>
+  loot 480
+    seed xml, like db-instance-automated-backup-not-found-fault
+    note <DBInstanceAutomatedBackupNotFoundFault>

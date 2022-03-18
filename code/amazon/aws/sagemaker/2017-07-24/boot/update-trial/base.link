@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-not-found
+  take form resource-not-found
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/update-trial-response
+  take form update-trial-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-trial, name <UpdateTrial>
+  note <Updates the display name of a trial.>
+
+  take x-amz-target
+    like native-string
+  take update-trial-request, like update-trial-request
+
+  line </#X-Amz-Target=SageMaker.UpdateTrial>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-trial-request
+
+  loot 200
+    seed json, like update-trial-response
+    note <Success>
+  loot 480
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 481
+    seed json, like resource-not-found
+    note <ResourceNotFound>

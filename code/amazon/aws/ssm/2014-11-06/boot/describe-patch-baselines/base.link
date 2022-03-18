@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/describe-patch-baselines-result
+  take form describe-patch-baselines-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-patch-baselines, name <DescribePatchBaselines>
+  note <Lists the patch baselines in your Amazon Web Services account.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-patch-baselines-request, like describe-patch-baselines-request
+
+  line </#X-Amz-Target=AmazonSSM.DescribePatchBaselines>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-patch-baselines-request
+
+  loot 200
+    seed json, like describe-patch-baselines-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>

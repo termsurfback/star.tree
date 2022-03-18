@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/iotevents-data/2018-10-23/base/batch-put-message-body
+  take form batch-put-message-body
+
+load @drumwork/snow/amazonaws.com/iotevents-data/2018-10-23/base/batch-put-message-response
+  take form batch-put-message-response
+
+load @drumwork/snow/amazonaws.com/iotevents-data/2018-10-23/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iotevents-data/2018-10-23/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iotevents-data/2018-10-23/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/iotevents-data/2018-10-23/base/throttling-exception
+  take form throttling-exception
+
+boot batch-put-message, name <BatchPutMessage>
+  note <Sends a set of messages to the AWS IoT Events system. Each message payload is transformed into the input you specify (`"inputName"`) and ingested into any detectors that monitor that input. If multiple messages are sent, the order in which the messages are processed isn't guaranteed. To guarantee ordering, you must send messages one at a time and wait for a successful response.>
+
+  take batch-put-message-body, like batch-put-message-body
+
+  line </inputs/messages>
+
+  seed json, loan batch-put-message-body
+
+  loot 200
+    seed json, like batch-put-message-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 482
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>

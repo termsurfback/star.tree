@@ -1,0 +1,70 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/custom-verification-email-invalid-content-exception
+  take form custom-verification-email-invalid-content-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/custom-verification-email-template-does-not-exist-exception
+  take form custom-verification-email-template-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/from-email-address-not-verified-exception
+  take form from-email-address-not-verified-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-update-custom-verification-email-template, name <GET_UpdateCustomVerificationEmailTemplate>
+  note <Updates an existing custom verification email template.
+
+For more information about custom verification email templates, see [Using Custom Verification Email Templates](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/custom-verification-emails.html) in the _Amazon SES Developer Guide_.
+
+You can execute this operation no more than once per second.>
+
+  take template-name
+    like native-string
+    note <The name of the custom verification email template that you want to update.>
+  take from-email-address
+    like native-string
+    note <The email address that the custom verification email is sent from.>
+    void take
+  take template-subject
+    like native-string
+    note <The subject line of the custom verification email.>
+    void take
+  take template-content
+    like native-string
+    note <The content of the custom verification email. The total size of the email must be less than 10 MB. The message body may contain HTML, with some limitations. For more information, see [Custom Verification Email Frequently Asked Questions](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/custom-verification-emails.html#custom-verification-emails-faq) in the _Amazon SES Developer Guide_.>
+    void take
+  take success-redirection-url
+    like native-string
+    note <The URL that the recipient of the verification email is sent to if his or her address is successfully verified.>
+    void take
+  take failure-redirection-url
+    like native-string
+    note <The URL that the recipient of the verification email is sent to if his or her address is not successfully verified.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=UpdateCustomVerificationEmailTemplate>
+
+  find <TemplateName>, loan template-name
+  find <FromEmailAddress>, loan from-email-address
+  find <TemplateSubject>, loan template-subject
+  find <TemplateContent>, loan template-content
+  find <SuccessRedirectionURL>, loan success-redirection-url
+  find <FailureRedirectionURL>, loan failure-redirection-url
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like custom-verification-email-template-does-not-exist-exception
+    note <CustomVerificationEmailTemplateDoesNotExistException>
+  loot 481
+    seed xml, like from-email-address-not-verified-exception
+    note <FromEmailAddressNotVerifiedException>
+  loot 482
+    seed xml, like custom-verification-email-invalid-content-exception
+    note <CustomVerificationEmailInvalidContentException>

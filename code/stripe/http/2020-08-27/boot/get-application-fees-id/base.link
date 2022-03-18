@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/application-fee
+  take form application-fee
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-application-fees-id-body
+  take form get-application-fees-id-body
+
+boot get-application-fees-id, name <GetApplicationFeesId>
+  note <Retrieves the details of an application fee that your account has collected. The same information is returned when refunding the application fee.>
+
+  take id
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-application-fees-id-body, like get-application-fees-id-body
+    void take
+
+  line </v1/application_fees/{id}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-application-fees-id-body
+
+  loot 200
+    seed json, like application-fee
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

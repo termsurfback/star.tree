@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/authorization-already-exists-fault
+  take form authorization-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/authorization-quota-exceeded-fault
+  take form authorization-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/authorize-db-security-group-ingress-result
+  take form authorize-db-security-group-ingress-result
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/db-security-group-not-found-fault
+  take form db-security-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/invalid-db-security-group-state-fault
+  take form invalid-db-security-group-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-authorize-db-security-group-ingress, name <POST_AuthorizeDBSecurityGroupIngress>
+  take action
+    like native-string
+  take version
+    like native-string
+  take authorize-db-security-group-ingress-message, like authorize-db-security-group-ingress-message
+    void take
+
+  line </#Action=AuthorizeDBSecurityGroupIngress>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan authorize-db-security-group-ingress-message
+
+  loot 200
+    seed xml, like authorize-db-security-group-ingress-result
+    note <Success>
+  loot 480
+    seed xml, like db-security-group-not-found-fault
+    note <DBSecurityGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-db-security-group-state-fault
+    note <InvalidDBSecurityGroupStateFault>
+  loot 482
+    seed xml, like authorization-already-exists-fault
+    note <AuthorizationAlreadyExistsFault>
+  loot 483
+    seed xml, like authorization-quota-exceeded-fault
+    note <AuthorizationQuotaExceededFault>

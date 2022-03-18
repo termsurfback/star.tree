@@ -1,0 +1,77 @@
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/dependency-timeout-exception
+  take form dependency-timeout-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-arn-exception
+  take form invalid-arn-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-grant-id-exception
+  take form invalid-grant-id-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-grant-token-exception
+  take form invalid-grant-token-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-internal-exception
+  take form kms-internal-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-invalid-state-exception
+  take form kms-invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot retire-grant, name <RetireGrant>
+  note <Deletes a grant. Typically, you retire a grant when you no longer need its permissions. To identify the grant to retire, use a [grant token](https://docs.aws.amazon.com/kms/latest/developerguide/grants.html#grant_token), or both the grant ID and a key identifier (key ID or key ARN) of the KMS key. The CreateGrant operation returns both values.
+
+This operation can be called by the _retiring principal_ for a grant, by the _grantee principal_ if the grant allows the `RetireGrant` operation, and by the Amazon Web Services account (root user) in which the grant is created. It can also be called by principals to whom permission for retiring a grant is delegated. For details, see [Retiring and revoking grants](https://docs.aws.amazon.com/kms/latest/developerguide/grant-manage.html#grant-delete) in the _Key Management Service Developer Guide_.
+
+For detailed information about grants, including grant terminology, see [Using grants](https://docs.aws.amazon.com/kms/latest/developerguide/grants.html) in the __Key Management Service Developer Guide__ . For examples of working with grants in several programming languages, see [Programming grants](https://docs.aws.amazon.com/kms/latest/developerguide/programming-grants.html).
+
+**Cross-account use**: Yes. You can retire a grant on a KMS key in a different Amazon Web Services account.
+
+**Required permissions:**:Permission to retire a grant is determined primarily by the grant. For details, see [Retiring and revoking grants](https://docs.aws.amazon.com/kms/latest/developerguide/grant-manage.html#grant-delete) in the _Key Management Service Developer Guide_.
+
+**Related operations:** - CreateGrant
+
+- ListGrants
+
+- ListRetirableGrants
+
+- RevokeGrant>
+
+  take x-amz-target
+    like native-string
+  take retire-grant-request, like retire-grant-request
+
+  line </#X-Amz-Target=TrentService.RetireGrant>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan retire-grant-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like invalid-arn-exception
+    note <InvalidArnException>
+  loot 481
+    seed json, like invalid-grant-token-exception
+    note <InvalidGrantTokenException>
+  loot 482
+    seed json, like invalid-grant-id-exception
+    note <InvalidGrantIdException>
+  loot 483
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 484
+    seed json, like dependency-timeout-exception
+    note <DependencyTimeoutException>
+  loot 485
+    seed json, like kms-internal-exception
+    note <KMSInternalException>
+  loot 486
+    seed json, like kms-invalid-state-exception
+    note <KMSInvalidStateException>

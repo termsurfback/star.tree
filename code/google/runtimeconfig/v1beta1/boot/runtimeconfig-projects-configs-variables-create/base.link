@@ -1,0 +1,29 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/runtimeconfig/v1beta1/base/variable
+  take form variable
+
+boot runtimeconfig-projects-configs-variables-create, name <runtimeconfig.projects.configs.variables.create>
+  note <Creates a variable within the given configuration. You cannot create a variable with a name that is a prefix of an existing variable name, or a name that has an existing variable name as a prefix. To learn more about creating a variable, read the [Setting and Getting Data](/deployment-manager/runtime-configurator/set-and-get-variables) documentation.>
+
+  take parent
+    like native-string
+    note <The path to the RutimeConfig resource that this variable should belong to. The configuration must exist beforehand; the path must be in the format: `projects/[PROJECT_ID]/configs/[CONFIG_NAME]`>
+  take request-id
+    like native-string
+    note <An optional but recommended unique `request_id`. If the server receives two `create()` requests with the same `request_id`, then the second request will be ignored and the first resource created and stored in the backend is returned. Empty `request_id` fields are ignored. It is responsibility of the client to ensure uniqueness of the `request_id` strings. `request_id` strings are limited to 64 characters.>
+    void take
+  take variable, like variable
+    void take
+
+  line </v1beta1/{parent}/variables>
+
+  find <requestId>, loan request-id
+
+  seed json, loan variable
+
+  loot 200
+    seed json, like variable
+    note <Successful response>

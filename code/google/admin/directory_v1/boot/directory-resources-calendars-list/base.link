@@ -1,0 +1,43 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/admin/directory_v1/base/calendar-resources
+  take form calendar-resources
+
+boot directory-resources-calendars-list, name <directory.resources.calendars.list>
+  note <Retrieves a list of calendar resources for an account.>
+
+  take customer
+    like native-string
+    note <The unique ID for the customer's Google Workspace account. As an account administrator, you can also use the `my_customer` alias to represent your account's customer ID.>
+  take max-results
+    like native-integer
+    note <Maximum number of results to return.>
+    void take
+  take order-by
+    like native-string
+    note <Field(s) to sort results by in either ascending or descending order. Supported fields include `resourceId`, `resourceName`, `capacity`, `buildingId`, and `floorName`. If no order is specified, defaults to ascending. Should be of the form "field [asc|desc], field [asc|desc], ...". For example `buildingId, capacity desc` would return results sorted first by `buildingId` in ascending order then by `capacity` in descending order.>
+    void take
+  take page-token
+    like native-string
+    note <Token to specify the next page in the list.>
+    void take
+  take query
+    like native-string
+    note <String query used to filter results. Should be of the form "field operator value" where field can be any of supported fields and operators can be any of supported operations. Operators include '=' for exact match, '!=' for mismatch and ':' for prefix match or HAS match where applicable. For prefix match, the value should always be followed by a *. Logical operators NOT and AND are supported (in this order of precedence). Supported fields include `generatedResourceName`, `name`, `buildingId`, `floor_name`, `capacity`, `featureInstances.feature.name`, `resourceEmail`, `resourceCategory`. For example `buildingId=US-NYC-9TH AND featureInstances.feature.name:Phone`.>
+    void take
+
+  line </admin/directory/v1/customer/{customer}/resources/calendars>
+
+  find <maxResults>, loan max-results
+  find <orderBy>, loan order-by
+  find <pageToken>, loan page-token
+  find <query>, loan query
+
+  loot 200
+    seed json, like calendar-resources
+    note <Successful response>

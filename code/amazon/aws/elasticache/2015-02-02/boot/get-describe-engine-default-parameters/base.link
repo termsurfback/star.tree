@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/describe-engine-default-parameters-result
+  take form describe-engine-default-parameters-result
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-engine-default-parameters, name <GET_DescribeEngineDefaultParameters>
+  note <Returns the default engine and system parameter information for the specified cache engine.>
+
+  take cache-parameter-group-family
+    like native-string
+    note <The name of the cache parameter group family.
+
+Valid values are: `memcached1.4` | `memcached1.5` | `memcached1.6` | `redis2.6` | `redis2.8` | `redis3.2` | `redis4.0` | `redis5.0` | `redis6.x` |>
+  take max-records
+    like native-integer
+    note <The maximum number of records to include in the response. If more records exist than the specified `MaxRecords` value, a marker is included in the response so that the remaining results can be retrieved.
+
+Default: 100
+
+Constraints: minimum 20; maximum 100.>
+    void take
+  take marker
+    like native-string
+    note <An optional marker returned from a prior request. Use this marker for pagination of results from this operation. If this parameter is specified, the response includes only records beyond the marker, up to the value specified by `MaxRecords`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeEngineDefaultParameters>
+
+  find <CacheParameterGroupFamily>, loan cache-parameter-group-family
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-engine-default-parameters-result
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 481
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

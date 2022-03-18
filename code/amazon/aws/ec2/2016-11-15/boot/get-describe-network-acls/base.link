@@ -1,0 +1,105 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-network-acls-result
+  take form describe-network-acls-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/network-acl-id
+  take form network-acl-id
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-network-acls, name <GET_DescribeNetworkAcls>
+  note <Describes one or more of your network ACLs.
+
+For more information, see [Network ACLs](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_ACLs.html) in the _Amazon Virtual Private Cloud User Guide_.>
+
+  take filter
+    like list
+      like filter
+    note <One or more filters.
+
+- `association.association-id` - The ID of an association ID for the ACL.
+
+- `association.network-acl-id` - The ID of the network ACL involved in the association.
+
+- `association.subnet-id` - The ID of the subnet involved in the association.
+
+- `default` - Indicates whether the ACL is the default network ACL for the VPC.
+
+- `entry.cidr` - The IPv4 CIDR range specified in the entry.
+
+- `entry.icmp.code` - The ICMP code specified in the entry, if any.
+
+- `entry.icmp.type` - The ICMP type specified in the entry, if any.
+
+- `entry.ipv6-cidr` - The IPv6 CIDR range specified in the entry.
+
+- `entry.port-range.from` - The start of the port range specified in the entry.
+
+- `entry.port-range.to` - The end of the port range specified in the entry.
+
+- `entry.protocol` - The protocol specified in the entry (`tcp` | `udp` | `icmp` or a protocol number).
+
+- `entry.rule-action` - Allows or denies the matching traffic (`allow` | `deny`).
+
+- `entry.rule-number` - The number of an entry (in other words, rule) in the set of ACL entries.
+
+- `network-acl-id` - The ID of the network ACL.
+
+- `owner-id` - The ID of the Amazon Web Services account that owns the network ACL.
+
+- `tag`:&lt;key&gt; - The key/value combination of a tag assigned to the resource. Use the tag key in the filter name and the tag value as the filter value. For example, to find all resources that have a tag with the key `Owner` and the value `TeamA`, specify `tag:Owner` for the filter name and `TeamA` for the filter value.
+
+- `tag-key` - The key of a tag assigned to the resource. Use this filter to find all resources assigned a tag with a specific key, regardless of the tag value.
+
+- `vpc-id` - The ID of the VPC for the network ACL.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take network-acl-id
+    like list
+      like network-acl-id
+    note <One or more network ACL IDs.
+
+Default: Describes all your network ACLs.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next page of results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return with a single call. To retrieve the remaining results, make another call with the returned `nextToken` value.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeNetworkAcls>
+
+  find <Filter>, loan filter
+  find <DryRun>, loan dry-run
+  find <NetworkAclId>, loan network-acl-id
+  find <NextToken>, loan next-token
+  find <MaxResults>, loan max-results
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-network-acls-result
+    note <Success>

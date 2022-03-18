@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/connectparticipant/2018-09-07/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/connectparticipant/2018-09-07/base/create-participant-connection-body
+  take form create-participant-connection-body
+
+load @drumwork/snow/amazonaws.com/connectparticipant/2018-09-07/base/create-participant-connection-response
+  take form create-participant-connection-response
+
+load @drumwork/snow/amazonaws.com/connectparticipant/2018-09-07/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/connectparticipant/2018-09-07/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/connectparticipant/2018-09-07/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-participant-connection, name <CreateParticipantConnection>
+  note <Creates the participant's connection. Note that ParticipantToken is used for invoking this API instead of ConnectionToken.
+
+The participant token is valid for the lifetime of the participant - until they are part of a contact.
+
+The response URL for `WEBSOCKET` Type has a connect expiry timeout of 100s. Clients must manually connect to the returned websocket URL and subscribe to the desired topic.
+
+For chat, you need to publish the following on the established websocket connection:
+
+`{"topic":"aws/subscribe","content":{"topics":["aws/chat"]}}`
+
+Upon websocket URL expiry, as specified in the response ConnectionExpiry parameter, clients need to call this API again to obtain a new websocket URL and perform the same steps as before.
+
+The Amazon Connect Participant Service APIs do not use [Signature Version 4 authentication](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html).>
+
+  take x-amz-bearer
+    like native-string
+    note <This is a header parameter.
+
+The Participant Token as obtained from [StartChatContact](https://docs.aws.amazon.com/connect/latest/APIReference/API_StartChatContact.html) API response.>
+  take create-participant-connection-body, like create-participant-connection-body
+
+  line </participant/connection#X-Amz-Bearer>
+
+  hint <X-Amz-Bearer>, loan x-amz-bearer
+
+  seed json, loan create-participant-connection-body
+
+  loot 200
+    seed json, like create-participant-connection-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like validation-exception
+    note <ValidationException>

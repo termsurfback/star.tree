@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/create-directory-result
+  take form create-directory-result
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/directory-limit-exceeded-exception
+  take form directory-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-directory, name <CreateDirectory>
+  note <Creates a Simple AD directory. For more information, see [Simple Active Directory](https://docs.aws.amazon.com/directoryservice/latest/admin-guide/directory_simple_ad.html) in the _Directory Service Admin Guide_.
+
+Before you call `CreateDirectory`, ensure that all of the required permissions have been explicitly granted through a policy. For details about what permissions are required to run the `CreateDirectory` operation, see [Directory Service API Permissions: Actions, Resources, and Conditions Reference](http://docs.aws.amazon.com/directoryservice/latest/admin-guide/UsingWithDS_IAM_ResourcePermissions.html).>
+
+  take x-amz-target
+    like native-string
+  take create-directory-request, like create-directory-request
+
+  line </#X-Amz-Target=DirectoryService_20150416.CreateDirectory>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-directory-request
+
+  loot 200
+    seed json, like create-directory-result
+    note <Success>
+  loot 480
+    seed json, like directory-limit-exceeded-exception
+    note <DirectoryLimitExceededException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like client-exception
+    note <ClientException>
+  loot 483
+    seed json, like service-exception
+    note <ServiceException>

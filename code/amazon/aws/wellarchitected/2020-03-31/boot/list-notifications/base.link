@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/wellarchitected/2020-03-31/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/wellarchitected/2020-03-31/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/wellarchitected/2020-03-31/base/list-notifications-body
+  take form list-notifications-body
+
+load @drumwork/snow/amazonaws.com/wellarchitected/2020-03-31/base/list-notifications-output
+  take form list-notifications-output
+
+load @drumwork/snow/amazonaws.com/wellarchitected/2020-03-31/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/wellarchitected/2020-03-31/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-notifications, name <ListNotifications>
+  note <List lens notifications.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-notifications-body, like list-notifications-body
+
+  line </notifications>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-notifications-body
+
+  loot 200
+    seed json, like list-notifications-output
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>

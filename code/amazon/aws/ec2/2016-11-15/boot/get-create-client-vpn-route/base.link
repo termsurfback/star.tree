@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/create-client-vpn-route-result
+  take form create-client-vpn-route-result
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-client-vpn-route, name <GET_CreateClientVpnRoute>
+  note <Adds a route to a network to a Client VPN endpoint. Each Client VPN endpoint has a route table that describes the available destination network routes. Each route in the route table specifies the path for traﬃc to speciﬁc resources or networks.>
+
+  take client-vpn-endpoint-id
+    like native-string
+    note <The ID of the Client VPN endpoint to which to add the route.>
+  take destination-cidr-block
+    like native-string
+    note <The IPv4 address range, in CIDR notation, of the route destination. For example:
+
+- To add a route for Internet access, enter `0.0.0.0/0`
+
+- To add a route for a peered VPC, enter the peered VPC's IPv4 CIDR range
+
+- To add a route for an on-premises network, enter the AWS Site-to-Site VPN connection's IPv4 CIDR range
+
+- To add a route for the local network, enter the client CIDR range>
+  take target-vpc-subnet-id
+    like native-string
+    note <The ID of the subnet through which you want to route traffic. The specified subnet must be an existing target network of the Client VPN endpoint.
+
+Alternatively, if you're adding a route for the local network, specify `local`.>
+  take description
+    like native-string
+    note <A brief description of the route.>
+    void take
+  take client-token
+    like native-string
+    note <Unique, case-sensitive identifier that you provide to ensure the idempotency of the request. For more information, see [How to Ensure Idempotency](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/Run_Instance_Idempotency.html).>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateClientVpnRoute>
+
+  find <ClientVpnEndpointId>, loan client-vpn-endpoint-id
+  find <DestinationCidrBlock>, loan destination-cidr-block
+  find <TargetVpcSubnetId>, loan target-vpc-subnet-id
+  find <Description>, loan description
+  find <ClientToken>, loan client-token
+  find <DryRun>, loan dry-run
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-client-vpn-route-result
+    note <Success>

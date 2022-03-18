@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/custom-health-not-found
+  take form custom-health-not-found
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/instance-not-found
+  take form instance-not-found
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/service-not-found
+  take form service-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-instance-custom-health-status, name <UpdateInstanceCustomHealthStatus>
+  note <Submits a request to change the health status of a custom health check to healthy or unhealthy.
+
+You can use `UpdateInstanceCustomHealthStatus` to change the status only for custom health checks, which you define using `HealthCheckCustomConfig` when you create a service. You can't use it to change the status for Route 53 health checks, which you define using `HealthCheckConfig`.
+
+For more information, see [HealthCheckCustomConfig](https://docs.aws.amazon.com/cloud-map/latest/api/API_HealthCheckCustomConfig.html).>
+
+  take x-amz-target
+    like native-string
+  take update-instance-custom-health-status-request, like update-instance-custom-health-status-request
+
+  line </#X-Amz-Target=Route53AutoNaming_v20170314.UpdateInstanceCustomHealthStatus>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-instance-custom-health-status-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like instance-not-found
+    note <InstanceNotFound>
+  loot 481
+    seed json, like service-not-found
+    note <ServiceNotFound>
+  loot 482
+    seed json, like custom-health-not-found
+    note <CustomHealthNotFound>
+  loot 483
+    seed json, like invalid-input
+    note <InvalidInput>

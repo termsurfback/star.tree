@@ -1,0 +1,53 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/dlp/v2/base/google-privacy-dlp-v2-list-job-triggers-response
+  take form google-privacy-dlp-v2-list-job-triggers-response
+
+boot dlp-projects-locations-job-triggers-list, name <dlp.projects.locations.jobTriggers.list>
+  note <Lists job triggers. See https://cloud.google.com/dlp/docs/creating-job-triggers to learn more.>
+
+  take parent
+    like native-string
+    note <Required. Parent resource name. The format of this value varies depending on whether you have [specified a processing location](https://cloud.google.com/dlp/docs/specifying-location): + Projects scope, location specified: `projects/`PROJECT_ID`/locations/`LOCATION_ID + Projects scope, no location specified (defaults to global): `projects/`PROJECT_ID The following example `parent` string specifies a parent project with the identifier `example-project`, and specifies the `europe-west3` location for processing data: parent=projects/example-project/locations/europe-west3>
+  take filter
+    like native-string
+    note <Allows filtering. Supported syntax: * Filter expressions are made up of one or more restrictions. * Restrictions can be combined by `AND` or `OR` logical operators. A sequence of restrictions implicitly uses `AND`. * A restriction has the form of `{field} {operator} {value}`. * Supported fields/values for inspect triggers: - `status` - HEALTHY|PAUSED|CANCELLED - `inspected_storage` - DATASTORE|CLOUD_STORAGE|BIGQUERY - 'last_run_time` - RFC 3339 formatted timestamp, surrounded by quotation marks. Nanoseconds are ignored. - 'error_count' - Number of errors that have occurred while running. * The operator must be `=` or `!=` for status and inspected_storage. Examples: * inspected_storage = cloud_storage AND status = HEALTHY * inspected_storage = cloud_storage OR inspected_storage = bigquery * inspected_storage = cloud_storage AND (state = PAUSED OR state = HEALTHY) * last_run_time &gt; \"2017-12-12T00:00:00+00:00\" The length of this field should be no more than 500 characters.>
+    void take
+  take location-id
+    like native-string
+    note <Deprecated. This field has no effect.>
+    void take
+  take order-by
+    like native-string
+    note <Comma separated list of triggeredJob fields to order by, followed by `asc` or `desc` postfix. This list is case-insensitive, default sorting order is ascending, redundant space characters are insignificant. Example: `name asc,update_time, create_time desc` Supported fields are: - `create_time`: corresponds to time the JobTrigger was created. - `update_time`: corresponds to time the JobTrigger was last updated. - `last_run_time`: corresponds to the last time the JobTrigger ran. - `name`: corresponds to JobTrigger's name. - `display_name`: corresponds to JobTrigger's display name. - `status`: corresponds to JobTrigger's status.>
+    void take
+  take page-size
+    like native-integer
+    note <Size of the page, can be limited by a server.>
+    void take
+  take page-token
+    like native-string
+    note <Page token to continue retrieval. Comes from previous call to ListJobTriggers. `order_by` field must not change for subsequent calls.>
+    void take
+  take type
+    like native-string
+    note <The type of jobs. Will use `DlpJobType.INSPECT` if not set.>
+    void take
+
+  line </v2/{parent}/jobTriggers>
+
+  find <filter>, loan filter
+  find <locationId>, loan location-id
+  find <orderBy>, loan order-by
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+  find <type>, loan type
+
+  loot 200
+    seed json, like google-privacy-dlp-v2-list-job-triggers-response
+    note <Successful response>

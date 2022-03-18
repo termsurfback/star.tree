@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/codedeploy/2014-10-06/base/list-deployment-configs-output
+  take form list-deployment-configs-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-deployment-configs, name <ListDeploymentConfigs>
+  note <Lists the deployment configurations with the IAM user or AWS account.>
+
+  take x-amz-target
+    like native-string
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-deployment-configs-input, like list-deployment-configs-input
+
+  line </#X-Amz-Target=CodeDeploy_20141006.ListDeploymentConfigs>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <nextToken>, loan next-token
+
+  seed json, loan list-deployment-configs-input
+
+  loot 200
+    seed json, like list-deployment-configs-output
+    note <Success>
+  loot 480
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>

@@ -1,0 +1,70 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/get-ops-summary-result
+  take form get-ops-summary-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-aggregator-exception
+  take form invalid-aggregator-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-filter
+  take form invalid-filter
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-type-name-exception
+  take form invalid-type-name-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/resource-data-sync-not-found-exception
+  take form resource-data-sync-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-ops-summary, name <GetOpsSummary>
+  note <View a summary of operations metadata (OpsData) based on specified filters and aggregators. OpsData can include information about Amazon Web Services Systems Manager OpsCenter operational workitems (OpsItems) as well as information about any Amazon Web Services resource or service configured to report OpsData to Amazon Web Services Systems Manager Explorer.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-ops-summary-request, like get-ops-summary-request
+
+  line </#X-Amz-Target=AmazonSSM.GetOpsSummary>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan get-ops-summary-request
+
+  loot 200
+    seed json, like get-ops-summary-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like resource-data-sync-not-found-exception
+    note <ResourceDataSyncNotFoundException>
+  loot 482
+    seed json, like invalid-filter
+    note <InvalidFilter>
+  loot 483
+    seed json, like invalid-next-token
+    note <InvalidNextToken>
+  loot 484
+    seed json, like invalid-type-name-exception
+    note <InvalidTypeNameException>
+  loot 485
+    seed json, like invalid-aggregator-exception
+    note <InvalidAggregatorException>

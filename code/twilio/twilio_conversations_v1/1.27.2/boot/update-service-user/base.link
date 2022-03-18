@@ -1,0 +1,35 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_conversations_v1/1.27.2/base/conversations-v1-service-service-user
+  take form conversations-v1-service-service-user
+
+load @drumwork/snow/twilio.com/twilio_conversations_v1/1.27.2/base/update-service-user-body
+  take form update-service-user-body
+
+boot update-service-user, name <UpdateServiceUser>
+  note <Update an existing conversation user in your service>
+
+  take chat-service-sid
+    like native-string
+    note <The SID of the \[Conversation Service\](https://www.twilio.com/docs/conversations/api/service-resource) the User resource is associated with.>
+  take sid
+    like native-string
+    note <The SID of the User resource to update. This value can be either the \`sid\` or the \`identity\` of the User resource to update.>
+  take x-twilio-webhook-enabled
+    like native-string
+    note <The X-Twilio-Webhook-Enabled HTTP request header>
+    void take
+  take update-service-user-body, like update-service-user-body
+    void take
+
+  line </v1/Services/{chat-service-sid}/Users/{sid}>
+
+  hint <X-Twilio-Webhook-Enabled>, loan x-twilio-webhook-enabled
+
+  seed x-www-form-urlencoded, loan update-service-user-body
+
+  loot 200
+    seed json, like conversations-v1-service-service-user
+    note <OK>

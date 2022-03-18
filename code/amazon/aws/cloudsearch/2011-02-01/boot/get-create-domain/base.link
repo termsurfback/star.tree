@@ -1,0 +1,44 @@
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/base-exception
+  take form base-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/create-domain-response
+  take form create-domain-response
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-domain, name <GET_CreateDomain>
+  note <Creates a new search domain.>
+
+  take domain-name
+    like native-string
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateDomain>
+
+  find <DomainName>, loan domain-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-domain-response
+    note <Success>
+  loot 409
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 480
+    seed xml, like base-exception
+    note <BaseException>
+  loot 500
+    seed xml, like internal-exception
+    note <InternalException>

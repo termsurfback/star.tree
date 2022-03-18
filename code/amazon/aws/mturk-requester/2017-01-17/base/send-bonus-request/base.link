@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/currency-amount
+  take form currency-amount
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/customer-id
+  take form customer-id
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/entity-id
+  take form entity-id
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/idempotency-token
+  take form idempotency-token
+
+load @drumwork/snow/base/string
+  take form string
+
+form send-bonus-request, name <SendBonusRequest>
+  take worker-id, name <WorkerId>
+    like customer-id
+    note <The ID of the Worker being paid the bonus.>
+  take bonus-amount, name <BonusAmount>
+    like currency-amount
+    note <The Bonus amount is a US Dollar amount specified using a string (for example, "5" represents $5.00 USD and "101.42" represents $101.42 USD). Do not include currency symbols or currency codes.>
+  take assignment-id, name <AssignmentId>
+    like entity-id
+    note <The ID of the assignment for which this bonus is paid.>
+  take reason, name <Reason>
+    like string
+    note <A message that explains the reason for the bonus payment. The Worker receiving the bonus can see this message.>
+  take unique-request-token, name <UniqueRequestToken>
+    like idempotency-token
+    void take
+    note <A unique identifier for this request, which allows you to retry the call on error without granting multiple bonuses. This is useful in cases such as network timeouts where it is unclear whether or not the call succeeded on the server. If the bonus already exists in the system from a previous call using the same UniqueRequestToken, subsequent calls will return an error with a message containing the request ID.>

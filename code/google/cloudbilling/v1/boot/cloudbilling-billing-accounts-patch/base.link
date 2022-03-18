@@ -1,0 +1,29 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/cloudbilling/v1/base/billing-account
+  take form billing-account
+
+boot cloudbilling-billing-accounts-patch, name <cloudbilling.billingAccounts.patch>
+  note <Updates a billing account's fields. Currently the only field that can be edited is `display_name`. The current authenticated user must have the `billing.accounts.update` IAM permission, which is typically given to the [administrator](https://cloud.google.com/billing/docs/how-to/billing-access) of the billing account.>
+
+  take name
+    like native-string
+    note <Required. The name of the billing account resource to be updated.>
+  take update-mask
+    like native-string
+    note <The update mask applied to the resource. Only "display_name" is currently supported.>
+    void take
+  take billing-account, like billing-account
+    void take
+
+  line </v1/{name}>
+
+  find <updateMask>, loan update-mask
+
+  seed json, loan billing-account
+
+  loot 200
+    seed json, like billing-account
+    note <Successful response>

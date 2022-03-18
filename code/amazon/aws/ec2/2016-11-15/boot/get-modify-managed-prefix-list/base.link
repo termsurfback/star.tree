@@ -1,0 +1,80 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/add-prefix-list-entry
+  take form add-prefix-list-entry
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/modify-managed-prefix-list-result
+  take form modify-managed-prefix-list-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/remove-prefix-list-entry
+  take form remove-prefix-list-entry
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-modify-managed-prefix-list, name <GET_ModifyManagedPrefixList>
+  note <Modifies the specified managed prefix list.
+
+Adding or removing entries in a prefix list creates a new version of the prefix list. Changing the name of the prefix list does not affect the version.
+
+If you specify a current version number that does not match the true current version number, the request fails.>
+
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take prefix-list-id
+    like native-string
+    note <The ID of the prefix list.>
+  take current-version
+    like native-integer
+    note <The current version of the prefix list.>
+    void take
+  take prefix-list-name
+    like native-string
+    note <A name for the prefix list.>
+    void take
+  take add-entry
+    like list
+      like add-prefix-list-entry
+    note <One or more entries to add to the prefix list.>
+    void take
+  take remove-entry
+    like list
+      like remove-prefix-list-entry
+    note <One or more entries to remove from the prefix list.>
+    void take
+  take max-entries
+    like native-integer
+    note <The maximum number of entries for the prefix list. You cannot modify the entries of a prefix list and modify the size of a prefix list at the same time.
+
+If any of the resources that reference the prefix list cannot support the new maximum size, the modify operation fails. Check the state message for the IDs of the first ten resources that do not support the new maximum size.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyManagedPrefixList>
+
+  find <DryRun>, loan dry-run
+  find <PrefixListId>, loan prefix-list-id
+  find <CurrentVersion>, loan current-version
+  find <PrefixListName>, loan prefix-list-name
+  find <AddEntry>, loan add-entry
+  find <RemoveEntry>, loan remove-entry
+  find <MaxEntries>, loan max-entries
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-managed-prefix-list-result
+    note <Success>

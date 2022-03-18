@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/create-document-result
+  take form create-document-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/document-already-exists
+  take form document-already-exists
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/document-limit-exceeded
+  take form document-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-document-content
+  take form invalid-document-content
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-document-schema-version
+  take form invalid-document-schema-version
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/max-document-size-exceeded
+  take form max-document-size-exceeded
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-document, name <CreateDocument>
+  note <Creates a Amazon Web Services Systems Manager (SSM document). An SSM document defines the actions that Systems Manager performs on your managed instances. For more information about SSM documents, including information about supported schemas, features, and syntax, see [Amazon Web Services Systems Manager Documents](https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-ssm-docs.html) in the _Amazon Web Services Systems Manager User Guide_.>
+
+  take x-amz-target
+    like native-string
+  take create-document-request, like create-document-request
+
+  line </#X-Amz-Target=AmazonSSM.CreateDocument>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-document-request
+
+  loot 200
+    seed json, like create-document-result
+    note <Success>
+  loot 480
+    seed json, like document-already-exists
+    note <DocumentAlreadyExists>
+  loot 481
+    seed json, like max-document-size-exceeded
+    note <MaxDocumentSizeExceeded>
+  loot 482
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 483
+    seed json, like invalid-document-content
+    note <InvalidDocumentContent>
+  loot 484
+    seed json, like document-limit-exceeded
+    note <DocumentLimitExceeded>
+  loot 485
+    seed json, like invalid-document-schema-version
+    note <InvalidDocumentSchemaVersion>

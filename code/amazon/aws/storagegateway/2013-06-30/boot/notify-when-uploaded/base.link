@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/notify-when-uploaded-output
+  take form notify-when-uploaded-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot notify-when-uploaded, name <NotifyWhenUploaded>
+  note <Sends you notification through CloudWatch Events when all files written to your file share have been uploaded to Amazon S3.
+
+Storage Gateway can send a notification through Amazon CloudWatch Events when all files written to your file share up to that point in time have been uploaded to Amazon S3. These files include files written to the file share up to the time that you make a request for notification. When the upload is done, Storage Gateway sends you notification through an Amazon CloudWatch Event. You can configure CloudWatch Events to send the notification through event targets such as Amazon SNS or Lambda function. This operation is only supported for S3 File Gateways.
+
+For more information, see [Getting file upload notification](https://docs.aws.amazon.com/storagegateway/latest/userguide/monitoring-file-gateway.html#get-upload-notification) in the _Storage Gateway User Guide_.>
+
+  take x-amz-target
+    like native-string
+  take notify-when-uploaded-input, like notify-when-uploaded-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.NotifyWhenUploaded>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan notify-when-uploaded-input
+
+  loot 200
+    seed json, like notify-when-uploaded-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

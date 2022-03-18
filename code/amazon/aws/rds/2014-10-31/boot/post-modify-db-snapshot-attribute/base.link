@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-snapshot-not-found-fault
+  take form db-snapshot-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-snapshot-state-fault
+  take form invalid-db-snapshot-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/modify-db-snapshot-attribute-result
+  take form modify-db-snapshot-attribute-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/shared-snapshot-quota-exceeded-fault
+  take form shared-snapshot-quota-exceeded-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-modify-db-snapshot-attribute, name <POST_ModifyDBSnapshotAttribute>
+  note <Adds an attribute and values to, or removes an attribute and values from, a manual DB snapshot.
+
+To share a manual DB snapshot with other Amazon Web Services accounts, specify `restore` as the `AttributeName` and use the `ValuesToAdd` parameter to add a list of IDs of the Amazon Web Services accounts that are authorized to restore the manual DB snapshot. Uses the value `all` to make the manual DB snapshot public, which means it can be copied or restored by all Amazon Web Services accounts.
+
+Don't add the `all` value for any manual DB snapshots that contain private information that you don't want available to all Amazon Web Services accounts.
+
+If the manual DB snapshot is encrypted, it can be shared, but only by specifying a list of authorized Amazon Web Services account IDs for the `ValuesToAdd` parameter. You can't use `all` as a value for that parameter in this case.
+
+To view which Amazon Web Services accounts have access to copy or restore a manual DB snapshot, or whether a manual DB snapshot public or private, use the DescribeDBSnapshotAttributes API action. The accounts are returned as values for the `restore` attribute.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take modify-db-snapshot-attribute-message, like modify-db-snapshot-attribute-message
+    void take
+
+  line </#Action=ModifyDBSnapshotAttribute>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan modify-db-snapshot-attribute-message
+
+  loot 200
+    seed xml, like modify-db-snapshot-attribute-result
+    note <Success>
+  loot 480
+    seed xml, like db-snapshot-not-found-fault
+    note <DBSnapshotNotFoundFault>
+  loot 481
+    seed xml, like invalid-db-snapshot-state-fault
+    note <InvalidDBSnapshotStateFault>
+  loot 482
+    seed xml, like shared-snapshot-quota-exceeded-fault
+    note <SharedSnapshotQuotaExceededFault>

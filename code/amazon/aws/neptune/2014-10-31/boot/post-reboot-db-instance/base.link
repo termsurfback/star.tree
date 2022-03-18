@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-instance-state-fault
+  take form invalid-db-instance-state-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/reboot-db-instance-result
+  take form reboot-db-instance-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-reboot-db-instance, name <POST_RebootDBInstance>
+  note <You might need to reboot your DB instance, usually for maintenance reasons. For example, if you make certain modifications, or if you change the DB parameter group associated with the DB instance, you must reboot the instance for the changes to take effect.
+
+Rebooting a DB instance restarts the database engine service. Rebooting a DB instance results in a momentary outage, during which the DB instance status is set to rebooting.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take reboot-db-instance-message, like reboot-db-instance-message
+    void take
+
+  line </#Action=RebootDBInstance>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan reboot-db-instance-message
+
+  loot 200
+    seed xml, like reboot-db-instance-result
+    note <Success>
+  loot 480
+    seed xml, like invalid-db-instance-state-fault
+    note <InvalidDBInstanceStateFault>
+  loot 481
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>

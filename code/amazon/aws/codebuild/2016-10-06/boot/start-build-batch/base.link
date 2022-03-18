@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/start-build-batch-output
+  take form start-build-batch-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-build-batch, name <StartBuildBatch>
+  note <Starts a batch build for a project.>
+
+  take x-amz-target
+    like native-string
+  take start-build-batch-input, like start-build-batch-input
+
+  line </#X-Amz-Target=CodeBuild_20161006.StartBuildBatch>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan start-build-batch-input
+
+  loot 200
+    seed json, like start-build-batch-output
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

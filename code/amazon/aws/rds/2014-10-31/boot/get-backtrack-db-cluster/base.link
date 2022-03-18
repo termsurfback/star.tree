@@ -1,0 +1,80 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-backtrack
+  take form db-cluster-backtrack
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-backtrack-db-cluster, name <GET_BacktrackDBCluster>
+  note <Backtracks a DB cluster to a specific time, without creating a new DB cluster.
+
+For more information on backtracking, see [Backtracking an Aurora DB Cluster](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Managing.Backtrack.html) in the _Amazon Aurora User Guide._
+
+This action only applies to Aurora MySQL DB clusters.>
+
+  take db-cluster-identifier
+    like native-string
+    note <The DB cluster identifier of the DB cluster to be backtracked. This parameter is stored as a lowercase string.
+
+Constraints:
+
+- Must contain from 1 to 63 alphanumeric characters or hyphens.
+
+- First character must be a letter.
+
+- Can't end with a hyphen or contain two consecutive hyphens.
+
+Example: `my-cluster1`>
+  take backtrack-to
+    like native-string
+    note <The timestamp of the time to backtrack the DB cluster to, specified in ISO 8601 format. For more information about ISO 8601, see the [ISO8601 Wikipedia page.](http://en.wikipedia.org/wiki/ISO_8601)
+
+If the specified time isn't a consistent time for the DB cluster, Aurora automatically chooses the nearest possible consistent time for the DB cluster.
+
+Constraints:
+
+- Must contain a valid ISO 8601 timestamp.
+
+- Can't contain a timestamp set in the future.
+
+Example: `2017-07-08T18:00Z`>
+  take force
+    like native-boolean
+    note <A value that indicates whether to force the DB cluster to backtrack when binary logging is enabled. Otherwise, an error occurs when binary logging is enabled.>
+    void take
+  take use-earliest-time-on-point-in-time-unavailable
+    like native-boolean
+    note <A value that indicates whether to backtrack the DB cluster to the earliest possible backtrack time when _BacktrackTo_ is set to a timestamp earlier than the earliest backtrack time. When this parameter is disabled and _BacktrackTo_ is set to a timestamp earlier than the earliest backtrack time, an error occurs.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=BacktrackDBCluster>
+
+  find <DBClusterIdentifier>, loan db-cluster-identifier
+  find <BacktrackTo>, loan backtrack-to
+  find <Force>, loan force
+  find <UseEarliestTimeOnPointInTimeUnavailable>, loan use-earliest-time-on-point-in-time-unavailable
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like db-cluster-backtrack
+    note <Success>
+  loot 480
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>
+  loot 481
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>

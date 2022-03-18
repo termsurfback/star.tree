@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/create-hsm-client-certificate-result
+  take form create-hsm-client-certificate-result
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/hsm-client-certificate-already-exists-fault
+  take form hsm-client-certificate-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/hsm-client-certificate-quota-exceeded-fault
+  take form hsm-client-certificate-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-tag-fault
+  take form invalid-tag-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/tag
+  take form tag
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/tag-limit-exceeded-fault
+  take form tag-limit-exceeded-fault
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-hsm-client-certificate, name <GET_CreateHsmClientCertificate>
+  note <Creates an HSM client certificate that an Amazon Redshift cluster will use to connect to the client's HSM in order to store and retrieve the keys used to encrypt the cluster databases.
+
+The command returns a public key, which you must store in the HSM. In addition to creating the HSM certificate, you must create an Amazon Redshift HSM configuration that provides a cluster the information needed to store and use encryption keys in the HSM. For more information, go to [Hardware Security Modules](https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-db-encryption.html#working-with-HSM) in the _Amazon Redshift Cluster Management Guide_.>
+
+  take hsm-client-certificate-identifier
+    like native-string
+    note <The identifier to be assigned to the new HSM client certificate that the cluster will use to connect to the HSM to use the database encryption keys.>
+  take tags
+    like list
+      like tag
+    note <A list of tag instances.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateHsmClientCertificate>
+
+  find <HsmClientCertificateIdentifier>, loan hsm-client-certificate-identifier
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-hsm-client-certificate-result
+    note <Success>
+  loot 480
+    seed xml, like hsm-client-certificate-already-exists-fault
+    note <HsmClientCertificateAlreadyExistsFault>
+  loot 481
+    seed xml, like hsm-client-certificate-quota-exceeded-fault
+    note <HsmClientCertificateQuotaExceededFault>
+  loot 482
+    seed xml, like tag-limit-exceeded-fault
+    note <TagLimitExceededFault>
+  loot 483
+    seed xml, like invalid-tag-fault
+    note <InvalidTagFault>

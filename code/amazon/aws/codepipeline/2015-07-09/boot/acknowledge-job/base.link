@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/acknowledge-job-output
+  take form acknowledge-job-output
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/invalid-nonce-exception
+  take form invalid-nonce-exception
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/job-not-found-exception
+  take form job-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot acknowledge-job, name <AcknowledgeJob>
+  note <Returns information about a specified job and whether that job has been received by the job worker. Used for custom actions only.>
+
+  take x-amz-target
+    like native-string
+  take acknowledge-job-input, like acknowledge-job-input
+
+  line </#X-Amz-Target=CodePipeline_20150709.AcknowledgeJob>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan acknowledge-job-input
+
+  loot 200
+    seed json, like acknowledge-job-output
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like invalid-nonce-exception
+    note <InvalidNonceException>
+  loot 482
+    seed json, like job-not-found-exception
+    note <JobNotFoundException>

@@ -1,0 +1,26 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_verify_v2/1.27.2/base/create-messaging-configuration-body
+  take form create-messaging-configuration-body
+
+load @drumwork/snow/twilio.com/twilio_verify_v2/1.27.2/base/verify-v2-service-messaging-configuration
+  take form verify-v2-service-messaging-configuration
+
+boot create-messaging-configuration, name <CreateMessagingConfiguration>
+  note <Create a new MessagingConfiguration for a service.>
+
+  take service-sid
+    like native-string
+    note <The SID of the \[Service\](https://www.twilio.com/docs/verify/api/service) that the resource is associated with.>
+  take create-messaging-configuration-body, like create-messaging-configuration-body
+    void take
+
+  line </v2/Services/{service-sid}/MessagingConfigurations>
+
+  seed x-www-form-urlencoded, loan create-messaging-configuration-body
+
+  loot 201
+    seed json, like verify-v2-service-messaging-configuration
+    note <Created>

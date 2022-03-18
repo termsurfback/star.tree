@@ -1,0 +1,77 @@
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/delete-ota-update-response
+  take form delete-ota-update-response
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/version-conflict-exception
+  take form version-conflict-exception
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-ota-update, name <DeleteOTAUpdate>
+  note <Delete an OTA update.
+
+Requires permission to access the [DeleteOTAUpdate](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiot.html#awsiot-actions-as-permissions) action.>
+
+  take ota-update-id
+    like native-string
+    note <The ID of the OTA update to delete.>
+  take delete-stream
+    like native-boolean
+    note <When true, the stream created by the OTAUpdate process is deleted when the OTA update is deleted. Ignored if the stream specified in the OTAUpdate is supplied by the user.>
+    void take
+  take force-delete-aws-job
+    like native-boolean
+    note <When true, deletes the IoT job created by the OTAUpdate process even if it is "IN_PROGRESS". Otherwise, if the job is not in a terminal state ("COMPLETED" or "CANCELED") an exception will occur. The default is false.>
+    void take
+
+  line </otaUpdates/{ota-update-id}>
+
+  find <deleteStream>, loan delete-stream
+  find <forceDeleteAWSJob>, loan force-delete-aws-job
+
+  loot 200
+    seed json, like delete-ota-update-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 484
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 485
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 486
+    seed json, like version-conflict-exception
+    note <VersionConflictException>

@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-resource-policy, name <DeleteResourcePolicy>
+  note <Deletes a resource policy from this account. This revokes the access of the identities in that policy to put log events to this account.>
+
+  take x-amz-target
+    like native-string
+  take delete-resource-policy-request, like delete-resource-policy-request
+
+  line </#X-Amz-Target=Logs_20140328.DeleteResourcePolicy>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-resource-policy-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

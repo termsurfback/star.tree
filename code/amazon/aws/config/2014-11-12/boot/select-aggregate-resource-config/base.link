@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-expression-exception
+  take form invalid-expression-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-limit-exception
+  take form invalid-limit-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/no-such-configuration-aggregator-exception
+  take form no-such-configuration-aggregator-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/select-aggregate-resource-config-response
+  take form select-aggregate-resource-config-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot select-aggregate-resource-config, name <SelectAggregateResourceConfig>
+  note <Accepts a structured query language (SQL) SELECT command and an aggregator to query configuration state of Amazon Web Services resources across multiple accounts and regions, performs the corresponding search, and returns resource configurations matching the properties.
+
+For more information about query components, see the [**Query Components**](https://docs.aws.amazon.com/config/latest/developerguide/query-components.html) section in the Config Developer Guide.
+
+If you run an aggregation query (i.e., using `GROUP BY` or using aggregate functions such as `COUNT`; e.g., `SELECT resourceId, COUNT(*) WHERE resourceType = 'AWS::IAM::Role' GROUP BY resourceId`) and do not specify the `MaxResults` or the `Limit` query parameters, the default page size is set to 500.
+
+If you run a non-aggregation query (i.e., not using `GROUP BY` or aggregate function; e.g., `SELECT * WHERE resourceType = 'AWS::IAM::Role'`) and do not specify the `MaxResults` or the `Limit` query parameters, the default page size is set to 25.>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take select-aggregate-resource-config-request, like select-aggregate-resource-config-request
+
+  line </#X-Amz-Target=StarlingDoveService.SelectAggregateResourceConfig>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <Limit>, loan limit
+  find <NextToken>, loan next-token
+
+  seed json, loan select-aggregate-resource-config-request
+
+  loot 200
+    seed json, like select-aggregate-resource-config-response
+    note <Success>
+  loot 480
+    seed json, like invalid-expression-exception
+    note <InvalidExpressionException>
+  loot 481
+    seed json, like no-such-configuration-aggregator-exception
+    note <NoSuchConfigurationAggregatorException>
+  loot 482
+    seed json, like invalid-limit-exception
+    note <InvalidLimitException>
+  loot 483
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>

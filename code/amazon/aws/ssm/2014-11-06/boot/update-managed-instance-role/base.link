@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-instance-id
+  take form invalid-instance-id
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/update-managed-instance-role-result
+  take form update-managed-instance-role-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-managed-instance-role, name <UpdateManagedInstanceRole>
+  note <Changes the Identity and Access Management (IAM) role that is assigned to the on-premises instance or virtual machines (VM). IAM roles are first assigned to these hybrid instances during the activation process. For more information, see CreateActivation.>
+
+  take x-amz-target
+    like native-string
+  take update-managed-instance-role-request, like update-managed-instance-role-request
+
+  line </#X-Amz-Target=AmazonSSM.UpdateManagedInstanceRole>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-managed-instance-role-request
+
+  loot 200
+    seed json, like update-managed-instance-role-result
+    note <Success>
+  loot 480
+    seed json, like invalid-instance-id
+    note <InvalidInstanceId>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

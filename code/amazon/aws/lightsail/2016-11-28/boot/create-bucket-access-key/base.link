@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/lightsail/2016-11-28/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/lightsail/2016-11-28/base/create-bucket-access-key-result
+  take form create-bucket-access-key-result
+
+load @drumwork/snow/amazonaws.com/lightsail/2016-11-28/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/lightsail/2016-11-28/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/lightsail/2016-11-28/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/amazonaws.com/lightsail/2016-11-28/base/unauthenticated-exception
+  take form unauthenticated-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-bucket-access-key, name <CreateBucketAccessKey>
+  note <Creates a new access key for the specified Amazon Lightsail bucket. Access keys consist of an access key ID and corresponding secret access key.
+
+Access keys grant full programmatic access to the specified bucket and its objects. You can have a maximum of two access keys per bucket. Use the GetBucketAccessKeys action to get a list of current access keys for a specific bucket. For more information about access keys, see [Creating access keys for a bucket in Amazon Lightsail](https://lightsail.aws.amazon.com/ls/docs/en_us/articles/amazon-lightsail-creating-bucket-access-keys) in the _Amazon Lightsail Developer Guide_.
+
+The `secretAccessKey` value is returned only in response to the `CreateBucketAccessKey` action. You can get a secret access key only when you first create an access key; you cannot get the secret access key later. If you lose the secret access key, you must create a new access key.>
+
+  take x-amz-target
+    like native-string
+  take create-bucket-access-key-request, like create-bucket-access-key-request
+
+  line </#X-Amz-Target=Lightsail_20161128.CreateBucketAccessKey>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-bucket-access-key-request
+
+  loot 200
+    seed json, like create-bucket-access-key-result
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 482
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 483
+    seed json, like service-exception
+    note <ServiceException>
+  loot 484
+    seed json, like unauthenticated-exception
+    note <UnauthenticatedException>

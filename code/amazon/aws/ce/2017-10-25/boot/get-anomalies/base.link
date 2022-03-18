@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/get-anomalies-response
+  take form get-anomalies-response
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-anomalies, name <GetAnomalies>
+  note <Retrieves all of the cost anomalies detected on your account during the time period that's specified by the `DateInterval` object.>
+
+  take x-amz-target
+    like native-string
+  take get-anomalies-request, like get-anomalies-request
+
+  line </#X-Amz-Target=AWSInsightsIndexService.GetAnomalies>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-anomalies-request
+
+  loot 200
+    seed json, like get-anomalies-response
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>

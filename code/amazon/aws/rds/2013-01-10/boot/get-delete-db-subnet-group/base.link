@@ -1,0 +1,38 @@
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/db-subnet-group-not-found-fault
+  take form db-subnet-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/invalid-db-subnet-group-state-fault
+  take form invalid-db-subnet-group-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-01-10/base/invalid-db-subnet-state-fault
+  take form invalid-db-subnet-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-db-subnet-group, name <GET_DeleteDBSubnetGroup>
+  take db-subnet-group-name
+    like native-string
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteDBSubnetGroup>
+
+  find <DBSubnetGroupName>, loan db-subnet-group-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like invalid-db-subnet-group-state-fault
+    note <InvalidDBSubnetGroupStateFault>
+  loot 481
+    seed xml, like invalid-db-subnet-state-fault
+    note <InvalidDBSubnetStateFault>
+  loot 482
+    seed xml, like db-subnet-group-not-found-fault
+    note <DBSubnetGroupNotFoundFault>

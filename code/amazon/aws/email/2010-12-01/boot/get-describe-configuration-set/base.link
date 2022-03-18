@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/configuration-set-attribute
+  take form configuration-set-attribute
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/configuration-set-does-not-exist-exception
+  take form configuration-set-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/describe-configuration-set-response
+  take form describe-configuration-set-response
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-configuration-set, name <GET_DescribeConfigurationSet>
+  note <Returns the details of the specified configuration set. For information about using configuration sets, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/monitor-sending-activity.html).
+
+You can execute this operation no more than once per second.>
+
+  take configuration-set-name
+    like native-string
+    note <The name of the configuration set to describe.>
+  take configuration-set-attribute-names
+    like list
+      like configuration-set-attribute
+    note <A list of configuration set attributes to return.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeConfigurationSet>
+
+  find <ConfigurationSetName>, loan configuration-set-name
+  find <ConfigurationSetAttributeNames>, loan configuration-set-attribute-names
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-configuration-set-response
+    note <Success>
+  loot 480
+    seed xml, like configuration-set-does-not-exist-exception
+    note <ConfigurationSetDoesNotExistException>

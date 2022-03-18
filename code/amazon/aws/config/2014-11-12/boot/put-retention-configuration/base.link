@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/max-number-of-retention-configurations-exceeded-exception
+  take form max-number-of-retention-configurations-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/put-retention-configuration-response
+  take form put-retention-configuration-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-retention-configuration, name <PutRetentionConfiguration>
+  note <Creates and updates the retention configuration with details about retention period (number of days) that Config stores your historical information. The API creates the `RetentionConfiguration` object and names the object as **default**. When you have a `RetentionConfiguration` object named **default**, calling the API modifies the default object.
+
+Currently, Config supports only one retention configuration per region in your account.>
+
+  take x-amz-target
+    like native-string
+  take put-retention-configuration-request, like put-retention-configuration-request
+
+  line </#X-Amz-Target=StarlingDoveService.PutRetentionConfiguration>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan put-retention-configuration-request
+
+  loot 200
+    seed json, like put-retention-configuration-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 481
+    seed json, like max-number-of-retention-configurations-exceeded-exception
+    note <MaxNumberOfRetentionConfigurationsExceededException>

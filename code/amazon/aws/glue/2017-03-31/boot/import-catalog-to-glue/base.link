@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/import-catalog-to-glue-response
+  take form import-catalog-to-glue-response
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/operation-timeout-exception
+  take form operation-timeout-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot import-catalog-to-glue, name <ImportCatalogToGlue>
+  note <Imports an existing Amazon Athena Data Catalog to Glue.>
+
+  take x-amz-target
+    like native-string
+  take import-catalog-to-glue-request, like import-catalog-to-glue-request
+
+  line </#X-Amz-Target=AWSGlue.ImportCatalogToGlue>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan import-catalog-to-glue-request
+
+  loot 200
+    seed json, like import-catalog-to-glue-response
+    note <Success>
+  loot 480
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 481
+    seed json, like operation-timeout-exception
+    note <OperationTimeoutException>

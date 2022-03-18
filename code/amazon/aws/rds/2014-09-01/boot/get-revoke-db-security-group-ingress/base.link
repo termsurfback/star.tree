@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/authorization-not-found-fault
+  take form authorization-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/db-security-group-not-found-fault
+  take form db-security-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/invalid-db-security-group-state-fault
+  take form invalid-db-security-group-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/revoke-db-security-group-ingress-result
+  take form revoke-db-security-group-ingress-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-revoke-db-security-group-ingress, name <GET_RevokeDBSecurityGroupIngress>
+  take db-security-group-name
+    like native-string
+  take cidrip
+    like native-string
+    void take
+  take ec2-security-group-name
+    like native-string
+    void take
+  take ec2-security-group-id
+    like native-string
+    void take
+  take ec2-security-group-owner-id
+    like native-string
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=RevokeDBSecurityGroupIngress>
+
+  find <DBSecurityGroupName>, loan db-security-group-name
+  find <CIDRIP>, loan cidrip
+  find <EC2SecurityGroupName>, loan ec2-security-group-name
+  find <EC2SecurityGroupId>, loan ec2-security-group-id
+  find <EC2SecurityGroupOwnerId>, loan ec2-security-group-owner-id
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like revoke-db-security-group-ingress-result
+    note <Success>
+  loot 480
+    seed xml, like db-security-group-not-found-fault
+    note <DBSecurityGroupNotFoundFault>
+  loot 481
+    seed xml, like authorization-not-found-fault
+    note <AuthorizationNotFoundFault>
+  loot 482
+    seed xml, like invalid-db-security-group-state-fault
+    note <InvalidDBSecurityGroupStateFault>

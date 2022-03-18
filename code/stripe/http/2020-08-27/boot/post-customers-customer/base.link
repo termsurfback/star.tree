@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/customer
+  take form customer
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-customers-customer-body
+  take form post-customers-customer-body
+
+boot post-customers-customer, name <PostCustomersCustomer>
+  note <Updates the specified customer by setting the values of the parameters passed. Any parameters not provided will be left unchanged. For example, if you pass the **source** parameter, that becomes the customer’s active source (e.g., a card) to be used for all charges in the future. When you update a customer to a new valid card source by passing the **source** parameter: for each of the customer’s current subscriptions, if the subscription bills automatically and is in the `past_due` state, then the latest open invoice for the subscription with automatic collection enabled will be retried. This retry will not count as an automatic retry, and will not affect the next regularly scheduled payment for the invoice. Changing the **default_source** for a customer will not trigger this behavior.
+
+This request accepts mostly the same arguments as the customer creation call.>
+
+  take customer
+    like native-string
+  take post-customers-customer-body, like post-customers-customer-body
+    void take
+
+  line </v1/customers/{customer}>
+
+  seed x-www-form-urlencoded, loan post-customers-customer-body
+
+  loot 200
+    seed json, like customer
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

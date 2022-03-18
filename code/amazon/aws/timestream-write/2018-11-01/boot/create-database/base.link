@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/create-database-response
+  take form create-database-response
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/invalid-endpoint-exception
+  take form invalid-endpoint-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/service-quota-exceeded-exception
+  take form service-quota-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/timestream-write/2018-11-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-database, name <CreateDatabase>
+  note <Creates a new Timestream database. If the KMS key is not specified, the database will be encrypted with a Timestream managed KMS key located in your account. Refer to [AWS managed KMS keys](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#aws-managed-cmk) for more info. Service quotas apply. For more information, see [Access Management](https://docs.aws.amazon.com/timestream/latest/developerguide/ts-limits.html) in the Timestream Developer Guide.>
+
+  take x-amz-target
+    like native-string
+  take create-database-request, like create-database-request
+
+  line </#X-Amz-Target=Timestream_20181101.CreateDatabase>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-database-request
+
+  loot 200
+    seed json, like create-database-response
+    note <Success>
+  loot 480
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 483
+    seed json, like service-quota-exceeded-exception
+    note <ServiceQuotaExceededException>
+  loot 484
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 485
+    seed json, like invalid-endpoint-exception
+    note <InvalidEndpointException>
+  loot 486
+    seed json, like internal-server-exception
+    note <InternalServerException>

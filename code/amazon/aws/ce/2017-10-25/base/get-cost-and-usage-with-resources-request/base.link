@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/date-interval
+  take form date-interval
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/expression
+  take form expression
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/granularity
+  take form granularity
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/group-definitions
+  take form group-definitions
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/metric-names
+  take form metric-names
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/next-page-token
+  take form next-page-token
+
+form get-cost-and-usage-with-resources-request, name <GetCostAndUsageWithResourcesRequest>
+  take time-period, name <TimePeriod>
+    like date-interval
+    note <Sets the start and end dates for retrieving Amazon Web Services costs. The range must be within the last 14 days (the start date cannot be earlier than 14 days ago). The start date is inclusive, but the end date is exclusive. For example, if `start` is `2017-01-01` and `end` is `2017-05-01`, then the cost and usage data is retrieved from `2017-01-01` up to and including `2017-04-30` but not including `2017-05-01`.>
+  take granularity, name <Granularity>
+    like granularity
+    note <Sets the Amazon Web Services cost granularity to `MONTHLY`, `DAILY`, or `HOURLY`. If `Granularity` isn't set, the response object doesn't include the `Granularity`, `MONTHLY`, `DAILY`, or `HOURLY`.>
+  take filter, name <Filter>
+    like expression
+    note <Filters Amazon Web Services costs by different dimensions. For example, you can specify `SERVICE` and `LINKED_ACCOUNT` and get the costs that are associated with that account's usage of that service. You can nest `Expression` objects to define any combination of dimension filters. For more information, see [Expression](https://docs.aws.amazon.com/aws-cost-management/latest/APIReference/API_Expression.html).
+
+The `GetCostAndUsageWithResources` operation requires that you either group by or filter by a `ResourceId`. It requires the [Expression](https://docs.aws.amazon.com/aws-cost-management/latest/APIReference/API_Expression.html) `"SERVICE = Amazon Elastic Compute Cloud - Compute"` in the filter.>
+  take metrics, name <Metrics>
+    like metric-names
+    void take
+    note <Which metrics are returned in the query. For more information about blended and unblended rates, see [Why does the "blended" annotation appear on some line items in my bill?](http://aws.amazon.com/premiumsupport/knowledge-center/blended-rates-intro/).
+
+Valid values are `AmortizedCost`, `BlendedCost`, `NetAmortizedCost`, `NetUnblendedCost`, `NormalizedUsageAmount`, `UnblendedCost`, and `UsageQuantity`.
+
+If you return the `UsageQuantity` metric, the service aggregates all usage numbers without taking the units into account. For example, if you aggregate `usageQuantity` across all of Amazon EC2, the results aren't meaningful because Amazon EC2 compute hours and data transfer are measured in different units (for example, hours vs. GB). To get more meaningful `UsageQuantity` metrics, filter by `UsageType` or `UsageTypeGroups`.
+
+`Metrics` is required for `GetCostAndUsageWithResources` requests.>
+  take group-by, name <GroupBy>
+    like group-definitions
+    void take
+    note <You can group Amazon Web Services costs using up to two different groups: `DIMENSION`, `TAG`, `COST_CATEGORY`.>
+  take next-page-token, name <NextPageToken>
+    like next-page-token
+    void take
+    note <The token to retrieve the next set of results. Amazon Web Services provides the token when the response from a previous call has more results than the maximum page size.>

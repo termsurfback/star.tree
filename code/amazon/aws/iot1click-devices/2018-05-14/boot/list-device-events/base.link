@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/list-device-events-response
+  take form list-device-events-response
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/range-not-satisfiable-exception
+  take form range-not-satisfiable-exception
+
+load @drumwork/snow/amazonaws.com/iot1click-devices/2018-05-14/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-device-events, name <ListDeviceEvents>
+  note <Using a device ID, returns a DeviceEventsResponse object containing an array of events for the device.>
+
+  take device-id
+    like native-string
+    note <The unique identifier of the device.>
+  take from-time-stamp
+    like native-string
+    note <The start date for the device event query, in ISO8061 format. For example, 2018-03-28T15:45:12.880Z>
+  take max-results
+    like native-integer
+    note <The maximum number of results to return per request. If not set, a default value of 100 is used.>
+    void take
+  take next-token
+    like native-string
+    note <The token to retrieve the next set of results.>
+    void take
+  take to-time-stamp
+    like native-string
+    note <The end date for the device event query, in ISO8061 format. For example, 2018-03-28T15:45:12.880Z>
+
+  line </devices/{device-id}/events#fromTimeStamp&toTimeStamp>
+
+  find <fromTimeStamp>, loan from-time-stamp
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+  find <toTimeStamp>, loan to-time-stamp
+
+  loot 200
+    seed json, like list-device-events-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like range-not-satisfiable-exception
+    note <RangeNotSatisfiableException>
+  loot 482
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 483
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

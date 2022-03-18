@@ -1,0 +1,30 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/cloudasset/v1/base/analyze-move-response
+  take form analyze-move-response
+
+boot cloudasset-analyze-move, name <cloudasset.analyzeMove>
+  note <Analyze moving a resource to a specified destination without kicking off the actual move. The analysis is best effort depending on the user's permissions of viewing different hierarchical policies and configurations. The policies and configuration are subject to change before the actual resource migration takes place.>
+
+  take resource
+    like native-string
+    note <Required. Name of the resource to perform the analysis against. Only GCP Project are supported as of today. Hence, this can only be Project ID (such as "projects/my-project-id") or a Project Number (such as "projects/12345").>
+  take destination-parent
+    like native-string
+    note <Required. Name of the GCP Folder or Organization to reparent the target resource. The analysis will be performed against hypothetically moving the resource to this specified desitination parent. This can only be a Folder number (such as "folders/123") or an Organization number (such as "organizations/123").>
+    void take
+  take view
+    like native-string
+    note <Analysis view indicating what information should be included in the analysis response. If unspecified, the default view is FULL.>
+    void take
+
+  line </v1/{resource}:analyzeMove>
+
+  find <destinationParent>, loan destination-parent
+  find <view>, loan view
+
+  loot 200
+    seed json, like analyze-move-response
+    note <Successful response>

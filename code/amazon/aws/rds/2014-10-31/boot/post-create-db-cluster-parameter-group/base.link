@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/create-db-cluster-parameter-group-result
+  take form create-db-cluster-parameter-group-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-parameter-group-already-exists-fault
+  take form db-parameter-group-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-parameter-group-quota-exceeded-fault
+  take form db-parameter-group-quota-exceeded-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-db-cluster-parameter-group, name <POST_CreateDBClusterParameterGroup>
+  note <Creates a new DB cluster parameter group.
+
+Parameters in a DB cluster parameter group apply to all of the instances in a DB cluster.
+
+A DB cluster parameter group is initially created with the default parameters for the database engine used by instances in the DB cluster. To provide custom values for any of the parameters, you must modify the group after creating it using `ModifyDBClusterParameterGroup`. Once you've created a DB cluster parameter group, you need to associate it with your DB cluster using `ModifyDBCluster`. When you associate a new DB cluster parameter group with a running DB cluster, you need to reboot the DB instances in the DB cluster without failover for the new DB cluster parameter group and associated settings to take effect.
+
+After you create a DB cluster parameter group, you should wait at least 5 minutes before creating your first DB cluster that uses that DB cluster parameter group as the default parameter group. This allows Amazon RDS to fully complete the create action before the DB cluster parameter group is used as the default for a new DB cluster. This is especially important for parameters that are critical when creating the default database for a DB cluster, such as the character set for the default database defined by the `character_set_database` parameter. You can use the _Parameter Groups_ option of the [Amazon RDS console](https://console.aws.amazon.com/rds/) or the `DescribeDBClusterParameters` action to verify that your DB cluster parameter group has been created or modified.
+
+For more information on Amazon Aurora, see [What Is Amazon Aurora?](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_AuroraOverview.html) in the _Amazon Aurora User Guide._
+
+This action only applies to Aurora DB clusters.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-db-cluster-parameter-group-message, like create-db-cluster-parameter-group-message
+    void take
+
+  line </#Action=CreateDBClusterParameterGroup>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-db-cluster-parameter-group-message
+
+  loot 200
+    seed xml, like create-db-cluster-parameter-group-result
+    note <Success>
+  loot 480
+    seed xml, like db-parameter-group-quota-exceeded-fault
+    note <DBParameterGroupQuotaExceededFault>
+  loot 481
+    seed xml, like db-parameter-group-already-exists-fault
+    note <DBParameterGroupAlreadyExistsFault>

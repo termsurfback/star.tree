@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/record-lifecycle-action-heartbeat-answer
+  take form record-lifecycle-action-heartbeat-answer
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-record-lifecycle-action-heartbeat, name <GET_RecordLifecycleActionHeartbeat>
+  note <Records a heartbeat for the lifecycle action associated with the specified token or instance. This extends the timeout by the length of time defined using the PutLifecycleHook API call.
+
+This step is a part of the procedure for adding a lifecycle hook to an Auto Scaling group:
+
+1. (Optional) Create a Lambda function and a rule that allows CloudWatch Events to invoke your Lambda function when Amazon EC2 Auto Scaling launches or terminates instances.
+
+2. (Optional) Create a notification target and an IAM role. The target can be either an Amazon SQS queue or an Amazon SNS topic. The role allows Amazon EC2 Auto Scaling to publish lifecycle notifications to the target.
+
+3. Create the lifecycle hook. Specify whether the hook is used when the instances launch or terminate.
+
+4. **If you need more time, record the lifecycle action heartbeat to keep the instance in a pending state.** 5. If you finish before the timeout period ends, complete the lifecycle action.
+
+For more information, see [Amazon EC2 Auto Scaling lifecycle hooks](https://docs.aws.amazon.com/autoscaling/ec2/userguide/lifecycle-hooks.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+
+  take lifecycle-hook-name
+    like native-string
+    note <The name of the lifecycle hook.>
+  take auto-scaling-group-name
+    like native-string
+    note <The name of the Auto Scaling group.>
+  take lifecycle-action-token
+    like native-string
+    note <A token that uniquely identifies a specific lifecycle action associated with an instance. Amazon EC2 Auto Scaling sends this token to the notification target that you specified when you created the lifecycle hook.>
+    void take
+  take instance-id
+    like native-string
+    note <The ID of the instance.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=RecordLifecycleActionHeartbeat>
+
+  find <LifecycleHookName>, loan lifecycle-hook-name
+  find <AutoScalingGroupName>, loan auto-scaling-group-name
+  find <LifecycleActionToken>, loan lifecycle-action-token
+  find <InstanceId>, loan instance-id
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like record-lifecycle-action-heartbeat-answer
+    note <Success>
+  loot 480
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

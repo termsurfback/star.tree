@@ -1,0 +1,78 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/export-task-not-found-fault
+  take form export-task-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/export-tasks-message
+  take form export-tasks-message
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/filter
+  take form filter
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-export-tasks, name <GET_DescribeExportTasks>
+  note <Returns information about a snapshot export to Amazon S3. This API operation supports pagination.>
+
+  take export-task-identifier
+    like native-string
+    note <The identifier of the snapshot export task to be described.>
+    void take
+  take source-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the snapshot exported to Amazon S3.>
+    void take
+  take filters
+    like list
+      like filter
+    note <Filters specify one or more snapshot exports to describe. The filters are specified as name-value pairs that define what to include in the output. Filter names and values are case-sensitive.
+
+Supported filters include the following:
+
+- `export-task-identifier` - An identifier for the snapshot export task.
+
+- `s3-bucket` - The Amazon S3 bucket the snapshot is exported to.
+
+- `source-arn` - The Amazon Resource Name (ARN) of the snapshot exported to Amazon S3
+
+- `status` - The status of the export task. Must be lowercase, for example, `complete`.>
+    void take
+  take marker
+    like native-string
+    note <An optional pagination token provided by a previous `DescribeExportTasks` request. If you specify this parameter, the response includes only records beyond the marker, up to the value specified by the `MaxRecords` parameter.>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of records to include in the response. If more records exist than the specified value, a pagination token called a marker is included in the response. You can use the marker in a later `DescribeExportTasks` request to retrieve the remaining results.
+
+Default: 100
+
+Constraints: Minimum 20, maximum 100.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeExportTasks>
+
+  find <ExportTaskIdentifier>, loan export-task-identifier
+  find <SourceArn>, loan source-arn
+  find <Filters>, loan filters
+  find <Marker>, loan marker
+  find <MaxRecords>, loan max-records
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like export-tasks-message
+    note <Success>
+  loot 480
+    seed xml, like export-task-not-found-fault
+    note <ExportTaskNotFoundFault>

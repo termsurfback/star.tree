@@ -1,0 +1,84 @@
+
+load @drumwork/snow/amazonaws.com/outposts/2019-12-03/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/outposts/2019-12-03/base/availability-zone
+  take form availability-zone
+
+load @drumwork/snow/amazonaws.com/outposts/2019-12-03/base/availability-zone-id
+  take form availability-zone-id
+
+load @drumwork/snow/amazonaws.com/outposts/2019-12-03/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/outposts/2019-12-03/base/life-cycle-status
+  take form life-cycle-status
+
+load @drumwork/snow/amazonaws.com/outposts/2019-12-03/base/list-outposts-output
+  take form list-outposts-output
+
+load @drumwork/snow/amazonaws.com/outposts/2019-12-03/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-outposts, name <ListOutposts>
+  note <Create a list of the Outposts for your AWS account. Add filters to your request to return a more specific list of results. Use filters to match an Outpost lifecycle status, Availibility Zone (`us-east-1a`), and AZ ID (`use1-az1`).
+
+If you specify multiple filters, the filters are joined with an `AND`, and the request returns only results that match all of the specified filters.>
+
+  take next-token
+    like native-string
+    void take
+  take max-results
+    like native-integer
+    void take
+  take life-cycle-status-filter
+    like list
+      like life-cycle-status
+    note <A filter for the lifecycle status of the Outpost.
+
+Filter values are case sensitive. If you specify multiple values for a filter, the values are joined with an `OR`, and the request returns all results that match any of the specified values.>
+    void take
+  take availability-zone-filter
+    like list
+      like availability-zone
+    note <A filter for the Availibility Zone (`us-east-1a`) of the Outpost.
+
+Filter values are case sensitive. If you specify multiple values for a filter, the values are joined with an `OR`, and the request returns all results that match any of the specified values.>
+    void take
+  take availability-zone-id-filter
+    like list
+      like availability-zone-id
+    note <A filter for the AZ IDs (`use1-az1`) of the Outpost.
+
+Filter values are case sensitive. If you specify multiple values for a filter, the values are joined with an `OR`, and the request returns all results that match any of the specified values.>
+    void take
+
+  line </outposts>
+
+  find <NextToken>, loan next-token
+  find <MaxResults>, loan max-results
+  find <LifeCycleStatusFilter>, loan life-cycle-status-filter
+  find <AvailabilityZoneFilter>, loan availability-zone-filter
+  find <AvailabilityZoneIdFilter>, loan availability-zone-id-filter
+
+  loot 200
+    seed json, like list-outposts-output
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

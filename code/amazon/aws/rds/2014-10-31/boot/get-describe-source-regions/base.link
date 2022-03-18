@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/source-region-message
+  take form source-region-message
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-source-regions, name <GET_DescribeSourceRegions>
+  note <Returns a list of the source Amazon Web Services Regions where the current Amazon Web Services Region can create a read replica, copy a DB snapshot from, or replicate automated backups from. This API action supports pagination.>
+
+  take region-name
+    like native-string
+    note <The source Amazon Web Services Region name. For example, `us-east-1`.
+
+Constraints:
+
+- Must specify a valid Amazon Web Services Region name.>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of records to include in the response. If more records exist than the specified `MaxRecords` value, a pagination token called a marker is included in the response so you can retrieve the remaining results.
+
+Default: 100
+
+Constraints: Minimum 20, maximum 100.>
+    void take
+  take marker
+    like native-string
+    note <An optional pagination token provided by a previous `DescribeSourceRegions` request. If this parameter is specified, the response includes only records beyond the marker, up to the value specified by `MaxRecords`.>
+    void take
+  take filters
+    like list
+      like filter
+    note <This parameter isn't currently supported.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeSourceRegions>
+
+  find <RegionName>, loan region-name
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Filters>, loan filters
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like source-region-message
+    note <Success>

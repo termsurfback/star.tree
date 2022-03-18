@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/delete-accounts-account-people-person-body
+  take form delete-accounts-account-people-person-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/deleted-person
+  take form deleted-person
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+boot delete-accounts-account-people-person, name <DeleteAccountsAccountPeoplePerson>
+  note <Deletes an existing person’s relationship to the account’s legal entity. Any person with a relationship for an account can be deleted through the API, except if the person is the `account_opener`. If your integration is using the `executive` parameter, you cannot delete the only verified `executive` on file.>
+
+  take account
+    like native-string
+  take person
+    like native-string
+  take delete-accounts-account-people-person-body, like delete-accounts-account-people-person-body
+    void take
+
+  line </v1/accounts/{account}/people/{person}>
+
+  seed x-www-form-urlencoded, loan delete-accounts-account-people-person-body
+
+  loot 200
+    seed json, like deleted-person
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

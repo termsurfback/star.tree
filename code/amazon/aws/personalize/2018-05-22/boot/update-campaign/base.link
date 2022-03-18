@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/update-campaign-response
+  take form update-campaign-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-campaign, name <UpdateCampaign>
+  note <Updates a campaign by either deploying a new solution or changing the value of the campaign's `minProvisionedTPS` parameter.
+
+To update a campaign, the campaign status must be ACTIVE or CREATE FAILED. Check the campaign status using the DescribeCampaign API.
+
+You must wait until the `status` of the updated campaign is `ACTIVE` before asking the campaign for recommendations.
+
+For more information on campaigns, see CreateCampaign.>
+
+  take x-amz-target
+    like native-string
+  take update-campaign-request, like update-campaign-request
+
+  line </#X-Amz-Target=AmazonPersonalize.UpdateCampaign>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-campaign-request
+
+  loot 200
+    seed json, like update-campaign-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>

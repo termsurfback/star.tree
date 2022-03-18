@@ -1,0 +1,37 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/calendar/v3/base/event
+  take form event
+
+boot calendar-events-quick-add, name <calendar.events.quickAdd>
+  note <Creates an event based on a simple text string.>
+
+  take calendar-id
+    like native-string
+    note <Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the "primary" keyword.>
+  take text
+    like native-string
+    note <The text describing the event to be created.>
+  take send-notifications
+    like native-boolean
+    note <Deprecated. Please use sendUpdates instead. Whether to send notifications about the creation of the event. Note that some emails might still be sent even if you set the value to false. The default is false.>
+    void take
+  take send-updates
+    like native-string
+    note <Guests who should receive notifications about the creation of the new event.>
+    void take
+
+  line </calendars/{calendar-id}/events/quickAdd>
+
+  find <text>, loan text
+  find <sendNotifications>, loan send-notifications
+  find <sendUpdates>, loan send-updates
+
+  loot 200
+    seed json, like event
+    note <Successful response>

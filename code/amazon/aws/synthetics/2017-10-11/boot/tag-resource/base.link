@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/tag-resource-body
+  take form tag-resource-body
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/tag-resource-response
+  take form tag-resource-response
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot tag-resource, name <TagResource>
+  note <Assigns one or more tags (key-value pairs) to the specified canary.
+
+Tags can help you organize and categorize your resources. You can also use them to scope user permissions, by granting a user permission to access or change only resources with certain tag values.
+
+Tags don't have any semantic meaning to Amazon Web Services and are interpreted strictly as strings of characters.
+
+You can use the `TagResource` action with a canary that already has tags. If you specify a new tag key for the alarm, this tag is appended to the list of tags associated with the alarm. If you specify a tag key that is already associated with the alarm, the new tag value that you specify replaces the previous value for that tag.
+
+You can associate as many as 50 tags with a canary.>
+
+  take resource-arn
+    like native-string
+    note <The ARN of the canary that you're adding tags to.
+
+The ARN format of a canary is `arn:aws:synthetics:_Region_:_account-id_:canary:_canary-name_` .>
+  take tag-resource-body, like tag-resource-body
+
+  line </tags/{resource-arn}>
+
+  seed json, loan tag-resource-body
+
+  loot 200
+    seed json, like tag-resource-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>

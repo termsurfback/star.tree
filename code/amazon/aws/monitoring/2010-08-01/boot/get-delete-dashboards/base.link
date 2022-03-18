@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/dashboard-name
+  take form dashboard-name
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/dashboard-not-found-error
+  take form dashboard-not-found-error
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/delete-dashboards-output
+  take form delete-dashboards-output
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/internal-service-fault
+  take form internal-service-fault
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-dashboards, name <GET_DeleteDashboards>
+  note <Deletes all dashboards that you specify. You can specify up to 100 dashboards to delete. If there is an error during this call, no dashboards are deleted.>
+
+  take dashboard-names
+    like list
+      like dashboard-name
+    note <The dashboards to be deleted. This parameter is required.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteDashboards>
+
+  find <DashboardNames>, loan dashboard-names
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-dashboards-output
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 481
+    seed xml, like dashboard-not-found-error
+    note <DashboardNotFoundError>
+  loot 482
+    seed xml, like internal-service-fault
+    note <InternalServiceFault>

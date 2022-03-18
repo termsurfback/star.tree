@@ -1,0 +1,97 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/ip-permission
+  take form ip-permission
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/revoke-security-group-egress-result
+  take form revoke-security-group-egress-result
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-revoke-security-group-egress, name <GET_RevokeSecurityGroupEgress>
+  note <[VPC only] Removes the specified outbound (egress) rules from a security group for EC2-VPC. This action does not apply to security groups for use in EC2-Classic.
+
+You can specify rules using either rule IDs or security group rule properties. If you use rule properties, the values that you specify (for example, ports) must match the existing rule's values exactly. Each rule has a protocol, from and to ports, and destination (CIDR range, security group, or prefix list). For the TCP and UDP protocols, you must also specify the destination port or range of ports. For the ICMP protocol, you must also specify the ICMP type and code. If the security group rule has a description, you do not need to specify the description to revoke the rule.
+
+[Default VPC] If the values you specify do not match the existing rule's values, no error is returned, and the output describes the security group rules that were not revoked.
+
+Amazon Web Services recommends that you describe the security group to verify that the rules were removed.
+
+Rule changes are propagated to instances within the security group as quickly as possible. However, a small delay might occur.>
+
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take group-id
+    like native-string
+    note <The ID of the security group.>
+  take ip-permissions
+    like list
+      like ip-permission
+    note <The sets of IP permissions. You can't specify a destination security group and a CIDR IP address range in the same set of permissions.>
+    void take
+  take security-group-rule-id
+    like list
+      like string
+    note <The IDs of the security group rules.>
+    void take
+  take cidr-ip
+    like native-string
+    note <Not supported. Use a set of IP permissions to specify the CIDR.>
+    void take
+  take from-port
+    like native-integer
+    note <Not supported. Use a set of IP permissions to specify the port.>
+    void take
+  take ip-protocol
+    like native-string
+    note <Not supported. Use a set of IP permissions to specify the protocol name or number.>
+    void take
+  take to-port
+    like native-integer
+    note <Not supported. Use a set of IP permissions to specify the port.>
+    void take
+  take source-security-group-name
+    like native-string
+    note <Not supported. Use a set of IP permissions to specify a destination security group.>
+    void take
+  take source-security-group-owner-id
+    like native-string
+    note <Not supported. Use a set of IP permissions to specify a destination security group.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=RevokeSecurityGroupEgress>
+
+  find <DryRun>, loan dry-run
+  find <GroupId>, loan group-id
+  find <IpPermissions>, loan ip-permissions
+  find <SecurityGroupRuleId>, loan security-group-rule-id
+  find <CidrIp>, loan cidr-ip
+  find <FromPort>, loan from-port
+  find <IpProtocol>, loan ip-protocol
+  find <ToPort>, loan to-port
+  find <SourceSecurityGroupName>, loan source-security-group-name
+  find <SourceSecurityGroupOwnerId>, loan source-security-group-owner-id
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like revoke-security-group-egress-result
+    note <Success>

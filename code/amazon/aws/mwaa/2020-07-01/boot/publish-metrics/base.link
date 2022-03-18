@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/mwaa/2020-07-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/mwaa/2020-07-01/base/publish-metrics-body
+  take form publish-metrics-body
+
+load @drumwork/snow/amazonaws.com/mwaa/2020-07-01/base/publish-metrics-output
+  take form publish-metrics-output
+
+load @drumwork/snow/amazonaws.com/mwaa/2020-07-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot publish-metrics, name <PublishMetrics>
+  note <An operation for publishing metrics from the customers to the Ops plane.>
+
+  take environment-name
+    like native-string
+    note <Publishes environment metric data to Amazon CloudWatch.>
+  take publish-metrics-body, like publish-metrics-body
+
+  line </metrics/environments/{environment-name}>
+
+  seed json, loan publish-metrics-body
+
+  loot 200
+    seed json, like publish-metrics-output
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>

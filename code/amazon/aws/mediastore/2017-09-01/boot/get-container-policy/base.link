@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/container-in-use-exception
+  take form container-in-use-exception
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/container-not-found-exception
+  take form container-not-found-exception
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/get-container-policy-output
+  take form get-container-policy-output
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/policy-not-found-exception
+  take form policy-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-container-policy, name <GetContainerPolicy>
+  note <Retrieves the access policy for the specified container. For information about the data that is included in an access policy, see the [AWS Identity and Access Management User Guide](https://aws.amazon.com/documentation/iam/).>
+
+  take x-amz-target
+    like native-string
+  take get-container-policy-input, like get-container-policy-input
+
+  line </#X-Amz-Target=MediaStore_20170901.GetContainerPolicy>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-container-policy-input
+
+  loot 200
+    seed json, like get-container-policy-output
+    note <Success>
+  loot 480
+    seed json, like container-in-use-exception
+    note <ContainerInUseException>
+  loot 481
+    seed json, like container-not-found-exception
+    note <ContainerNotFoundException>
+  loot 482
+    seed json, like policy-not-found-exception
+    note <PolicyNotFoundException>
+  loot 483
+    seed json, like internal-server-error
+    note <InternalServerError>

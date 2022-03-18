@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-document
+  take form invalid-document
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/start-session-response
+  take form start-session-response
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/target-not-connected
+  take form target-not-connected
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-session, name <StartSession>
+  note <Initiates a connection to a target (for example, an instance) for a Session Manager session. Returns a URL and token that can be used to open a WebSocket connection for sending input and receiving outputs.
+
+Amazon Web Services CLI usage: `start-session` is an interactive command that requires the Session Manager plugin to be installed on the client machine making the call. For information, see [Install the Session Manager plugin for the Amazon Web Services CLI](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html) in the _Amazon Web Services Systems Manager User Guide_.
+
+Amazon Web Services Tools for PowerShell usage: Start-SSMSession isn't currently supported by Amazon Web Services Tools for PowerShell on Windows local machines.>
+
+  take x-amz-target
+    like native-string
+  take start-session-request, like start-session-request
+
+  line </#X-Amz-Target=AmazonSSM.StartSession>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan start-session-request
+
+  loot 200
+    seed json, like start-session-response
+    note <Success>
+  loot 480
+    seed json, like invalid-document
+    note <InvalidDocument>
+  loot 481
+    seed json, like target-not-connected
+    note <TargetNotConnected>
+  loot 482
+    seed json, like internal-server-error
+    note <InternalServerError>

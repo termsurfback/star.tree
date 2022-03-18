@@ -1,0 +1,44 @@
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/docker-volume-configuration
+  take form docker-volume-configuration
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/efs-volume-configuration
+  take form efs-volume-configuration
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/f-sx-windows-file-server-volume-configuration
+  take form f-sx-windows-file-server-volume-configuration
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/host-volume-properties
+  take form host-volume-properties
+
+load @drumwork/snow/base/string
+  take form string
+
+form volume, name <Volume>
+  note <A data volume used in a task definition. For tasks that use the Amazon Elastic File System (Amazon EFS), specify an `efsVolumeConfiguration`. For Windows tasks that use Amazon FSx for Windows File Server file system, specify a `fsxWindowsFileServerVolumeConfiguration`. For tasks that use a Docker volume, specify a `DockerVolumeConfiguration`. For tasks that use a bind mount host volume, specify a `host` and optional `sourcePath`. For more information, see [Using Data Volumes in Tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using_data_volumes.html).>
+  take name, name <name>
+    like string
+    void take
+    note <The name of the volume. Up to 255 letters (uppercase and lowercase), numbers, underscores, and hyphens are allowed. This name is referenced in the `sourceVolume` parameter of container definition `mountPoints`.>
+  take host, name <host>
+    like host-volume-properties
+    void take
+    note <This parameter is specified when you are using bind mount host volumes. The contents of the `host` parameter determine whether your bind mount host volume persists on the host container instance and where it is stored. If the `host` parameter is empty, then the Docker daemon assigns a host path for your data volume. However, the data is not guaranteed to persist after the containers associated with it stop running.
+
+Windows containers can mount whole directories on the same drive as `$env:ProgramData`. Windows containers cannot mount directories on a different drive, and mount point cannot be across drives. For example, you can mount `C:\my\path:C:\my\path` and `D:\:D:\`, but not `D:\my\path:C:\my\path` or `D:\:C:\my\path`.>
+  take docker-volume-configuration, name <dockerVolumeConfiguration>
+    like docker-volume-configuration
+    void take
+    note <This parameter is specified when you are using Docker volumes.
+
+Windows containers only support the use of the `local` driver. To use bind mounts, specify the `host` parameter instead.
+
+Docker volumes are not supported by tasks run on Fargate.>
+  take efs-volume-configuration, name <efsVolumeConfiguration>
+    like efs-volume-configuration
+    void take
+    note <This parameter is specified when you are using an Amazon Elastic File System file system for task storage.>
+  take fsx-windows-file-server-volume-configuration, name <fsxWindowsFileServerVolumeConfiguration>
+    like f-sx-windows-file-server-volume-configuration
+    void take
+    note <This parameter is specified when you are using Amazon FSx for Windows File Server file system for task storage.>

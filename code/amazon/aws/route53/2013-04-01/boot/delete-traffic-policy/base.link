@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/concurrent-modification
+  take form concurrent-modification
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/delete-traffic-policy-response
+  take form delete-traffic-policy-response
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/no-such-traffic-policy
+  take form no-such-traffic-policy
+
+load @drumwork/snow/amazonaws.com/route53/2013-04-01/base/traffic-policy-in-use
+  take form traffic-policy-in-use
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-traffic-policy, name <DeleteTrafficPolicy>
+  note <Deletes a traffic policy.
+
+When you delete a traffic policy, Route 53 sets a flag on the policy to indicate that it has been deleted. However, Route 53 never fully deletes the traffic policy. Note the following:
+
+- Deleted traffic policies aren't listed if you run [ListTrafficPolicies](https://docs.aws.amazon.com/Route53/latest/APIReference/API_ListTrafficPolicies.html).
+
+- There's no way to get a list of deleted policies.
+
+- If you retain the ID of the policy, you can get information about the policy, including the traffic policy document, by running [GetTrafficPolicy](https://docs.aws.amazon.com/Route53/latest/APIReference/API_GetTrafficPolicy.html).>
+
+  take id
+    like native-string
+    note <The ID of the traffic policy that you want to delete.>
+  take version
+    like native-integer
+    note <The version number of the traffic policy that you want to delete.>
+
+  line </2013-04-01/trafficpolicy/{id}/{version}>
+
+  loot 200
+    seed xml, like delete-traffic-policy-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-traffic-policy
+    note <NoSuchTrafficPolicy>
+  loot 481
+    seed xml, like invalid-input
+    note <InvalidInput>
+  loot 482
+    seed xml, like traffic-policy-in-use
+    note <TrafficPolicyInUse>
+  loot 483
+    seed xml, like concurrent-modification
+    note <ConcurrentModification>

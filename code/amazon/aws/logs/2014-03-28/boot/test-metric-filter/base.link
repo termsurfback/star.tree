@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/logs/2014-03-28/base/test-metric-filter-response
+  take form test-metric-filter-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot test-metric-filter, name <TestMetricFilter>
+  note <Tests the filter pattern of a metric filter against a sample of log event messages. You can use this operation to validate the correctness of a metric filter pattern.>
+
+  take x-amz-target
+    like native-string
+  take test-metric-filter-request, like test-metric-filter-request
+
+  line </#X-Amz-Target=Logs_20140328.TestMetricFilter>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan test-metric-filter-request
+
+  loot 200
+    seed json, like test-metric-filter-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

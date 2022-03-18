@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/invalid-arn
+  take form invalid-arn
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/list-tags-for-resource-output
+  take form list-tags-for-resource-output
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/resource-not-found
+  take form resource-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-tags-for-resource, name <ListTagsForResource>
+  note <List tags for a given resource.
+
+Tags may only contain Unicode letters, digits, white space, or these symbols: `_ . : / = + - @`.>
+
+  take x-amz-target
+    like native-string
+  take list-tags-for-resource-input, like list-tags-for-resource-input
+
+  line </#X-Amz-Target=AWSStepFunctions.ListTagsForResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-tags-for-resource-input
+
+  loot 200
+    seed json, like list-tags-for-resource-output
+    note <Success>
+  loot 480
+    seed json, like invalid-arn
+    note <InvalidArn>
+  loot 481
+    seed json, like resource-not-found
+    note <ResourceNotFound>

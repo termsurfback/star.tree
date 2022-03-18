@@ -1,0 +1,77 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-subnet-group-already-exists-fault
+  take form cluster-subnet-group-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-subnet-group-quota-exceeded-fault
+  take form cluster-subnet-group-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-subnet-quota-exceeded-fault
+  take form cluster-subnet-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/create-cluster-subnet-group-result
+  take form create-cluster-subnet-group-result
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/dependent-service-request-throttling-fault
+  take form dependent-service-request-throttling-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-subnet
+  take form invalid-subnet
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-tag-fault
+  take form invalid-tag-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/tag-limit-exceeded-fault
+  take form tag-limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unauthorized-operation
+  take form unauthorized-operation
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-cluster-subnet-group, name <POST_CreateClusterSubnetGroup>
+  note <Creates a new Amazon Redshift subnet group. You must provide a list of one or more subnets in your existing Amazon Virtual Private Cloud (Amazon VPC) when creating Amazon Redshift subnet group.
+
+For information about subnet groups, go to [Amazon Redshift Cluster Subnet Groups](https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-cluster-subnet-groups.html) in the _Amazon Redshift Cluster Management Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-cluster-subnet-group-message, like create-cluster-subnet-group-message
+    void take
+
+  line </#Action=CreateClusterSubnetGroup>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-cluster-subnet-group-message
+
+  loot 200
+    seed xml, like create-cluster-subnet-group-result
+    note <Success>
+  loot 480
+    seed xml, like cluster-subnet-group-already-exists-fault
+    note <ClusterSubnetGroupAlreadyExistsFault>
+  loot 481
+    seed xml, like cluster-subnet-group-quota-exceeded-fault
+    note <ClusterSubnetGroupQuotaExceededFault>
+  loot 482
+    seed xml, like cluster-subnet-quota-exceeded-fault
+    note <ClusterSubnetQuotaExceededFault>
+  loot 483
+    seed xml, like invalid-subnet
+    note <InvalidSubnet>
+  loot 484
+    seed xml, like unauthorized-operation
+    note <UnauthorizedOperation>
+  loot 485
+    seed xml, like tag-limit-exceeded-fault
+    note <TagLimitExceededFault>
+  loot 486
+    seed xml, like invalid-tag-fault
+    note <InvalidTagFault>
+  loot 487
+    seed xml, like dependent-service-request-throttling-fault
+    note <DependentServiceRequestThrottlingFault>

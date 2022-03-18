@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/acm/2015-12-08/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-account-configuration, name <PutAccountConfiguration>
+  note <Adds or modifies account-level configurations in ACM.
+
+The supported configuration option is `DaysBeforeExpiry`. This option specifies the number of days prior to certificate expiration when ACM starts generating `EventBridge` events. ACM sends one event per day per certificate until the certificate expires. By default, accounts receive events starting 45 days before certificate expiration.>
+
+  take x-amz-target
+    like native-string
+  take put-account-configuration-request, like put-account-configuration-request
+
+  line </#X-Amz-Target=CertificateManager.PutAccountConfiguration>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan put-account-configuration-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 483
+    seed json, like conflict-exception
+    note <ConflictException>

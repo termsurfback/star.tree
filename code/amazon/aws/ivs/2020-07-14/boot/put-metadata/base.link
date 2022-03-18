@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/channel-not-broadcasting
+  take form channel-not-broadcasting
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/put-metadata-body
+  take form put-metadata-body
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/validation-exception
+  take form validation-exception
+
+boot put-metadata, name <PutMetadata>
+  note <Inserts metadata into the active stream of the specified channel. A maximum of 5 requests per second per channel is allowed, each with a maximum 1 KB payload. (If 5 TPS is not sufficient for your needs, we recommend batching your data into a single PutMetadata call.) Also see [Embedding Metadata within a Video Stream](https://docs.aws.amazon.com/ivs/latest/userguide/metadata.html) in the _Amazon IVS User Guide_.>
+
+  take put-metadata-body, like put-metadata-body
+
+  line </PutMetadata>
+
+  seed json, loan put-metadata-body
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like channel-not-broadcasting
+    note <ChannelNotBroadcasting>
+  loot 483
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 484
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

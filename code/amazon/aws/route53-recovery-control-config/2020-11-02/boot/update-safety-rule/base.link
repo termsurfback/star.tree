@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/update-safety-rule-body
+  take form update-safety-rule-body
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/update-safety-rule-response
+  take form update-safety-rule-response
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/validation-exception
+  take form validation-exception
+
+boot update-safety-rule, name <UpdateSafetyRule>
+  note <Update a safety rule (an assertion rule or gating rule) for the routing controls in a control panel. You can only update the name and the waiting period for a safety rule. To make other updates, delete the safety rule and create a new safety rule.>
+
+  take update-safety-rule-body, like update-safety-rule-body
+
+  line </safetyrule>
+
+  seed json, loan update-safety-rule-body
+
+  loot 200
+    seed json, like update-safety-rule-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>

@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/algorithm-image
+  take form algorithm-image
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/arn-or-name
+  take form arn-or-name
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/metric-definition-list
+  take form metric-definition-list
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/training-input-mode
+  take form training-input-mode
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+form algorithm-specification, name <AlgorithmSpecification>
+  note <Specifies the training algorithm to use in a CreateTrainingJob request.
+
+For more information about algorithms provided by Amazon SageMaker, see [Algorithms](https://docs.aws.amazon.com/sagemaker/latest/dg/algos.html). For information about using your own algorithms, see [Using Your Own Algorithms with Amazon SageMaker](https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms.html).>
+  take training-image, name <TrainingImage>
+    like algorithm-image
+    void take
+    note <The registry path of the Docker image that contains the training algorithm. For information about docker registry paths for built-in algorithms, see [Algorithms Provided by Amazon SageMaker: Common Parameters](https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-algo-docker-registry-paths.html). Amazon SageMaker supports both `registry/repository[:tag]` and `registry/repository[@digest]` image path formats. For more information, see [Using Your Own Algorithms with Amazon SageMaker](https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms.html).>
+  take algorithm-name, name <AlgorithmName>
+    like arn-or-name
+    void take
+    note <The name of the algorithm resource to use for the training job. This must be an algorithm resource that you created or subscribe to on Amazon Web Services Marketplace. If you specify a value for this parameter, you can't specify a value for `TrainingImage`.>
+  take training-input-mode, name <TrainingInputMode>
+    like training-input-mode
+    note <The input mode that the algorithm supports. For the input modes that Amazon SageMaker algorithms support, see [Algorithms](https://docs.aws.amazon.com/sagemaker/latest/dg/algos.html). If an algorithm supports the `File` input mode, Amazon SageMaker downloads the training data from S3 to the provisioned ML storage Volume, and mounts the directory to docker volume for training container. If an algorithm supports the `Pipe` input mode, Amazon SageMaker streams data directly from S3 to the container.
+
+In File mode, make sure you provision ML storage volume with sufficient capacity to accommodate the data download from S3. In addition to the training data, the ML storage volume also stores the output model. The algorithm container use ML storage volume to also store intermediate information, if any.
+
+For distributed algorithms using File mode, training data is distributed uniformly, and your training duration is predictable if the input data objects size is approximately same. Amazon SageMaker does not split the files any further for model training. If the object sizes are skewed, training won't be optimal as the data distribution is also skewed where one host in a training cluster is overloaded, thus becoming bottleneck in training.>
+  take metric-definitions, name <MetricDefinitions>
+    like metric-definition-list
+    void take
+    note <A list of metric definition objects. Each object specifies the metric name and regular expressions used to parse algorithm logs. Amazon SageMaker publishes each metric to Amazon CloudWatch.>
+  take enable-sage-maker-metrics-time-series, name <EnableSageMakerMetricsTimeSeries>
+    like boolean
+    void take
+    note <To generate and save time-series metrics during training, set to `true`. The default is `false` and time-series metrics aren't generated except in the following cases:
+
+- You use one of the Amazon SageMaker built-in algorithms
+
+- You use one of the following [Prebuilt Amazon SageMaker Docker Images](https://docs.aws.amazon.com/sagemaker/latest/dg/pre-built-containers-frameworks-deep-learning.html):
+
+  - Tensorflow (version &gt;= 1.15)
+
+  - MXNet (version &gt;= 1.6)
+
+  - PyTorch (version &gt;= 1.3)
+
+- You specify at least one MetricDefinition>

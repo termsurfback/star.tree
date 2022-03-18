@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/delete-global-cluster-result
+  take form delete-global-cluster-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/global-cluster-not-found-fault
+  take form global-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-global-cluster-state-fault
+  take form invalid-global-cluster-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-global-cluster, name <POST_DeleteGlobalCluster>
+  note <Deletes a global database cluster. The primary and secondary clusters must already be detached or destroyed first.
+
+This action only applies to Aurora DB clusters.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-global-cluster-message, like delete-global-cluster-message
+    void take
+
+  line </#Action=DeleteGlobalCluster>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-global-cluster-message
+
+  loot 200
+    seed xml, like delete-global-cluster-result
+    note <Success>
+  loot 480
+    seed xml, like global-cluster-not-found-fault
+    note <GlobalClusterNotFoundFault>
+  loot 481
+    seed xml, like invalid-global-cluster-state-fault
+    note <InvalidGlobalClusterStateFault>

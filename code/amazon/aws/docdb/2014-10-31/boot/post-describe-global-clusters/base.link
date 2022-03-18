@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/global-cluster-not-found-fault
+  take form global-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/global-clusters-message
+  take form global-clusters-message
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-global-clusters, name <POST_DescribeGlobalClusters>
+  note <Returns information about Amazon DocumentDB global clusters. This API supports pagination.
+
+This action only applies to Amazon DocumentDB clusters.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-global-clusters-message, like describe-global-clusters-message
+    void take
+
+  line </#Action=DescribeGlobalClusters>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-global-clusters-message
+
+  loot 200
+    seed xml, like global-clusters-message
+    note <Success>
+  loot 480
+    seed xml, like global-cluster-not-found-fault
+    note <GlobalClusterNotFoundFault>

@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/comprehendmedical/2018-10-30/base/infer-icd10-cm-response
+  take form infer-icd10-cm-response
+
+load @drumwork/snow/amazonaws.com/comprehendmedical/2018-10-30/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/comprehendmedical/2018-10-30/base/invalid-encoding-exception
+  take form invalid-encoding-exception
+
+load @drumwork/snow/amazonaws.com/comprehendmedical/2018-10-30/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/comprehendmedical/2018-10-30/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/comprehendmedical/2018-10-30/base/text-size-limit-exceeded-exception
+  take form text-size-limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/comprehendmedical/2018-10-30/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot infer-icd10-cm, name <InferICD10CM>
+  note <InferICD10CM detects medical conditions as entities listed in a patient record and links those entities to normalized concept identifiers in the ICD-10-CM knowledge base from the Centers for Disease Control. Amazon Comprehend Medical only detects medical entities in English language texts.>
+
+  take x-amz-target
+    like native-string
+  take infer-icd10-cm-request, like infer-icd10-cm-request
+
+  line </#X-Amz-Target=ComprehendMedical_20181030.InferICD10CM>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan infer-icd10-cm-request
+
+  loot 200
+    seed json, like infer-icd10-cm-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 482
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 483
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 484
+    seed json, like invalid-encoding-exception
+    note <InvalidEncodingException>
+  loot 485
+    seed json, like text-size-limit-exceeded-exception
+    note <TextSizeLimitExceededException>

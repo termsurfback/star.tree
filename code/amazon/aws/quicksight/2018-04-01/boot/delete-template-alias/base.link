@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/delete-template-alias-response
+  take form delete-template-alias-response
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/unsupported-user-edition-exception
+  take form unsupported-user-edition-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-template-alias, name <DeleteTemplateAlias>
+  note <Deletes the item that the specified template alias points to. If you provide a specific alias, you delete the version of the template that the alias points to.>
+
+  take aws-account-id
+    like native-string
+    note <The ID of the Amazon Web Services account that contains the item to delete.>
+  take template-id
+    like native-string
+    note <The ID for the template that the specified alias is for.>
+  take alias-name
+    like native-string
+    note <The name for the template alias. To delete a specific alias, you delete the version that the alias points to. You can specify the alias name, or specify the latest version of the template by providing the keyword `$LATEST` in the `AliasName` parameter.>
+
+  line </accounts/{aws-account-id}/templates/{template-id}/aliases/{alias-name}>
+
+  loot 200
+    seed json, like delete-template-alias-response
+    note <Success>
+  loot 480
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like unsupported-user-edition-exception
+    note <UnsupportedUserEditionException>
+  loot 483
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 484
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

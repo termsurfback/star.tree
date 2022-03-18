@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/global-replication-group-not-found-fault
+  take form global-replication-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-global-replication-group-state-fault
+  take form invalid-global-replication-group-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/rebalance-slots-in-global-replication-group-result
+  take form rebalance-slots-in-global-replication-group-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-rebalance-slots-in-global-replication-group, name <POST_RebalanceSlotsInGlobalReplicationGroup>
+  note <Redistribute slots to ensure uniform distribution across existing shards in the cluster.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take rebalance-slots-in-global-replication-group-message, like rebalance-slots-in-global-replication-group-message
+    void take
+
+  line </#Action=RebalanceSlotsInGlobalReplicationGroup>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan rebalance-slots-in-global-replication-group-message
+
+  loot 200
+    seed xml, like rebalance-slots-in-global-replication-group-result
+    note <Success>
+  loot 480
+    seed xml, like global-replication-group-not-found-fault
+    note <GlobalReplicationGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-global-replication-group-state-fault
+    note <InvalidGlobalReplicationGroupStateFault>
+  loot 482
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>

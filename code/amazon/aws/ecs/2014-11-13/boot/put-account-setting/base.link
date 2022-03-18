@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/put-account-setting-response
+  take form put-account-setting-response
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-account-setting, name <PutAccountSetting>
+  note <Modifies an account setting. Account settings are set on a per-Region basis.
+
+If you change the account setting for the root user, the default settings for all of the IAM users and roles for which no individual account setting has been specified are reset. For more information, see [Account Settings](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-account-settings.html) in the _Amazon Elastic Container Service Developer Guide_.
+
+When `serviceLongArnFormat`, `taskLongArnFormat`, or `containerInstanceLongArnFormat` are specified, the Amazon Resource Name (ARN) and resource ID format of the resource type for a specified IAM user, IAM role, or the root user for an account is affected. The opt-in and opt-out account setting must be set for each Amazon ECS resource separately. The ARN and resource ID format of a resource will be defined by the opt-in status of the IAM user or role that created the resource. You must enable this setting to use Amazon ECS features such as resource tagging.
+
+When `awsvpcTrunking` is specified, the elastic network interface (ENI) limit for any new container instances that support the feature is changed. If `awsvpcTrunking` is enabled, any new container instances that support the feature are launched have the increased ENI limits available to them. For more information, see [Elastic Network Interface Trunking](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/container-instance-eni.html) in the _Amazon Elastic Container Service Developer Guide_.
+
+When `containerInsights` is specified, the default setting indicating whether CloudWatch Container Insights is enabled for your clusters is changed. If `containerInsights` is enabled, any new clusters that are created will have Container Insights enabled unless you disable it during cluster creation. For more information, see [CloudWatch Container Insights](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/cloudwatch-container-insights.html) in the _Amazon Elastic Container Service Developer Guide_.>
+
+  take x-amz-target
+    like native-string
+  take put-account-setting-request, like put-account-setting-request
+
+  line </#X-Amz-Target=AmazonEC2ContainerServiceV20141113.PutAccountSetting>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan put-account-setting-request
+
+  loot 200
+    seed json, like put-account-setting-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like client-exception
+    note <ClientException>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>

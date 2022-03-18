@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/create-server-response
+  take form create-server-response
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/resource-already-exists-exception
+  take form resource-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/opsworkscm/2016-11-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-server, name <CreateServer>
+  note <Creates and immedately starts a new server. The server is ready to use when it is in the `HEALTHY` state. By default, you can create a maximum of 10 servers.
+
+This operation is asynchronous.
+
+A `LimitExceededException` is thrown when you have created the maximum number of servers (10). A `ResourceAlreadyExistsException` is thrown when a server with the same name already exists in the account. A `ResourceNotFoundException` is thrown when you specify a backup ID that is not valid or is for a backup that does not exist. A `ValidationException` is thrown when parameters of the request are not valid.
+
+If you do not specify a security group by adding the `SecurityGroupIds` parameter, AWS OpsWorks creates a new security group.
+
+_Chef Automate:_ The default security group opens the Chef server to the world on TCP port 443. If a KeyName is present, AWS OpsWorks enables SSH access. SSH is also open to the world on TCP port 22.
+
+_Puppet Enterprise:_ The default security group opens TCP ports 22, 443, 4433, 8140, 8142, 8143, and 8170. If a KeyName is present, AWS OpsWorks enables SSH access. SSH is also open to the world on TCP port 22.
+
+By default, your server is accessible from any IP address. We recommend that you update your security group rules to allow access from known IP addresses and address ranges only. To edit security group rules, open Security Groups in the navigation pane of the EC2 management console.
+
+To specify your own domain for a server, and provide your own self-signed or CA-signed certificate and private key, specify values for `CustomDomain`, `CustomCertificate`, and `CustomPrivateKey`.>
+
+  take x-amz-target
+    like native-string
+  take create-server-request, like create-server-request
+
+  line </#X-Amz-Target=OpsWorksCM_V2016_11_01.CreateServer>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-server-request
+
+  loot 200
+    seed json, like create-server-response
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed json, like resource-already-exists-exception
+    note <ResourceAlreadyExistsException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like validation-exception
+    note <ValidationException>

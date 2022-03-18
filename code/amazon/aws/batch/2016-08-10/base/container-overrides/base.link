@@ -1,0 +1,56 @@
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/environment-variables
+  take form environment-variables
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/resource-requirements
+  take form resource-requirements
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/string-list
+  take form string-list
+
+load @drumwork/snow/base/integer
+  take form integer
+
+load @drumwork/snow/base/string
+  take form string
+
+form container-overrides, name <ContainerOverrides>
+  note <The overrides that should be sent to a container.>
+  take vcpus, name <vcpus>
+    like integer
+    void take
+    note <This parameter indicates the number of vCPUs reserved for the container.It overrides the `vcpus` parameter that's set in the job definition, but doesn't override any vCPU requirement specified in the `resourceRequirement` structure in the job definition. To override vCPU requirements that are specified in the `ResourceRequirement` structure in the job definition, `ResourceRequirement` must be specified in the `SubmitJob` request, with `type` set to `VCPU` and `value` set to the new value.
+
+This parameter maps to `CpuShares` in the [Create a container](https://docs.docker.com/engine/api/v1.23/#create-a-container) section of the [Docker Remote API](https://docs.docker.com/engine/api/v1.23/) and the `--cpu-shares` option to [docker run](https://docs.docker.com/engine/reference/run/). Each vCPU is equivalent to 1,024 CPU shares. You must specify at least one vCPU.
+
+This parameter is supported for jobs that run on EC2 resources, but isn't supported for jobs that run on Fargate resources. For Fargate resources, you can only use `resourceRequirement`. For EC2 resources, you can use either this parameter or `resourceRequirement` but not both.
+
+This field is deprecated, use resourceRequirements instead.>
+  take memory, name <memory>
+    like integer
+    void take
+    note <This parameter indicates the amount of memory (in MiB) that's reserved for the job. It overrides the `memory` parameter set in the job definition, but doesn't override any memory requirement specified in the `ResourceRequirement` structure in the job definition. To override memory requirements that are specified in the `ResourceRequirement` structure in the job definition, `ResourceRequirement` must be specified in the `SubmitJob` request, with `type` set to `MEMORY` and `value` set to the new value.
+
+This parameter is supported for jobs that run on EC2 resources, but isn't supported for jobs that run on Fargate resources. For these resources, use `resourceRequirement` instead.
+
+This field is deprecated, use resourceRequirements instead.>
+  take command, name <command>
+    like string-list
+    void take
+    note <The command to send to the container that overrides the default command from the Docker image or the job definition.>
+  take instance-type, name <instanceType>
+    like string
+    void take
+    note <The instance type to use for a multi-node parallel job.
+
+This parameter isn't applicable to single-node container jobs or jobs that run on Fargate resources, and shouldn't be provided.>
+  take environment, name <environment>
+    like environment-variables
+    void take
+    note <The environment variables to send to the container. You can add new environment variables, which are added to the container at launch, or you can override the existing environment variables from the Docker image or the job definition.
+
+Environment variables must not start with `AWS_BATCH`; this naming convention is reserved for variables that are set by the Batch service.>
+  take resource-requirements, name <resourceRequirements>
+    like resource-requirements
+    void take
+    note <The type and amount of resources to assign to a container. This overrides the settings in the job definition. The supported resources include `GPU`, `MEMORY`, and `VCPU`.>

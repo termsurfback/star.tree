@@ -1,0 +1,30 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/container/v1/base/list-clusters-response
+  take form list-clusters-response
+
+boot container-projects-locations-clusters-list, name <container.projects.locations.clusters.list>
+  note <Lists all clusters owned by a project in either the specified zone or all zones.>
+
+  take parent
+    like native-string
+    note <The parent (project and location) where the clusters will be listed. Specified in the format `projects/*/locations/*`. Location "-" matches all zones and all regions.>
+  take project-id
+    like native-string
+    note <Deprecated. The Google Developers Console [project ID or project number](https://support.google.com/cloud/answer/6158840). This field has been deprecated and replaced by the parent field.>
+    void take
+  take zone
+    like native-string
+    note <Deprecated. The name of the Google Compute Engine [zone](https://cloud.google.com/compute/docs/zones#available) in which the cluster resides, or "-" for all zones. This field has been deprecated and replaced by the parent field.>
+    void take
+
+  line </v1/{parent}/clusters>
+
+  find <projectId>, loan project-id
+  find <zone>, loan zone
+
+  loot 200
+    seed json, like list-clusters-response
+    note <Successful response>

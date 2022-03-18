@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/list-instances-response
+  take form list-instances-response
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/service-not-found
+  take form service-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-instances, name <ListInstances>
+  note <Lists summary information about the instances that you registered by using a specified service.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-instances-request, like list-instances-request
+
+  line </#X-Amz-Target=Route53AutoNaming_v20170314.ListInstances>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-instances-request
+
+  loot 200
+    seed json, like list-instances-response
+    note <Success>
+  loot 480
+    seed json, like service-not-found
+    note <ServiceNotFound>
+  loot 481
+    seed json, like invalid-input
+    note <InvalidInput>

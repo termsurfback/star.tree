@@ -1,0 +1,120 @@
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/job-manifest-location
+  take form job-manifest-location
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/job-manifest-spec
+  take form job-manifest-spec
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/job-report-format
+  take form job-report-format
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/job-report-scope
+  take form job-report-scope
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/lambda-invoke-operation
+  take form lambda-invoke-operation
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/report-prefix-string
+  take form report-prefix-string
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/s3-bucket-arn-string
+  take form s3-bucket-arn-string
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/s3-copy-object-operation
+  take form s3-copy-object-operation
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/s3-delete-object-tagging-operation
+  take form s3-delete-object-tagging-operation
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/s3-initiate-restore-object-operation
+  take form s3-initiate-restore-object-operation
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/s3-set-object-acl-operation
+  take form s3-set-object-acl-operation
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/s3-set-object-legal-hold-operation
+  take form s3-set-object-legal-hold-operation
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/s3-set-object-retention-operation
+  take form s3-set-object-retention-operation
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/s3-set-object-tagging-operation
+  take form s3-set-object-tagging-operation
+
+load @drumwork/snow/base/boolean
+  take form boolean
+
+form create-job-body
+  take confirmation-required, name <ConfirmationRequired>
+    void take
+  take operation, name <Operation>
+    like form
+      take lambda-invoke, name <LambdaInvoke>
+        like lambda-invoke-operation
+        void take
+        note <Directs the specified job to invoke an Lambda function on every object in the manifest.>
+      take s3-put-object-copy, name <S3PutObjectCopy>
+        like s3-copy-object-operation
+        void take
+        note <Directs the specified job to run a PUT Copy object call on every object in the manifest.>
+      take s3-put-object-acl, name <S3PutObjectAcl>
+        like s3-set-object-acl-operation
+        void take
+        note <Directs the specified job to run a PUT Object acl call on every object in the manifest.>
+      take s3-put-object-tagging, name <S3PutObjectTagging>
+        like s3-set-object-tagging-operation
+        void take
+        note <Directs the specified job to run a PUT Object tagging call on every object in the manifest.>
+      take s3-delete-object-tagging, name <S3DeleteObjectTagging>
+        like s3-delete-object-tagging-operation
+        void take
+        note <Directs the specified job to execute a DELETE Object tagging call on every object in the manifest.>
+      take s3-initiate-restore-object, name <S3InitiateRestoreObject>
+        like s3-initiate-restore-object-operation
+        void take
+        note <Directs the specified job to initiate restore requests for every archived object in the manifest.>
+      take s3-put-object-legal-hold, name <S3PutObjectLegalHold>
+        like s3-set-object-legal-hold-operation
+        void take
+      take s3-put-object-retention, name <S3PutObjectRetention>
+        like s3-set-object-retention-operation
+        void take
+  take report, name <Report>
+    like form
+      take bucket, name <Bucket>
+        like s3-bucket-arn-string
+        void take
+        note <The Amazon Resource Name (ARN) for the bucket where specified job-completion report will be stored.>
+      take format, name <Format>
+        like job-report-format
+        void take
+        note <The format of the specified job-completion report.>
+      take enabled, name <Enabled>
+        like boolean
+        void take
+        note <Indicates whether the specified job will generate a job-completion report.>
+      take prefix, name <Prefix>
+        like report-prefix-string
+        void take
+        note <An optional prefix to describe where in the specified bucket the job-completion report will be stored. Amazon S3 stores the job-completion report at `&lt;prefix&gt;/job-&lt;job-id&gt;/report.json`.>
+      take report-scope, name <ReportScope>
+        like job-report-scope
+        void take
+        note <Indicates whether the job-completion report will include details of all tasks or only failed tasks.>
+  take client-request-token, name <ClientRequestToken>
+  take manifest, name <Manifest>
+    like form
+      take spec, name <Spec>
+        like job-manifest-spec
+        void take
+        note <Describes the format of the specified job's manifest. If the manifest is in CSV format, also describes the columns contained within the manifest.>
+      take location, name <Location>
+        like job-manifest-location
+        void take
+        note <Contains the information required to locate the specified job's manifest.>
+  take description, name <Description>
+    void take
+  take priority, name <Priority>
+  take role-arn, name <RoleArn>
+  take tags, name <Tags>
+    void take

@@ -1,0 +1,121 @@
+
+load @drumwork/snow/amazonaws.com/transcribe/2017-10-26/base/kms-encryption-context-map
+  take form kms-encryption-context-map
+
+load @drumwork/snow/amazonaws.com/transcribe/2017-10-26/base/kms-key-id
+  take form kms-key-id
+
+load @drumwork/snow/amazonaws.com/transcribe/2017-10-26/base/language-code
+  take form language-code
+
+load @drumwork/snow/amazonaws.com/transcribe/2017-10-26/base/media
+  take form media
+
+load @drumwork/snow/amazonaws.com/transcribe/2017-10-26/base/media-format
+  take form media-format
+
+load @drumwork/snow/amazonaws.com/transcribe/2017-10-26/base/media-sample-rate-hertz
+  take form media-sample-rate-hertz
+
+load @drumwork/snow/amazonaws.com/transcribe/2017-10-26/base/medical-content-identification-type
+  take form medical-content-identification-type
+
+load @drumwork/snow/amazonaws.com/transcribe/2017-10-26/base/medical-transcription-setting
+  take form medical-transcription-setting
+
+load @drumwork/snow/amazonaws.com/transcribe/2017-10-26/base/output-bucket-name
+  take form output-bucket-name
+
+load @drumwork/snow/amazonaws.com/transcribe/2017-10-26/base/output-key
+  take form output-key
+
+load @drumwork/snow/amazonaws.com/transcribe/2017-10-26/base/specialty
+  take form specialty
+
+load @drumwork/snow/amazonaws.com/transcribe/2017-10-26/base/tag-list
+  take form tag-list
+
+load @drumwork/snow/amazonaws.com/transcribe/2017-10-26/base/transcription-job-name
+  take form transcription-job-name
+
+load @drumwork/snow/amazonaws.com/transcribe/2017-10-26/base/type
+  take form type
+
+form start-medical-transcription-job-request, name <StartMedicalTranscriptionJobRequest>
+  take medical-transcription-job-name, name <MedicalTranscriptionJobName>
+    like transcription-job-name
+    note <The name of the medical transcription job. You can't use the strings "`.`" or "`..`" by themselves as the job name. The name must also be unique within an Amazon Web Services account. If you try to create a medical transcription job with the same name as a previous medical transcription job, you get a `ConflictException` error.>
+  take language-code, name <LanguageCode>
+    like language-code
+    note <The language code for the language spoken in the input media file. US English (en-US) is the valid value for medical transcription jobs. Any other value you enter for language code results in a `BadRequestException` error.>
+  take media-sample-rate-hertz, name <MediaSampleRateHertz>
+    like media-sample-rate-hertz
+    void take
+    note <The sample rate, in Hertz, of the audio track in the input media file.
+
+If you do not specify the media sample rate, Amazon Transcribe Medical determines the sample rate. If you specify the sample rate, it must match the rate detected by Amazon Transcribe Medical. In most cases, you should leave the `MediaSampleRateHertz` field blank and let Amazon Transcribe Medical determine the sample rate.>
+  take media-format, name <MediaFormat>
+    like media-format
+    void take
+    note <The audio format of the input media file.>
+  take media, name <Media>
+    like media
+  take output-bucket-name, name <OutputBucketName>
+    like output-bucket-name
+    note <The Amazon S3 location where the transcription is stored.
+
+You must set `OutputBucketName` for Amazon Transcribe Medical to store the transcription results. Your transcript appears in the S3 location you specify. When you call the GetMedicalTranscriptionJob, the operation returns this location in the `TranscriptFileUri` field. The S3 bucket must have permissions that allow Amazon Transcribe Medical to put files in the bucket. For more information, see [Permissions Required for IAM User Roles](https://docs.aws.amazon.com/transcribe/latest/dg/security_iam_id-based-policy-examples.html#auth-role-iam-user).
+
+You can specify an Amazon Web Services Key Management Service (KMS) key to encrypt the output of your transcription using the `OutputEncryptionKMSKeyId` parameter. If you don't specify a KMS key, Amazon Transcribe Medical uses the default Amazon S3 key for server-side encryption of transcripts that are placed in your S3 bucket.>
+  take output-key, name <OutputKey>
+    like output-key
+    void take
+    note <You can specify a location in an Amazon S3 bucket to store the output of your medical transcription job.
+
+If you don't specify an output key, Amazon Transcribe Medical stores the output of your transcription job in the Amazon S3 bucket you specified. By default, the object key is "your-transcription-job-name.json".
+
+You can use output keys to specify the Amazon S3 prefix and file name of the transcription output. For example, specifying the Amazon S3 prefix, "folder1/folder2/", as an output key would lead to the output being stored as "folder1/folder2/your-transcription-job-name.json". If you specify "my-other-job-name.json" as the output key, the object key is changed to "my-other-job-name.json". You can use an output key to change both the prefix and the file name, for example "folder/my-other-job-name.json".
+
+If you specify an output key, you must also specify an S3 bucket in the `OutputBucketName` parameter.>
+  take output-encryption-kms-key-id, name <OutputEncryptionKMSKeyId>
+    like kms-key-id
+    void take
+    note <The Amazon Resource Name (ARN) of the Amazon Web Services Key Management Service (KMS) key used to encrypt the output of the transcription job. The user calling the StartMedicalTranscriptionJob operation must have permission to use the specified KMS key.
+
+You use either of the following to identify a KMS key in the current account:
+
+- KMS Key ID: "1234abcd-12ab-34cd-56ef-1234567890ab"
+
+- KMS Key Alias: "alias/ExampleAlias"
+
+You can use either of the following to identify a KMS key in the current account or another account:
+
+- Amazon Resource Name (ARN) of a KMS key in the current account or another account: "arn:aws:kms:region:account ID:key/1234abcd-12ab-34cd-56ef-1234567890ab"
+
+- ARN of a KMS Key Alias: "arn:aws:kms:region:account ID:alias/ExampleAlias"
+
+If you don't specify an encryption key, the output of the medical transcription job is encrypted with the default Amazon S3 key (SSE-S3).
+
+If you specify a KMS key to encrypt your output, you must also specify an output location in the `OutputBucketName` parameter.>
+  take kms-encryption-context, name <KMSEncryptionContext>
+    like kms-encryption-context-map
+    void take
+    note <A map of plain text, non-secret key:value pairs, known as encryption context pairs, that provide an added layer of security for your data.>
+  take settings, name <Settings>
+    like medical-transcription-setting
+    void take
+    note <Optional settings for the medical transcription job.>
+  take content-identification-type, name <ContentIdentificationType>
+    like medical-content-identification-type
+    void take
+    note <You can configure Amazon Transcribe Medical to label content in the transcription output. If you specify `PHI`, Amazon Transcribe Medical labels the personal health information (PHI) that it identifies in the transcription output.>
+  take specialty, name <Specialty>
+    like specialty
+    note <The medical specialty of any clinician speaking in the input media.>
+  take type, name <Type>
+    like type
+    note <The type of speech in the input audio. `CONVERSATION` refers to conversations between two or more speakers, e.g., a conversations between doctors and patients. `DICTATION` refers to single-speaker dictated speech, such as clinical notes.>
+  take tags, name <Tags>
+    like tag-list
+    void take
+    note <Add tags to an Amazon Transcribe medical transcription job.>

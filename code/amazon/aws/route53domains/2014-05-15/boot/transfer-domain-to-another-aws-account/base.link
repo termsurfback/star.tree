@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/duplicate-request
+  take form duplicate-request
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/operation-limit-exceeded
+  take form operation-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/transfer-domain-to-another-aws-account-response
+  take form transfer-domain-to-another-aws-account-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot transfer-domain-to-another-aws-account, name <TransferDomainToAnotherAwsAccount>
+  note <Transfers a domain from the current AWS account to another AWS account. Note the following:
+
+- The AWS account that you're transferring the domain to must accept the transfer. If the other account doesn't accept the transfer within 3 days, we cancel the transfer. See [AcceptDomainTransferFromAnotherAwsAccount](https://docs.aws.amazon.com/Route53/latest/APIReference/API_domains_AcceptDomainTransferFromAnotherAwsAccount.html).
+
+- You can cancel the transfer before the other account accepts it. See [CancelDomainTransferToAnotherAwsAccount](https://docs.aws.amazon.com/Route53/latest/APIReference/API_domains_CancelDomainTransferToAnotherAwsAccount.html).
+
+- The other account can reject the transfer. See [RejectDomainTransferFromAnotherAwsAccount](https://docs.aws.amazon.com/Route53/latest/APIReference/API_domains_RejectDomainTransferFromAnotherAwsAccount.html).
+
+When you transfer a domain from one AWS account to another, Route 53 doesn't transfer the hosted zone that is associated with the domain. DNS resolution isn't affected if the domain and the hosted zone are owned by separate accounts, so transferring the hosted zone is optional. For information about transferring the hosted zone to another AWS account, see [Migrating a Hosted Zone to a Different AWS Account](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zones-migrating.html) in the _Amazon Route 53 Developer Guide_.
+
+Use either [ListOperations](https://docs.aws.amazon.com/Route53/latest/APIReference/API_domains_ListOperations.html) or [GetOperationDetail](https://docs.aws.amazon.com/Route53/latest/APIReference/API_domains_GetOperationDetail.html) to determine whether the operation succeeded. [GetOperationDetail](https://docs.aws.amazon.com/Route53/latest/APIReference/API_domains_GetOperationDetail.html) provides additional information, for example, `Domain Transfer from Aws Account 111122223333 has been cancelled`.>
+
+  take x-amz-target
+    like native-string
+  take transfer-domain-to-another-aws-account-request, like transfer-domain-to-another-aws-account-request
+
+  line </#X-Amz-Target=Route53Domains_v20140515.TransferDomainToAnotherAwsAccount>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan transfer-domain-to-another-aws-account-request
+
+  loot 200
+    seed json, like transfer-domain-to-another-aws-account-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input
+    note <InvalidInput>
+  loot 481
+    seed json, like operation-limit-exceeded
+    note <OperationLimitExceeded>
+  loot 482
+    seed json, like duplicate-request
+    note <DuplicateRequest>

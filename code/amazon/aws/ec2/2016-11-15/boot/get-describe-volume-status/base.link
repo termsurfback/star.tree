@@ -1,0 +1,101 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-volume-status-result
+  take form describe-volume-status-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/volume-id
+  take form volume-id
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-volume-status, name <GET_DescribeVolumeStatus>
+  note <Describes the status of the specified volumes. Volume status provides the result of the checks performed on your volumes to determine events that can impair the performance of your volumes. The performance of a volume can be affected if an issue occurs on the volume's underlying host. If the volume's underlying host experiences a power outage or system issue, after the system is restored, there could be data inconsistencies on the volume. Volume events notify you if this occurs. Volume actions notify you if any action needs to be taken in response to the event.
+
+The `DescribeVolumeStatus` operation provides the following information about the specified volumes:
+
+_Status_: Reflects the current status of the volume. The possible values are `ok`, `impaired` , `warning`, or `insufficient-data`. If all checks pass, the overall status of the volume is `ok`. If the check fails, the overall status is `impaired`. If the status is `insufficient-data`, then the checks might still be taking place on your volume at the time. We recommend that you retry the request. For more information about volume status, see [Monitor the status of your volumes](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/monitoring-volume-status.html) in the _Amazon Elastic Compute Cloud User Guide_.
+
+_Events_: Reflect the cause of a volume status and might require you to take action. For example, if your volume returns an `impaired` status, then the volume event might be `potential-data-inconsistency`. This means that your volume has been affected by an issue with the underlying host, has all I/O operations disabled, and might have inconsistent data.
+
+_Actions_: Reflect the actions you might have to take in response to an event. For example, if the status of the volume is `impaired` and the volume event shows `potential-data-inconsistency`, then the action shows `enable-volume-io`. This means that you may want to enable the I/O operations for the volume by calling the EnableVolumeIO action and then check the volume for data consistency.
+
+Volume status is based on the volume status checks, and does not reflect the volume state. Therefore, volume status does not indicate volumes in the `error` state (for example, when a volume is incapable of accepting I/O.)>
+
+  take filter
+    like list
+      like filter
+    note <The filters.
+
+- `action.code` - The action code for the event (for example, `enable-volume-io`).
+
+- `action.description` - A description of the action.
+
+- `action.event-id` - The event ID associated with the action.
+
+- `availability-zone` - The Availability Zone of the instance.
+
+- `event.description` - A description of the event.
+
+- `event.event-id` - The event ID.
+
+- `event.event-type` - The event type (for `io-enabled`: `passed` | `failed`; for `io-performance`: `io-performance:degraded` | `io-performance:severely-degraded` | `io-performance:stalled`).
+
+- `event.not-after` - The latest end time for the event.
+
+- `event.not-before` - The earliest start time for the event.
+
+- `volume-status.details-name` - The cause for `volume-status.status` (`io-enabled` | `io-performance`).
+
+- `volume-status.details-status` - The status of `volume-status.details-name` (for `io-enabled`: `passed` | `failed`; for `io-performance`: `normal` | `degraded` | `severely-degraded` | `stalled`).
+
+- `volume-status.status` - The status of the volume (`ok` | `impaired` | `warning` | `insufficient-data`).>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of volume results returned by `DescribeVolumeStatus` in paginated output. When this parameter is used, the request only returns `MaxResults` results in a single page along with a `NextToken` response element. The remaining results of the initial request can be seen by sending another request with the returned `NextToken` value. This value can be between 5 and 1,000; if `MaxResults` is given a value larger than 1,000, only 1,000 results are returned. If this parameter is not used, then `DescribeVolumeStatus` returns all results. You cannot specify this parameter and the volume IDs parameter in the same request.>
+    void take
+  take next-token
+    like native-string
+    note <The `NextToken` value to include in a future `DescribeVolumeStatus` request. When the results of the request exceed `MaxResults`, this value can be used to retrieve the next page of results. This value is `null` when there are no more results to return.>
+    void take
+  take volume-id
+    like list
+      like volume-id
+    note <The IDs of the volumes.
+
+Default: Describes all your volumes.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeVolumeStatus>
+
+  find <Filter>, loan filter
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <VolumeId>, loan volume-id
+  find <DryRun>, loan dry-run
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-volume-status-result
+    note <Success>

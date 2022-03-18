@@ -1,0 +1,44 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/people/v1/base/search-response
+  take form search-response
+
+boot people-people-search-contacts, name <people.people.searchContacts>
+  note <Provides a list of contacts in the authenticated user's grouped contacts that matches the search query. The query matches on a contact's `names`, `nickNames`, `emailAddresses`, `phoneNumbers`, and `organizations` fields that are from the CONTACT source. **IMPORTANT**: Before searching, clients should send a warmup request with an empty query to update the cache. See https://developers.google.com/people/v1/contacts#search_the_users_contacts>
+
+  take page-size
+    like native-integer
+    note <Optional. The number of results to return. Defaults to 10 if field is not set, or set to 0. Values greater than 30 will be capped to 30.>
+    void take
+  take query
+    like native-string
+    note <Required. The plain-text query for the request. The query is used to match prefix phrases of the fields on a person. For example, a person with name "foo name" matches queries such as "f", "fo", "foo", "foo n", "nam", etc., but not "oo n".>
+    void take
+  take read-mask
+    like native-string
+    note <Required. A field mask to restrict which fields on each person are returned. Multiple fields can be specified by separating them with commas. Valid values are: * addresses * ageRanges * biographies * birthdays * calendarUrls * clientData * coverPhotos * emailAddresses * events * externalIds * genders * imClients * interests * locales * locations * memberships * metadata * miscKeywords * names * nicknames * occupations * organizations * phoneNumbers * photos * relations * sipAddresses * skills * urls * userDefined>
+    void take
+  take sources
+    like list
+      like native-string
+    note <Optional. A mask of what source types to return. Defaults to READ_SOURCE_TYPE_CONTACT if not set.>
+    void take
+
+  line </v1/people:searchContacts>
+
+  find <pageSize>, loan page-size
+  find <query>, loan query
+  find <readMask>, loan read-mask
+  find <sources>, loan sources
+
+  loot 200
+    seed json, like search-response
+    note <Successful response>

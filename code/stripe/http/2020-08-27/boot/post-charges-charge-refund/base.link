@@ -1,0 +1,37 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/charge
+  take form charge
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-charges-charge-refund-body
+  take form post-charges-charge-refund-body
+
+boot post-charges-charge-refund, name <PostChargesChargeRefund>
+  note <When you create a new refund, you must specify a Charge or a PaymentIntent object on which to create it.
+
+Creating a new refund will refund a charge that has previously been created but not yet refunded. Funds will be refunded to the credit or debit card that was originally charged.
+
+You can optionally refund only part of a charge. You can do so multiple times, until the entire charge has been refunded.
+
+Once entirely refunded, a charge can’t be refunded again. This method will raise an error when called on an already-refunded charge, or when trying to refund more money than is left on a charge.>
+
+  take charge
+    like native-string
+  take post-charges-charge-refund-body, like post-charges-charge-refund-body
+    void take
+
+  line </v1/charges/{charge}/refund>
+
+  seed x-www-form-urlencoded, loan post-charges-charge-refund-body
+
+  loot 200
+    seed json, like charge
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

@@ -1,0 +1,67 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-team
+  take form defs-team
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-user-id
+  take form defs-user-id
+
+boot rtm-connect, name <rtm_connect>
+  note <Starts a Real Time Messaging session.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `rtm:stream`>
+  take batch-presence-aware
+    like native-boolean
+    note <Batch presence deliveries via subscription. Enabling changes the shape of `presence_change` events. See [batch presence](/docs/presence-and-status#batching).>
+    void take
+  take presence-sub
+    like native-boolean
+    note <Only deliver presence events when requested by subscription. See [presence subscriptions](/docs/presence-and-status#subscriptions).>
+    void take
+
+  line </rtm.connect>
+
+  find <token>, loan token
+  find <batch_presence_aware>, loan batch-presence-aware
+  find <presence_sub>, loan presence-sub
+
+  loot 200
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-true
+        take self, name <self>
+          like form
+            take id, name <id>
+              like defs-user-id
+            take name, name <name>
+        take team, name <team>
+          like form
+            take domain, name <domain>
+            take id, name <id>
+              like defs-team
+            take name, name <name>
+        take url, name <url>
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take callstack, name <callstack>
+          void take
+        take error, name <error>
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response>

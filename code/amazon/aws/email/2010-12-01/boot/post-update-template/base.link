@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/invalid-template-exception
+  take form invalid-template-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/template-does-not-exist-exception
+  take form template-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/update-template-response
+  take form update-template-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-update-template, name <POST_UpdateTemplate>
+  note <Updates an email template. Email templates enable you to send personalized email to one or more destinations in a single API operation. For more information, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/send-personalized-email-api.html).
+
+You can execute this operation no more than once per second.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take update-template-request, like update-template-request
+    void take
+
+  line </#Action=UpdateTemplate>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan update-template-request
+
+  loot 200
+    seed xml, like update-template-response
+    note <Success>
+  loot 480
+    seed xml, like template-does-not-exist-exception
+    note <TemplateDoesNotExistException>
+  loot 481
+    seed xml, like invalid-template-exception
+    note <InvalidTemplateException>

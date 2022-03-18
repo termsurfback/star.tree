@@ -1,0 +1,46 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-sources-source-body
+  take form get-sources-source-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/source
+  take form source
+
+boot get-sources-source, name <GetSourcesSource>
+  note <Retrieves an existing source object. Supply the unique source ID from a source creation request and Stripe will return the corresponding up-to-date source object information.>
+
+  take source
+    like native-string
+  take client-secret
+    like native-string
+    note <The client secret of the source. Required if a publishable key is used to retrieve the source.>
+    void take
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-sources-source-body, like get-sources-source-body
+    void take
+
+  line </v1/sources/{source}>
+
+  find <client_secret>, loan client-secret
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-sources-source-body
+
+  loot 200
+    seed json, like source
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

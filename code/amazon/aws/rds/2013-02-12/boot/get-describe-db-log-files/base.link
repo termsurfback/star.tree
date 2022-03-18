@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/describe-db-log-files-response
+  take form describe-db-log-files-response
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-db-log-files, name <GET_DescribeDBLogFiles>
+  take db-instance-identifier
+    like native-string
+  take filename-contains
+    like native-string
+    void take
+  take file-last-written
+    like native-integer
+    void take
+  take file-size
+    like native-integer
+    void take
+  take max-records
+    like native-integer
+    void take
+  take marker
+    like native-string
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeDBLogFiles>
+
+  find <DBInstanceIdentifier>, loan db-instance-identifier
+  find <FilenameContains>, loan filename-contains
+  find <FileLastWritten>, loan file-last-written
+  find <FileSize>, loan file-size
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-db-log-files-response
+    note <Success>
+  loot 480
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>

@@ -1,0 +1,87 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-number
+  take form native-number
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+load @drumwork/snow/slack.com/1.7.0/base/objs-paging
+  take form objs-paging
+
+boot files-list, name <files_list>
+  note <List for a team, in a channel, or from a user with applied filters.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `files:read`>
+    void take
+  take user
+    like native-string
+    note <Filter files created by a single user.>
+    void take
+  take channel
+    like native-string
+    note <Filter files appearing in a specific channel, indicated by its ID.>
+    void take
+  take ts-from
+    like native-number
+    note <Filter files created after this timestamp (inclusive).>
+    void take
+  take ts-to
+    like native-number
+    note <Filter files created before this timestamp (inclusive).>
+    void take
+  take types
+    like native-string
+    note <Filter files by type ([see below](#file_types)). You can pass multiple values in the types argument, like `types=spaces,snippets`.The default value is `all`, which does not filter the list.>
+    void take
+  take count
+    like native-string
+    void take
+  take page
+    like native-string
+    void take
+  take show-files-hidden-by-limit
+    like native-boolean
+    note <Show truncated file info for files hidden due to being too old, and the team who owns the file being over the file limit.>
+    void take
+
+  line </files.list>
+
+  find <token>, loan token
+  find <user>, loan user
+  find <channel>, loan channel
+  find <ts_from>, loan ts-from
+  find <ts_to>, loan ts-to
+  find <types>, loan types
+  find <count>, loan count
+  find <page>, loan page
+  find <show_files_hidden_by_limit>, loan show-files-hidden-by-limit
+
+  loot 200
+    seed json
+      like form
+        take files, name <files>
+        take ok, name <ok>
+          like defs-ok-true
+        take paging, name <paging>
+          like objs-paging
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take callstack, name <callstack>
+          void take
+        take error, name <error>
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response>

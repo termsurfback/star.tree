@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-db-revisions-message
+  take form cluster-db-revisions-message
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-state-fault
+  take form invalid-cluster-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-cluster-db-revisions, name <POST_DescribeClusterDbRevisions>
+  note <Returns an array of `ClusterDbRevision` objects.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-cluster-db-revisions-message, like describe-cluster-db-revisions-message
+    void take
+
+  line </#Action=DescribeClusterDbRevisions>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-cluster-db-revisions-message
+
+  loot 200
+    seed xml, like cluster-db-revisions-message
+    note <Success>
+  loot 480
+    seed xml, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 481
+    seed xml, like invalid-cluster-state-fault
+    note <InvalidClusterStateFault>

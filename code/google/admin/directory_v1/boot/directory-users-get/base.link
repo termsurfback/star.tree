@@ -1,0 +1,35 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/admin/directory_v1/base/user
+  take form user
+
+boot directory-users-get, name <directory.users.get>
+  note <Retrieves a user.>
+
+  take user-key
+    like native-string
+    note <Identifies the user in the API request. The value can be the user's primary email address, alias email address, or unique user ID.>
+  take custom-field-mask
+    like native-string
+    note <A comma-separated list of schema names. All fields from these schemas are fetched. This should only be set when `projection=custom`.>
+    void take
+  take projection
+    like native-string
+    note <What subset of fields to fetch for this user.>
+    void take
+  take view-type
+    like native-string
+    note <Whether to fetch the administrator-only or domain-wide public view of the user. For more information, see [Retrieve a user as a non-administrator](/admin-sdk/directory/v1/guides/manage-users#retrieve_users_non_admin).>
+    void take
+
+  line </admin/directory/v1/users/{user-key}>
+
+  find <customFieldMask>, loan custom-field-mask
+  find <projection>, loan projection
+  find <viewType>, loan view-type
+
+  loot 200
+    seed json, like user
+    note <Successful response>

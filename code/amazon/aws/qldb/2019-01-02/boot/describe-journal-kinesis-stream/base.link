@@ -1,0 +1,42 @@
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/describe-journal-kinesis-stream-response
+  take form describe-journal-kinesis-stream-response
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/resource-precondition-not-met-exception
+  take form resource-precondition-not-met-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-journal-kinesis-stream, name <DescribeJournalKinesisStream>
+  note <Returns detailed information about a given Amazon QLDB journal stream. The output includes the Amazon Resource Name (ARN), stream name, current status, creation time, and the parameters of the original stream creation request.
+
+This action does not return any expired journal streams. For more information, see [Expiration for terminal streams](https://docs.aws.amazon.com/qldb/latest/developerguide/streams.create.html#streams.create.states.expiration) in the _Amazon QLDB Developer Guide_.>
+
+  take name
+    like native-string
+    note <The name of the ledger.>
+  take stream-id
+    like native-string
+    note <The UUID (represented in Base62-encoded text) of the QLDB journal stream to describe.>
+
+  line </ledgers/{name}/journal-kinesis-streams/{stream-id}>
+
+  loot 200
+    seed json, like describe-journal-kinesis-stream-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like resource-precondition-not-met-exception
+    note <ResourcePreconditionNotMetException>

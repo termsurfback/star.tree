@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/get-resource-policy-output
+  take form get-resource-policy-output
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-resource-policy, name <GetResourcePolicy>
+  note <Gets a resource policy that is identified by its resource ARN.>
+
+  take x-amz-target
+    like native-string
+  take get-resource-policy-input, like get-resource-policy-input
+
+  line </#X-Amz-Target=CodeBuild_20161006.GetResourcePolicy>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-resource-policy-input
+
+  loot 200
+    seed json, like get-resource-policy-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-input-exception
+    note <InvalidInputException>

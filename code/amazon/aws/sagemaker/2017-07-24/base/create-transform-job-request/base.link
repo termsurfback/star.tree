@@ -1,0 +1,99 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/batch-strategy
+  take form batch-strategy
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/data-processing
+  take form data-processing
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/experiment-config
+  take form experiment-config
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/max-concurrent-transforms
+  take form max-concurrent-transforms
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/max-payload-in-mb
+  take form max-payload-in-mb
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/model-client-config
+  take form model-client-config
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/model-name
+  take form model-name
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/tag-list
+  take form tag-list
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/transform-environment-map
+  take form transform-environment-map
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/transform-input
+  take form transform-input
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/transform-job-name
+  take form transform-job-name
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/transform-output
+  take form transform-output
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/transform-resources
+  take form transform-resources
+
+form create-transform-job-request, name <CreateTransformJobRequest>
+  take transform-job-name, name <TransformJobName>
+    like transform-job-name
+    note <The name of the transform job. The name must be unique within an Amazon Web Services Region in an Amazon Web Services account.>
+  take model-name, name <ModelName>
+    like model-name
+    note <The name of the model that you want to use for the transform job. `ModelName` must be the name of an existing Amazon SageMaker model within an Amazon Web Services Region in an Amazon Web Services account.>
+  take max-concurrent-transforms, name <MaxConcurrentTransforms>
+    like max-concurrent-transforms
+    void take
+    note <The maximum number of parallel requests that can be sent to each instance in a transform job. If `MaxConcurrentTransforms` is set to `0` or left unset, Amazon SageMaker checks the optional execution-parameters to determine the settings for your chosen algorithm. If the execution-parameters endpoint is not enabled, the default value is `1`. For more information on execution-parameters, see [How Containers Serve Requests](https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms-batch-code.html#your-algorithms-batch-code-how-containe-serves-requests). For built-in algorithms, you don't need to set a value for `MaxConcurrentTransforms`.>
+  take model-client-config, name <ModelClientConfig>
+    like model-client-config
+    void take
+    note <Configures the timeout and maximum number of retries for processing a transform job invocation.>
+  take max-payload-in-mb, name <MaxPayloadInMB>
+    like max-payload-in-mb
+    void take
+    note <The maximum allowed size of the payload, in MB. A _payload_ is the data portion of a record (without metadata). The value in `MaxPayloadInMB` must be greater than, or equal to, the size of a single record. To estimate the size of a record in MB, divide the size of your dataset by the number of records. To ensure that the records fit within the maximum payload size, we recommend using a slightly larger value. The default value is `6` MB.
+
+For cases where the payload might be arbitrarily large and is transmitted using HTTP chunked encoding, set the value to `0`. This feature works only in supported algorithms. Currently, Amazon SageMaker built-in algorithms do not support HTTP chunked encoding.>
+  take batch-strategy, name <BatchStrategy>
+    like batch-strategy
+    void take
+    note <Specifies the number of records to include in a mini-batch for an HTTP inference request. A _record_ _is a single unit of input data that inference can be made on. For example, a single line in a CSV file is a record._
+
+_
+
+To enable the batch strategy, you must set the `SplitType` property to `Line`, `RecordIO`, or `TFRecord`.
+
+To use only one record when making an HTTP invocation request to a container, set `BatchStrategy` to `SingleRecord` and `SplitType` to `Line`.
+
+To fit as many records in a mini-batch as can fit within the `MaxPayloadInMB` limit, set `BatchStrategy` to `MultiRecord` and `SplitType` to `Line`.
+
+_>
+  take environment, name <Environment>
+    like transform-environment-map
+    void take
+    note <The environment variables to set in the Docker container. We support up to 16 key and values entries in the map.>
+  take transform-input, name <TransformInput>
+    like transform-input
+    note <Describes the input source and the way the transform job consumes it.>
+  take transform-output, name <TransformOutput>
+    like transform-output
+    note <Describes the results of the transform job.>
+  take transform-resources, name <TransformResources>
+    like transform-resources
+    note <Describes the resources, including ML instance types and ML instance count, to use for the transform job.>
+  take data-processing, name <DataProcessing>
+    like data-processing
+    void take
+    note <The data structure used to specify the data to be used for inference in a batch transform job and to associate the data that is relevant to the prediction results in the output. The input filter provided allows you to exclude input data that is not needed for inference in a batch transform job. The output filter provided allows you to include input data relevant to interpreting the predictions in the output from the job. For more information, see [Associate Prediction Results with their Corresponding Input Records](https://docs.aws.amazon.com/sagemaker/latest/dg/batch-transform-data-processing.html).>
+  take tags, name <Tags>
+    like tag-list
+    void take
+    note <(Optional) An array of key-value pairs. For more information, see [Using Cost Allocation Tags](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html#allocation-what) in the _Amazon Web Services Billing and Cost Management User Guide_.>
+  take experiment-config, name <ExperimentConfig>
+    like experiment-config
+    void take

@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/cancel-command-result
+  take form cancel-command-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/duplicate-instance-id
+  take form duplicate-instance-id
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-command-id
+  take form invalid-command-id
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-instance-id
+  take form invalid-instance-id
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot cancel-command, name <CancelCommand>
+  note <Attempts to cancel the command specified by the Command ID. There is no guarantee that the command will be terminated and the underlying process stopped.>
+
+  take x-amz-target
+    like native-string
+  take cancel-command-request, like cancel-command-request
+
+  line </#X-Amz-Target=AmazonSSM.CancelCommand>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan cancel-command-request
+
+  loot 200
+    seed json, like cancel-command-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like invalid-command-id
+    note <InvalidCommandId>
+  loot 482
+    seed json, like invalid-instance-id
+    note <InvalidInstanceId>
+  loot 483
+    seed json, like duplicate-instance-id
+    note <DuplicateInstanceId>

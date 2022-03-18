@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-fast-snapshot-restores-result
+  take form describe-fast-snapshot-restores-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-fast-snapshot-restores, name <GET_DescribeFastSnapshotRestores>
+  note <Describes the state of fast snapshot restores for your snapshots.>
+
+  take filter
+    like list
+      like filter
+    note <The filters. The possible values are:
+
+- `availability-zone`: The Availability Zone of the snapshot.
+
+- `owner-id`: The ID of the Amazon Web Services account that enabled fast snapshot restore on the snapshot.
+
+- `snapshot-id`: The ID of the snapshot.
+
+- `state`: The state of fast snapshot restores for the snapshot (`enabling` | `optimizing` | `enabled` | `disabling` | `disabled`).>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return with a single call. To retrieve the remaining results, make another call with the returned `nextToken` value.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next page of results.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeFastSnapshotRestores>
+
+  find <Filter>, loan filter
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <DryRun>, loan dry-run
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-fast-snapshot-restores-result
+    note <Success>

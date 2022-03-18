@@ -1,0 +1,52 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/gmail/v1/base/list-history-response
+  take form list-history-response
+
+boot gmail-users-history-list, name <gmail.users.history.list>
+  note <Lists the history of all changes to the given mailbox. History results are returned in chronological order (increasing `historyId`).>
+
+  take user-id
+    like native-string
+    note <The user's email address. The special value `me` can be used to indicate the authenticated user.>
+  take history-types
+    like list
+      like native-string
+    note <History types to be returned by the function>
+    void take
+  take label-id
+    like native-string
+    note <Only return messages with a label matching the ID.>
+    void take
+  take max-results
+    like native-integer
+    note <Maximum number of history records to return. This field defaults to 100. The maximum allowed value for this field is 500.>
+    void take
+  take page-token
+    like native-string
+    note <Page token to retrieve a specific page of results in the list.>
+    void take
+  take start-history-id
+    like native-string
+    note <Required. Returns history records after the specified `startHistoryId`. The supplied `startHistoryId` should be obtained from the `historyId` of a message, thread, or previous `list` response. History IDs increase chronologically but are not contiguous with random gaps in between valid IDs. Supplying an invalid or out of date `startHistoryId` typically returns an `HTTP 404` error code. A `historyId` is typically valid for at least a week, but in some rare circumstances may be valid for only a few hours. If you receive an `HTTP 404` error response, your application should perform a full sync. If you receive no `nextPageToken` in the response, there are no updates to retrieve and you can store the returned `historyId` for a future request.>
+    void take
+
+  line </gmail/v1/users/{user-id}/history>
+
+  find <historyTypes>, loan history-types
+  find <labelId>, loan label-id
+  find <maxResults>, loan max-results
+  find <pageToken>, loan page-token
+  find <startHistoryId>, loan start-history-id
+
+  loot 200
+    seed json, like list-history-response
+    note <Successful response>

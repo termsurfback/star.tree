@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/migrationhub-config/2019-06-30/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/migrationhub-config/2019-06-30/base/get-home-region-result
+  take form get-home-region-result
+
+load @drumwork/snow/amazonaws.com/migrationhub-config/2019-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/migrationhub-config/2019-06-30/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/migrationhub-config/2019-06-30/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/migrationhub-config/2019-06-30/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-home-region, name <GetHomeRegion>
+  note <Returns the calling account’s home region, if configured. This API is used by other AWS services to determine the regional endpoint for calling AWS Application Discovery Service and Migration Hub. You must call `GetHomeRegion` at least once before you call any other AWS Application Discovery Service and AWS Migration Hub APIs, to obtain the account's Migration Hub home region.>
+
+  take x-amz-target
+    like native-string
+  take get-home-region-request, like get-home-region-request
+
+  line </#X-Amz-Target=AWSMigrationHubMultiAccountService.GetHomeRegion>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-home-region-request
+
+  loot 200
+    seed json, like get-home-region-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like invalid-input-exception
+    note <InvalidInputException>

@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/scaling-activity-in-progress-fault
+  take form scaling-activity-in-progress-fault
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-set-desired-capacity, name <GET_SetDesiredCapacity>
+  note <Sets the size of the specified Auto Scaling group.
+
+If a scale-in activity occurs as a result of a new `DesiredCapacity` value that is lower than the current size of the group, the Auto Scaling group uses its termination policy to determine which instances to terminate.
+
+For more information, see [Manual scaling](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-manual-scaling.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+
+  take auto-scaling-group-name
+    like native-string
+    note <The name of the Auto Scaling group.>
+  take desired-capacity
+    like native-integer
+    note <The desired capacity is the initial capacity of the Auto Scaling group after this operation completes and the capacity it attempts to maintain.>
+  take honor-cooldown
+    like native-boolean
+    note <Indicates whether Amazon EC2 Auto Scaling waits for the cooldown period to complete before initiating a scaling activity to set your Auto Scaling group to its new capacity. By default, Amazon EC2 Auto Scaling does not honor the cooldown period during manual scaling activities.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=SetDesiredCapacity>
+
+  find <AutoScalingGroupName>, loan auto-scaling-group-name
+  find <DesiredCapacity>, loan desired-capacity
+  find <HonorCooldown>, loan honor-cooldown
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like scaling-activity-in-progress-fault
+    note <ScalingActivityInProgressFault>
+  loot 481
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

@@ -1,0 +1,117 @@
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/blob
+  take form blob
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/environment-variables-map
+  take form environment-variables-map
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/max-fifteen-minutes-in-seconds
+  take form max-fifteen-minutes-in-seconds
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/max-one-year-in-seconds
+  take form max-one-year-in-seconds
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/max-size3008
+  take form max-size3008
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/nullable-boolean
+  take form nullable-boolean
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/security-group-ids
+  take form security-group-ids
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/subnet-ids
+  take form subnet-ids
+
+load @drumwork/snow/base/string
+  take form string
+
+form create-canary-body
+  take name, name <Name>
+  take code, name <Code>
+    like form
+      take s3-bucket, name <S3Bucket>
+        like string
+        void take
+        note <If your canary script is located in S3, specify the bucket name here. Do not include `s3://` as the start of the bucket name.>
+      take s3-key, name <S3Key>
+        like string
+        void take
+        note <The S3 key of your script. For more information, see [Working with Amazon S3 Objects](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingObjects.html).>
+      take s3-version, name <S3Version>
+        like string
+        void take
+        note <The S3 version ID of your script.>
+      take zip-file, name <ZipFile>
+        like blob
+        void take
+        note <If you input your canary script directly into the canary instead of referring to an S3 location, the value of this parameter is the base64-encoded contents of the .zip file that contains the script. It must be smaller than 256 Kb.>
+      take handler, name <Handler>
+        like string
+        void take
+        note <The entry point to use for the source code when running the canary. This value must end with the string `.handler`. The string is limited to 29 characters or fewer.>
+  take artifact-s3-location, name <ArtifactS3Location>
+  take execution-role-arn, name <ExecutionRoleArn>
+  take schedule, name <Schedule>
+    like form
+      take expression, name <Expression>
+        like string
+        void take
+        note <A `rate` expression or a `cron` expression that defines how often the canary is to run.
+
+For a rate expression, The syntax is `rate(_number unit_)`. _unit_ can be `minute`, `minutes`, or `hour`.
+
+For example, `rate(1 minute)` runs the canary once a minute, `rate(10 minutes)` runs it once every 10 minutes, and `rate(1 hour)` runs it once every hour. You can specify a frequency between `rate(1 minute)` and `rate(1 hour)`.
+
+Specifying `rate(0 minute)` or `rate(0 hour)` is a special value that causes the canary to run only once when it is started.
+
+Use `cron(_expression_)` to specify a cron expression. You can't schedule a canary to wait for more than a year before running. For information about the syntax for cron expressions, see [Scheduling canary runs using cron](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_cron.html).>
+      take duration-in-seconds, name <DurationInSeconds>
+        like max-one-year-in-seconds
+        void take
+        note <How long, in seconds, for the canary to continue making regular runs according to the schedule in the `Expression` value. If you specify 0, the canary continues making runs until you stop it. If you omit this field, the default of 0 is used.>
+  take run-config, name <RunConfig>
+    like form
+      take timeout-in-seconds, name <TimeoutInSeconds>
+        like max-fifteen-minutes-in-seconds
+        void take
+        note <How long the canary is allowed to run before it must stop. You can't set this time to be longer than the frequency of the runs of this canary.
+
+If you omit this field, the frequency of the canary is used as this value, up to a maximum of 14 minutes.>
+      take memory-in-mb, name <MemoryInMB>
+        like max-size3008
+        void take
+        note <The maximum amount of memory available to the canary while it is running, in MB. This value must be a multiple of 64.>
+      take active-tracing, name <ActiveTracing>
+        like nullable-boolean
+        void take
+        note <Specifies whether this canary is to use active X-Ray tracing when it runs. Active tracing enables this canary run to be displayed in the ServiceLens and X-Ray service maps even if the canary does not hit an endpoint that has X-Ray tracing enabled. Using X-Ray tracing incurs charges. For more information, see [Canaries and X-Ray tracing](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_tracing.html).
+
+You can enable active tracing only for canaries that use version `syn-nodejs-2.0` or later for their canary runtime.>
+      take environment-variables, name <EnvironmentVariables>
+        like environment-variables-map
+        void take
+        note <Specifies the keys and values to use for any environment variables used in the canary script. Use the following format:
+
+{ "key1" : "value1", "key2" : "value2", ...}
+
+Keys must start with a letter and be at least two characters. The total size of your environment variables cannot exceed 4 KB. You can't specify any Lambda reserved environment variables as the keys for your environment variables. For more information about reserved keys, see [Runtime environment variables](https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html#configuration-envvars-runtime).>
+    void take
+  take success-retention-period-in-days, name <SuccessRetentionPeriodInDays>
+    void take
+  take failure-retention-period-in-days, name <FailureRetentionPeriodInDays>
+    void take
+  take runtime-version, name <RuntimeVersion>
+  take vpc-config, name <VpcConfig>
+    like form
+      take subnet-ids, name <SubnetIds>
+        like subnet-ids
+        void take
+        note <The IDs of the subnets where this canary is to run.>
+      take security-group-ids, name <SecurityGroupIds>
+        like security-group-ids
+        void take
+        note <The IDs of the security groups for this canary.>
+    void take
+  take tags, name <Tags>
+    void take

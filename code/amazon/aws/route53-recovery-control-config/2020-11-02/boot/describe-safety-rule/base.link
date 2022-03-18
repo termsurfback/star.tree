@@ -1,0 +1,31 @@
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/describe-safety-rule-response
+  take form describe-safety-rule-response
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/route53-recovery-control-config/2020-11-02/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-safety-rule, name <DescribeSafetyRule>
+  note <Describes the safety rules (that is, the assertion rules and gating rules) for the routing controls in a control panel.>
+
+  take safety-rule-arn
+    like native-string
+    note <The request body that you include when you update a safety rule.>
+
+  line </safetyrule/{safety-rule-arn}>
+
+  loot 200
+    seed json, like describe-safety-rule-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

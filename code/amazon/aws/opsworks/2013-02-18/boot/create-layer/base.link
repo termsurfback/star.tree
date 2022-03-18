@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/opsworks/2013-02-18/base/create-layer-result
+  take form create-layer-result
+
+load @drumwork/snow/amazonaws.com/opsworks/2013-02-18/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/opsworks/2013-02-18/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-layer, name <CreateLayer>
+  note <Creates a layer. For more information, see [How to Create a Layer](https://docs.aws.amazon.com/opsworks/latest/userguide/workinglayers-basics-create.html).
+
+You should use **CreateLayer** for noncustom layer types such as PHP App Server only if the stack does not have an existing layer of that type. A stack can have at most one instance of each noncustom layer; if you attempt to create a second instance, **CreateLayer** fails. A stack can have an arbitrary number of custom layers, so you can call **CreateLayer** as many times as you like for that layer type.
+
+**Required Permissions**: To use this action, an IAM user must have a Manage permissions level for the stack, or an attached policy that explicitly grants permissions. For more information on user permissions, see [Managing User Permissions](https://docs.aws.amazon.com/opsworks/latest/userguide/opsworks-security-users.html).>
+
+  take x-amz-target
+    like native-string
+  take create-layer-request, like create-layer-request
+
+  line </#X-Amz-Target=OpsWorks_20130218.CreateLayer>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-layer-request
+
+  loot 200
+    seed json, like create-layer-result
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

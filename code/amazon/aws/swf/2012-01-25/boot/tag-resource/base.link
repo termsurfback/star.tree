@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/limit-exceeded-fault
+  take form limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/operation-not-permitted-fault
+  take form operation-not-permitted-fault
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/too-many-tags-fault
+  take form too-many-tags-fault
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/unknown-resource-fault
+  take form unknown-resource-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot tag-resource, name <TagResource>
+  note <Add a tag to a Amazon SWF domain.
+
+Amazon SWF supports a maximum of 50 tags per resource.>
+
+  take x-amz-target
+    like native-string
+  take tag-resource-input, like tag-resource-input
+
+  line </#X-Amz-Target=SimpleWorkflowService.TagResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan tag-resource-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like unknown-resource-fault
+    note <UnknownResourceFault>
+  loot 481
+    seed json, like too-many-tags-fault
+    note <TooManyTagsFault>
+  loot 482
+    seed json, like limit-exceeded-fault
+    note <LimitExceededFault>
+  loot 483
+    seed json, like operation-not-permitted-fault
+    note <OperationNotPermittedFault>

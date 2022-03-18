@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/groundstation/2019-05-23/base/dependency-exception
+  take form dependency-exception
+
+load @drumwork/snow/amazonaws.com/groundstation/2019-05-23/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/groundstation/2019-05-23/base/list-ground-stations-response
+  take form list-ground-stations-response
+
+load @drumwork/snow/amazonaws.com/groundstation/2019-05-23/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-ground-stations, name <ListGroundStations>
+  note <Returns a list of ground stations.>
+
+  take max-results
+    like native-integer
+    note <Maximum number of ground stations returned.>
+    void take
+  take next-token
+    like native-string
+    note <Next token that can be supplied in the next call to get the next page of ground stations.>
+    void take
+  take satellite-id
+    like native-string
+    note <Satellite ID to retrieve on-boarded ground stations.>
+    void take
+
+  line </groundstation>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+  find <satelliteId>, loan satellite-id
+
+  loot 200
+    seed json, like list-ground-stations-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like dependency-exception
+    note <DependencyException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

@@ -1,0 +1,87 @@
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/describe-account-customization-response
+  take form describe-account-customization-response
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/resource-unavailable-exception
+  take form resource-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-account-customization, name <DescribeAccountCustomization>
+  note <Describes the customizations associated with the provided Amazon Web Services account and Amazon Amazon QuickSight namespace in an Amazon Web Services Region;. The Amazon QuickSight console evaluates which customizations to apply by running this API operation with the `Resolved` flag included.
+
+To determine what customizations display when you run this command, it can help to visualize the relationship of the entities involved.
+
+- `Amazon Web Services account` - The Amazon Web Services account exists at the top of the hierarchy. It has the potential to use all of the Amazon Web Services Regions; and AWS Services. When you subscribe to Amazon QuickSight, you choose one Amazon Web Services Region; to use as your home Region. That's where your free SPICE capacity is located. You can use Amazon QuickSight in any supported Amazon Web Services Region;.
+
+- `Amazon Web Services Region;` - In each Amazon Web Services Region; where you sign in to Amazon QuickSight at least once, Amazon QuickSight acts as a separate instance of the same service. If you have a user directory, it resides in us-east-1, which is the US East (N. Virginia). Generally speaking, these users have access to Amazon QuickSight in any Amazon Web Services Region;, unless they are constrained to a namespace.
+
+  To run the command in a different Amazon Web Services Region;, you change your Region settings. If you're using the AWS CLI, you can use one of the following options:
+
+  - Use [command line options](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-options.html).
+
+  - Use [named profiles](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html).
+
+  - Run `aws configure` to change your default Amazon Web Services Region;. Use Enter to key the same settings for your keys. For more information, see [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html).
+
+- `Namespace` - A Amazon QuickSight namespace is a partition that contains users and assets (data sources, datasets, dashboards, and so on). To access assets that are in a specific namespace, users and groups must also be part of the same namespace. People who share a namespace are completely isolated from users and assets in other namespaces, even if they are in the same Amazon Web Services account and Amazon Web Services Region;.
+
+- `Applied customizations` - Within an Amazon Web Services Region;, a set of Amazon QuickSight customizations can apply to an Amazon Web Services account or to a namespace. Settings that you apply to a namespace override settings that you apply to an Amazon Web Services account. All settings are isolated to a single Amazon Web Services Region;. To apply them in other Amazon Web Services Regions;, run the `CreateAccountCustomization` command in each Amazon Web Services Region; where you want to apply the same customizations.>
+
+  take aws-account-id
+    like native-string
+    note <The ID for the Amazon Web Services account that you want to describe Amazon QuickSight customizations for.>
+  take namespace
+    like native-string
+    note <The Amazon QuickSight namespace that you want to describe Amazon QuickSight customizations for.>
+    void take
+  take resolved
+    like native-boolean
+    note <The `Resolved` flag works with the other parameters to determine which view of Amazon QuickSight customizations is returned. You can add this flag to your command to use the same view that Amazon QuickSight uses to identify which customizations to apply to the console. Omit this flag, or set it to `no-resolved`, to reveal customizations that are configured at different levels.>
+    void take
+
+  line </accounts/{aws-account-id}/customizations>
+
+  find <namespace>, loan namespace
+  find <resolved>, loan resolved
+
+  loot 200
+    seed json, like describe-account-customization-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 485
+    seed json, like resource-unavailable-exception
+    note <ResourceUnavailableException>

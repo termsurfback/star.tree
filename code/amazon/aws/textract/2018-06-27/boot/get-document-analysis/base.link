@@ -1,0 +1,87 @@
+
+load @drumwork/snow/amazonaws.com/textract/2018-06-27/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/textract/2018-06-27/base/get-document-analysis-response
+  take form get-document-analysis-response
+
+load @drumwork/snow/amazonaws.com/textract/2018-06-27/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/textract/2018-06-27/base/invalid-job-id-exception
+  take form invalid-job-id-exception
+
+load @drumwork/snow/amazonaws.com/textract/2018-06-27/base/invalid-kms-key-exception
+  take form invalid-kms-key-exception
+
+load @drumwork/snow/amazonaws.com/textract/2018-06-27/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/textract/2018-06-27/base/invalid-s3-object-exception
+  take form invalid-s3-object-exception
+
+load @drumwork/snow/amazonaws.com/textract/2018-06-27/base/provisioned-throughput-exceeded-exception
+  take form provisioned-throughput-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/textract/2018-06-27/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-document-analysis, name <GetDocumentAnalysis>
+  note <Gets the results for an Amazon Textract asynchronous operation that analyzes text in a document.
+
+You start asynchronous text analysis by calling StartDocumentAnalysis, which returns a job identifier (`JobId`). When the text analysis operation finishes, Amazon Textract publishes a completion status to the Amazon Simple Notification Service (Amazon SNS) topic that's registered in the initial call to `StartDocumentAnalysis`. To get the results of the text-detection operation, first check that the status value published to the Amazon SNS topic is `SUCCEEDED`. If so, call `GetDocumentAnalysis`, and pass the job identifier (`JobId`) from the initial call to `StartDocumentAnalysis`.
+
+`GetDocumentAnalysis` returns an array of Block objects. The following types of information are returned:
+
+- Form data (key-value pairs). The related information is returned in two Block objects, each of type `KEY_VALUE_SET`: a KEY `Block` object and a VALUE `Block` object. For example, _Name: Ana Silva Carolina_ contains a key and value. _Name:_ is the key. _Ana Silva Carolina_ is the value.
+
+- Table and table cell data. A TABLE `Block` object contains information about a detected table. A CELL `Block` object is returned for each cell in a table.
+
+- Lines and words of text. A LINE `Block` object contains one or more WORD `Block` objects. All lines and words that are detected in the document are returned (including text that doesn't have a relationship with the value of the `StartDocumentAnalysis` `FeatureTypes` input parameter).
+
+Selection elements such as check boxes and option buttons (radio buttons) can be detected in form data and in tables. A SELECTION_ELEMENT `Block` object contains information about a selection element, including the selection status.
+
+Use the `MaxResults` parameter to limit the number of blocks that are returned. If there are more results than specified in `MaxResults`, the value of `NextToken` in the operation response contains a pagination token for getting the next set of results. To get the next page of results, call `GetDocumentAnalysis`, and populate the `NextToken` request parameter with the token value that's returned from the previous call to `GetDocumentAnalysis`.
+
+For more information, see [Document Text Analysis](https://docs.aws.amazon.com/textract/latest/dg/how-it-works-analyzing.html).>
+
+  take x-amz-target
+    like native-string
+  take get-document-analysis-request, like get-document-analysis-request
+
+  line </#X-Amz-Target=Textract.GetDocumentAnalysis>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-document-analysis-request
+
+  loot 200
+    seed json, like get-document-analysis-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like provisioned-throughput-exceeded-exception
+    note <ProvisionedThroughputExceededException>
+  loot 483
+    seed json, like invalid-job-id-exception
+    note <InvalidJobIdException>
+  loot 484
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 485
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 486
+    seed json, like invalid-s3-object-exception
+    note <InvalidS3ObjectException>
+  loot 487
+    seed json, like invalid-kms-key-exception
+    note <InvalidKMSKeyException>

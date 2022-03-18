@@ -1,0 +1,73 @@
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/duplicate-request
+  take form duplicate-request
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/register-instance-response
+  take form register-instance-response
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/resource-in-use
+  take form resource-in-use
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/resource-limit-exceeded
+  take form resource-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/servicediscovery/2017-03-14/base/service-not-found
+  take form service-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot register-instance, name <RegisterInstance>
+  note <Creates or updates one or more records and, optionally, creates a health check based on the settings in a specified service. When you submit a `RegisterInstance` request, the following occurs:
+
+- For each DNS record that you define in the service that's specified by `ServiceId`, a record is created or updated in the hosted zone that's associated with the corresponding namespace.
+
+- If the service includes `HealthCheckConfig`, a health check is created based on the settings in the health check configuration.
+
+- The health check, if any, is associated with each of the new or updated records.
+
+One `RegisterInstance` request must complete before you can submit another request and specify the same service ID and instance ID.
+
+For more information, see [CreateService](https://docs.aws.amazon.com/cloud-map/latest/api/API_CreateService.html).
+
+When Cloud Map receives a DNS query for the specified DNS name, it returns the applicable value:
+
+- **If the health check is healthy**: returns all the records
+
+- **If the health check is unhealthy**: returns the applicable value for the last healthy instance
+
+- **If you didn't specify a health check configuration**: returns all the records
+
+For the current quota on the number of instances that you can register using the same namespace and using the same service, see [Cloud Map quotas](https://docs.aws.amazon.com/cloud-map/latest/dg/cloud-map-limits.html) in the _Cloud Map Developer Guide_.>
+
+  take x-amz-target
+    like native-string
+  take register-instance-request, like register-instance-request
+
+  line </#X-Amz-Target=Route53AutoNaming_v20170314.RegisterInstance>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan register-instance-request
+
+  loot 200
+    seed json, like register-instance-response
+    note <Success>
+  loot 480
+    seed json, like duplicate-request
+    note <DuplicateRequest>
+  loot 481
+    seed json, like invalid-input
+    note <InvalidInput>
+  loot 482
+    seed json, like resource-in-use
+    note <ResourceInUse>
+  loot 483
+    seed json, like resource-limit-exceeded
+    note <ResourceLimitExceeded>
+  loot 484
+    seed json, like service-not-found
+    note <ServiceNotFound>

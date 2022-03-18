@@ -1,0 +1,31 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/payout
+  take form payout
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-payouts-payout-body
+  take form post-payouts-payout-body
+
+boot post-payouts-payout, name <PostPayoutsPayout>
+  note <Updates the specified payout by setting the values of the parameters passed. Any parameters not provided will be left unchanged. This request accepts only the metadata as arguments.>
+
+  take payout
+    like native-string
+  take post-payouts-payout-body, like post-payouts-payout-body
+    void take
+
+  line </v1/payouts/{payout}>
+
+  seed x-www-form-urlencoded, loan post-payouts-payout-body
+
+  loot 200
+    seed json, like payout
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

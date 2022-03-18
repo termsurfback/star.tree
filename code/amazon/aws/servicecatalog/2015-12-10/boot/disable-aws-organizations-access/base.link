@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/disable-aws-organizations-access-output
+  take form disable-aws-organizations-access-output
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/invalid-state-exception
+  take form invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/operation-not-supported-exception
+  take form operation-not-supported-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot disable-aws-organizations-access, name <DisableAWSOrganizationsAccess>
+  note <Disable portfolio sharing through AWS Organizations feature. This feature will not delete your current shares but it will prevent you from creating new shares throughout your organization. Current shares will not be in sync with your organization structure if it changes after calling this API. This API can only be called by the management account in the organization.
+
+This API can't be invoked if there are active delegated administrators in the organization.
+
+Note that a delegated administrator is not authorized to invoke `DisableAWSOrganizationsAccess`.>
+
+  take x-amz-target
+    like native-string
+  take disable-aws-organizations-access-input, like disable-aws-organizations-access-input
+
+  line </#X-Amz-Target=AWS242ServiceCatalogService.DisableAWSOrganizationsAccess>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan disable-aws-organizations-access-input
+
+  loot 200
+    seed json, like disable-aws-organizations-access-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-state-exception
+    note <InvalidStateException>
+  loot 482
+    seed json, like operation-not-supported-exception
+    note <OperationNotSupportedException>

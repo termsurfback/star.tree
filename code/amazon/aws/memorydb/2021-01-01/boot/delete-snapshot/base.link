@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/delete-snapshot-response
+  take form delete-snapshot-response
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/invalid-snapshot-state-fault
+  take form invalid-snapshot-state-fault
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/service-linked-role-not-found-fault
+  take form service-linked-role-not-found-fault
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/snapshot-not-found-fault
+  take form snapshot-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-snapshot, name <DeleteSnapshot>
+  note <Deletes an existing snapshot. When you receive a successful response from this operation, MemoryDB immediately begins deleting the snapshot; you cannot cancel or revert this operation.>
+
+  take x-amz-target
+    like native-string
+  take delete-snapshot-request, like delete-snapshot-request
+
+  line </#X-Amz-Target=AmazonMemoryDB.DeleteSnapshot>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-snapshot-request
+
+  loot 200
+    seed json, like delete-snapshot-response
+    note <Success>
+  loot 480
+    seed json, like snapshot-not-found-fault
+    note <SnapshotNotFoundFault>
+  loot 481
+    seed json, like invalid-snapshot-state-fault
+    note <InvalidSnapshotStateFault>
+  loot 482
+    seed json, like service-linked-role-not-found-fault
+    note <ServiceLinkedRoleNotFoundFault>
+  loot 483
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 484
+    seed json, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/iotdeviceadvisor/2020-09-18/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/iotdeviceadvisor/2020-09-18/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/iotdeviceadvisor/2020-09-18/base/start-suite-run-body
+  take form start-suite-run-body
+
+load @drumwork/snow/amazonaws.com/iotdeviceadvisor/2020-09-18/base/start-suite-run-response
+  take form start-suite-run-response
+
+load @drumwork/snow/amazonaws.com/iotdeviceadvisor/2020-09-18/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-suite-run, name <StartSuiteRun>
+  note <Starts a Device Advisor test suite run.>
+
+  take suite-definition-id
+    like native-string
+    note <Suite definition Id of the test suite.>
+  take start-suite-run-body, like start-suite-run-body
+
+  line </suiteDefinitions/{suite-definition-id}/suiteRuns>
+
+  seed json, loan start-suite-run-body
+
+  loot 200
+    seed json, like start-suite-run-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like conflict-exception
+    note <ConflictException>

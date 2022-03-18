@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/network-firewall/2020-11-12/base/custom-actions
+  take form custom-actions
+
+load @drumwork/snow/amazonaws.com/network-firewall/2020-11-12/base/stateful-rule-group-references
+  take form stateful-rule-group-references
+
+load @drumwork/snow/amazonaws.com/network-firewall/2020-11-12/base/stateless-actions
+  take form stateless-actions
+
+load @drumwork/snow/amazonaws.com/network-firewall/2020-11-12/base/stateless-rule-group-references
+  take form stateless-rule-group-references
+
+form firewall-policy, name <FirewallPolicy>
+  note <The firewall policy defines the behavior of a firewall using a collection of stateless and stateful rule groups and other settings. You can use one firewall policy for multiple firewalls.
+
+This, along with FirewallPolicyResponse, define the policy. You can retrieve all objects for a firewall policy by calling DescribeFirewallPolicy.>
+  take stateless-rule-group-references, name <StatelessRuleGroupReferences>
+    like stateless-rule-group-references
+    void take
+    note <References to the stateless rule groups that are used in the policy. These define the matching criteria in stateless rules.>
+  take stateless-default-actions, name <StatelessDefaultActions>
+    like stateless-actions
+    note <The actions to take on a packet if it doesn't match any of the stateless rules in the policy. If you want non-matching packets to be forwarded for stateful inspection, specify `aws:forward_to_sfe`.
+
+You must specify one of the standard actions: `aws:pass`, `aws:drop`, or `aws:forward_to_sfe`. In addition, you can specify custom actions that are compatible with your standard section choice.
+
+For example, you could specify `["aws:pass"]` or you could specify `["aws:pass", “customActionName”]`. For information about compatibility, see the custom action descriptions under CustomAction.>
+  take stateless-fragment-default-actions, name <StatelessFragmentDefaultActions>
+    like stateless-actions
+    note <The actions to take on a fragmented UDP packet if it doesn't match any of the stateless rules in the policy. Network Firewall only manages UDP packet fragments and silently drops packet fragments for other protocols. If you want non-matching fragmented UDP packets to be forwarded for stateful inspection, specify `aws:forward_to_sfe`.
+
+You must specify one of the standard actions: `aws:pass`, `aws:drop`, or `aws:forward_to_sfe`. In addition, you can specify custom actions that are compatible with your standard section choice.
+
+For example, you could specify `["aws:pass"]` or you could specify `["aws:pass", “customActionName”]`. For information about compatibility, see the custom action descriptions under CustomAction.>
+  take stateless-custom-actions, name <StatelessCustomActions>
+    like custom-actions
+    void take
+    note <The custom action definitions that are available for use in the firewall policy's `StatelessDefaultActions` setting. You name each custom action that you define, and then you can use it by name in your default actions specifications.>
+  take stateful-rule-group-references, name <StatefulRuleGroupReferences>
+    like stateful-rule-group-references
+    void take
+    note <References to the stateless rule groups that are used in the policy. These define the inspection criteria in stateful rules.>

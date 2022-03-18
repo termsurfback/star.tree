@@ -1,0 +1,29 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-limit-exceeded
+  take form resource-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/update-notebook-instance-output
+  take form update-notebook-instance-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-notebook-instance, name <UpdateNotebookInstance>
+  note <Updates a notebook instance. NotebookInstance updates include upgrading or downgrading the ML compute instance used for your notebook instance to accommodate changes in your workload requirements.>
+
+  take x-amz-target
+    like native-string
+  take update-notebook-instance-input, like update-notebook-instance-input
+
+  line </#X-Amz-Target=SageMaker.UpdateNotebookInstance>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-notebook-instance-input
+
+  loot 200
+    seed json, like update-notebook-instance-output
+    note <Success>
+  loot 480
+    seed json, like resource-limit-exceeded
+    note <ResourceLimitExceeded>

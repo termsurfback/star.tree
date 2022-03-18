@@ -1,0 +1,78 @@
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/describe-theme-response
+  take form describe-theme-response
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/resource-exists-exception
+  take form resource-exists-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/unsupported-user-edition-exception
+  take form unsupported-user-edition-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-theme, name <DescribeTheme>
+  note <Describes a theme.>
+
+  take aws-account-id
+    like native-string
+    note <The ID of the Amazon Web Services account that contains the theme that you're describing.>
+  take theme-id
+    like native-string
+    note <The ID for the theme.>
+  take version-number
+    like native-integer
+    note <The version number for the version to describe. If a `VersionNumber` parameter value isn't provided, the latest version of the theme is described.>
+    void take
+  take alias-name
+    like native-string
+    note <The alias of the theme that you want to describe. If you name a specific alias, you describe the version that the alias points to. You can specify the latest version of the theme by providing the keyword `$LATEST` in the `AliasName` parameter. The keyword `$PUBLISHED` doesn't apply to themes.>
+    void take
+
+  line </accounts/{aws-account-id}/themes/{theme-id}>
+
+  find <version-number>, loan version-number
+  find <alias-name>, loan alias-name
+
+  loot 200
+    seed json, like describe-theme-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed json, like resource-exists-exception
+    note <ResourceExistsException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 484
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 485
+    seed json, like unsupported-user-edition-exception
+    note <UnsupportedUserEditionException>
+  loot 486
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

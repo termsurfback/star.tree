@@ -1,0 +1,73 @@
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/rotate-secret-response
+  take form rotate-secret-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot rotate-secret, name <RotateSecret>
+  note <Configures and starts the asynchronous process of rotating this secret. If you include the configuration parameters, the operation sets those values for the secret and then immediately starts a rotation. If you do not include the configuration parameters, the operation starts a rotation with the values already stored in the secret. After the rotation completes, the protected service and its clients all use the new version of the secret.
+
+This required configuration information includes the ARN of an Amazon Web Services Lambda function and optionally, the time between scheduled rotations. The Lambda rotation function creates a new version of the secret and creates or updates the credentials on the protected service to match. After testing the new credentials, the function marks the new secret with the staging label `AWSCURRENT` so that your clients all immediately begin to use the new version. For more information about rotating secrets and how to configure a Lambda function to rotate the secrets for your protected service, see [Rotating Secrets in Amazon Web Services Secrets Manager](https://docs.aws.amazon.com/secretsmanager/latest/userguide/rotating-secrets.html) in the _Amazon Web Services Secrets Manager User Guide_.
+
+Secrets Manager schedules the next rotation when the previous one completes. Secrets Manager schedules the date by adding the rotation interval (number of days) to the actual date of the last rotation. The service chooses the hour within that 24-hour date window randomly. The minute is also chosen somewhat randomly, but weighted towards the top of the hour and influenced by a variety of factors that help distribute load.
+
+The rotation function must end with the versions of the secret in one of two states:
+
+- The `AWSPENDING` and `AWSCURRENT` staging labels are attached to the same version of the secret, or
+
+- The `AWSPENDING` staging label is not attached to any version of the secret.
+
+If the `AWSPENDING` staging label is present but not attached to the same version as `AWSCURRENT` then any later invocation of `RotateSecret` assumes that a previous rotation request is still in progress and returns an error.
+
+**Minimum permissions** To run this command, you must have the following permissions:
+
+- secretsmanager:RotateSecret
+
+- lambda:InvokeFunction (on the function specified in the secret's metadata)
+
+**Related operations** - To list the secrets in your account, use ListSecrets.
+
+- To get the details for a version of a secret, use DescribeSecret.
+
+- To create a new version of a secret, use CreateSecret.
+
+- To attach staging labels to or remove staging labels from a version of a secret, use UpdateSecretVersionStage.>
+
+  take x-amz-target
+    like native-string
+  take rotate-secret-request, like rotate-secret-request
+
+  line </#X-Amz-Target=secretsmanager.RotateSecret>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan rotate-secret-request
+
+  loot 200
+    seed json, like rotate-secret-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 483
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

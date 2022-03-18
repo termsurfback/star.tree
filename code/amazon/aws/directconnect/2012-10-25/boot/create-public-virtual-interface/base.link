@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/direct-connect-client-exception
+  take form direct-connect-client-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/direct-connect-server-exception
+  take form direct-connect-server-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/duplicate-tag-keys-exception
+  take form duplicate-tag-keys-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/too-many-tags-exception
+  take form too-many-tags-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/virtual-interface
+  take form virtual-interface
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-public-virtual-interface, name <CreatePublicVirtualInterface>
+  note <Creates a public virtual interface. A virtual interface is the VLAN that transports Direct Connect traffic. A public virtual interface supports sending traffic to public services of Amazon Web Services such as Amazon S3.
+
+When creating an IPv6 public virtual interface (`addressFamily` is `ipv6`), leave the `customer` and `amazon` address fields blank to use auto-assigned IPv6 space. Custom IPv6 addresses are not supported.>
+
+  take x-amz-target
+    like native-string
+  take create-public-virtual-interface-request, like create-public-virtual-interface-request
+
+  line </#X-Amz-Target=OvertureService.CreatePublicVirtualInterface>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-public-virtual-interface-request
+
+  loot 200
+    seed json, like virtual-interface
+    note <Success>
+  loot 480
+    seed json, like duplicate-tag-keys-exception
+    note <DuplicateTagKeysException>
+  loot 481
+    seed json, like too-many-tags-exception
+    note <TooManyTagsException>
+  loot 482
+    seed json, like direct-connect-server-exception
+    note <DirectConnectServerException>
+  loot 483
+    seed json, like direct-connect-client-exception
+    note <DirectConnectClientException>

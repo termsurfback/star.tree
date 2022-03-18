@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/cancel-job-body
+  take form cancel-job-body
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/cancel-job-response
+  take form cancel-job-response
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot cancel-job, name <CancelJob>
+  note <Cancels a job.
+
+Requires permission to access the [CancelJob](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiot.html#awsiot-actions-as-permissions) action.>
+
+  take job-id
+    like native-string
+    note <The unique identifier you assigned to this job when it was created.>
+  take force
+    like native-boolean
+    note <(Optional) If `true` job executions with status "IN_PROGRESS" and "QUEUED" are canceled, otherwise only job executions with status "QUEUED" are canceled. The default is `false`.
+
+Canceling a job which is "IN_PROGRESS", will cause a device which is executing the job to be unable to update the job execution status. Use caution and ensure that each device executing a job which is canceled is able to recover to a valid state.>
+    void take
+  take cancel-job-body, like cancel-job-body
+
+  line </jobs/{job-id}/cancel>
+
+  find <force>, loan force
+
+  seed json, loan cancel-job-body
+
+  loot 200
+    seed json, like cancel-job-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>

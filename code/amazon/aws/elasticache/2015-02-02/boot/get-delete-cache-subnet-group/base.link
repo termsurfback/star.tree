@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-subnet-group-in-use
+  take form cache-subnet-group-in-use
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-subnet-group-not-found-fault
+  take form cache-subnet-group-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-cache-subnet-group, name <GET_DeleteCacheSubnetGroup>
+  note <Deletes a cache subnet group.
+
+You cannot delete a default cache subnet group or one that is associated with any clusters.>
+
+  take cache-subnet-group-name
+    like native-string
+    note <The name of the cache subnet group to delete.
+
+Constraints: Must contain no more than 255 alphanumeric characters or hyphens.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteCacheSubnetGroup>
+
+  find <CacheSubnetGroupName>, loan cache-subnet-group-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like cache-subnet-group-in-use
+    note <CacheSubnetGroupInUse>
+  loot 481
+    seed xml, like cache-subnet-group-not-found-fault
+    note <CacheSubnetGroupNotFoundFault>

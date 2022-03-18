@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/batch-delete-cluster-snapshots-result
+  take form batch-delete-cluster-snapshots-result
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/batch-delete-request-size-exceeded-fault
+  take form batch-delete-request-size-exceeded-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-batch-delete-cluster-snapshots, name <POST_BatchDeleteClusterSnapshots>
+  note <Deletes a set of cluster snapshots.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take batch-delete-cluster-snapshots-request, like batch-delete-cluster-snapshots-request
+    void take
+
+  line </#Action=BatchDeleteClusterSnapshots>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan batch-delete-cluster-snapshots-request
+
+  loot 200
+    seed xml, like batch-delete-cluster-snapshots-result
+    note <Success>
+  loot 480
+    seed xml, like batch-delete-request-size-exceeded-fault
+    note <BatchDeleteRequestSizeExceededFault>

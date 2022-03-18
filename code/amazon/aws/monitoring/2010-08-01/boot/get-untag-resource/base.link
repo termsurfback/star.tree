@@ -1,0 +1,68 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/internal-service-fault
+  take form internal-service-fault
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/tag-key
+  take form tag-key
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/untag-resource-output
+  take form untag-resource-output
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-untag-resource, name <GET_UntagResource>
+  note <Removes one or more tags from the specified resource.>
+
+  take resource-arn
+    like native-string
+    note <The ARN of the CloudWatch resource that you're removing tags from.
+
+The ARN format of an alarm is `arn:aws:cloudwatch:_Region_:_account-id_:alarm:_alarm-name_`
+
+The ARN format of a Contributor Insights rule is `arn:aws:cloudwatch:_Region_:_account-id_:insight-rule:_insight-rule-name_`
+
+For more information about ARN format, see [Resource Types Defined by Amazon CloudWatch](https://docs.aws.amazon.com/IAM/latest/UserGuide/list_amazoncloudwatch.html#amazoncloudwatch-resources-for-iam-policies) in the _Amazon Web Services General Reference_.>
+  take tag-keys
+    like list
+      like tag-key
+    note <The list of tag keys to remove from the resource.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=UntagResource>
+
+  find <ResourceARN>, loan resource-arn
+  find <TagKeys>, loan tag-keys
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like untag-resource-output
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 481
+    seed xml, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed xml, like concurrent-modification-exception
+    note <ConcurrentModificationException>
+  loot 483
+    seed xml, like internal-service-fault
+    note <InternalServiceFault>

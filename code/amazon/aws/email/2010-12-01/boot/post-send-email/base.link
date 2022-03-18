@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/account-sending-paused-exception
+  take form account-sending-paused-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/configuration-set-does-not-exist-exception
+  take form configuration-set-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/configuration-set-sending-paused-exception
+  take form configuration-set-sending-paused-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/mail-from-domain-not-verified-exception
+  take form mail-from-domain-not-verified-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/message-rejected
+  take form message-rejected
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/send-email-response
+  take form send-email-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-send-email, name <POST_SendEmail>
+  note <Composes an email message and immediately queues it for sending. In order to send email using the `SendEmail` operation, your message must meet the following requirements:
+
+- The message must be sent from a verified email address or domain. If you attempt to send email using a non-verified address or domain, the operation will result in an "Email address not verified" error.
+
+- If your account is still in the Amazon SES sandbox, you may only send to verified addresses or domains, or to email addresses associated with the Amazon SES Mailbox Simulator. For more information, see [Verifying Email Addresses and Domains](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-addresses-and-domains.html) in the _Amazon SES Developer Guide._
+
+- The maximum message size is 10 MB.
+
+- The message must include at least one recipient email address. The recipient address can be a To: address, a CC: address, or a BCC: address. If a recipient email address is invalid (that is, it is not in the format _UserName@[SubDomain.]Domain.TopLevelDomain_), the entire message will be rejected, even if the message contains other recipients that are valid.
+
+- The message may not include more than 50 recipients, across the To:, CC: and BCC: fields. If you need to send an email message to a larger audience, you can divide your recipient list into groups of 50 or fewer, and then call the `SendEmail` operation several times to send the message to each group.
+
+For every message that you send, the total number of recipients (including each recipient in the To:, CC: and BCC: fields) is counted against the maximum number of emails you can send in a 24-hour period (your _sending quota_). For more information about sending quotas in Amazon SES, see [Managing Your Amazon SES Sending Limits](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/manage-sending-limits.html) in the _Amazon SES Developer Guide._>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take send-email-request, like send-email-request
+    void take
+
+  line </#Action=SendEmail>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan send-email-request
+
+  loot 200
+    seed xml, like send-email-response
+    note <Success>
+  loot 480
+    seed xml, like message-rejected
+    note <MessageRejected>
+  loot 481
+    seed xml, like mail-from-domain-not-verified-exception
+    note <MailFromDomainNotVerifiedException>
+  loot 482
+    seed xml, like configuration-set-does-not-exist-exception
+    note <ConfigurationSetDoesNotExistException>
+  loot 483
+    seed xml, like configuration-set-sending-paused-exception
+    note <ConfigurationSetSendingPausedException>
+  loot 484
+    seed xml, like account-sending-paused-exception
+    note <AccountSendingPausedException>

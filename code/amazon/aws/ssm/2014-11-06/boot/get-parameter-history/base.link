@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/get-parameter-history-result
+  take form get-parameter-history-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-key-id
+  take form invalid-key-id
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/parameter-not-found
+  take form parameter-not-found
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-parameter-history, name <GetParameterHistory>
+  note <Retrieves the history of all changes to a parameter.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-parameter-history-request, like get-parameter-history-request
+
+  line </#X-Amz-Target=AmazonSSM.GetParameterHistory>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan get-parameter-history-request
+
+  loot 200
+    seed json, like get-parameter-history-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like parameter-not-found
+    note <ParameterNotFound>
+  loot 482
+    seed json, like invalid-next-token
+    note <InvalidNextToken>
+  loot 483
+    seed json, like invalid-key-id
+    note <InvalidKeyId>

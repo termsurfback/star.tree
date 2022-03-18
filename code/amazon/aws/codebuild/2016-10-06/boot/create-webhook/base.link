@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/create-webhook-output
+  take form create-webhook-output
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/o-auth-provider-exception
+  take form o-auth-provider-exception
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/resource-already-exists-exception
+  take form resource-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/codebuild/2016-10-06/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-webhook, name <CreateWebhook>
+  note <For an existing CodeBuild build project that has its source code stored in a GitHub or Bitbucket repository, enables CodeBuild to start rebuilding the source code every time a code change is pushed to the repository.
+
+If you enable webhooks for an CodeBuild project, and the project is used as a build step in CodePipeline, then two identical builds are created for each commit. One build is triggered through webhooks, and one through CodePipeline. Because billing is on a per-build basis, you are billed for both builds. Therefore, if you are using CodePipeline, we recommend that you disable webhooks in CodeBuild. In the CodeBuild console, clear the Webhook box. For more information, see step 5 in [Change a Build Project's Settings](https://docs.aws.amazon.com/codebuild/latest/userguide/change-project.html#change-project-console).>
+
+  take x-amz-target
+    like native-string
+  take create-webhook-input, like create-webhook-input
+
+  line </#X-Amz-Target=CodeBuild_20161006.CreateWebhook>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-webhook-input
+
+  loot 200
+    seed json, like create-webhook-output
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like o-auth-provider-exception
+    note <OAuthProviderException>
+  loot 482
+    seed json, like resource-already-exists-exception
+    note <ResourceAlreadyExistsException>
+  loot 483
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

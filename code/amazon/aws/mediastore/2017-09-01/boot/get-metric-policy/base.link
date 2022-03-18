@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/container-in-use-exception
+  take form container-in-use-exception
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/container-not-found-exception
+  take form container-not-found-exception
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/get-metric-policy-output
+  take form get-metric-policy-output
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/policy-not-found-exception
+  take form policy-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-metric-policy, name <GetMetricPolicy>
+  note <Returns the metric policy for the specified container.>
+
+  take x-amz-target
+    like native-string
+  take get-metric-policy-input, like get-metric-policy-input
+
+  line </#X-Amz-Target=MediaStore_20170901.GetMetricPolicy>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-metric-policy-input
+
+  loot 200
+    seed json, like get-metric-policy-output
+    note <Success>
+  loot 480
+    seed json, like container-not-found-exception
+    note <ContainerNotFoundException>
+  loot 481
+    seed json, like policy-not-found-exception
+    note <PolicyNotFoundException>
+  loot 482
+    seed json, like container-in-use-exception
+    note <ContainerInUseException>
+  loot 483
+    seed json, like internal-server-error
+    note <InternalServerError>

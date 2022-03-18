@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/list-stack-set-operations-output
+  take form list-stack-set-operations-output
+
+load @drumwork/snow/amazonaws.com/cloudformation/2010-05-15/base/stack-set-not-found-exception
+  take form stack-set-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-list-stack-set-operations, name <POST_ListStackSetOperations>
+  note <Returns summary information about operations performed on a stack set.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take list-stack-set-operations-input, like list-stack-set-operations-input
+    void take
+
+  line </#Action=ListStackSetOperations>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan list-stack-set-operations-input
+
+  loot 200
+    seed xml, like list-stack-set-operations-output
+    note <Success>
+  loot 480
+    seed xml, like stack-set-not-found-exception
+    note <StackSetNotFoundException>

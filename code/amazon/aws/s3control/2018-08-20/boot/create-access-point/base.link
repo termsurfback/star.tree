@@ -1,0 +1,44 @@
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/create-access-point-body
+  take form create-access-point-body
+
+load @drumwork/snow/amazonaws.com/s3control/2018-08-20/base/create-access-point-result
+  take form create-access-point-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-access-point, name <CreateAccessPoint>
+  note <Creates an access point and associates it with the specified bucket. For more information, see [Managing Data Access with Amazon S3 Access Points](https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-points.html) in the _Amazon S3 User Guide_.
+
+S3 on Outposts only supports VPC-style access points.
+
+For more information, see [Accessing Amazon S3 on Outposts using virtual private cloud (VPC) only access points](https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html) in the _Amazon S3 User Guide_.
+
+All Amazon S3 on Outposts REST API requests for this action require an additional parameter of `x-amz-outpost-id` to be passed with the request and an S3 on Outposts endpoint hostname prefix instead of `s3-control`. For an example of the request syntax for Amazon S3 on Outposts that uses the S3 on Outposts endpoint hostname prefix and the `x-amz-outpost-id` derived using the access point ARN, see the [Examples](https://docs.aws.amazon.com/AmazonS3/latest/API/API_control_CreateAccessPoint.html#API_control_CreateAccessPoint_Examples) section.
+
+The following actions are related to `CreateAccessPoint`:
+
+- [GetAccessPoint](https://docs.aws.amazon.com/AmazonS3/latest/API/API_control_GetAccessPoint.html)
+
+- [DeleteAccessPoint](https://docs.aws.amazon.com/AmazonS3/latest/API/API_control_DeleteAccessPoint.html)
+
+- [ListAccessPoints](https://docs.aws.amazon.com/AmazonS3/latest/API/API_control_ListAccessPoints.html)>
+
+  take name
+    like native-string
+    note <The name you want to assign to this access point.>
+  take x-amz-account-id
+    like native-string
+    note <The Amazon Web Services account ID for the owner of the bucket for which you want to create an access point.>
+  take create-access-point-body, like create-access-point-body
+
+  line </v20180820/accesspoint/{name}#x-amz-account-id>
+
+  hint <x-amz-account-id>, loan x-amz-account-id
+
+  seed xml, loan create-access-point-body
+
+  loot 200
+    seed xml, like create-access-point-result
+    note <Success>

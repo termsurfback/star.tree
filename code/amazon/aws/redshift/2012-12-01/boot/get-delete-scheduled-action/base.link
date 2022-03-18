@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/scheduled-action-not-found-fault
+  take form scheduled-action-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unauthorized-operation
+  take form unauthorized-operation
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-scheduled-action, name <GET_DeleteScheduledAction>
+  note <Deletes a scheduled action.>
+
+  take scheduled-action-name
+    like native-string
+    note <The name of the scheduled action to delete.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteScheduledAction>
+
+  find <ScheduledActionName>, loan scheduled-action-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like scheduled-action-not-found-fault
+    note <ScheduledActionNotFoundFault>
+  loot 481
+    seed xml, like unauthorized-operation
+    note <UnauthorizedOperation>

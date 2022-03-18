@@ -1,0 +1,92 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/appliance-mode-support-value
+  take form appliance-mode-support-value
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/create-transit-gateway-vpc-attachment-result
+  take form create-transit-gateway-vpc-attachment-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/dns-support-value
+  take form dns-support-value
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/ipv6-support-value
+  take form ipv6-support-value
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/subnet-id
+  take form subnet-id
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/tag-specification
+  take form tag-specification
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-transit-gateway-vpc-attachment, name <GET_CreateTransitGatewayVpcAttachment>
+  note <Attaches the specified VPC to the specified transit gateway.
+
+If you attach a VPC with a CIDR range that overlaps the CIDR range of a VPC that is already attached, the new VPC CIDR range is not propagated to the default propagation route table.
+
+To send VPC traffic to an attached transit gateway, add a route to the VPC route table using CreateRoute.>
+
+  take transit-gateway-id
+    like native-string
+    note <The ID of the transit gateway.>
+  take vpc-id
+    like native-string
+    note <The ID of the VPC.>
+  take subnet-ids
+    like list
+      like subnet-id
+    note <The IDs of one or more subnets. You can specify only one subnet per Availability Zone. You must specify at least one subnet, but we recommend that you specify two subnets for better availability. The transit gateway uses one IP address from each specified subnet.>
+  take options
+    like form
+      take dns-support, name <DnsSupport>
+        like dns-support-value
+        void take
+        note <Enable or disable DNS support. The default is `enable`.>
+      take ipv6-support, name <Ipv6Support>
+        like ipv6-support-value
+        void take
+        note <Enable or disable IPv6 support. The default is `disable`.>
+      take appliance-mode-support, name <ApplianceModeSupport>
+        like appliance-mode-support-value
+        void take
+        note <Enable or disable support for appliance mode. If enabled, a traffic flow between a source and destination uses the same Availability Zone for the VPC attachment for the lifetime of that flow. The default is `disable`.>
+    note <The VPC attachment options.>
+    void take
+  take tag-specifications
+    like list
+      like tag-specification
+    note <The tags to apply to the VPC attachment.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateTransitGatewayVpcAttachment>
+
+  find <TransitGatewayId>, loan transit-gateway-id
+  find <VpcId>, loan vpc-id
+  find <SubnetIds>, loan subnet-ids
+  find <Options>, loan options
+  find <TagSpecifications>, loan tag-specifications
+  find <DryRun>, loan dry-run
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-transit-gateway-vpc-attachment-result
+    note <Success>

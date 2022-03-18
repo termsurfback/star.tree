@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/apprunner/2020-05-15/base/create-auto-scaling-configuration-response
+  take form create-auto-scaling-configuration-response
+
+load @drumwork/snow/amazonaws.com/apprunner/2020-05-15/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/apprunner/2020-05-15/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/apprunner/2020-05-15/base/service-quota-exceeded-exception
+  take form service-quota-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-auto-scaling-configuration, name <CreateAutoScalingConfiguration>
+  note <Create an AWS App Runner automatic scaling configuration resource. App Runner requires this resource when you create App Runner services that require non-default auto scaling settings. You can share an auto scaling configuration across multiple services.
+
+Create multiple revisions of a configuration by using the same `AutoScalingConfigurationName` and different `AutoScalingConfigurationRevision` values. When you create a service, you can set it to use the latest active revision of an auto scaling configuration or a specific revision.
+
+Configure a higher `MinSize` to increase the spread of your App Runner service over more Availability Zones in the AWS Region. The tradeoff is a higher minimal cost.
+
+Configure a lower `MaxSize` to control your cost. The tradeoff is lower responsiveness during peak demand.>
+
+  take x-amz-target
+    like native-string
+  take create-auto-scaling-configuration-request, like create-auto-scaling-configuration-request
+
+  line </#X-Amz-Target=AppRunner.CreateAutoScalingConfiguration>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-auto-scaling-configuration-request
+
+  loot 200
+    seed json, like create-auto-scaling-configuration-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>
+  loot 482
+    seed json, like service-quota-exceeded-exception
+    note <ServiceQuotaExceededException>

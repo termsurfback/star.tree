@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/list-jobs-body
+  take form list-jobs-body
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/list-jobs-response
+  take form list-jobs-response
+
+load @drumwork/snow/amazonaws.com/batch/2016-08-10/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-jobs, name <ListJobs>
+  note <Returns a list of Batch jobs.
+
+You must specify only one of the following items:
+
+- A job queue ID to return a list of jobs in that job queue
+
+- A multi-node parallel job ID to return a list of nodes for that job
+
+- An array job ID to return a list of the children for that job
+
+You can filter the results by job status with the `jobStatus` parameter. If you don't specify a status, only `RUNNING` jobs are returned.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-jobs-body, like list-jobs-body
+
+  line </v1/listjobs>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-jobs-body
+
+  loot 200
+    seed json, like list-jobs-response
+    note <Success>
+  loot 480
+    seed json, like client-exception
+    note <ClientException>
+  loot 481
+    seed json, like server-exception
+    note <ServerException>

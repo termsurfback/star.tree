@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/access-point-not-found-exception
+  take form access-point-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/detach-load-balancer-from-subnets-output
+  take form detach-load-balancer-from-subnets-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/invalid-configuration-request-exception
+  take form invalid-configuration-request-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/subnet-id
+  take form subnet-id
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-detach-load-balancer-from-subnets, name <GET_DetachLoadBalancerFromSubnets>
+  note <Removes the specified subnets from the set of configured subnets for the load balancer.
+
+After a subnet is removed, all EC2 instances registered with the load balancer in the removed subnet go into the `OutOfService` state. Then, the load balancer balances the traffic among the remaining routable subnets.>
+
+  take load-balancer-name
+    like native-string
+    note <The name of the load balancer.>
+  take subnets
+    like list
+      like subnet-id
+    note <The IDs of the subnets.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DetachLoadBalancerFromSubnets>
+
+  find <LoadBalancerName>, loan load-balancer-name
+  find <Subnets>, loan subnets
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like detach-load-balancer-from-subnets-output
+    note <Success>
+  loot 480
+    seed xml, like access-point-not-found-exception
+    note <AccessPointNotFoundException>
+  loot 481
+    seed xml, like invalid-configuration-request-exception
+    note <InvalidConfigurationRequestException>

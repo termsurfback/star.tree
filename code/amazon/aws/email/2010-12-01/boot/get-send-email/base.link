@@ -1,0 +1,160 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/account-sending-paused-exception
+  take form account-sending-paused-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/address
+  take form address
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/address-list
+  take form address-list
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/body
+  take form body
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/configuration-set-does-not-exist-exception
+  take form configuration-set-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/configuration-set-sending-paused-exception
+  take form configuration-set-sending-paused-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/content
+  take form content
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/mail-from-domain-not-verified-exception
+  take form mail-from-domain-not-verified-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/message-rejected
+  take form message-rejected
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/message-tag
+  take form message-tag
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/send-email-response
+  take form send-email-response
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-send-email, name <GET_SendEmail>
+  note <Composes an email message and immediately queues it for sending. In order to send email using the `SendEmail` operation, your message must meet the following requirements:
+
+- The message must be sent from a verified email address or domain. If you attempt to send email using a non-verified address or domain, the operation will result in an "Email address not verified" error.
+
+- If your account is still in the Amazon SES sandbox, you may only send to verified addresses or domains, or to email addresses associated with the Amazon SES Mailbox Simulator. For more information, see [Verifying Email Addresses and Domains](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-addresses-and-domains.html) in the _Amazon SES Developer Guide._
+
+- The maximum message size is 10 MB.
+
+- The message must include at least one recipient email address. The recipient address can be a To: address, a CC: address, or a BCC: address. If a recipient email address is invalid (that is, it is not in the format _UserName@[SubDomain.]Domain.TopLevelDomain_), the entire message will be rejected, even if the message contains other recipients that are valid.
+
+- The message may not include more than 50 recipients, across the To:, CC: and BCC: fields. If you need to send an email message to a larger audience, you can divide your recipient list into groups of 50 or fewer, and then call the `SendEmail` operation several times to send the message to each group.
+
+For every message that you send, the total number of recipients (including each recipient in the To:, CC: and BCC: fields) is counted against the maximum number of emails you can send in a 24-hour period (your _sending quota_). For more information about sending quotas in Amazon SES, see [Managing Your Amazon SES Sending Limits](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/manage-sending-limits.html) in the _Amazon SES Developer Guide._>
+
+  take source
+    like native-string
+    note <The email address that is sending the email. This email address must be either individually verified with Amazon SES, or from a domain that has been verified with Amazon SES. For information about verifying identities, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-addresses-and-domains.html).
+
+If you are sending on behalf of another user and have been permitted to do so by a sending authorization policy, then you must also specify the `SourceArn` parameter. For more information about sending authorization, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/sending-authorization.html).
+
+Amazon SES does not support the SMTPUTF8 extension, as described in [RFC6531](https://tools.ietf.org/html/rfc6531). For this reason, the _local part_ of a source email address (the part of the email address that precedes the @ sign) may only contain [7-bit ASCII characters](https://en.wikipedia.org/wiki/Email_address#Local-part). If the _domain part_ of an address (the part after the @ sign) contains non-ASCII characters, they must be encoded using Punycode, as described in [RFC3492](https://tools.ietf.org/html/rfc3492.html). The sender name (also known as the _friendly name_) may contain non-ASCII characters. These characters must be encoded using MIME encoded-word syntax, as described in [RFC 2047](https://tools.ietf.org/html/rfc2047). MIME encoded-word syntax uses the following form: `=?charset?encoding?encoded-text?=`.>
+  take destination
+    like form
+      take to-addresses, name <ToAddresses>
+        like address-list
+        void take
+        note <The recipients to place on the To: line of the message.>
+      take cc-addresses, name <CcAddresses>
+        like address-list
+        void take
+        note <The recipients to place on the CC: line of the message.>
+      take bcc-addresses, name <BccAddresses>
+        like address-list
+        void take
+        note <The recipients to place on the BCC: line of the message.>
+    note <The destination for this email, composed of To:, CC:, and BCC: fields.>
+  take message
+    like form
+      take subject, name <Subject>
+        like content
+        note <The subject of the message: A short summary of the content, which will appear in the recipient's inbox.>
+      take body, name <Body>
+        like body
+        note <The message body.>
+    note <The message to be sent.>
+  take reply-to-addresses
+    like list
+      like address
+    note <The reply-to email address(es) for the message. If the recipient replies to the message, each reply-to address will receive the reply.>
+    void take
+  take return-path
+    like native-string
+    note <The email address that bounces and complaints will be forwarded to when feedback forwarding is enabled. If the message cannot be delivered to the recipient, then an error message will be returned from the recipient's ISP; this message will then be forwarded to the email address specified by the `ReturnPath` parameter. The `ReturnPath` parameter is never overwritten. This email address must be either individually verified with Amazon SES, or from a domain that has been verified with Amazon SES.>
+    void take
+  take source-arn
+    like native-string
+    note <This parameter is used only for sending authorization. It is the ARN of the identity that is associated with the sending authorization policy that permits you to send for the email address specified in the `Source` parameter.
+
+For example, if the owner of `example.com` (which has ARN `arn:aws:ses:us-east-1:123456789012:identity/example.com`) attaches a policy to it that authorizes you to send from `user@example.com`, then you would specify the `SourceArn` to be `arn:aws:ses:us-east-1:123456789012:identity/example.com`, and the `Source` to be `user@example.com`.
+
+For more information about sending authorization, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/sending-authorization.html).>
+    void take
+  take return-path-arn
+    like native-string
+    note <This parameter is used only for sending authorization. It is the ARN of the identity that is associated with the sending authorization policy that permits you to use the email address specified in the `ReturnPath` parameter.
+
+For example, if the owner of `example.com` (which has ARN `arn:aws:ses:us-east-1:123456789012:identity/example.com`) attaches a policy to it that authorizes you to use `feedback@example.com`, then you would specify the `ReturnPathArn` to be `arn:aws:ses:us-east-1:123456789012:identity/example.com`, and the `ReturnPath` to be `feedback@example.com`.
+
+For more information about sending authorization, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/sending-authorization.html).>
+    void take
+  take tags
+    like list
+      like message-tag
+    note <A list of tags, in the form of name/value pairs, to apply to an email that you send using `SendEmail`. Tags correspond to characteristics of the email that you define, so that you can publish email sending events.>
+    void take
+  take configuration-set-name
+    like native-string
+    note <The name of the configuration set to use when you send an email using `SendEmail`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=SendEmail>
+
+  find <Source>, loan source
+  find <Destination>, loan destination
+  find <Message>, loan message
+  find <ReplyToAddresses>, loan reply-to-addresses
+  find <ReturnPath>, loan return-path
+  find <SourceArn>, loan source-arn
+  find <ReturnPathArn>, loan return-path-arn
+  find <Tags>, loan tags
+  find <ConfigurationSetName>, loan configuration-set-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like send-email-response
+    note <Success>
+  loot 480
+    seed xml, like message-rejected
+    note <MessageRejected>
+  loot 481
+    seed xml, like mail-from-domain-not-verified-exception
+    note <MailFromDomainNotVerifiedException>
+  loot 482
+    seed xml, like configuration-set-does-not-exist-exception
+    note <ConfigurationSetDoesNotExistException>
+  loot 483
+    seed xml, like configuration-set-sending-paused-exception
+    note <ConfigurationSetSendingPausedException>
+  loot 484
+    seed xml, like account-sending-paused-exception
+    note <AccountSendingPausedException>

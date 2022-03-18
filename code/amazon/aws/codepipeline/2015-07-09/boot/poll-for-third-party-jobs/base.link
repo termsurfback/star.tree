@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/action-type-not-found-exception
+  take form action-type-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/poll-for-third-party-jobs-output
+  take form poll-for-third-party-jobs-output
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot poll-for-third-party-jobs, name <PollForThirdPartyJobs>
+  note <Determines whether there are any third party jobs for a job worker to act on. Used for partner actions only.
+
+When this API is called, AWS CodePipeline returns temporary credentials for the S3 bucket used to store artifacts for the pipeline, if the action requires access to that S3 bucket for input or output artifacts.>
+
+  take x-amz-target
+    like native-string
+  take poll-for-third-party-jobs-input, like poll-for-third-party-jobs-input
+
+  line </#X-Amz-Target=CodePipeline_20150709.PollForThirdPartyJobs>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan poll-for-third-party-jobs-input
+
+  loot 200
+    seed json, like poll-for-third-party-jobs-output
+    note <Success>
+  loot 480
+    seed json, like action-type-not-found-exception
+    note <ActionTypeNotFoundException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>

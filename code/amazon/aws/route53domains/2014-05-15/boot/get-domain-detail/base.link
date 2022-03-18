@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/get-domain-detail-response
+  take form get-domain-detail-response
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/invalid-input
+  take form invalid-input
+
+load @drumwork/snow/amazonaws.com/route53domains/2014-05-15/base/unsupported-tld
+  take form unsupported-tld
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-domain-detail, name <GetDomainDetail>
+  note <This operation returns detailed information about a specified domain that is associated with the current AWS account. Contact information for the domain is also returned as part of the output.>
+
+  take x-amz-target
+    like native-string
+  take get-domain-detail-request, like get-domain-detail-request
+
+  line </#X-Amz-Target=Route53Domains_v20140515.GetDomainDetail>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-domain-detail-request
+
+  loot 200
+    seed json, like get-domain-detail-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input
+    note <InvalidInput>
+  loot 481
+    seed json, like unsupported-tld
+    note <UnsupportedTLD>

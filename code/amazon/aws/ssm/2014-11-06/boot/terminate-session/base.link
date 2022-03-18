@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/does-not-exist-exception
+  take form does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/terminate-session-response
+  take form terminate-session-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot terminate-session, name <TerminateSession>
+  note <Permanently ends a session and closes the data connection between the Session Manager client and SSM Agent on the instance. A terminated session isn't be resumed.>
+
+  take x-amz-target
+    like native-string
+  take terminate-session-request, like terminate-session-request
+
+  line </#X-Amz-Target=AmazonSSM.TerminateSession>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan terminate-session-request
+
+  loot 200
+    seed json, like terminate-session-response
+    note <Success>
+  loot 480
+    seed json, like does-not-exist-exception
+    note <DoesNotExistException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

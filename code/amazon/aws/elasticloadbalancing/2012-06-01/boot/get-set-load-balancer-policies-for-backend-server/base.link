@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/access-point-not-found-exception
+  take form access-point-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/invalid-configuration-request-exception
+  take form invalid-configuration-request-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/policy-name
+  take form policy-name
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/policy-not-found-exception
+  take form policy-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/set-load-balancer-policies-for-backend-server-output
+  take form set-load-balancer-policies-for-backend-server-output
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-set-load-balancer-policies-for-backend-server, name <GET_SetLoadBalancerPoliciesForBackendServer>
+  note <Replaces the set of policies associated with the specified port on which the EC2 instance is listening with a new set of policies. At this time, only the back-end server authentication policy type can be applied to the instance ports; this policy type is composed of multiple public key policies.
+
+Each time you use `SetLoadBalancerPoliciesForBackendServer` to enable the policies, use the `PolicyNames` parameter to list the policies that you want to enable.
+
+You can use DescribeLoadBalancers or DescribeLoadBalancerPolicies to verify that the policy is associated with the EC2 instance.
+
+For more information about enabling back-end instance authentication, see [Configure Back-end Instance Authentication](https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/elb-create-https-ssl-load-balancer.html#configure_backendauth_clt) in the _Classic Load Balancers Guide_. For more information about Proxy Protocol, see [Configure Proxy Protocol Support](https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/enable-proxy-protocol.html) in the _Classic Load Balancers Guide_.>
+
+  take load-balancer-name
+    like native-string
+    note <The name of the load balancer.>
+  take instance-port
+    like native-integer
+    note <The port number associated with the EC2 instance.>
+  take policy-names
+    like list
+      like policy-name
+    note <The names of the policies. If the list is empty, then all current polices are removed from the EC2 instance.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=SetLoadBalancerPoliciesForBackendServer>
+
+  find <LoadBalancerName>, loan load-balancer-name
+  find <InstancePort>, loan instance-port
+  find <PolicyNames>, loan policy-names
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like set-load-balancer-policies-for-backend-server-output
+    note <Success>
+  loot 480
+    seed xml, like access-point-not-found-exception
+    note <AccessPointNotFoundException>
+  loot 481
+    seed xml, like policy-not-found-exception
+    note <PolicyNotFoundException>
+  loot 482
+    seed xml, like invalid-configuration-request-exception
+    note <InvalidConfigurationRequestException>

@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/delete-canary-response
+  take form delete-canary-response
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/synthetics/2017-10-11/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-canary, name <DeleteCanary>
+  note <Permanently deletes the specified canary.
+
+When you delete a canary, resources used and created by the canary are not automatically deleted. After you delete a canary that you do not intend to use again, you should also delete the following:
+
+- The Lambda functions and layers used by this canary. These have the prefix `cwsyn-_MyCanaryName_` .
+
+- The CloudWatch alarms created for this canary. These alarms have a name of `Synthetics-SharpDrop-Alarm-_MyCanaryName_` .
+
+- Amazon S3 objects and buckets, such as the canary's artifact location.
+
+- IAM roles created for the canary. If they were created in the console, these roles have the name `role/service-role/CloudWatchSyntheticsRole-_MyCanaryName_` .
+
+- CloudWatch Logs log groups created for the canary. These logs groups have the name `/aws/lambda/cwsyn-_MyCanaryName_` .
+
+Before you delete a canary, you might want to use `GetCanary` to display the information about this canary. Make note of the information returned by this operation so that you can delete these resources after you delete the canary.>
+
+  take name
+    like native-string
+    note <The name of the canary that you want to delete. To find the names of your canaries, use [DescribeCanaries](https://docs.aws.amazon.com/AmazonSynthetics/latest/APIReference/API_DescribeCanaries.html).>
+
+  line </canary/{name}>
+
+  loot 200
+    seed json, like delete-canary-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like conflict-exception
+    note <ConflictException>

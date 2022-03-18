@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/describe-environment-health-result
+  take form describe-environment-health-result
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/elastic-beanstalk-service-exception
+  take form elastic-beanstalk-service-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/environment-health-attribute
+  take form environment-health-attribute
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-environment-health, name <GET_DescribeEnvironmentHealth>
+  note <Returns information about the overall health of the specified environment. The **DescribeEnvironmentHealth** operation is only available with AWS Elastic Beanstalk Enhanced Health.>
+
+  take environment-name
+    like native-string
+    note <Specify the environment by name.
+
+You must specify either this or an EnvironmentName, or both.>
+    void take
+  take environment-id
+    like native-string
+    note <Specify the environment by ID.
+
+You must specify either this or an EnvironmentName, or both.>
+    void take
+  take attribute-names
+    like list
+      like environment-health-attribute
+    note <Specify the response elements to return. To retrieve all attributes, set to `All`. If no attribute names are specified, returns the name of the environment.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeEnvironmentHealth>
+
+  find <EnvironmentName>, loan environment-name
+  find <EnvironmentId>, loan environment-id
+  find <AttributeNames>, loan attribute-names
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-environment-health-result
+    note <Success>
+  loot 480
+    seed xml, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed xml, like elastic-beanstalk-service-exception
+    note <ElasticBeanstalkServiceException>

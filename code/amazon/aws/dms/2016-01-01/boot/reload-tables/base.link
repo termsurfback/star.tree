@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/invalid-resource-state-fault
+  take form invalid-resource-state-fault
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/reload-tables-response
+  take form reload-tables-response
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/resource-not-found-fault
+  take form resource-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot reload-tables, name <ReloadTables>
+  note <Reloads the target database table with the source data.
+
+You can only use this operation with a task in the `RUNNING` state, otherwise the service will throw an `InvalidResourceStateFault` exception.>
+
+  take x-amz-target
+    like native-string
+  take reload-tables-message, like reload-tables-message
+
+  line </#X-Amz-Target=AmazonDMSv20160101.ReloadTables>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan reload-tables-message
+
+  loot 200
+    seed json, like reload-tables-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-fault
+    note <ResourceNotFoundFault>
+  loot 481
+    seed json, like invalid-resource-state-fault
+    note <InvalidResourceStateFault>

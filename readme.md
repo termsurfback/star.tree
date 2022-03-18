@@ -7,7 +7,7 @@
 <br/>
 <br/>
 
-<h3 align='center'>tool</h3>
+<h3 align='center'>snow</h3>
 <p align='center'>
   Link Text Third-Party API Integration
 </p>
@@ -15,6 +15,10 @@
 <br/>
 <br/>
 <br/>
+
+### Resources
+
+- https://github.com/APIs-guru/openapi-directory
 
 ### License
 

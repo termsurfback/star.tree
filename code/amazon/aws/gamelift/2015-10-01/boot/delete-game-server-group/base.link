@@ -1,0 +1,63 @@
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/delete-game-server-group-output
+  take form delete-game-server-group-output
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-game-server-group, name <DeleteGameServerGroup>
+  note <**This operation is used with the GameLift FleetIQ solution and game server groups.** Terminates a game server group and permanently deletes the game server group record. You have several options for how these resources are impacted when deleting the game server group. Depending on the type of delete operation selected, this operation might affect these resources:
+
+- The game server group
+
+- The corresponding Auto Scaling group
+
+- All game servers that are currently running in the group
+
+To delete a game server group, identify the game server group to delete and specify the type of delete operation to initiate. Game server groups can only be deleted if they are in `ACTIVE` or `ERROR` status.
+
+If the delete request is successful, a series of operations are kicked off. The game server group status is changed to `DELETE_SCHEDULED`, which prevents new game servers from being registered and stops automatic scaling activity. Once all game servers in the game server group are deregistered, GameLift FleetIQ can begin deleting resources. If any of the delete operations fail, the game server group is placed in `ERROR` status.
+
+GameLift FleetIQ emits delete events to Amazon CloudWatch.
+
+**Learn more** [GameLift FleetIQ Guide](https://docs.aws.amazon.com/gamelift/latest/fleetiqguide/gsg-intro.html)
+
+**Related actions** CreateGameServerGroup | ListGameServerGroups | DescribeGameServerGroup | UpdateGameServerGroup | DeleteGameServerGroup | ResumeGameServerGroup | SuspendGameServerGroup | DescribeGameServerInstances | [All APIs by task](https://docs.aws.amazon.com/gamelift/latest/fleetiqguide/reference-awssdk-fleetiq.html)>
+
+  take x-amz-target
+    like native-string
+  take delete-game-server-group-input, like delete-game-server-group-input
+
+  line </#X-Amz-Target=GameLift.DeleteGameServerGroup>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-game-server-group-input
+
+  loot 200
+    seed json, like delete-game-server-group-output
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 482
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 483
+    seed json, like internal-service-exception
+    note <InternalServiceException>

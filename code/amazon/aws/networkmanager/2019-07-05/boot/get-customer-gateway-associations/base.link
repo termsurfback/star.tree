@@ -1,0 +1,91 @@
+
+load @drumwork/snow/amazonaws.com/networkmanager/2019-07-05/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/networkmanager/2019-07-05/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/networkmanager/2019-07-05/base/get-customer-gateway-associations-response
+  take form get-customer-gateway-associations-response
+
+load @drumwork/snow/amazonaws.com/networkmanager/2019-07-05/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/networkmanager/2019-07-05/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/networkmanager/2019-07-05/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/networkmanager/2019-07-05/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-customer-gateway-associations, name <GetCustomerGatewayAssociations>
+  note <Gets the association information for customer gateways that are associated with devices and links in your global network.>
+
+  take global-network-id
+    like native-string
+    note <The ID of the global network.>
+  take customer-gateway-arns
+    like list
+      like string
+    note <One or more customer gateway Amazon Resource Names (ARNs). For more information, see [Resources Defined by Amazon EC2](https://docs.aws.amazon.com/IAM/latest/UserGuide/list_amazonec2.html#amazonec2-resources-for-iam-policies). The maximum is 10.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next page of results.>
+    void take
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+
+  line </global-networks/{global-network-id}/customer-gateway-associations>
+
+  find <customerGatewayArns>, loan customer-gateway-arns
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like get-customer-gateway-associations-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 484
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 485
+    seed json, like internal-server-exception
+    note <InternalServerException>

@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/base-exception
+  take form base-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/update-stemming-options-response
+  take form update-stemming-options-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-update-stemming-options, name <GET_UpdateStemmingOptions>
+  note <Configures a stemming dictionary for the search domain. The stemming dictionary is used during indexing and when processing search requests. The maximum size of the stemming dictionary is 500 KB.>
+
+  take domain-name
+    like native-string
+  take stems
+    like native-string
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=UpdateStemmingOptions>
+
+  find <DomainName>, loan domain-name
+  find <Stems>, loan stems
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like update-stemming-options-response
+    note <Success>
+  loot 409
+    seed xml, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 480
+    seed xml, like base-exception
+    note <BaseException>
+  loot 500
+    seed xml, like internal-exception
+    note <InternalException>

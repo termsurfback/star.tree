@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/duplicate-resource-exception
+  take form duplicate-resource-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/import-as-provisioned-product-output
+  take form import-as-provisioned-product-output
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/invalid-parameters-exception
+  take form invalid-parameters-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/invalid-state-exception
+  take form invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot import-as-provisioned-product, name <ImportAsProvisionedProduct>
+  note <Requests the import of a resource as a Service Catalog provisioned product that is associated to a Service Catalog product and provisioning artifact. Once imported, all supported Service Catalog governance actions are supported on the provisioned product.
+
+Resource import only supports CloudFormation stack ARNs. CloudFormation StackSets and non-root nested stacks are not supported.
+
+The CloudFormation stack must have one of the following statuses to be imported: `CREATE_COMPLETE`, `UPDATE_COMPLETE`, `UPDATE_ROLLBACK_COMPLETE`, `IMPORT_COMPLETE`, `IMPORT_ROLLBACK_COMPLETE`.
+
+Import of the resource requires that the CloudFormation stack template matches the associated Service Catalog product provisioning artifact.
+
+The user or role that performs this operation must have the `cloudformation:GetTemplate` and `cloudformation:DescribeStacks` IAM policy permissions.>
+
+  take x-amz-target
+    like native-string
+  take import-as-provisioned-product-input, like import-as-provisioned-product-input
+
+  line </#X-Amz-Target=AWS242ServiceCatalogService.ImportAsProvisionedProduct>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan import-as-provisioned-product-input
+
+  loot 200
+    seed json, like import-as-provisioned-product-output
+    note <Success>
+  loot 480
+    seed json, like duplicate-resource-exception
+    note <DuplicateResourceException>
+  loot 481
+    seed json, like invalid-state-exception
+    note <InvalidStateException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like invalid-parameters-exception
+    note <InvalidParametersException>

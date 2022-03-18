@@ -1,0 +1,26 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/reseller/v1/base/subscription
+  take form subscription
+
+boot reseller-subscriptions-change-plan, name <reseller.subscriptions.changePlan>
+  note <Updates a subscription plan. Use this method to update a plan for a 30-day trial or a flexible plan subscription to an annual commitment plan with monthly or yearly payments. How a plan is updated differs depending on the plan and the products. For more information, see the description in [manage subscriptions](/admin-sdk/reseller/v1/how-tos/manage_subscriptions#update_subscription_plan).>
+
+  take customer-id
+    like native-string
+    note <This can be either the customer's primary domain name or the customer's unique identifier. If the domain name for a customer changes, the old domain name cannot be used to access the customer, but the customer's unique identifier (as returned by the API) can always be used. We recommend storing the unique identifier in your systems where applicable.>
+  take subscription-id
+    like native-string
+    note <This is a required property. The `subscriptionId` is the subscription identifier and is unique for each customer. Since a `subscriptionId` changes when a subscription is updated, we recommend to not use this ID as a key for persistent data. And the `subscriptionId` can be found using the retrieve all reseller subscriptions method.>
+  take change-plan-request, like change-plan-request
+    void take
+
+  line </apps/reseller/v1/customers/{customer-id}/subscriptions/{subscription-id}/changePlan>
+
+  seed json, loan change-plan-request
+
+  loot 200
+    seed json, like subscription
+    note <Successful response>

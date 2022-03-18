@@ -1,0 +1,92 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/arrival-date
+  take form arrival-date
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/bounced-recipient-info
+  take form bounced-recipient-info
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/extension-field-list
+  take form extension-field-list
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/message-rejected
+  take form message-rejected
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/reporting-mta
+  take form reporting-mta
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/send-bounce-response
+  take form send-bounce-response
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-send-bounce, name <GET_SendBounce>
+  note <Generates and sends a bounce message to the sender of an email you received through Amazon SES. You can only use this API on an email up to 24 hours after you receive it.
+
+You cannot use this API to send generic bounces for mail that was not received by Amazon SES.
+
+For information about receiving email through Amazon SES, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email.html).
+
+You can execute this operation no more than once per second.>
+
+  take original-message-id
+    like native-string
+    note <The message ID of the message to be bounced.>
+  take bounce-sender
+    like native-string
+    note <The address to use in the "From" header of the bounce message. This must be an identity that you have verified with Amazon SES.>
+  take explanation
+    like native-string
+    note <Human-readable text for the bounce message to explain the failure. If not specified, the text will be auto-generated based on the bounced recipient information.>
+    void take
+  take message-dsn
+    like form
+      take reporting-mta, name <ReportingMta>
+        like reporting-mta
+        note <The reporting MTA that attempted to deliver the message, formatted as specified in [RFC 3464](https://tools.ietf.org/html/rfc3464) (`mta-name-type; mta-name`). The default value is `dns; inbound-smtp.[region].amazonaws.com`.>
+      take arrival-date, name <ArrivalDate>
+        like arrival-date
+        void take
+        note <When the message was received by the reporting mail transfer agent (MTA), in [RFC 822](https://www.ietf.org/rfc/rfc0822.txt) date-time format.>
+      take extension-fields, name <ExtensionFields>
+        like extension-field-list
+        void take
+        note <Additional X-headers to include in the DSN.>
+    note <Message-related DSN fields. If not specified, Amazon SES will choose the values.>
+    void take
+  take bounced-recipient-info-list
+    like list
+      like bounced-recipient-info
+    note <A list of recipients of the bounced message, including the information required to create the Delivery Status Notifications (DSNs) for the recipients. You must specify at least one `BouncedRecipientInfo` in the list.>
+  take bounce-sender-arn
+    like native-string
+    note <This parameter is used only for sending authorization. It is the ARN of the identity that is associated with the sending authorization policy that permits you to use the address in the "From" header of the bounce. For more information about sending authorization, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/sending-authorization.html).>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=SendBounce>
+
+  find <OriginalMessageId>, loan original-message-id
+  find <BounceSender>, loan bounce-sender
+  find <Explanation>, loan explanation
+  find <MessageDsn>, loan message-dsn
+  find <BouncedRecipientInfoList>, loan bounced-recipient-info-list
+  find <BounceSenderArn>, loan bounce-sender-arn
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like send-bounce-response
+    note <Success>
+  loot 480
+    seed xml, like message-rejected
+    note <MessageRejected>

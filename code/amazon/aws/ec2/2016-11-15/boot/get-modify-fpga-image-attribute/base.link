@@ -1,0 +1,98 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/load-permission-list-request
+  take form load-permission-list-request
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/modify-fpga-image-attribute-result
+  take form modify-fpga-image-attribute-result
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-modify-fpga-image-attribute, name <GET_ModifyFpgaImageAttribute>
+  note <Modifies the specified attribute of the specified Amazon FPGA Image (AFI).>
+
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take fpga-image-id
+    like native-string
+    note <The ID of the AFI.>
+  take attribute
+    like native-string
+    note <The name of the attribute.>
+    void take
+  take operation-type
+    like native-string
+    note <The operation type.>
+    void take
+  take user-id
+    like list
+      like string
+    note <The AWS account IDs. This parameter is valid only when modifying the `loadPermission` attribute.>
+    void take
+  take user-group
+    like list
+      like string
+    note <The user groups. This parameter is valid only when modifying the `loadPermission` attribute.>
+    void take
+  take product-code
+    like list
+      like string
+    note <The product codes. After you add a product code to an AFI, it can't be removed. This parameter is valid only when modifying the `productCodes` attribute.>
+    void take
+  take load-permission
+    like form
+      take add, name <Add>
+        like load-permission-list-request
+        void take
+        note <The load permissions to add.>
+      take remove, name <Remove>
+        like load-permission-list-request
+        void take
+        note <The load permissions to remove.>
+    note <The load permission for the AFI.>
+    void take
+  take description
+    like native-string
+    note <A description for the AFI.>
+    void take
+  take name
+    like native-string
+    note <A name for the AFI.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyFpgaImageAttribute>
+
+  find <DryRun>, loan dry-run
+  find <FpgaImageId>, loan fpga-image-id
+  find <Attribute>, loan attribute
+  find <OperationType>, loan operation-type
+  find <UserId>, loan user-id
+  find <UserGroup>, loan user-group
+  find <ProductCode>, loan product-code
+  find <LoadPermission>, loan load-permission
+  find <Description>, loan description
+  find <Name>, loan name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-fpga-image-attribute-result
+    note <Success>

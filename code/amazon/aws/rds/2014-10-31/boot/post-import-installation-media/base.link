@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/custom-availability-zone-not-found-fault
+  take form custom-availability-zone-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/installation-media
+  take form installation-media
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/installation-media-already-exists-fault
+  take form installation-media-already-exists-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-import-installation-media, name <POST_ImportInstallationMedia>
+  note <Imports the installation media for a DB engine that requires an on-premises customer provided license, such as SQL Server.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take import-installation-media-message, like import-installation-media-message
+    void take
+
+  line </#Action=ImportInstallationMedia>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan import-installation-media-message
+
+  loot 200
+    seed xml, like installation-media
+    note <Success>
+  loot 480
+    seed xml, like custom-availability-zone-not-found-fault
+    note <CustomAvailabilityZoneNotFoundFault>
+  loot 481
+    seed xml, like installation-media-already-exists-fault
+    note <InstallationMediaAlreadyExistsFault>

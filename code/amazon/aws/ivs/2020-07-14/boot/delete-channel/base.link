@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/delete-channel-body
+  take form delete-channel-body
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/pending-verification
+  take form pending-verification
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ivs/2020-07-14/base/validation-exception
+  take form validation-exception
+
+boot delete-channel, name <DeleteChannel>
+  note <Deletes the specified channel and its associated stream keys.
+
+If you try to delete a live channel, you will get an error (409 ConflictException). To delete a channel that is live, call StopStream, wait for the Amazon EventBridge "Stream End" event (to verify that the stream's state was changed from Live to Offline), then call DeleteChannel. (See [Using EventBridge with Amazon IVS](https://docs.aws.amazon.com/ivs/latest/userguide/eventbridge.html).)>
+
+  take delete-channel-body, like delete-channel-body
+
+  line </DeleteChannel>
+
+  seed json, loan delete-channel-body
+
+  loot 204
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 484
+    seed json, like pending-verification
+    note <PendingVerification>

@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/get-service-linked-role-deletion-status-response
+  take form get-service-linked-role-deletion-status-response
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-get-service-linked-role-deletion-status, name <POST_GetServiceLinkedRoleDeletionStatus>
+  note <Retrieves the status of your service-linked role deletion. After you use DeleteServiceLinkedRole to submit a service-linked role for deletion, you can use the `DeletionTaskId` parameter in `GetServiceLinkedRoleDeletionStatus` to check the status of the deletion. If the deletion fails, this operation returns the reason that it failed, if that information is returned by the service.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take get-service-linked-role-deletion-status-request, like get-service-linked-role-deletion-status-request
+    void take
+
+  line </#Action=GetServiceLinkedRoleDeletionStatus>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan get-service-linked-role-deletion-status-request
+
+  loot 200
+    seed xml, like get-service-linked-role-deletion-status-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like invalid-input-exception
+    note <InvalidInputException>
+  loot 482
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

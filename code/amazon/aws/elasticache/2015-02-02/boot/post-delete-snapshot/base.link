@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/delete-snapshot-result
+  take form delete-snapshot-result
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-snapshot-state-fault
+  take form invalid-snapshot-state-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/snapshot-not-found-fault
+  take form snapshot-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-snapshot, name <POST_DeleteSnapshot>
+  note <Deletes an existing snapshot. When you receive a successful response from this operation, ElastiCache immediately begins deleting the snapshot; you cannot cancel or revert this operation.
+
+This operation is valid for Redis only.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-snapshot-message, like delete-snapshot-message
+    void take
+
+  line </#Action=DeleteSnapshot>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-snapshot-message
+
+  loot 200
+    seed xml, like delete-snapshot-result
+    note <Success>
+  loot 480
+    seed xml, like snapshot-not-found-fault
+    note <SnapshotNotFoundFault>
+  loot 481
+    seed xml, like invalid-snapshot-state-fault
+    note <InvalidSnapshotStateFault>
+  loot 482
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

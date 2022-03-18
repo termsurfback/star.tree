@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/describe-kinesis-streaming-destination-output
+  take form describe-kinesis-streaming-destination-output
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-kinesis-streaming-destination, name <DescribeKinesisStreamingDestination>
+  note <Returns information about the status of Kinesis streaming.>
+
+  take x-amz-target
+    like native-string
+  take describe-kinesis-streaming-destination-input, like describe-kinesis-streaming-destination-input
+
+  line </#X-Amz-Target=DynamoDB_20120810.DescribeKinesisStreamingDestination>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-kinesis-streaming-destination-input
+
+  loot 200
+    seed json, like describe-kinesis-streaming-destination-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/lex-models/2017-04-19/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/lex-models/2017-04-19/base/conflict-exception
+  take form conflict-exception
+
+load @drumwork/snow/amazonaws.com/lex-models/2017-04-19/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/lex-models/2017-04-19/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/lex-models/2017-04-19/base/precondition-failed-exception
+  take form precondition-failed-exception
+
+load @drumwork/snow/amazonaws.com/lex-models/2017-04-19/base/put-slot-type-body
+  take form put-slot-type-body
+
+load @drumwork/snow/amazonaws.com/lex-models/2017-04-19/base/put-slot-type-response
+  take form put-slot-type-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-slot-type, name <PutSlotType>
+  note <Creates a custom slot type or replaces an existing custom slot type.
+
+To create a custom slot type, specify a name for the slot type and a set of enumeration values, which are the values that a slot of this type can assume. For more information, see how-it-works.
+
+If you specify the name of an existing slot type, the fields in the request replace the existing values in the `$LATEST` version of the slot type. Amazon Lex removes the fields that you don't provide in the request. If you don't specify required fields, Amazon Lex throws an exception. When you update the `$LATEST` version of a slot type, if a bot uses the `$LATEST` version of an intent that contains the slot type, the bot's `status` field is set to `NOT_BUILT`.
+
+This operation requires permissions for the `lex:PutSlotType` action.>
+
+  take name
+    like native-string
+    note <The name of the slot type. The name is _not_ case sensitive.
+
+The name can't match a built-in slot type name, or a built-in slot type name with "AMAZON." removed. For example, because there is a built-in slot type called `AMAZON.DATE`, you can't create a custom slot type called `DATE`.
+
+For a list of built-in slot types, see [Slot Type Reference](https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/built-in-intent-ref/slot-type-reference) in the _Alexa Skills Kit_.>
+  take put-slot-type-body, like put-slot-type-body
+
+  line </slottypes/{name}/versions/$LATEST>
+
+  seed json, loan put-slot-type-body
+
+  loot 200
+    seed json, like put-slot-type-response
+    note <Success>
+  loot 480
+    seed json, like conflict-exception
+    note <ConflictException>
+  loot 481
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 483
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 484
+    seed json, like precondition-failed-exception
+    note <PreconditionFailedException>

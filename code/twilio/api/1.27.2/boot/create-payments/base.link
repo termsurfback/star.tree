@@ -1,0 +1,29 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/api/1.27.2/base/api-v2010-account-call-payments
+  take form api-v2010-account-call-payments
+
+load @drumwork/snow/twilio.com/api/1.27.2/base/create-payments-body
+  take form create-payments-body
+
+boot create-payments, name <CreatePayments>
+  note <create an instance of payments. This will start a new payments session>
+
+  take account-sid
+    like native-string
+    note <The SID of the \[Account\](https://www.twilio.com/docs/iam/api/account) that will create the resource.>
+  take call-sid
+    like native-string
+    note <The SID of the call that will create the resource. Call leg associated with this sid is expected to provide payment information thru DTMF.>
+  take create-payments-body, like create-payments-body
+    void take
+
+  line </2010-04-01/Accounts/{account-sid}/Calls/{call-sid}/Payments.json>
+
+  seed x-www-form-urlencoded, loan create-payments-body
+
+  loot 201
+    seed json, like api-v2010-account-call-payments
+    note <Created>

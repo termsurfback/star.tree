@@ -1,0 +1,71 @@
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/directory-unavailable-exception
+  take form directory-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/entity-does-not-exist-exception
+  take form entity-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/invalid-password-exception
+  take form invalid-password-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/reset-user-password-result
+  take form reset-user-password-result
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/unsupported-operation-exception
+  take form unsupported-operation-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/user-does-not-exist-exception
+  take form user-does-not-exist-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot reset-user-password, name <ResetUserPassword>
+  note <Resets the password for any user in your Managed Microsoft AD or Simple AD directory.
+
+You can reset the password for any user in your directory with the following exceptions:
+
+- For Simple AD, you cannot reset the password for any user that is a member of either the **Domain Admins** or **Enterprise Admins** group except for the administrator user.
+
+- For Managed Microsoft AD, you can only reset the password for a user that is in an OU based off of the NetBIOS name that you typed when you created your directory. For example, you cannot reset the password for a user in the **Amazon Web Services Reserved** OU. For more information about the OU structure for an Managed Microsoft AD directory, see [What Gets Created](https://docs.aws.amazon.com/directoryservice/latest/admin-guide/ms_ad_getting_started_what_gets_created.html) in the _Directory Service Administration Guide_.>
+
+  take x-amz-target
+    like native-string
+  take reset-user-password-request, like reset-user-password-request
+
+  line </#X-Amz-Target=DirectoryService_20150416.ResetUserPassword>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan reset-user-password-request
+
+  loot 200
+    seed json, like reset-user-password-result
+    note <Success>
+  loot 480
+    seed json, like directory-unavailable-exception
+    note <DirectoryUnavailableException>
+  loot 481
+    seed json, like user-does-not-exist-exception
+    note <UserDoesNotExistException>
+  loot 482
+    seed json, like invalid-password-exception
+    note <InvalidPasswordException>
+  loot 483
+    seed json, like unsupported-operation-exception
+    note <UnsupportedOperationException>
+  loot 484
+    seed json, like entity-does-not-exist-exception
+    note <EntityDoesNotExistException>
+  loot 485
+    seed json, like client-exception
+    note <ClientException>
+  loot 486
+    seed json, like service-exception
+    note <ServiceException>

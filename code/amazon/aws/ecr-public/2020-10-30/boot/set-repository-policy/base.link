@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/repository-not-found-exception
+  take form repository-not-found-exception
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/amazonaws.com/ecr-public/2020-10-30/base/set-repository-policy-response
+  take form set-repository-policy-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot set-repository-policy, name <SetRepositoryPolicy>
+  note <Applies a repository policy to the specified public repository to control access permissions. For more information, see [Amazon ECR Repository Policies](https://docs.aws.amazon.com/AmazonECR/latest/userguide/repository-policies.html) in the _Amazon Elastic Container Registry User Guide_.>
+
+  take x-amz-target
+    like native-string
+  take set-repository-policy-request, like set-repository-policy-request
+
+  line </#X-Amz-Target=SpencerFrontendService.SetRepositoryPolicy>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan set-repository-policy-request
+
+  loot 200
+    seed json, like set-repository-policy-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like repository-not-found-exception
+    note <RepositoryNotFoundException>

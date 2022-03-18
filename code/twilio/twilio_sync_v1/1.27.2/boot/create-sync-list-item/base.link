@@ -1,0 +1,27 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_sync_v1/1.27.2/base/create-sync-list-item-body
+  take form create-sync-list-item-body
+
+load @drumwork/snow/twilio.com/twilio_sync_v1/1.27.2/base/sync-v1-service-sync-list-sync-list-item
+  take form sync-v1-service-sync-list-sync-list-item
+
+boot create-sync-list-item, name <CreateSyncListItem>
+  take service-sid
+    like native-string
+    note <The SID of the \[Sync Service\](https://www.twilio.com/docs/sync/api/service) to create the new List Item in.>
+  take list-sid
+    like native-string
+    note <The SID of the Sync List to add the new List Item to. Can be the Sync List resource&#39;s \`sid\` or its \`unique\_name\`.>
+  take create-sync-list-item-body, like create-sync-list-item-body
+    void take
+
+  line </v1/Services/{service-sid}/Lists/{list-sid}/Items>
+
+  seed x-www-form-urlencoded, loan create-sync-list-item-body
+
+  loot 201
+    seed json, like sync-v1-service-sync-list-sync-list-item
+    note <Created>

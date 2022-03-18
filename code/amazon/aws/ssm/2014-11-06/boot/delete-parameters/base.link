@@ -1,0 +1,29 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/delete-parameters-result
+  take form delete-parameters-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-parameters, name <DeleteParameters>
+  note <Delete a list of parameters. After deleting a parameter, wait for at least 30 seconds to create a parameter with the same name.>
+
+  take x-amz-target
+    like native-string
+  take delete-parameters-request, like delete-parameters-request
+
+  line </#X-Amz-Target=AmazonSSM.DeleteParameters>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-parameters-request
+
+  loot 200
+    seed json, like delete-parameters-result
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>

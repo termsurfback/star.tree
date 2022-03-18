@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/does-not-exist-exception
+  take form does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/feature-not-available-exception
+  take form feature-not-available-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/idempotent-parameter-mismatch
+  take form idempotent-parameter-mismatch
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/register-task-with-maintenance-window-result
+  take form register-task-with-maintenance-window-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/resource-limit-exceeded-exception
+  take form resource-limit-exceeded-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot register-task-with-maintenance-window, name <RegisterTaskWithMaintenanceWindow>
+  note <Adds a new task to a maintenance window.>
+
+  take x-amz-target
+    like native-string
+  take register-task-with-maintenance-window-request, like register-task-with-maintenance-window-request
+
+  line </#X-Amz-Target=AmazonSSM.RegisterTaskWithMaintenanceWindow>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan register-task-with-maintenance-window-request
+
+  loot 200
+    seed json, like register-task-with-maintenance-window-result
+    note <Success>
+  loot 480
+    seed json, like idempotent-parameter-mismatch
+    note <IdempotentParameterMismatch>
+  loot 481
+    seed json, like does-not-exist-exception
+    note <DoesNotExistException>
+  loot 482
+    seed json, like resource-limit-exceeded-exception
+    note <ResourceLimitExceededException>
+  loot 483
+    seed json, like feature-not-available-exception
+    note <FeatureNotAvailableException>
+  loot 484
+    seed json, like internal-server-error
+    note <InternalServerError>

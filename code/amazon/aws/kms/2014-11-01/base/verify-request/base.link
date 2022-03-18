@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/ciphertext-type
+  take form ciphertext-type
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/grant-token-list
+  take form grant-token-list
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/key-id-type
+  take form key-id-type
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/message-type
+  take form message-type
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/plaintext-type
+  take form plaintext-type
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/signing-algorithm-spec
+  take form signing-algorithm-spec
+
+form verify-request, name <VerifyRequest>
+  take key-id, name <KeyId>
+    like key-id-type
+    note <Identifies the asymmetric KMS key that will be used to verify the signature. This must be the same KMS key that was used to generate the signature. If you specify a different KMS key, the signature verification fails.
+
+To specify a KMS key, use its key ID, key ARN, alias name, or alias ARN. When using an alias name, prefix it with `"alias/"`. To specify a KMS key in a different Amazon Web Services account, you must use the key ARN or alias ARN.
+
+For example:
+
+- Key ID: `1234abcd-12ab-34cd-56ef-1234567890ab`
+
+- Key ARN: `arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab`
+
+- Alias name: `alias/ExampleAlias`
+
+- Alias ARN: `arn:aws:kms:us-east-2:111122223333:alias/ExampleAlias`
+
+To get the key ID and key ARN for a KMS key, use ListKeys or DescribeKey. To get the alias name and alias ARN, use ListAliases.>
+  take message, name <Message>
+    like plaintext-type
+    note <Specifies the message that was signed. You can submit a raw message of up to 4096 bytes, or a hash digest of the message. If you submit a digest, use the `MessageType` parameter with a value of `DIGEST`.
+
+If the message specified here is different from the message that was signed, the signature verification fails. A message and its hash digest are considered to be the same message.>
+  take message-type, name <MessageType>
+    like message-type
+    void take
+    note <Tells KMS whether the value of the `Message` parameter is a message or message digest. The default value, RAW, indicates a message. To indicate a message digest, enter `DIGEST`.
+
+Use the `DIGEST` value only when the value of the `Message` parameter is a message digest. If you use the `DIGEST` value with a raw message, the security of the verification operation can be compromised.>
+  take signature, name <Signature>
+    like ciphertext-type
+    note <The signature that the `Sign` operation generated.>
+  take signing-algorithm, name <SigningAlgorithm>
+    like signing-algorithm-spec
+    note <The signing algorithm that was used to sign the message. If you submit a different algorithm, the signature verification fails.>
+  take grant-tokens, name <GrantTokens>
+    like grant-token-list
+    void take
+    note <A list of grant tokens.
+
+Use a grant token when your permission to call this operation comes from a new grant that has not yet achieved _eventual consistency_. For more information, see [Grant token](https://docs.aws.amazon.com/kms/latest/developerguide/grants.html#grant_token) and [Using a grant token](https://docs.aws.amazon.com/kms/latest/developerguide/grant-manage.html#using-grant-token) in the _Key Management Service Developer Guide_.>

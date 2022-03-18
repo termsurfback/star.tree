@@ -1,0 +1,33 @@
+
+load @drumwork/snow/amazonaws.com/lambda/2014-11-11/base/function-configuration
+  take form function-configuration
+
+load @drumwork/snow/amazonaws.com/lambda/2014-11-11/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/lambda/2014-11-11/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-function-configuration, name <GetFunctionConfiguration>
+  note <Returns the configuration information of the Lambda function. This the same information you provided as parameters when uploading the function by using UploadFunction.
+
+This operation requires permission for the `lambda:GetFunctionConfiguration` operation.>
+
+  take function-name
+    like native-string
+    note <The name of the Lambda function for which you want to retrieve the configuration information.>
+
+  line </2014-11-13/functions/{function-name}/configuration>
+
+  loot 200
+    seed json, like function-configuration
+    note <Success>
+  loot 404
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 500
+    seed json, like service-exception
+    note <ServiceException>

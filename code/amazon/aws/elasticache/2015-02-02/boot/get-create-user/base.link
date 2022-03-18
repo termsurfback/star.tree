@@ -1,0 +1,104 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/duplicate-user-name-fault
+  take form duplicate-user-name-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/tag
+  take form tag
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/tag-quota-per-resource-exceeded
+  take form tag-quota-per-resource-exceeded
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/user
+  take form user
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/user-already-exists-fault
+  take form user-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/user-quota-exceeded-fault
+  take form user-quota-exceeded-fault
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-create-user, name <GET_CreateUser>
+  note <For Redis engine version 6.x onwards: Creates a Redis user. For more information, see [Using Role Based Access Control (RBAC)](http://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/Clusters.RBAC.html).>
+
+  take user-id
+    like native-string
+    note <The ID of the user.>
+  take user-name
+    like native-string
+    note <The username of the user.>
+  take engine
+    like native-string
+    note <The current supported value is Redis.>
+  take passwords
+    like list
+      like string
+    note <Passwords used for this user. You can create up to two passwords for each user.>
+    void take
+  take access-string
+    like native-string
+    note <Access permissions string used for this user.>
+  take no-password-required
+    like native-boolean
+    note <Indicates a password is not required for this user.>
+    void take
+  take tags
+    like list
+      like tag
+    note <A list of tags to be added to this resource. A tag is a key-value pair. A tag key must be accompanied by a tag value, although null is accepted.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateUser>
+
+  find <UserId>, loan user-id
+  find <UserName>, loan user-name
+  find <Engine>, loan engine
+  find <Passwords>, loan passwords
+  find <AccessString>, loan access-string
+  find <NoPasswordRequired>, loan no-password-required
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like user
+    note <Success>
+  loot 480
+    seed xml, like user-already-exists-fault
+    note <UserAlreadyExistsFault>
+  loot 481
+    seed xml, like user-quota-exceeded-fault
+    note <UserQuotaExceededFault>
+  loot 482
+    seed xml, like duplicate-user-name-fault
+    note <DuplicateUserNameFault>
+  loot 483
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 484
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>
+  loot 485
+    seed xml, like tag-quota-per-resource-exceeded
+    note <TagQuotaPerResourceExceeded>

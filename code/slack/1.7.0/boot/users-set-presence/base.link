@@ -1,0 +1,42 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+load @drumwork/snow/slack.com/1.7.0/base/users-set-presence-body
+  take form users-set-presence-body
+
+boot users-set-presence, name <users_setPresence>
+  note <Manually sets user presence.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `users:write`>
+  take users-set-presence-body, like users-set-presence-body
+
+  line </users.setPresence>
+
+  hint <token>, loan token
+
+  seed x-www-form-urlencoded, loan users-set-presence-body
+
+  loot 200
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-true
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take callstack, name <callstack>
+          void take
+        take error, name <error>
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response>

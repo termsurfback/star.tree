@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/invalid-arn
+  take form invalid-arn
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/resource-not-found
+  take form resource-not-found
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/tag-resource-output
+  take form tag-resource-output
+
+load @drumwork/snow/amazonaws.com/states/2016-11-23/base/too-many-tags
+  take form too-many-tags
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot tag-resource, name <TagResource>
+  note <Add a tag to a Step Functions resource.
+
+An array of key-value pairs. For more information, see [Using Cost Allocation Tags](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html) in the _AWS Billing and Cost Management User Guide_, and [Controlling Access Using IAM Tags](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_iam-tags.html).
+
+Tags may only contain Unicode letters, digits, white space, or these symbols: `_ . : / = + - @`.>
+
+  take x-amz-target
+    like native-string
+  take tag-resource-input, like tag-resource-input
+
+  line </#X-Amz-Target=AWSStepFunctions.TagResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan tag-resource-input
+
+  loot 200
+    seed json, like tag-resource-output
+    note <Success>
+  loot 480
+    seed json, like invalid-arn
+    note <InvalidArn>
+  loot 481
+    seed json, like resource-not-found
+    note <ResourceNotFound>
+  loot 482
+    seed json, like too-many-tags
+    note <TooManyTags>

@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/secretsmanager/2017-10-17/base/list-secrets-response
+  take form list-secrets-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-secrets, name <ListSecrets>
+  note <Lists all of the secrets that are stored by Secrets Manager in the Amazon Web Services account. To list the versions currently stored for a specific secret, use ListSecretVersionIds. The encrypted fields `SecretString` and `SecretBinary` are not included in the output. To get that information, call the GetSecretValue operation.
+
+Always check the `NextToken` response parameter when calling any of the `List*` operations. These operations can occasionally return an empty or shorter than expected list of results even when there more results become available. When this happens, the `NextToken` response parameter contains a value to pass to the next call to the same API to request the next part of the list.
+
+**Minimum permissions** To run this command, you must have the following permissions:
+
+- secretsmanager:ListSecrets
+
+**Related operations** - To list the versions attached to a secret, use ListSecretVersionIds.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-secrets-request, like list-secrets-request
+
+  line </#X-Amz-Target=secretsmanager.ListSecrets>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-secrets-request
+
+  loot 200
+    seed json, like list-secrets-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 482
+    seed json, like internal-service-error
+    note <InternalServiceError>

@@ -1,0 +1,73 @@
+
+load @drumwork/snow/amazonaws.com/iotanalytics/2017-11-27/base/customer-managed-datastore-s3-storage
+  take form customer-managed-datastore-s3-storage
+
+load @drumwork/snow/amazonaws.com/iotanalytics/2017-11-27/base/datastore-iot-site-wise-multi-layer-storage
+  take form datastore-iot-site-wise-multi-layer-storage
+
+load @drumwork/snow/amazonaws.com/iotanalytics/2017-11-27/base/json-configuration
+  take form json-configuration
+
+load @drumwork/snow/amazonaws.com/iotanalytics/2017-11-27/base/parquet-configuration
+  take form parquet-configuration
+
+load @drumwork/snow/amazonaws.com/iotanalytics/2017-11-27/base/partitions
+  take form partitions
+
+load @drumwork/snow/amazonaws.com/iotanalytics/2017-11-27/base/retention-period-in-days
+  take form retention-period-in-days
+
+load @drumwork/snow/amazonaws.com/iotanalytics/2017-11-27/base/service-managed-datastore-s3-storage
+  take form service-managed-datastore-s3-storage
+
+load @drumwork/snow/amazonaws.com/iotanalytics/2017-11-27/base/unlimited-retention-period
+  take form unlimited-retention-period
+
+form create-datastore-body
+  take datastore-name, name <datastoreName>
+  take datastore-storage, name <datastoreStorage>
+    like form
+      take service-managed-s3, name <serviceManagedS3>
+        like service-managed-datastore-s3-storage
+        void take
+        note <Used to store data in an Amazon S3 bucket managed by IoT Analytics. You can't change the choice of Amazon S3 storage after your data store is created.>
+      take customer-managed-s3, name <customerManagedS3>
+        like customer-managed-datastore-s3-storage
+        void take
+        note <S3-customer-managed; When you choose customer-managed storage, the `retentionPeriod` parameter is ignored. You can't change the choice of Amazon S3 storage after your data store is created.>
+      take iot-site-wise-multi-layer-storage, name <iotSiteWiseMultiLayerStorage>
+        like datastore-iot-site-wise-multi-layer-storage
+        void take
+        note <Used to store data used by IoT SiteWise in an Amazon S3 bucket that you manage. You can't change the choice of Amazon S3 storage after your data store is created.>
+    void take
+  take retention-period, name <retentionPeriod>
+    like form
+      take unlimited, name <unlimited>
+        like unlimited-retention-period
+        void take
+        note <If true, message data is kept indefinitely.>
+      take number-of-days, name <numberOfDays>
+        like retention-period-in-days
+        void take
+        note <The number of days that message data is kept. The `unlimited` parameter must be false.>
+    void take
+  take tags, name <tags>
+    void take
+  take file-format-configuration, name <fileFormatConfiguration>
+    like form
+      take json-configuration, name <jsonConfiguration>
+        like json-configuration
+        void take
+        note <Contains the configuration information of the JSON format.>
+      take parquet-configuration, name <parquetConfiguration>
+        like parquet-configuration
+        void take
+        note <Contains the configuration information of the Parquet format.>
+    void take
+  take datastore-partitions, name <datastorePartitions>
+    like form
+      take partitions, name <partitions>
+        like partitions
+        void take
+        note <A list of partition dimensions in a data store.>
+    void take

@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/resourcegroupstaggingapi/2017-01-26/base/constraint-violation-exception
+  take form constraint-violation-exception
+
+load @drumwork/snow/amazonaws.com/resourcegroupstaggingapi/2017-01-26/base/get-compliance-summary-output
+  take form get-compliance-summary-output
+
+load @drumwork/snow/amazonaws.com/resourcegroupstaggingapi/2017-01-26/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/resourcegroupstaggingapi/2017-01-26/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/resourcegroupstaggingapi/2017-01-26/base/throttled-exception
+  take form throttled-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-compliance-summary, name <GetComplianceSummary>
+  note <Returns a table that shows counts of resources that are noncompliant with their tag policies.
+
+For more information on tag policies, see [Tag Policies](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_tag-policies.html) in the _AWS Organizations User Guide._
+
+You can call this operation only from the organization's management account and from the us-east-1 Region.
+
+This operation supports pagination, where the response can be sent in multiple pages. You should check the `PaginationToken` response parameter to determine if there are additional results available to return. Repeat the query, passing the `PaginationToken` response parameter value as an input to the next request until you recieve a `null` value. A null value for `PaginationToken` indicates that there are no more results waiting to be returned.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take pagination-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-compliance-summary-input, like get-compliance-summary-input
+
+  line </#X-Amz-Target=ResourceGroupsTaggingAPI_20170126.GetComplianceSummary>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <PaginationToken>, loan pagination-token
+
+  seed json, loan get-compliance-summary-input
+
+  loot 200
+    seed json, like get-compliance-summary-output
+    note <Success>
+  loot 480
+    seed json, like constraint-violation-exception
+    note <ConstraintViolationException>
+  loot 481
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 483
+    seed json, like throttled-exception
+    note <ThrottledException>

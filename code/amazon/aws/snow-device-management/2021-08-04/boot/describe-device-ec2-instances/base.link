@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/snow-device-management/2021-08-04/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/snow-device-management/2021-08-04/base/describe-device-ec2-instances-body
+  take form describe-device-ec2-instances-body
+
+load @drumwork/snow/amazonaws.com/snow-device-management/2021-08-04/base/describe-device-ec2-output
+  take form describe-device-ec2-output
+
+load @drumwork/snow/amazonaws.com/snow-device-management/2021-08-04/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/snow-device-management/2021-08-04/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/snow-device-management/2021-08-04/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/snow-device-management/2021-08-04/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-device-ec2-instances, name <DescribeDeviceEc2Instances>
+  note <Checks the current state of the Amazon EC2 instances. The output is similar to `describeDevice`, but the results are sourced from the device cache in the Amazon Web Services Cloud and include a subset of the available fields.>
+
+  take managed-device-id
+    like native-string
+    note <The ID of the managed device.>
+  take describe-device-ec2-instances-body, like describe-device-ec2-instances-body
+
+  line </managed-device/{managed-device-id}/resources/ec2/describe>
+
+  seed json, loan describe-device-ec2-instances-body
+
+  loot 200
+    seed json, like describe-device-ec2-output
+    note <Success>
+  loot 480
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 484
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

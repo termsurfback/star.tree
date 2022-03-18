@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/stop-fleet-result
+  take form stop-fleet-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot stop-fleet, name <StopFleet>
+  note <Stops the specified fleet.>
+
+  take x-amz-target
+    like native-string
+  take stop-fleet-request, like stop-fleet-request
+
+  line </#X-Amz-Target=PhotonAdminProxyService.StopFleet>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan stop-fleet-request
+
+  loot 200
+    seed json, like stop-fleet-result
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>

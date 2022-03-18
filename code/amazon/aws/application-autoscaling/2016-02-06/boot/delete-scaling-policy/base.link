@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/concurrent-update-exception
+  take form concurrent-update-exception
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/delete-scaling-policy-response
+  take form delete-scaling-policy-response
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/object-not-found-exception
+  take form object-not-found-exception
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-scaling-policy, name <DeleteScalingPolicy>
+  note <Deletes the specified scaling policy for an Application Auto Scaling scalable target.
+
+Deleting a step scaling policy deletes the underlying alarm action, but does not delete the CloudWatch alarm associated with the scaling policy, even if it no longer has an associated action.
+
+For more information, see [Delete a step scaling policy](https://docs.aws.amazon.com/autoscaling/application/userguide/application-auto-scaling-step-scaling-policies.html#delete-step-scaling-policy) and [Delete a target tracking scaling policy](https://docs.aws.amazon.com/autoscaling/application/userguide/application-auto-scaling-target-tracking.html#delete-target-tracking-policy) in the _Application Auto Scaling User Guide_.>
+
+  take x-amz-target
+    like native-string
+  take delete-scaling-policy-request, like delete-scaling-policy-request
+
+  line </#X-Amz-Target=AnyScaleFrontendService.DeleteScalingPolicy>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-scaling-policy-request
+
+  loot 200
+    seed json, like delete-scaling-policy-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like object-not-found-exception
+    note <ObjectNotFoundException>
+  loot 482
+    seed json, like concurrent-update-exception
+    note <ConcurrentUpdateException>
+  loot 483
+    seed json, like internal-service-exception
+    note <InternalServiceException>

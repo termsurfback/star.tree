@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/sdb/2009-04-15/base/attribute-does-not-exist
+  take form attribute-does-not-exist
+
+load @drumwork/snow/amazonaws.com/sdb/2009-04-15/base/no-such-domain
+  take form no-such-domain
+
+load @drumwork/snow/amazonaws.com/sdb/2009-04-15/base/number-item-attributes-exceeded
+  take form number-item-attributes-exceeded
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-put-attributes, name <POST_PutAttributes>
+  note <The PutAttributes operation creates or replaces attributes in an item. The client may specify new attributes using a combination of the `Attribute.X.Name` and `Attribute.X.Value` parameters. The client specifies the first attribute by the parameters `Attribute.0.Name` and `Attribute.0.Value`, the second attribute by the parameters `Attribute.1.Name` and `Attribute.1.Value`, and so on.
+
+Attributes are uniquely identified in an item by their name/value combination. For example, a single item can have the attributes `{ "first_name", "first_value" }` and `{ "first_name", second_value" }`. However, it cannot have two attribute instances where both the `Attribute.X.Name` and `Attribute.X.Value` are the same.
+
+Optionally, the requestor can supply the `Replace` parameter for each individual attribute. Setting this value to `true` causes the new attribute value to replace the existing attribute value(s). For example, if an item has the attributes `{ 'a', '1' }`, `{ 'b', '2'}` and `{ 'b', '3' }` and the requestor calls `PutAttributes` using the attributes `{ 'b', '4' }` with the `Replace` parameter set to true, the final attributes of the item are changed to `{ 'a', '1' }` and `{ 'b', '4' }`, which replaces the previous values of the 'b' attribute with the new value.
+
+Using `PutAttributes` to replace attribute values that do not exist will not result in an error response.
+
+You cannot specify an empty string as an attribute name.
+
+Because Amazon SimpleDB makes multiple copies of client data and uses an eventual consistency update model, an immediate GetAttributes or Select operation (read) immediately after a PutAttributes or DeleteAttributes operation (write) might not return the updated data.
+
+The following limitations are enforced for this operation:
+
+- 256 total attribute name-value pairs per item
+- One billion attributes per domain
+- 10 GB of total user data storage per domain>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take put-attributes-request, like put-attributes-request
+    void take
+
+  line </#Action=PutAttributes>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan put-attributes-request
+
+  loot 200
+    note <Success>
+  loot 400
+    seed xml, like no-such-domain
+    note <NoSuchDomain>
+  loot 404
+    seed xml, like attribute-does-not-exist
+    note <AttributeDoesNotExist>
+  loot 409
+    seed xml, like number-item-attributes-exceeded
+    note <NumberItemAttributesExceeded>

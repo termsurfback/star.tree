@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/list-signing-certificates-response
+  take form list-signing-certificates-response
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-list-signing-certificates, name <POST_ListSigningCertificates>
+  note <Returns information about the signing certificates associated with the specified IAM user. If none exists, the operation returns an empty list.
+
+Although each user is limited to a small number of signing certificates, you can still paginate the results using the `MaxItems` and `Marker` parameters.
+
+If the `UserName` field is not specified, the user name is determined implicitly based on the Amazon Web Services access key ID used to sign the request for this operation. This operation works for access keys under the account. Consequently, you can use this operation to manage account root user credentials even if the account has no associated users.>
+
+  take max-items
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take list-signing-certificates-request, like list-signing-certificates-request
+    void take
+
+  line </#Action=ListSigningCertificates>
+
+  find <MaxItems>, loan max-items
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan list-signing-certificates-request
+
+  loot 200
+    seed xml, like list-signing-certificates-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

@@ -1,0 +1,72 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/storage/v1/base/object
+  take form object
+
+boot storage-objects-patch, name <storage.objects.patch>
+  note <Patches an object's metadata.>
+
+  take bucket
+    like native-string
+    note <Name of the bucket in which the object resides.>
+  take object
+    like native-string
+    note <Name of the object. For information about how to URL encode object names to be path safe, see Encoding URI Path Parts.>
+  take generation
+    like native-string
+    note <If present, selects a specific revision of this object (as opposed to the latest version, the default).>
+    void take
+  take if-generation-match
+    like native-string
+    note <Makes the operation conditional on whether the object's current generation matches the given value. Setting to 0 makes the operation succeed only if there are no live versions of the object.>
+    void take
+  take if-generation-not-match
+    like native-string
+    note <Makes the operation conditional on whether the object's current generation does not match the given value. If no live object exists, the precondition fails. Setting to 0 makes the operation succeed only if there is a live version of the object.>
+    void take
+  take if-metageneration-match
+    like native-string
+    note <Makes the operation conditional on whether the object's current metageneration matches the given value.>
+    void take
+  take if-metageneration-not-match
+    like native-string
+    note <Makes the operation conditional on whether the object's current metageneration does not match the given value.>
+    void take
+  take predefined-acl
+    like native-string
+    note <Apply a predefined set of access controls to this object.>
+    void take
+  take projection
+    like native-string
+    note <Set of properties to return. Defaults to full.>
+    void take
+  take provisional-user-project
+    like native-string
+    note <The project to be billed for this request if the target bucket is requester-pays bucket.>
+    void take
+  take user-project
+    like native-string
+    note <The project to be billed for this request, for Requester Pays buckets.>
+    void take
+  take object, like object
+    void take
+
+  line </b/{bucket}/o/{object}>
+
+  find <generation>, loan generation
+  find <ifGenerationMatch>, loan if-generation-match
+  find <ifGenerationNotMatch>, loan if-generation-not-match
+  find <ifMetagenerationMatch>, loan if-metageneration-match
+  find <ifMetagenerationNotMatch>, loan if-metageneration-not-match
+  find <predefinedAcl>, loan predefined-acl
+  find <projection>, loan projection
+  find <provisionalUserProject>, loan provisional-user-project
+  find <userProject>, loan user-project
+
+  seed json, loan object
+
+  loot 200
+    seed json, like object
+    note <Successful response>

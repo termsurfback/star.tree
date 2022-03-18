@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/get-pipeline-execution-output
+  take form get-pipeline-execution-output
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/pipeline-execution-not-found-exception
+  take form pipeline-execution-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/pipeline-not-found-exception
+  take form pipeline-not-found-exception
+
+load @drumwork/snow/amazonaws.com/codepipeline/2015-07-09/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-pipeline-execution, name <GetPipelineExecution>
+  note <Returns information about an execution of a pipeline, including details about artifacts, the pipeline execution ID, and the name, version, and status of the pipeline.>
+
+  take x-amz-target
+    like native-string
+  take get-pipeline-execution-input, like get-pipeline-execution-input
+
+  line </#X-Amz-Target=CodePipeline_20150709.GetPipelineExecution>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-pipeline-execution-input
+
+  loot 200
+    seed json, like get-pipeline-execution-output
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like pipeline-not-found-exception
+    note <PipelineNotFoundException>
+  loot 482
+    seed json, like pipeline-execution-not-found-exception
+    note <PipelineExecutionNotFoundException>

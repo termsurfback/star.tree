@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_taskrouter_v1/1.27.2/base/taskrouter-v1-workspace-task
+  take form taskrouter-v1-workspace-task
+
+load @drumwork/snow/twilio.com/twilio_taskrouter_v1/1.27.2/base/update-task-body
+  take form update-task-body
+
+boot update-task, name <UpdateTask>
+  take workspace-sid
+    like native-string
+    note <The SID of the Workspace with the Task to update.>
+  take sid
+    like native-string
+    note <The SID of the Task resource to update.>
+  take if-match
+    like native-string
+    note <If provided, applies this mutation if (and only if) the \[ETag\](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/ETag) header of the Task matches the provided value. This matches the semantics of (and is implemented with) the HTTP \[If-Match header\](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/If-Match).>
+    void take
+  take update-task-body, like update-task-body
+    void take
+
+  line </v1/Workspaces/{workspace-sid}/Tasks/{sid}>
+
+  hint <If-Match>, loan if-match
+
+  seed x-www-form-urlencoded, loan update-task-body
+
+  loot 200
+    seed json, like taskrouter-v1-workspace-task
+    note <OK>

@@ -1,0 +1,91 @@
+
+load @drumwork/snow/amazonaws.com/s3/2006-03-01/base/put-object-tagging-body
+  take form put-object-tagging-body
+
+load @drumwork/snow/amazonaws.com/s3/2006-03-01/base/put-object-tagging-output
+  take form put-object-tagging-output
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-object-tagging, name <PutObjectTagging>
+  note <Sets the supplied tag-set to an object that already exists in a bucket.
+
+A tag is a key-value pair. You can associate tags with an object by sending a PUT request against the tagging subresource that is associated with the object. You can retrieve tags by sending a GET request. For more information, see [GetObjectTagging](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectTagging.html).
+
+For tagging-related restrictions related to characters and encodings, see [Tag Restrictions](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/allocation-tag-restrictions.html). Note that Amazon S3 limits the maximum number of tags to 10 tags per object.
+
+To use this operation, you must have permission to perform the `s3:PutObjectTagging` action. By default, the bucket owner has this permission and can grant this permission to others.
+
+To put tags of any other version, use the `versionId` query parameter. You also need permission for the `s3:PutObjectVersionTagging` action.
+
+For information about the Amazon S3 object tagging feature, see [Object Tagging](https://docs.aws.amazon.com/AmazonS3/latest/dev/object-tagging.html).
+
+**Special Errors** - - _Code: InvalidTagError_
+
+  - _Cause: The tag provided was not a valid tag. This error can occur if the tag did not pass input validation. For more information, see [Object Tagging](https://docs.aws.amazon.com/AmazonS3/latest/dev/object-tagging.html)._
+
+- - _Code: MalformedXMLError_
+
+  - _Cause: The XML provided does not match the schema._
+
+- - _Code: OperationAbortedError_
+
+  - _Cause: A conflicting conditional action is currently in progress against this resource. Please try again._
+
+- - _Code: InternalError_
+
+  - _Cause: The service was unable to apply the provided tag to the object._
+
+**Related Resources** - [GetObjectTagging](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObjectTagging.html)
+
+- [DeleteObjectTagging](https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObjectTagging.html)>
+
+  take bucket
+    like native-string
+    note <The bucket name containing the object.
+
+When using this action with an access point, you must direct requests to the access point hostname. The access point hostname takes the form _AccessPointName_-_AccountId_.s3-accesspoint._Region_.amazonaws.com. When using this action with an access point through the Amazon Web Services SDKs, you provide the access point ARN in place of the bucket name. For more information about access point ARNs, see [Using access points](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-access-points.html) in the _Amazon S3 User Guide_.
+
+When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form _AccessPointName_-_AccountId_._outpostID_.s3-outposts._Region_.amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see [Using S3 on Outposts](https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html) in the _Amazon S3 User Guide_.>
+  take key
+    like native-string
+    note <Name of the object key.>
+  take content-md5
+    like native-string
+    note <The MD5 hash for the request body.
+
+For requests made using the Amazon Web Services Command Line Interface (CLI) or Amazon Web Services SDKs, this field is calculated automatically.>
+    void take
+  take x-amz-expected-bucket-owner
+    like native-string
+    note <The account ID of the expected bucket owner. If the bucket is owned by a different account, the request will fail with an HTTP `403 (Access Denied)` error.>
+    void take
+  take x-amz-request-payer
+    like native-string
+    void take
+  take version-id
+    like native-string
+    note <The versionId of the object that the tag-set will be added to.>
+    void take
+  take tagging
+    like native-boolean
+  take put-object-tagging-body, like put-object-tagging-body
+
+  line </{bucket}/{key}#tagging>
+
+  hint <Content-MD5>, loan content-md5
+  hint <x-amz-expected-bucket-owner>, loan x-amz-expected-bucket-owner
+  hint <x-amz-request-payer>, loan x-amz-request-payer
+
+  find <versionId>, loan version-id
+  find <tagging>, loan tagging
+
+  seed xml, loan put-object-tagging-body
+
+  loot 200
+    seed xml, like put-object-tagging-output
+    note <Success>

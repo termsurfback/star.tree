@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/auditmanager/2017-07-25/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/auditmanager/2017-07-25/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/auditmanager/2017-07-25/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/auditmanager/2017-07-25/base/update-control-body
+  take form update-control-body
+
+load @drumwork/snow/amazonaws.com/auditmanager/2017-07-25/base/update-control-response
+  take form update-control-response
+
+load @drumwork/snow/amazonaws.com/auditmanager/2017-07-25/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-control, name <UpdateControl>
+  note <Updates a custom control in Audit Manager.>
+
+  take control-id
+    like native-string
+    note <The identifier for the specified control.>
+  take update-control-body, like update-control-body
+
+  line </controls/{control-id}>
+
+  seed json, loan update-control-body
+
+  loot 200
+    seed json, like update-control-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 483
+    seed json, like internal-server-exception
+    note <InternalServerException>

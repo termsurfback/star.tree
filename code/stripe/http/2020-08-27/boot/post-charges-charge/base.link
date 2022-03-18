@@ -1,0 +1,31 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/charge
+  take form charge
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-charges-charge-body
+  take form post-charges-charge-body
+
+boot post-charges-charge, name <PostChargesCharge>
+  note <Updates the specified charge by setting the values of the parameters passed. Any parameters not provided will be left unchanged.>
+
+  take charge
+    like native-string
+  take post-charges-charge-body, like post-charges-charge-body
+    void take
+
+  line </v1/charges/{charge}>
+
+  seed x-www-form-urlencoded, loan post-charges-charge-body
+
+  loot 200
+    seed json, like charge
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

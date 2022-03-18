@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/list-training-jobs-response
+  take form list-training-jobs-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-training-jobs, name <ListTrainingJobs>
+  note <Lists training jobs.
+
+When `StatusEquals` and `MaxResults` are set at the same time, the `MaxResults` number of training jobs are first retrieved ignoring the `StatusEquals` parameter and then they are filtered by the `StatusEquals` parameter, which is returned as a response.
+
+For example, if `ListTrainingJobs` is invoked with the following parameters:
+
+`{ ... MaxResults: 100, StatusEquals: InProgress ... }`
+
+First, 100 trainings jobs with any status, including those other than `InProgress`, are selected (sorted according to the creation time, from the most current to the oldest). Next, those with a status of `InProgress` are returned.
+
+You can quickly test the API using the following Amazon Web Services CLI code.
+
+`aws sagemaker list-training-jobs --max-results 100 --status-equals InProgress`>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-training-jobs-request, like list-training-jobs-request
+
+  line </#X-Amz-Target=SageMaker.ListTrainingJobs>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-training-jobs-request
+
+  loot 200
+    seed json, like list-training-jobs-response
+    note <Success>

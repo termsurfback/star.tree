@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/detach-instances-answer
+  take form detach-instances-answer
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/xml-string-max-len19
+  take form xml-string-max-len19
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-detach-instances, name <GET_DetachInstances>
+  note <Removes one or more instances from the specified Auto Scaling group.
+
+After the instances are detached, you can manage them independent of the Auto Scaling group.
+
+If you do not specify the option to decrement the desired capacity, Amazon EC2 Auto Scaling launches instances to replace the ones that are detached.
+
+If there is a Classic Load Balancer attached to the Auto Scaling group, the instances are deregistered from the load balancer. If there are target groups attached to the Auto Scaling group, the instances are deregistered from the target groups.
+
+For more information, see [Detach EC2 instances from your Auto Scaling group](https://docs.aws.amazon.com/autoscaling/ec2/userguide/detach-instance-asg.html) in the _Amazon EC2 Auto Scaling User Guide_.>
+
+  take instance-ids
+    like list
+      like xml-string-max-len19
+    note <The IDs of the instances. You can specify up to 20 instances.>
+    void take
+  take auto-scaling-group-name
+    like native-string
+    note <The name of the Auto Scaling group.>
+  take should-decrement-desired-capacity
+    like native-boolean
+    note <Indicates whether the Auto Scaling group decrements the desired capacity value by the number of instances detached.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DetachInstances>
+
+  find <InstanceIds>, loan instance-ids
+  find <AutoScalingGroupName>, loan auto-scaling-group-name
+  find <ShouldDecrementDesiredCapacity>, loan should-decrement-desired-capacity
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like detach-instances-answer
+    note <Success>
+  loot 480
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

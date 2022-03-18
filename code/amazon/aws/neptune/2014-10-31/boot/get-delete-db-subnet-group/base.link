@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-subnet-group-not-found-fault
+  take form db-subnet-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-subnet-group-state-fault
+  take form invalid-db-subnet-group-state-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-subnet-state-fault
+  take form invalid-db-subnet-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-db-subnet-group, name <GET_DeleteDBSubnetGroup>
+  note <Deletes a DB subnet group.
+
+The specified database subnet group must not be associated with any DB instances.>
+
+  take db-subnet-group-name
+    like native-string
+    note <The name of the database subnet group to delete.
+
+You can't delete the default subnet group.
+
+Constraints:
+
+Constraints: Must match the name of an existing DBSubnetGroup. Must not be default.
+
+Example: `mySubnetgroup`>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteDBSubnetGroup>
+
+  find <DBSubnetGroupName>, loan db-subnet-group-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like invalid-db-subnet-group-state-fault
+    note <InvalidDBSubnetGroupStateFault>
+  loot 481
+    seed xml, like invalid-db-subnet-state-fault
+    note <InvalidDBSubnetStateFault>
+  loot 482
+    seed xml, like db-subnet-group-not-found-fault
+    note <DBSubnetGroupNotFoundFault>

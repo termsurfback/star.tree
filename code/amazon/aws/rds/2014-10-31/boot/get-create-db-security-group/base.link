@@ -1,0 +1,75 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/create-db-security-group-result
+  take form create-db-security-group-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-security-group-already-exists-fault
+  take form db-security-group-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-security-group-not-supported-fault
+  take form db-security-group-not-supported-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-security-group-quota-exceeded-fault
+  take form db-security-group-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/tag
+  take form tag
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-db-security-group, name <GET_CreateDBSecurityGroup>
+  note <Creates a new DB security group. DB security groups control access to a DB instance.
+
+A DB security group controls access to EC2-Classic DB instances that are not in a VPC.>
+
+  take db-security-group-name
+    like native-string
+    note <The name for the DB security group. This value is stored as a lowercase string.
+
+Constraints:
+
+- Must be 1 to 255 letters, numbers, or hyphens.
+
+- First character must be a letter
+
+- Can't end with a hyphen or contain two consecutive hyphens
+
+- Must not be "Default"
+
+Example: `mysecuritygroup`>
+  take db-security-group-description
+    like native-string
+    note <The description for the DB security group.>
+  take tags
+    like list
+      like tag
+    note <Tags to assign to the DB security group.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateDBSecurityGroup>
+
+  find <DBSecurityGroupName>, loan db-security-group-name
+  find <DBSecurityGroupDescription>, loan db-security-group-description
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-db-security-group-result
+    note <Success>
+  loot 480
+    seed xml, like db-security-group-already-exists-fault
+    note <DBSecurityGroupAlreadyExistsFault>
+  loot 481
+    seed xml, like db-security-group-quota-exceeded-fault
+    note <DBSecurityGroupQuotaExceededFault>
+  loot 482
+    seed xml, like db-security-group-not-supported-fault
+    note <DBSecurityGroupNotSupportedFault>

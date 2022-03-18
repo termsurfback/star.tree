@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-spot-price-history-result
+  take form describe-spot-price-history-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-spot-price-history, name <POST_DescribeSpotPriceHistory>
+  note <Describes the Spot price history. For more information, see [Spot Instance pricing history](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-instances-history.html) in the _Amazon EC2 User Guide for Linux Instances_.
+
+When you specify a start and end time, the operation returns the prices of the instance types within that time range. It also returns the last price change before the start time, which is the effective price as of the start time.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-spot-price-history-request, like describe-spot-price-history-request
+    void take
+
+  line </#Action=DescribeSpotPriceHistory>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-spot-price-history-request
+
+  loot 200
+    seed xml, like describe-spot-price-history-result
+    note <Success>

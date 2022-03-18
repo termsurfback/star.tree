@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-subscription-items-item-body
+  take form get-subscription-items-item-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/subscription-item
+  take form subscription-item
+
+boot get-subscription-items-item, name <GetSubscriptionItemsItem>
+  note <Retrieves the subscription item with the given ID.>
+
+  take item
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-subscription-items-item-body, like get-subscription-items-item-body
+    void take
+
+  line </v1/subscription_items/{item}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-subscription-items-item-body
+
+  loot 200
+    seed json, like subscription-item
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

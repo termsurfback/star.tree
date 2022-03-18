@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/data-unavailable-exception
+  take form data-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/get-usage-forecast-response
+  take form get-usage-forecast-response
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/unresolvable-usage-unit-exception
+  take form unresolvable-usage-unit-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-usage-forecast, name <GetUsageForecast>
+  note <Retrieves a forecast for how much Amazon Web Services predicts that you will use over the forecast time period that you select, based on your past usage.>
+
+  take x-amz-target
+    like native-string
+  take get-usage-forecast-request, like get-usage-forecast-request
+
+  line </#X-Amz-Target=AWSInsightsIndexService.GetUsageForecast>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-usage-forecast-request
+
+  loot 200
+    seed json, like get-usage-forecast-response
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed json, like data-unavailable-exception
+    note <DataUnavailableException>
+  loot 482
+    seed json, like unresolvable-usage-unit-exception
+    note <UnresolvableUsageUnitException>

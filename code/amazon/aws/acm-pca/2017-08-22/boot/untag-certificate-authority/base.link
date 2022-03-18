@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/invalid-arn-exception
+  take form invalid-arn-exception
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/invalid-state-exception
+  take form invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/invalid-tag-exception
+  take form invalid-tag-exception
+
+load @drumwork/snow/amazonaws.com/acm-pca/2017-08-22/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot untag-certificate-authority, name <UntagCertificateAuthority>
+  note <Remove one or more tags from your private CA. A tag consists of a key-value pair. If you do not specify the value portion of the tag when calling this action, the tag will be removed regardless of value. If you specify a value, the tag is removed only if it is associated with the specified value. To add tags to a private CA, use the [TagCertificateAuthority](https://docs.aws.amazon.com/acm-pca/latest/APIReference/API_TagCertificateAuthority.html). Call the [ListTags](https://docs.aws.amazon.com/acm-pca/latest/APIReference/API_ListTags.html) action to see what tags are associated with your CA.>
+
+  take x-amz-target
+    like native-string
+  take untag-certificate-authority-request, like untag-certificate-authority-request
+
+  line </#X-Amz-Target=ACMPrivateCA.UntagCertificateAuthority>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan untag-certificate-authority-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-arn-exception
+    note <InvalidArnException>
+  loot 482
+    seed json, like invalid-state-exception
+    note <InvalidStateException>
+  loot 483
+    seed json, like invalid-tag-exception
+    note <InvalidTagException>

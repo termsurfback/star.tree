@@ -1,0 +1,146 @@
+
+load @drumwork/snow/amazonaws.com/s3/2006-03-01/base/head-object-output
+  take form head-object-output
+
+load @drumwork/snow/amazonaws.com/s3/2006-03-01/base/no-such-key
+  take form no-such-key
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot head-object, name <HeadObject>
+  note <The HEAD action retrieves metadata from an object without returning the object itself. This action is useful if you're only interested in an object's metadata. To use HEAD, you must have READ access to the object.
+
+A `HEAD` request has the same options as a `GET` action on an object. The response is identical to the `GET` response except that there is no response body. Because of this, if the `HEAD` request generates an error, it returns a generic `404 Not Found` or `403 Forbidden` code. It is not possible to retrieve the exact exception beyond these error codes.
+
+If you encrypt an object by using server-side encryption with customer-provided encryption keys (SSE-C) when you store the object in Amazon S3, then when you retrieve the metadata from the object, you must use the following headers:
+
+- x-amz-server-side-encryption-customer-algorithm
+
+- x-amz-server-side-encryption-customer-key
+
+- x-amz-server-side-encryption-customer-key-MD5
+
+For more information about SSE-C, see [Server-Side Encryption (Using Customer-Provided Encryption Keys)](https://docs.aws.amazon.com/AmazonS3/latest/dev/ServerSideEncryptionCustomerKeys.html).
+
+- Encryption request headers, like `x-amz-server-side-encryption`, should not be sent for GET requests if your object uses server-side encryption with KMS keys (SSE-KMS) or server-side encryption with Amazon S3-managed encryption keys (SSE-S3). If your object does use these types of keys, you’ll get an HTTP 400 BadRequest error.
+
+- The last modified property in this case is the creation date of the object.
+
+Request headers are limited to 8 KB in size. For more information, see [Common Request Headers](https://docs.aws.amazon.com/AmazonS3/latest/API/RESTCommonRequestHeaders.html).
+
+Consider the following when using request headers:
+
+- Consideration 1 - If both of the `If-Match` and `If-Unmodified-Since` headers are present in the request as follows:
+
+  - `If-Match` condition evaluates to `true`, and;
+
+  - `If-Unmodified-Since` condition evaluates to `false`;
+
+  Then Amazon S3 returns `200 OK` and the data requested.
+
+- Consideration 2 - If both of the `If-None-Match` and `If-Modified-Since` headers are present in the request as follows:
+
+  - `If-None-Match` condition evaluates to `false`, and;
+
+  - `If-Modified-Since` condition evaluates to `true`;
+
+  Then Amazon S3 returns the `304 Not Modified` response code.
+
+For more information about conditional requests, see [RFC 7232](https://tools.ietf.org/html/rfc7232).
+
+**Permissions** You need the relevant read object (or version) permission for this operation. For more information, see [Specifying Permissions in a Policy](https://docs.aws.amazon.com/AmazonS3/latest/dev/using-with-s3-actions.html). If the object you request does not exist, the error Amazon S3 returns depends on whether you also have the s3:ListBucket permission.
+
+- If you have the `s3:ListBucket` permission on the bucket, Amazon S3 returns an HTTP status code 404 ("no such key") error.
+
+- If you don’t have the `s3:ListBucket` permission, Amazon S3 returns an HTTP status code 403 ("access denied") error.
+
+The following action is related to `HeadObject`:
+
+- [GetObject](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html)>
+
+  take bucket
+    like native-string
+    note <The name of the bucket containing the object.
+
+When using this action with an access point, you must direct requests to the access point hostname. The access point hostname takes the form _AccessPointName_-_AccountId_.s3-accesspoint._Region_.amazonaws.com. When using this action with an access point through the Amazon Web Services SDKs, you provide the access point ARN in place of the bucket name. For more information about access point ARNs, see [Using access points](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-access-points.html) in the _Amazon S3 User Guide_.
+
+When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form _AccessPointName_-_AccountId_._outpostID_.s3-outposts._Region_.amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see [Using S3 on Outposts](https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html) in the _Amazon S3 User Guide_.>
+  take key
+    like native-string
+    note <The object key.>
+  take if-match
+    like native-string
+    note <Return the object only if its entity tag (ETag) is the same as the one specified, otherwise return a 412 (precondition failed).>
+    void take
+  take if-modified-since
+    like native-string
+    note <Return the object only if it has been modified since the specified time, otherwise return a 304 (not modified).>
+    void take
+  take if-none-match
+    like native-string
+    note <Return the object only if its entity tag (ETag) is different from the one specified, otherwise return a 304 (not modified).>
+    void take
+  take if-unmodified-since
+    like native-string
+    note <Return the object only if it has not been modified since the specified time, otherwise return a 412 (precondition failed).>
+    void take
+  take range
+    like native-string
+    note <Downloads the specified range bytes of an object. For more information about the HTTP Range header, see [http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35](http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35).
+
+Amazon S3 doesn't support retrieving multiple ranges of data per `GET` request.>
+    void take
+  take x-amz-server-side-encryption-customer-algorithm
+    like native-string
+    note <Specifies the algorithm to use to when encrypting the object (for example, AES256).>
+    void take
+  take x-amz-server-side-encryption-customer-key
+    like native-string
+    note <Specifies the customer-provided encryption key for Amazon S3 to use in encrypting data. This value is used to store the object and then it is discarded; Amazon S3 does not store the encryption key. The key must be appropriate for use with the algorithm specified in the `x-amz-server-side-encryption-customer-algorithm` header.>
+    void take
+  take x-amz-server-side-encryption-customer-key-md5
+    like native-string
+    note <Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure that the encryption key was transmitted without error.>
+    void take
+  take x-amz-request-payer
+    like native-string
+    void take
+  take x-amz-expected-bucket-owner
+    like native-string
+    note <The account ID of the expected bucket owner. If the bucket is owned by a different account, the request will fail with an HTTP `403 (Access Denied)` error.>
+    void take
+  take version-id
+    like native-string
+    note <VersionId used to reference a specific version of the object.>
+    void take
+  take part-number
+    like native-integer
+    note <Part number of the object being read. This is a positive integer between 1 and 10,000. Effectively performs a 'ranged' HEAD request for the part specified. Useful querying about the size of the part and the number of parts in this object.>
+    void take
+
+  line </{bucket}/{key}>
+
+  hint <If-Match>, loan if-match
+  hint <If-Modified-Since>, loan if-modified-since
+  hint <If-None-Match>, loan if-none-match
+  hint <If-Unmodified-Since>, loan if-unmodified-since
+  hint <Range>, loan range
+  hint <x-amz-server-side-encryption-customer-algorithm>, loan x-amz-server-side-encryption-customer-algorithm
+  hint <x-amz-server-side-encryption-customer-key>, loan x-amz-server-side-encryption-customer-key
+  hint <x-amz-server-side-encryption-customer-key-MD5>, loan x-amz-server-side-encryption-customer-key-md5
+  hint <x-amz-request-payer>, loan x-amz-request-payer
+  hint <x-amz-expected-bucket-owner>, loan x-amz-expected-bucket-owner
+
+  find <versionId>, loan version-id
+  find <partNumber>, loan part-number
+
+  loot 200
+    seed xml, like head-object-output
+    note <Success>
+  loot 480
+    seed xml, like no-such-key
+    note <NoSuchKey>

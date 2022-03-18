@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/list-policy-tags-response
+  take form list-policy-tags-response
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-list-policy-tags, name <POST_ListPolicyTags>
+  note <Lists the tags that are attached to the specified IAM customer managed policy. The returned list of tags is sorted by tag key. For more information about tagging, see [Tagging IAM resources](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_tags.html) in the _IAM User Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take list-policy-tags-request, like list-policy-tags-request
+    void take
+
+  line </#Action=ListPolicyTags>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan list-policy-tags-request
+
+  loot 200
+    seed xml, like list-policy-tags-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>
+  loot 482
+    seed xml, like invalid-input-exception
+    note <InvalidInputException>

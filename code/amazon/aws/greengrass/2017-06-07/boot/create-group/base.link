@@ -1,0 +1,34 @@
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/create-group-body
+  take form create-group-body
+
+load @drumwork/snow/amazonaws.com/greengrass/2017-06-07/base/create-group-response
+  take form create-group-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-group, name <CreateGroup>
+  note <Creates a group. You may provide the initial version of the group or use ''CreateGroupVersion'' at a later time. Tip: You can use the ''gg_group_setup'' package (https://github.com/awslabs/aws-greengrass-group-setup) as a library or command-line application to create and deploy Greengrass groups.>
+
+  take x-amzn-client-token
+    like native-string
+    note <A client token used to correlate requests and responses.>
+    void take
+  take create-group-body, like create-group-body
+
+  line </greengrass/groups>
+
+  hint <X-Amzn-Client-Token>, loan x-amzn-client-token
+
+  seed json, loan create-group-body
+
+  loot 200
+    seed json, like create-group-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>

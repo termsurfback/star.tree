@@ -1,0 +1,31 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/delete-invoices-invoice-body
+  take form delete-invoices-invoice-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/deleted-invoice
+  take form deleted-invoice
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+boot delete-invoices-invoice, name <DeleteInvoicesInvoice>
+  note <Permanently deletes a one-off invoice draft. This cannot be undone. Attempts to delete invoices that are no longer in a draft state will fail; once an invoice has been finalized or if an invoice is for a subscription, it must be [voided](#void_invoice).>
+
+  take invoice
+    like native-string
+  take delete-invoices-invoice-body, like delete-invoices-invoice-body
+    void take
+
+  line </v1/invoices/{invoice}>
+
+  seed x-www-form-urlencoded, loan delete-invoices-invoice-body
+
+  loot 200
+    seed json, like deleted-invoice
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

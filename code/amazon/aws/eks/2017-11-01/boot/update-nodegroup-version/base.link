@@ -1,0 +1,72 @@
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/update-nodegroup-version-body
+  take form update-nodegroup-version-body
+
+load @drumwork/snow/amazonaws.com/eks/2017-11-01/base/update-nodegroup-version-response
+  take form update-nodegroup-version-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-nodegroup-version, name <UpdateNodegroupVersion>
+  note <Updates the Kubernetes version or AMI version of an Amazon EKS managed node group.
+
+You can update a node group using a launch template only if the node group was originally deployed with a launch template. If you need to update a custom AMI in a node group that was deployed with a launch template, then update your custom AMI, specify the new ID in a new version of the launch template, and then update the node group to the new version of the launch template.
+
+If you update without a launch template, then you can update to the latest available AMI version of a node group's current Kubernetes version by not specifying a Kubernetes version in the request. You can update to the latest AMI version of your cluster's current Kubernetes version by specifying your cluster's Kubernetes version in the request. For more information, see [Amazon EKS optimized Amazon Linux 2 AMI versions](https://docs.aws.amazon.com/eks/latest/userguide/eks-linux-ami-versions.html) in the _Amazon EKS User Guide_.
+
+You cannot roll back a node group to an earlier Kubernetes version or AMI version.
+
+When a node in a managed node group is terminated due to a scaling action or update, the pods in that node are drained first. Amazon EKS attempts to drain the nodes gracefully and will fail if it is unable to do so. You can `force` the update if Amazon EKS is unable to drain the nodes as a result of a pod disruption budget issue.>
+
+  take name
+    like native-string
+    note <The name of the Amazon EKS cluster that is associated with the managed node group to update.>
+  take nodegroup-name
+    like native-string
+    note <The name of the managed node group to update.>
+  take update-nodegroup-version-body, like update-nodegroup-version-body
+
+  line </clusters/{name}/node-groups/{nodegroup-name}/update-version>
+
+  seed json, loan update-nodegroup-version-body
+
+  loot 200
+    seed json, like update-nodegroup-version-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like client-exception
+    note <ClientException>
+  loot 482
+    seed json, like server-exception
+    note <ServerException>
+  loot 483
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>
+  loot 484
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 485
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

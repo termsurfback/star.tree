@@ -1,0 +1,42 @@
+
+load @drumwork/snow/amazonaws.com/health/2016-08-04/base/describe-event-aggregates-response
+  take form describe-event-aggregates-response
+
+load @drumwork/snow/amazonaws.com/health/2016-08-04/base/invalid-pagination-token
+  take form invalid-pagination-token
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-event-aggregates, name <DescribeEventAggregates>
+  note <Returns the number of events of each event type (issue, scheduled change, and account notification). If no filter is specified, the counts of all events in each category are returned.
+
+This API operation uses pagination. Specify the `nextToken` parameter in the next request to return more results.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-event-aggregates-request, like describe-event-aggregates-request
+
+  line </#X-Amz-Target=AWSHealth_20160804.DescribeEventAggregates>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan describe-event-aggregates-request
+
+  loot 200
+    seed json, like describe-event-aggregates-response
+    note <Success>
+  loot 480
+    seed json, like invalid-pagination-token
+    note <InvalidPaginationToken>

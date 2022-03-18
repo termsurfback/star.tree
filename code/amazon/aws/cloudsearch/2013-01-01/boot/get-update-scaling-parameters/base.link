@@ -1,0 +1,80 @@
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2013-01-01/base/base-exception
+  take form base-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2013-01-01/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2013-01-01/base/invalid-type-exception
+  take form invalid-type-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2013-01-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2013-01-01/base/partition-instance-type
+  take form partition-instance-type
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2013-01-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2013-01-01/base/u-int-value
+  take form u-int-value
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2013-01-01/base/update-scaling-parameters-response
+  take form update-scaling-parameters-response
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-update-scaling-parameters, name <GET_UpdateScalingParameters>
+  note <Configures scaling parameters for a domain. A domain's scaling parameters specify the desired search instance type and replication count. Amazon CloudSearch will still automatically scale your domain based on the volume of data and traffic, but not below the desired instance type and replication count. If the Multi-AZ option is enabled, these values control the resources used per Availability Zone. For more information, see [Configuring Scaling Options](http://docs.aws.amazon.com/cloudsearch/latest/developerguide/configuring-scaling-options.html) in the _Amazon CloudSearch Developer Guide_.>
+
+  take domain-name
+    like native-string
+  take scaling-parameters
+    like form
+      take desired-instance-type, name <DesiredInstanceType>
+        like partition-instance-type
+        void take
+        note <The instance type that you want to preconfigure for your domain. For example, `search.m1.small`.>
+      take desired-replication-count, name <DesiredReplicationCount>
+        like u-int-value
+        void take
+        note <The number of replicas you want to preconfigure for each index partition.>
+      take desired-partition-count, name <DesiredPartitionCount>
+        like u-int-value
+        void take
+        note <The number of partitions you want to preconfigure for your domain. Only valid when you select `m2.2xlarge` as the desired instance type.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=UpdateScalingParameters>
+
+  find <DomainName>, loan domain-name
+  find <ScalingParameters>, loan scaling-parameters
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like update-scaling-parameters-response
+    note <Success>
+  loot 480
+    seed xml, like base-exception
+    note <BaseException>
+  loot 481
+    seed xml, like internal-exception
+    note <InternalException>
+  loot 482
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 483
+    seed xml, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 484
+    seed xml, like invalid-type-exception
+    note <InvalidTypeException>

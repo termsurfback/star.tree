@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/eventbridge/2015-10-07/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/eventbridge/2015-10-07/base/list-event-sources-response
+  take form list-event-sources-response
+
+load @drumwork/snow/amazonaws.com/eventbridge/2015-10-07/base/operation-disabled-exception
+  take form operation-disabled-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-event-sources, name <ListEventSources>
+  note <You can use this to see all the partner event sources that have been shared with your Amazon Web Services account. For more information about partner event sources, see [CreateEventBus](https://docs.aws.amazon.com/eventbridge/latest/APIReference/API_CreateEventBus.html).>
+
+  take x-amz-target
+    like native-string
+  take list-event-sources-request, like list-event-sources-request
+
+  line </#X-Amz-Target=AWSEvents.ListEventSources>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-event-sources-request
+
+  loot 200
+    seed json, like list-event-sources-response
+    note <Success>
+  loot 480
+    seed json, like internal-exception
+    note <InternalException>
+  loot 481
+    seed json, like operation-disabled-exception
+    note <OperationDisabledException>

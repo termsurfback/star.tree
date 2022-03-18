@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/add-communication-to-case-response
+  take form add-communication-to-case-response
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/attachment-set-expired
+  take form attachment-set-expired
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/attachment-set-id-not-found
+  take form attachment-set-id-not-found
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/case-id-not-found
+  take form case-id-not-found
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot add-communication-to-case, name <AddCommunicationToCase>
+  note <Adds additional customer communication to an AWS Support case. Use the `caseId` parameter to identify the case to which to add communication. You can list a set of email addresses to copy on the communication by using the `ccEmailAddresses` parameter. The `communicationBody` value contains the text of the communication.
+
+- You must have a Business or Enterprise Support plan to use the AWS Support API.
+
+- If you call the AWS Support API from an account that does not have a Business or Enterprise Support plan, the `SubscriptionRequiredException` error message appears. For information about changing your support plan, see [AWS Support](http://aws.amazon.com/premiumsupport/).>
+
+  take x-amz-target
+    like native-string
+  take add-communication-to-case-request, like add-communication-to-case-request
+
+  line </#X-Amz-Target=AWSSupport_20130415.AddCommunicationToCase>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan add-communication-to-case-request
+
+  loot 200
+    seed json, like add-communication-to-case-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like case-id-not-found
+    note <CaseIdNotFound>
+  loot 482
+    seed json, like attachment-set-id-not-found
+    note <AttachmentSetIdNotFound>
+  loot 483
+    seed json, like attachment-set-expired
+    note <AttachmentSetExpired>

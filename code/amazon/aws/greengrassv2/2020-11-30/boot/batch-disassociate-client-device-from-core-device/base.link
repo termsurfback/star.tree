@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/greengrassv2/2020-11-30/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/greengrassv2/2020-11-30/base/batch-disassociate-client-device-from-core-device-body
+  take form batch-disassociate-client-device-from-core-device-body
+
+load @drumwork/snow/amazonaws.com/greengrassv2/2020-11-30/base/batch-disassociate-client-device-from-core-device-response
+  take form batch-disassociate-client-device-from-core-device-response
+
+load @drumwork/snow/amazonaws.com/greengrassv2/2020-11-30/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/greengrassv2/2020-11-30/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/greengrassv2/2020-11-30/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/greengrassv2/2020-11-30/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot batch-disassociate-client-device-from-core-device, name <BatchDisassociateClientDeviceFromCoreDevice>
+  note <Disassociate a list of client devices from a core device. After you disassociate a client device from a core device, the client device won't be able to use cloud discovery to retrieve the core device's connectivity information and certificates.>
+
+  take core-device-thing-name
+    like native-string
+    note <The name of the core device. This is also the name of the IoT thing.>
+  take batch-disassociate-client-device-from-core-device-body, like batch-disassociate-client-device-from-core-device-body
+
+  line </greengrass/v2/coreDevices/{core-device-thing-name}/disassociateClientDevices>
+
+  seed json, loan batch-disassociate-client-device-from-core-device-body
+
+  loot 200
+    seed json, like batch-disassociate-client-device-from-core-device-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 483
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 484
+    seed json, like throttling-exception
+    note <ThrottlingException>

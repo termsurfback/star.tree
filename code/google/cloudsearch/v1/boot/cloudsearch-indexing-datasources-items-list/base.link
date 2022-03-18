@@ -1,0 +1,51 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/cloudsearch/v1/base/list-items-response
+  take form list-items-response
+
+boot cloudsearch-indexing-datasources-items-list, name <cloudsearch.indexing.datasources.items.list>
+  note <Lists all or a subset of Item resources. This API requires an admin or service account to execute. The service account used is the one whitelisted in the corresponding data source.>
+
+  take name
+    like native-string
+    note <Name of the Data Source to list Items. Format: datasources/{source_id}>
+  take brief
+    like native-boolean
+    note <When set to true, the indexing system only populates the following fields: name, version, queue. metadata.hash, metadata.title, metadata.sourceRepositoryURL, metadata.objectType, metadata.createTime, metadata.updateTime, metadata.contentLanguage, metadata.mimeType, structured_data.hash, content.hash, itemType, itemStatus.code, itemStatus.processingError.code, itemStatus.repositoryError.type, If this value is false, then all the fields are populated in Item.>
+    void take
+  take connector-name
+    like native-string
+    note <Name of connector making this call. Format: datasources/{source_id}/connectors/{ID}>
+    void take
+  take debug-options-enable-debugging
+    like native-boolean
+    note <If you are asked by Google to help with debugging, set this field. Otherwise, ignore this field.>
+    void take
+  take page-size
+    like native-integer
+    note <Maximum number of items to fetch in a request. The max value is 1000 when brief is true. The max value is 10 if brief is false. The default value is 10>
+    void take
+  take page-token
+    like native-string
+    note <The next_page_token value returned from a previous List request, if any.>
+    void take
+
+  line </v1/indexing/{name}/items>
+
+  find <brief>, loan brief
+  find <connectorName>, loan connector-name
+  find <debugOptions.enableDebugging>, loan debug-options-enable-debugging
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-items-response
+    note <Successful response>

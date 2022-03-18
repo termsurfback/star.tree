@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/worklink/2018-09-25/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/worklink/2018-09-25/base/tag-key
+  take form tag-key
+
+load @drumwork/snow/amazonaws.com/worklink/2018-09-25/base/untag-resource-response
+  take form untag-resource-response
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot untag-resource, name <UntagResource>
+  note <Removes one or more tags from the specified resource.>
+
+  take resource-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the fleet.>
+  take tag-keys
+    like list
+      like tag-key
+    note <The list of tag keys to remove from the resource.>
+
+  line </tags/{resource-arn}#tagKeys>
+
+  find <tagKeys>, loan tag-keys
+
+  loot 200
+    seed json, like untag-resource-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

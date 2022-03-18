@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/entity-does-not-exist-exception
+  take form entity-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/get-snapshot-limits-result
+  take form get-snapshot-limits-result
+
+load @drumwork/snow/amazonaws.com/ds/2015-04-16/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-snapshot-limits, name <GetSnapshotLimits>
+  note <Obtains the manual snapshot limits for a directory.>
+
+  take x-amz-target
+    like native-string
+  take get-snapshot-limits-request, like get-snapshot-limits-request
+
+  line </#X-Amz-Target=DirectoryService_20150416.GetSnapshotLimits>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-snapshot-limits-request
+
+  loot 200
+    seed json, like get-snapshot-limits-result
+    note <Success>
+  loot 480
+    seed json, like entity-does-not-exist-exception
+    note <EntityDoesNotExistException>
+  loot 481
+    seed json, like client-exception
+    note <ClientException>
+  loot 482
+    seed json, like service-exception
+    note <ServiceException>

@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/describe-replication-instance-task-logs-response
+  take form describe-replication-instance-task-logs-response
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/invalid-resource-state-fault
+  take form invalid-resource-state-fault
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/resource-not-found-fault
+  take form resource-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-replication-instance-task-logs, name <DescribeReplicationInstanceTaskLogs>
+  note <Returns information about the task logs for the specified task.>
+
+  take x-amz-target
+    like native-string
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-replication-instance-task-logs-message, like describe-replication-instance-task-logs-message
+
+  line </#X-Amz-Target=AmazonDMSv20160101.DescribeReplicationInstanceTaskLogs>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+
+  seed json, loan describe-replication-instance-task-logs-message
+
+  loot 200
+    seed json, like describe-replication-instance-task-logs-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-fault
+    note <ResourceNotFoundFault>
+  loot 481
+    seed json, like invalid-resource-state-fault
+    note <InvalidResourceStateFault>

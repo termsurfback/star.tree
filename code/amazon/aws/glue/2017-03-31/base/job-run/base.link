@@ -1,0 +1,172 @@
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/attempt-count
+  take form attempt-count
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/error-string
+  take form error-string
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/execution-time
+  take form execution-time
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/generic-map
+  take form generic-map
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/generic-string
+  take form generic-string
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/glue-version-string
+  take form glue-version-string
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/id-string
+  take form id-string
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/integer-value
+  take form integer-value
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/job-run-state
+  take form job-run-state
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/name-string
+  take form name-string
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/notification-property
+  take form notification-property
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/nullable-double
+  take form nullable-double
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/nullable-integer
+  take form nullable-integer
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/predecessor-list
+  take form predecessor-list
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/timeout
+  take form timeout
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/timestamp-value
+  take form timestamp-value
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/worker-type
+  take form worker-type
+
+form job-run, name <JobRun>
+  note <Contains information about a job run.>
+  take id, name <Id>
+    like id-string
+    void take
+    note <The ID of this job run.>
+  take attempt, name <Attempt>
+    like attempt-count
+    void take
+    note <The number of the attempt to run this job.>
+  take previous-run-id, name <PreviousRunId>
+    like id-string
+    void take
+    note <The ID of the previous run of this job. For example, the `JobRunId` specified in the `StartJobRun` action.>
+  take trigger-name, name <TriggerName>
+    like name-string
+    void take
+    note <The name of the trigger that started this job run.>
+  take job-name, name <JobName>
+    like name-string
+    void take
+    note <The name of the job definition being used in this run.>
+  take started-on, name <StartedOn>
+    like timestamp-value
+    void take
+    note <The date and time at which this job run was started.>
+  take last-modified-on, name <LastModifiedOn>
+    like timestamp-value
+    void take
+    note <The last time that this job run was modified.>
+  take completed-on, name <CompletedOn>
+    like timestamp-value
+    void take
+    note <The date and time that this job run completed.>
+  take job-run-state, name <JobRunState>
+    like job-run-state
+    void take
+    note <The current state of the job run. For more information about the statuses of jobs that have terminated abnormally, see [Glue Job Run Statuses](https://docs.aws.amazon.com/glue/latest/dg/job-run-statuses.html).>
+  take arguments, name <Arguments>
+    like generic-map
+    void take
+    note <The job arguments associated with this run. For this job run, they replace the default arguments set in the job definition itself.
+
+You can specify arguments here that your own job-execution script consumes, as well as arguments that Glue itself consumes.
+
+For information about how to specify and consume your own job arguments, see the [Calling Glue APIs in Python](https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-python-calling.html) topic in the developer guide.
+
+For information about the key-value pairs that Glue consumes to set up your job, see the [Special Parameters Used by Glue](https://docs.aws.amazon.com/glue/latest/dg/aws-glue-programming-etl-glue-arguments.html) topic in the developer guide.>
+  take error-message, name <ErrorMessage>
+    like error-string
+    void take
+    note <An error message associated with this job run.>
+  take predecessor-runs, name <PredecessorRuns>
+    like predecessor-list
+    void take
+    note <A list of predecessors to this job run.>
+  take allocated-capacity, name <AllocatedCapacity>
+    like integer-value
+    void take
+    note <This field is deprecated. Use `MaxCapacity` instead.
+
+The number of Glue data processing units (DPUs) allocated to this JobRun. From 2 to 100 DPUs can be allocated; the default is 10. A DPU is a relative measure of processing power that consists of 4 vCPUs of compute capacity and 16 GB of memory. For more information, see the [Glue pricing page](https://aws.amazon.com/glue/pricing/).
+
+This property is deprecated, use MaxCapacity instead.>
+  take execution-time, name <ExecutionTime>
+    like execution-time
+    void take
+    note <The amount of time (in seconds) that the job run consumed resources.>
+  take timeout, name <Timeout>
+    like timeout
+    void take
+    note <The `JobRun` timeout in minutes. This is the maximum time that a job run can consume resources before it is terminated and enters `TIMEOUT` status. The default is 2,880 minutes (48 hours). This overrides the timeout value set in the parent job.>
+  take max-capacity, name <MaxCapacity>
+    like nullable-double
+    void take
+    note <The number of Glue data processing units (DPUs) that can be allocated when this job runs. A DPU is a relative measure of processing power that consists of 4 vCPUs of compute capacity and 16 GB of memory. For more information, see the [Glue pricing page](https://aws.amazon.com/glue/pricing/).
+
+Do not set `Max Capacity` if using `WorkerType` and `NumberOfWorkers`.
+
+The value that can be allocated for `MaxCapacity` depends on whether you are running a Python shell job or an Apache Spark ETL job:
+
+- When you specify a Python shell job (`JobCommand.Name`="pythonshell"), you can allocate either 0.0625 or 1 DPU. The default is 0.0625 DPU.
+
+- When you specify an Apache Spark ETL job (`JobCommand.Name`="glueetl"), you can allocate from 2 to 100 DPUs. The default is 10 DPUs. This job type cannot have a fractional DPU allocation.>
+  take worker-type, name <WorkerType>
+    like worker-type
+    void take
+    note <The type of predefined worker that is allocated when a job runs. Accepts a value of Standard, G.1X, or G.2X.
+
+- For the `Standard` worker type, each worker provides 4 vCPU, 16 GB of memory and a 50GB disk, and 2 executors per worker.
+
+- For the `G.1X` worker type, each worker provides 4 vCPU, 16 GB of memory and a 64GB disk, and 1 executor per worker.
+
+- For the `G.2X` worker type, each worker provides 8 vCPU, 32 GB of memory and a 128GB disk, and 1 executor per worker.>
+  take number-of-workers, name <NumberOfWorkers>
+    like nullable-integer
+    void take
+    note <The number of workers of a defined `workerType` that are allocated when a job runs.
+
+The maximum number of workers you can define are 299 for `G.1X`, and 149 for `G.2X`.>
+  take security-configuration, name <SecurityConfiguration>
+    like name-string
+    void take
+    note <The name of the `SecurityConfiguration` structure to be used with this job run.>
+  take log-group-name, name <LogGroupName>
+    like generic-string
+    void take
+    note <The name of the log group for secure logging that can be server-side encrypted in Amazon CloudWatch using KMS. This name can be `/aws-glue/jobs/`, in which case the default encryption is `NONE`. If you add a role name and `SecurityConfiguration` name (in other words, `/aws-glue/jobs-yourRoleName-yourSecurityConfigurationName/`), then that security configuration is used to encrypt the log group.>
+  take notification-property, name <NotificationProperty>
+    like notification-property
+    void take
+    note <Specifies configuration properties of a job run notification.>
+  take glue-version, name <GlueVersion>
+    like glue-version-string
+    void take
+    note <Glue version determines the versions of Apache Spark and Python that Glue supports. The Python version indicates the version supported for jobs of type Spark.
+
+For more information about the available Glue versions and corresponding Spark and Python versions, see [Glue version](https://docs.aws.amazon.com/glue/latest/dg/add-job.html) in the developer guide.
+
+Jobs that are created without specifying a Glue version default to Glue 0.9.>

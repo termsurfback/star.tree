@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/stop-matchmaking-output
+  take form stop-matchmaking-output
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/unsupported-region-exception
+  take form unsupported-region-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot stop-matchmaking, name <StopMatchmaking>
+  note <Cancels a matchmaking ticket or match backfill ticket that is currently being processed. To stop the matchmaking operation, specify the ticket ID. If successful, work on the ticket is stopped, and the ticket status is changed to `CANCELLED`.
+
+This call is also used to turn off automatic backfill for an individual game session. This is for game sessions that are created with a matchmaking configuration that has automatic backfill enabled. The ticket ID is included in the `MatchmakerData` of an updated game session object, which is provided to the game server.
+
+If the operation is successful, the service sends back an empty JSON struct with the HTTP 200 response (not an empty HTTP body).
+
+**Learn more** [Add FlexMatch to a game client](https://docs.aws.amazon.com/gamelift/latest/flexmatchguide/match-client.html)
+
+**Related actions** StartMatchmaking | DescribeMatchmaking | StopMatchmaking | AcceptMatch | StartMatchBackfill | [All APIs by task](https://docs.aws.amazon.com/gamelift/latest/developerguide/reference-awssdk.html#reference-awssdk-resources-fleets)>
+
+  take x-amz-target
+    like native-string
+  take stop-matchmaking-input, like stop-matchmaking-input
+
+  line </#X-Amz-Target=GameLift.StopMatchmaking>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan stop-matchmaking-input
+
+  loot 200
+    seed json, like stop-matchmaking-output
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 482
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 483
+    seed json, like unsupported-region-exception
+    note <UnsupportedRegionException>

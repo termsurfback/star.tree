@@ -1,0 +1,25 @@
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-webhook-endpoints-body
+  take form post-webhook-endpoints-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/webhook-endpoint
+  take form webhook-endpoint
+
+boot post-webhook-endpoints, name <PostWebhookEndpoints>
+  note <A webhook endpoint must have a `url` and a list of `enabled_events`. You may optionally specify the Boolean `connect` parameter. If set to true, then a Connect webhook endpoint that notifies the specified `url` about events from all connected accounts is created; otherwise an account webhook endpoint that notifies the specified `url` only about events from your account is created. You can also create webhook endpoints in the [webhooks settings](https://dashboard.stripe.com/account/webhooks) section of the Dashboard.>
+
+  take post-webhook-endpoints-body, like post-webhook-endpoints-body
+
+  line </v1/webhook_endpoints>
+
+  seed x-www-form-urlencoded, loan post-webhook-endpoints-body
+
+  loot 200
+    seed json, like webhook-endpoint
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

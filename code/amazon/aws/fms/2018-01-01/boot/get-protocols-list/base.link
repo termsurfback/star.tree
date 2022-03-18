@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/fms/2018-01-01/base/get-protocols-list-response
+  take form get-protocols-list-response
+
+load @drumwork/snow/amazonaws.com/fms/2018-01-01/base/internal-error-exception
+  take form internal-error-exception
+
+load @drumwork/snow/amazonaws.com/fms/2018-01-01/base/invalid-operation-exception
+  take form invalid-operation-exception
+
+load @drumwork/snow/amazonaws.com/fms/2018-01-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-protocols-list, name <GetProtocolsList>
+  note <Returns information about the specified Firewall Manager protocols list.>
+
+  take x-amz-target
+    like native-string
+  take get-protocols-list-request, like get-protocols-list-request
+
+  line </#X-Amz-Target=AWSFMS_20180101.GetProtocolsList>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-protocols-list-request
+
+  loot 200
+    seed json, like get-protocols-list-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-operation-exception
+    note <InvalidOperationException>
+  loot 482
+    seed json, like internal-error-exception
+    note <InternalErrorException>

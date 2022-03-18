@@ -1,0 +1,39 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/calls-participants-remove-body
+  take form calls-participants-remove-body
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+boot calls-participants-remove, name <calls_participants_remove>
+  note <Registers participants removed from a Call.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `calls:write`>
+  take calls-participants-remove-body, like calls-participants-remove-body
+
+  line </calls.participants.remove>
+
+  hint <token>, loan token
+
+  seed x-www-form-urlencoded, loan calls-participants-remove-body
+
+  loot 200
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-true
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response>

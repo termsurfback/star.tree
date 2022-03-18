@@ -1,0 +1,48 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/my-business/v4/base/list-questions-response
+  take form list-questions-response
+
+boot mybusiness-accounts-locations-questions-list, name <mybusiness.accounts.locations.questions.list>
+  note <Returns the paginated list of questions and some of its answers for a specified location.>
+
+  take parent
+    like native-string
+    note <The name of the location to fetch questions for.>
+  take answers-per-question
+    like native-integer
+    note <How many answers to fetch per question. The default and maximum `answers_per_question` values are 10.>
+    void take
+  take filter
+    like native-string
+    note <A filter constraining the questions to return. The only filter currently supported is "ignore_answered=true">
+    void take
+  take order-by
+    like native-string
+    note <The order to return the questions. Valid options include 'update_time desc' and 'upvote_count desc', which will return the questions sorted descendingly by the requested field. The default sort order is 'update_time desc'.>
+    void take
+  take page-size
+    like native-integer
+    note <How many questions to fetch per page. The default and maximum `page_size` values are 10.>
+    void take
+  take page-token
+    like native-string
+    note <If specified, the next page of questions is retrieved.>
+    void take
+
+  line </v4/{parent}/questions>
+
+  find <answersPerQuestion>, loan answers-per-question
+  find <filter>, loan filter
+  find <orderBy>, loan order-by
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-questions-response
+    note <Successful response>

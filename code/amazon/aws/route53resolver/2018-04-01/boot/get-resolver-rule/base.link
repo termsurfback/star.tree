@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/get-resolver-rule-response
+  take form get-resolver-rule-response
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/route53resolver/2018-04-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-resolver-rule, name <GetResolverRule>
+  note <Gets information about a specified Resolver rule, such as the domain name that the rule forwards DNS queries for and the ID of the outbound Resolver endpoint that the rule is associated with.>
+
+  take x-amz-target
+    like native-string
+  take get-resolver-rule-request, like get-resolver-rule-request
+
+  line </#X-Amz-Target=Route53Resolver.GetResolverRule>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-resolver-rule-request
+
+  loot 200
+    seed json, like get-resolver-rule-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>

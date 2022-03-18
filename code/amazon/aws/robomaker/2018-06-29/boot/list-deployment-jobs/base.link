@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/list-deployment-jobs-body
+  take form list-deployment-jobs-body
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/list-deployment-jobs-response
+  take form list-deployment-jobs-response
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/robomaker/2018-06-29/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-deployment-jobs, name <ListDeploymentJobs>
+  note <Returns a list of deployment jobs for a fleet. You can optionally provide filters to retrieve specific deployment jobs.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-deployment-jobs-body, like list-deployment-jobs-body
+
+  line </listDeploymentJobs>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan list-deployment-jobs-body
+
+  loot 200
+    seed json, like list-deployment-jobs-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>

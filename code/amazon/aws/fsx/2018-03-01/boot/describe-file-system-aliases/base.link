@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/bad-request
+  take form bad-request
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/describe-file-system-aliases-response
+  take form describe-file-system-aliases-response
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/file-system-not-found
+  take form file-system-not-found
+
+load @drumwork/snow/amazonaws.com/fsx/2018-03-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-file-system-aliases, name <DescribeFileSystemAliases>
+  note <Returns the DNS aliases that are associated with the specified Amazon FSx for Windows File Server file system. A history of all DNS aliases that have been associated with and disassociated from the file system is available in the list of AdministrativeAction provided in the DescribeFileSystems operation response.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-file-system-aliases-request, like describe-file-system-aliases-request
+
+  line </#X-Amz-Target=AWSSimbaAPIService_v20180301.DescribeFileSystemAliases>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-file-system-aliases-request
+
+  loot 200
+    seed json, like describe-file-system-aliases-response
+    note <Success>
+  loot 480
+    seed json, like bad-request
+    note <BadRequest>
+  loot 481
+    seed json, like file-system-not-found
+    note <FileSystemNotFound>
+  loot 482
+    seed json, like internal-server-error
+    note <InternalServerError>

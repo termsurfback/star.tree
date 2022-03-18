@@ -1,0 +1,22 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/reseller/v1/base/subscription
+  take form subscription
+
+boot reseller-subscriptions-start-paid-service, name <reseller.subscriptions.startPaidService>
+  note <Immediately move a 30-day free trial subscription to a paid service subscription. This method is only applicable if a payment plan has already been set up for the 30-day trial subscription. For more information, see [manage subscriptions](/admin-sdk/reseller/v1/how-tos/manage_subscriptions#paid_service).>
+
+  take customer-id
+    like native-string
+    note <This can be either the customer's primary domain name or the customer's unique identifier. If the domain name for a customer changes, the old domain name cannot be used to access the customer, but the customer's unique identifier (as returned by the API) can always be used. We recommend storing the unique identifier in your systems where applicable.>
+  take subscription-id
+    like native-string
+    note <This is a required property. The `subscriptionId` is the subscription identifier and is unique for each customer. Since a `subscriptionId` changes when a subscription is updated, we recommend to not use this ID as a key for persistent data. And the `subscriptionId` can be found using the retrieve all reseller subscriptions method.>
+
+  line </apps/reseller/v1/customers/{customer-id}/subscriptions/{subscription-id}/startPaidService>
+
+  loot 200
+    seed json, like subscription
+    note <Successful response>

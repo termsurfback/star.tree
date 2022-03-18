@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/list-access-control-rules-response
+  take form list-access-control-rules-response
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/organization-not-found-exception
+  take form organization-not-found-exception
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/organization-state-exception
+  take form organization-state-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-access-control-rules, name <ListAccessControlRules>
+  note <Lists the access control rules for the specified organization.>
+
+  take x-amz-target
+    like native-string
+  take list-access-control-rules-request, like list-access-control-rules-request
+
+  line </#X-Amz-Target=WorkMailService.ListAccessControlRules>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-access-control-rules-request
+
+  loot 200
+    seed json, like list-access-control-rules-response
+    note <Success>
+  loot 480
+    seed json, like organization-not-found-exception
+    note <OrganizationNotFoundException>
+  loot 481
+    seed json, like organization-state-exception
+    note <OrganizationStateException>

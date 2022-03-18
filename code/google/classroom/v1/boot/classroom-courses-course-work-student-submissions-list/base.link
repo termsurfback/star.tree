@@ -1,0 +1,55 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/classroom/v1/base/list-student-submissions-response
+  take form list-student-submissions-response
+
+boot classroom-courses-course-work-student-submissions-list, name <classroom.courses.courseWork.studentSubmissions.list>
+  note <Returns a list of student submissions that the requester is permitted to view, factoring in the OAuth scopes of the request. `-` may be specified as the `course_work_id` to include student submissions for multiple course work items. Course students may only view their own work. Course teachers and domain administrators may view all student submissions. This method returns the following error codes: * `PERMISSION_DENIED` if the requesting user is not permitted to access the requested course or course work, or for access errors. * `INVALID_ARGUMENT` if the request is malformed. * `NOT_FOUND` if the requested course does not exist.>
+
+  take course-id
+    like native-string
+    note <Identifier of the course. This identifier can be either the Classroom-assigned identifier or an alias.>
+  take course-work-id
+    like native-string
+    note <Identifier of the student work to request. This may be set to the string literal `"-"` to request student work for all course work in the specified course.>
+  take late
+    like native-string
+    note <Requested lateness value. If specified, returned student submissions are restricted by the requested value. If unspecified, submissions are returned regardless of `late` value.>
+    void take
+  take page-size
+    like native-integer
+    note <Maximum number of items to return. Zero or unspecified indicates that the server may assign a maximum. The server may return fewer than the specified number of results.>
+    void take
+  take page-token
+    like native-string
+    note <nextPageToken value returned from a previous list call, indicating that the subsequent page of results should be returned. The list request must be otherwise identical to the one that resulted in this token.>
+    void take
+  take states
+    like list
+      like native-string
+    note <Requested submission states. If specified, returned student submissions match one of the specified submission states.>
+    void take
+  take user-id
+    like native-string
+    note <Optional argument to restrict returned student work to those owned by the student with the specified identifier. The identifier can be one of the following: * the numeric identifier for the user * the email address of the user * the string literal `"me"`, indicating the requesting user>
+    void take
+
+  line </v1/courses/{course-id}/courseWork/{course-work-id}/studentSubmissions>
+
+  find <late>, loan late
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+  find <states>, loan states
+  find <userId>, loan user-id
+
+  loot 200
+    seed json, like list-student-submissions-response
+    note <Successful response>

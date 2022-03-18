@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/describe-registry-response
+  take form describe-registry-response
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/amazonaws.com/ecr/2015-09-21/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-registry, name <DescribeRegistry>
+  note <Describes the settings for a registry. The replication configuration for a repository can be created or updated with the PutReplicationConfiguration API action.>
+
+  take x-amz-target
+    like native-string
+  take describe-registry-request, like describe-registry-request
+
+  line </#X-Amz-Target=AmazonEC2ContainerRegistry_V20150921.DescribeRegistry>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-registry-request
+
+  loot 200
+    seed json, like describe-registry-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 482
+    seed json, like validation-exception
+    note <ValidationException>

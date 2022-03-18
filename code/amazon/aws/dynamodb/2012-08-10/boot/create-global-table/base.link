@@ -1,0 +1,75 @@
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/create-global-table-output
+  take form create-global-table-output
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/global-table-already-exists-exception
+  take form global-table-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/table-not-found-exception
+  take form table-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-global-table, name <CreateGlobalTable>
+  note <Creates a global table from an existing table. A global table creates a replication relationship between two or more DynamoDB tables with the same table name in the provided Regions.
+
+This operation only applies to [Version 2017.11.29](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/globaltables.V1.html) of global tables.
+
+If you want to add a new replica table to a global table, each of the following conditions must be true:
+
+- The table must have the same primary key as all of the other replicas.
+
+- The table must have the same name as all of the other replicas.
+
+- The table must have DynamoDB Streams enabled, with the stream containing both the new and the old images of the item.
+
+- None of the replica tables in the global table can contain any data.
+
+If global secondary indexes are specified, then the following conditions must also be met:
+
+- The global secondary indexes must have the same name.
+
+- The global secondary indexes must have the same hash key and sort key (if present).
+
+If local secondary indexes are specified, then the following conditions must also be met:
+
+- The local secondary indexes must have the same name.
+
+- The local secondary indexes must have the same hash key and sort key (if present).
+
+Write capacity settings should be set consistently across your replica tables and secondary indexes. DynamoDB strongly recommends enabling auto scaling to manage the write capacity settings for all of your global tables replicas and indexes.
+
+If you prefer to manage write capacity settings manually, you should provision equal replicated write capacity units to your replica tables. You should also provision equal replicated write capacity units to matching secondary indexes across your global table.>
+
+  take x-amz-target
+    like native-string
+  take create-global-table-input, like create-global-table-input
+
+  line </#X-Amz-Target=DynamoDB_20120810.CreateGlobalTable>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-global-table-input
+
+  loot 200
+    seed json, like create-global-table-output
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 482
+    seed json, like global-table-already-exists-exception
+    note <GlobalTableAlreadyExistsException>
+  loot 483
+    seed json, like table-not-found-exception
+    note <TableNotFoundException>

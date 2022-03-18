@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/describe-organization-response
+  take form describe-organization-response
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/workmail/2017-10-01/base/organization-not-found-exception
+  take form organization-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-organization, name <DescribeOrganization>
+  note <Provides more information regarding a given organization based on its identifier.>
+
+  take x-amz-target
+    like native-string
+  take describe-organization-request, like describe-organization-request
+
+  line </#X-Amz-Target=WorkMailService.DescribeOrganization>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-organization-request
+
+  loot 200
+    seed json, like describe-organization-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like organization-not-found-exception
+    note <OrganizationNotFoundException>

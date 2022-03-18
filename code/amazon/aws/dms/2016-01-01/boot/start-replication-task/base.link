@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/access-denied-fault
+  take form access-denied-fault
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/invalid-resource-state-fault
+  take form invalid-resource-state-fault
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/resource-not-found-fault
+  take form resource-not-found-fault
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/start-replication-task-response
+  take form start-replication-task-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-replication-task, name <StartReplicationTask>
+  note <Starts the replication task.
+
+For more information about DMS tasks, see [Working with Migration Tasks](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Tasks.html) in the _Database Migration Service User Guide._>
+
+  take x-amz-target
+    like native-string
+  take start-replication-task-message, like start-replication-task-message
+
+  line </#X-Amz-Target=AmazonDMSv20160101.StartReplicationTask>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan start-replication-task-message
+
+  loot 200
+    seed json, like start-replication-task-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-fault
+    note <ResourceNotFoundFault>
+  loot 481
+    seed json, like invalid-resource-state-fault
+    note <InvalidResourceStateFault>
+  loot 482
+    seed json, like access-denied-fault
+    note <AccessDeniedFault>

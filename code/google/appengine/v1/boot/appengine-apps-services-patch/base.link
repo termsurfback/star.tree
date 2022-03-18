@@ -1,0 +1,40 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/appengine/v1/base/operation
+  take form operation
+
+boot appengine-apps-services-patch, name <appengine.apps.services.patch>
+  note <Updates the configuration of the specified service.>
+
+  take apps-id
+    like native-string
+    note <Part of `name`. Name of the resource to update. Example: apps/myapp/services/default.>
+  take services-id
+    like native-string
+    note <Part of `name`. See documentation of `appsId`.>
+  take migrate-traffic
+    like native-boolean
+    note <Set to true to gradually shift traffic to one or more versions that you specify. By default, traffic is shifted immediately. For gradual traffic migration, the target versions must be located within instances that are configured for both warmup requests (https://cloud.google.com/appengine/docs/admin-api/reference/rest/v1/apps.services.versions#InboundServiceType) and automatic scaling (https://cloud.google.com/appengine/docs/admin-api/reference/rest/v1/apps.services.versions#AutomaticScaling). You must specify the shardBy (https://cloud.google.com/appengine/docs/admin-api/reference/rest/v1/apps.services#ShardBy) field in the Service resource. Gradual traffic migration is not supported in the App Engine flexible environment. For examples, see Migrating and Splitting Traffic (https://cloud.google.com/appengine/docs/admin-api/migrating-splitting-traffic).>
+    void take
+  take update-mask
+    like native-string
+    note <Required. Standard field mask for the set of fields to be updated.>
+    void take
+  take service, like service
+    void take
+
+  line </v1/apps/{apps-id}/services/{services-id}>
+
+  find <migrateTraffic>, loan migrate-traffic
+  find <updateMask>, loan update-mask
+
+  seed json, loan service
+
+  loot 200
+    seed json, like operation
+    note <Successful response>

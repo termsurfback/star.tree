@@ -1,0 +1,84 @@
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/list-groups-response
+  take form list-groups-response
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/precondition-not-met-exception
+  take form precondition-not-met-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/resource-unavailable-exception
+  take form resource-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-groups, name <ListGroups>
+  note <Lists all user groups in Amazon QuickSight.>
+
+  take aws-account-id
+    like native-string
+    note <The ID for the Amazon Web Services account that the group is in. Currently, you use the ID for the Amazon Web Services account that contains your Amazon QuickSight account.>
+  take namespace
+    like native-string
+    note <The namespace. Currently, you should set this to `default`.>
+  take next-token
+    like native-string
+    note <A pagination token that can be used in a subsequent request.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return.>
+    void take
+
+  line </accounts/{aws-account-id}/namespaces/{namespace}/groups>
+
+  find <next-token>, loan next-token
+  find <max-results>, loan max-results
+
+  loot 200
+    seed json, like list-groups-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 485
+    seed json, like precondition-not-met-exception
+    note <PreconditionNotMetException>
+  loot 486
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 487
+    seed json, like resource-unavailable-exception
+    note <ResourceUnavailableException>

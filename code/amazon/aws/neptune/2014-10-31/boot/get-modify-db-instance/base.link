@@ -1,0 +1,421 @@
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/authorization-not-found-fault
+  take form authorization-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/certificate-not-found-fault
+  take form certificate-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-instance-already-exists-fault
+  take form db-instance-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-parameter-group-not-found-fault
+  take form db-parameter-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-security-group-not-found-fault
+  take form db-security-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/db-upgrade-dependency-failure-fault
+  take form db-upgrade-dependency-failure-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/domain-not-found-fault
+  take form domain-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/insufficient-db-instance-capacity-fault
+  take form insufficient-db-instance-capacity-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-instance-state-fault
+  take form invalid-db-instance-state-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-db-security-group-state-fault
+  take form invalid-db-security-group-state-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/invalid-vpc-network-state-fault
+  take form invalid-vpc-network-state-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/log-type-list
+  take form log-type-list
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/modify-db-instance-result
+  take form modify-db-instance-result
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/option-group-not-found-fault
+  take form option-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/provisioned-iops-not-available-in-az-fault
+  take form provisioned-iops-not-available-in-az-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/storage-quota-exceeded-fault
+  take form storage-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/neptune/2014-10-31/base/storage-type-not-supported-fault
+  take form storage-type-not-supported-fault
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-modify-db-instance, name <GET_ModifyDBInstance>
+  note <Modifies settings for a DB instance. You can change one or more database configuration parameters by specifying these parameters and the new values in the request. To learn what modifications you can make to your DB instance, call DescribeValidDBInstanceModifications before you call ModifyDBInstance.>
+
+  take db-instance-identifier
+    like native-string
+    note <The DB instance identifier. This value is stored as a lowercase string.
+
+Constraints:
+
+- Must match the identifier of an existing DBInstance.>
+  take allocated-storage
+    like native-integer
+    note <Not supported by Neptune.>
+    void take
+  take db-instance-class
+    like native-string
+    note <The new compute and memory capacity of the DB instance, for example, `db.m4.large`. Not all DB instance classes are available in all AWS Regions.
+
+If you modify the DB instance class, an outage occurs during the change. The change is applied during the next maintenance window, unless `ApplyImmediately` is specified as `true` for this request.
+
+Default: Uses existing setting>
+    void take
+  take db-subnet-group-name
+    like native-string
+    note <The new DB subnet group for the DB instance. You can use this parameter to move your DB instance to a different VPC.
+
+Changing the subnet group causes an outage during the change. The change is applied during the next maintenance window, unless you specify `true` for the `ApplyImmediately` parameter.
+
+Constraints: If supplied, must match the name of an existing DBSubnetGroup.
+
+Example: `mySubnetGroup`>
+    void take
+  take db-security-groups
+    like list
+      like string
+    note <A list of DB security groups to authorize on this DB instance. Changing this setting doesn't result in an outage and the change is asynchronously applied as soon as possible.
+
+Constraints:
+
+- If supplied, must match existing DBSecurityGroups.>
+    void take
+  take vpc-security-group-ids
+    like list
+      like string
+    note <A list of EC2 VPC security groups to authorize on this DB instance. This change is asynchronously applied as soon as possible.
+
+Not applicable. The associated list of EC2 VPC security groups is managed by the DB cluster. For more information, see ModifyDBCluster.
+
+Constraints:
+
+- If supplied, must match existing VpcSecurityGroupIds.>
+    void take
+  take apply-immediately
+    like native-boolean
+    note <Specifies whether the modifications in this request and any pending modifications are asynchronously applied as soon as possible, regardless of the `PreferredMaintenanceWindow` setting for the DB instance.
+
+If this parameter is set to `false`, changes to the DB instance are applied during the next maintenance window. Some parameter changes can cause an outage and are applied on the next call to RebootDBInstance, or the next failure reboot.
+
+Default: `false`>
+    void take
+  take master-user-password
+    like native-string
+    note <Not supported by Neptune.>
+    void take
+  take db-parameter-group-name
+    like native-string
+    note <The name of the DB parameter group to apply to the DB instance. Changing this setting doesn't result in an outage. The parameter group name itself is changed immediately, but the actual parameter changes are not applied until you reboot the instance without failover. The db instance will NOT be rebooted automatically and the parameter changes will NOT be applied during the next maintenance window.
+
+Default: Uses existing setting
+
+Constraints: The DB parameter group must be in the same DB parameter group family as this DB instance.>
+    void take
+  take backup-retention-period
+    like native-integer
+    note <Not applicable. The retention period for automated backups is managed by the DB cluster. For more information, see ModifyDBCluster.
+
+Default: Uses existing setting>
+    void take
+  take preferred-backup-window
+    like native-string
+    note <The daily time range during which automated backups are created if automated backups are enabled.
+
+Not applicable. The daily time range for creating automated backups is managed by the DB cluster. For more information, see ModifyDBCluster.
+
+Constraints:
+
+- Must be in the format hh24:mi-hh24:mi
+
+- Must be in Universal Time Coordinated (UTC)
+
+- Must not conflict with the preferred maintenance window
+
+- Must be at least 30 minutes>
+    void take
+  take preferred-maintenance-window
+    like native-string
+    note <The weekly time range (in UTC) during which system maintenance can occur, which might result in an outage. Changing this parameter doesn't result in an outage, except in the following situation, and the change is asynchronously applied as soon as possible. If there are pending actions that cause a reboot, and the maintenance window is changed to include the current time, then changing this parameter will cause a reboot of the DB instance. If moving this window to the current time, there must be at least 30 minutes between the current time and end of the window to ensure pending changes are applied.
+
+Default: Uses existing setting
+
+Format: ddd:hh24:mi-ddd:hh24:mi
+
+Valid Days: Mon | Tue | Wed | Thu | Fri | Sat | Sun
+
+Constraints: Must be at least 30 minutes>
+    void take
+  take multi-az
+    like native-boolean
+    note <Specifies if the DB instance is a Multi-AZ deployment. Changing this parameter doesn't result in an outage and the change is applied during the next maintenance window unless the `ApplyImmediately` parameter is set to `true` for this request.>
+    void take
+  take engine-version
+    like native-string
+    note <The version number of the database engine to upgrade to. Currently, setting this parameter has no effect. To upgrade your database engine to the most recent release, use the ApplyPendingMaintenanceAction API.>
+    void take
+  take allow-major-version-upgrade
+    like native-boolean
+    note <Indicates that major version upgrades are allowed. Changing this parameter doesn't result in an outage and the change is asynchronously applied as soon as possible.>
+    void take
+  take auto-minor-version-upgrade
+    like native-boolean
+    note <Indicates that minor version upgrades are applied automatically to the DB instance during the maintenance window. Changing this parameter doesn't result in an outage except in the following case and the change is asynchronously applied as soon as possible. An outage will result if this parameter is set to `true` during the maintenance window, and a newer minor version is available, and Neptune has enabled auto patching for that engine version.>
+    void take
+  take license-model
+    like native-string
+    note <Not supported by Neptune.>
+    void take
+  take iops
+    like native-integer
+    note <The new Provisioned IOPS (I/O operations per second) value for the instance.
+
+Changing this setting doesn't result in an outage and the change is applied during the next maintenance window unless the `ApplyImmediately` parameter is set to `true` for this request.
+
+Default: Uses existing setting>
+    void take
+  take option-group-name
+    like native-string
+    note <_(Not supported by Neptune)_>
+    void take
+  take new-db-instance-identifier
+    like native-string
+    note <The new DB instance identifier for the DB instance when renaming a DB instance. When you change the DB instance identifier, an instance reboot will occur immediately if you set `Apply Immediately` to true, or will occur during the next maintenance window if `Apply Immediately` to false. This value is stored as a lowercase string.
+
+Constraints:
+
+- Must contain from 1 to 63 letters, numbers, or hyphens.
+
+- The first character must be a letter.
+
+- Cannot end with a hyphen or contain two consecutive hyphens.
+
+Example: `mydbinstance`>
+    void take
+  take storage-type
+    like native-string
+    note <Not supported.>
+    void take
+  take tde-credential-arn
+    like native-string
+    note <The ARN from the key store with which to associate the instance for TDE encryption.>
+    void take
+  take tde-credential-password
+    like native-string
+    note <The password for the given ARN from the key store in order to access the device.>
+    void take
+  take ca-certificate-identifier
+    like native-string
+    note <Indicates the certificate that needs to be associated with the instance.>
+    void take
+  take domain
+    like native-string
+    note <Not supported.>
+    void take
+  take copy-tags-to-snapshot
+    like native-boolean
+    note <True to copy all tags from the DB instance to snapshots of the DB instance, and otherwise false. The default is false.>
+    void take
+  take monitoring-interval
+    like native-integer
+    note <The interval, in seconds, between points when Enhanced Monitoring metrics are collected for the DB instance. To disable collecting Enhanced Monitoring metrics, specify 0. The default is 0.
+
+If `MonitoringRoleArn` is specified, then you must also set `MonitoringInterval` to a value other than 0.
+
+Valid Values: `0, 1, 5, 10, 15, 30, 60`>
+    void take
+  take db-port-number
+    like native-integer
+    note <The port number on which the database accepts connections.
+
+The value of the `DBPortNumber` parameter must not match any of the port values specified for options in the option group for the DB instance.
+
+Your database will restart when you change the `DBPortNumber` value regardless of the value of the `ApplyImmediately` parameter.
+
+Default: `8182`>
+    void take
+  take publicly-accessible
+    like native-boolean
+    note <This flag should no longer be used.>
+    void take
+  take monitoring-role-arn
+    like native-string
+    note <The ARN for the IAM role that permits Neptune to send enhanced monitoring metrics to Amazon CloudWatch Logs. For example, `arn:aws:iam:123456789012:role/emaccess`.
+
+If `MonitoringInterval` is set to a value other than 0, then you must supply a `MonitoringRoleArn` value.>
+    void take
+  take domain-iam-role-name
+    like native-string
+    note <Not supported>
+    void take
+  take promotion-tier
+    like native-integer
+    note <A value that specifies the order in which a Read Replica is promoted to the primary instance after a failure of the existing primary instance.
+
+Default: 1
+
+Valid Values: 0 - 15>
+    void take
+  take enable-iam-database-authentication
+    like native-boolean
+    note <True to enable mapping of Amazon Identity and Access Management (IAM) accounts to database accounts, and otherwise false.
+
+You can enable IAM database authentication for the following database engines
+
+Not applicable. Mapping Amazon IAM accounts to database accounts is managed by the DB cluster. For more information, see ModifyDBCluster.
+
+Default: `false`>
+    void take
+  take enable-performance-insights
+    like native-boolean
+    note <_(Not supported by Neptune)_>
+    void take
+  take performance-insights-kms-key-id
+    like native-string
+    note <_(Not supported by Neptune)_>
+    void take
+  take cloudwatch-logs-export-configuration
+    like form
+      take enable-log-types, name <EnableLogTypes>
+        like log-type-list
+        void take
+        note <The list of log types to enable.>
+      take disable-log-types, name <DisableLogTypes>
+        like log-type-list
+        void take
+        note <The list of log types to disable.>
+    note <The configuration setting for the log types to be enabled for export to CloudWatch Logs for a specific DB instance or DB cluster.>
+    void take
+  take deletion-protection
+    like native-boolean
+    note <A value that indicates whether the DB instance has deletion protection enabled. The database can't be deleted when deletion protection is enabled. By default, deletion protection is disabled. See [Deleting a DB Instance](https://docs.aws.amazon.com/neptune/latest/userguide/manage-console-instances-delete.html).>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyDBInstance>
+
+  find <DBInstanceIdentifier>, loan db-instance-identifier
+  find <AllocatedStorage>, loan allocated-storage
+  find <DBInstanceClass>, loan db-instance-class
+  find <DBSubnetGroupName>, loan db-subnet-group-name
+  find <DBSecurityGroups>, loan db-security-groups
+  find <VpcSecurityGroupIds>, loan vpc-security-group-ids
+  find <ApplyImmediately>, loan apply-immediately
+  find <MasterUserPassword>, loan master-user-password
+  find <DBParameterGroupName>, loan db-parameter-group-name
+  find <BackupRetentionPeriod>, loan backup-retention-period
+  find <PreferredBackupWindow>, loan preferred-backup-window
+  find <PreferredMaintenanceWindow>, loan preferred-maintenance-window
+  find <MultiAZ>, loan multi-az
+  find <EngineVersion>, loan engine-version
+  find <AllowMajorVersionUpgrade>, loan allow-major-version-upgrade
+  find <AutoMinorVersionUpgrade>, loan auto-minor-version-upgrade
+  find <LicenseModel>, loan license-model
+  find <Iops>, loan iops
+  find <OptionGroupName>, loan option-group-name
+  find <NewDBInstanceIdentifier>, loan new-db-instance-identifier
+  find <StorageType>, loan storage-type
+  find <TdeCredentialArn>, loan tde-credential-arn
+  find <TdeCredentialPassword>, loan tde-credential-password
+  find <CACertificateIdentifier>, loan ca-certificate-identifier
+  find <Domain>, loan domain
+  find <CopyTagsToSnapshot>, loan copy-tags-to-snapshot
+  find <MonitoringInterval>, loan monitoring-interval
+  find <DBPortNumber>, loan db-port-number
+  find <PubliclyAccessible>, loan publicly-accessible
+  find <MonitoringRoleArn>, loan monitoring-role-arn
+  find <DomainIAMRoleName>, loan domain-iam-role-name
+  find <PromotionTier>, loan promotion-tier
+  find <EnableIAMDatabaseAuthentication>, loan enable-iam-database-authentication
+  find <EnablePerformanceInsights>, loan enable-performance-insights
+  find <PerformanceInsightsKMSKeyId>, loan performance-insights-kms-key-id
+  find <CloudwatchLogsExportConfiguration>, loan cloudwatch-logs-export-configuration
+  find <DeletionProtection>, loan deletion-protection
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like modify-db-instance-result
+    note <Success>
+  loot 480
+    seed xml, like invalid-db-instance-state-fault
+    note <InvalidDBInstanceStateFault>
+  loot 481
+    seed xml, like invalid-db-security-group-state-fault
+    note <InvalidDBSecurityGroupStateFault>
+  loot 482
+    seed xml, like db-instance-already-exists-fault
+    note <DBInstanceAlreadyExistsFault>
+  loot 483
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>
+  loot 484
+    seed xml, like db-security-group-not-found-fault
+    note <DBSecurityGroupNotFoundFault>
+  loot 485
+    seed xml, like db-parameter-group-not-found-fault
+    note <DBParameterGroupNotFoundFault>
+  loot 486
+    seed xml, like insufficient-db-instance-capacity-fault
+    note <InsufficientDBInstanceCapacityFault>
+  loot 487
+    seed xml, like storage-quota-exceeded-fault
+    note <StorageQuotaExceededFault>
+  loot 488
+    seed xml, like invalid-vpc-network-state-fault
+    note <InvalidVPCNetworkStateFault>
+  loot 489
+    seed xml, like provisioned-iops-not-available-in-az-fault
+    note <ProvisionedIopsNotAvailableInAZFault>
+  loot 490
+    seed xml, like option-group-not-found-fault
+    note <OptionGroupNotFoundFault>
+  loot 491
+    seed xml, like db-upgrade-dependency-failure-fault
+    note <DBUpgradeDependencyFailureFault>
+  loot 492
+    seed xml, like storage-type-not-supported-fault
+    note <StorageTypeNotSupportedFault>
+  loot 493
+    seed xml, like authorization-not-found-fault
+    note <AuthorizationNotFoundFault>
+  loot 494
+    seed xml, like certificate-not-found-fault
+    note <CertificateNotFoundFault>
+  loot 495
+    seed xml, like domain-not-found-fault
+    note <DomainNotFoundFault>

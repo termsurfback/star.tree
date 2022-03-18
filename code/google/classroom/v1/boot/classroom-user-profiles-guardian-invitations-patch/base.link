@@ -1,0 +1,32 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/classroom/v1/base/guardian-invitation
+  take form guardian-invitation
+
+boot classroom-user-profiles-guardian-invitations-patch, name <classroom.userProfiles.guardianInvitations.patch>
+  note <Modifies a guardian invitation. Currently, the only valid modification is to change the `state` from `PENDING` to `COMPLETE`. This has the effect of withdrawing the invitation. This method returns the following error codes: * `PERMISSION_DENIED` if the current user does not have permission to manage guardians, if guardians are not enabled for the domain in question or for other access errors. * `FAILED_PRECONDITION` if the guardian link is not in the `PENDING` state. * `INVALID_ARGUMENT` if the format of the student ID provided cannot be recognized (it is not an email address, nor a `user_id` from this API), or if the passed `GuardianInvitation` has a `state` other than `COMPLETE`, or if it modifies fields other than `state`. * `NOT_FOUND` if the student ID provided is a valid student ID, but Classroom has no record of that student, or if the `id` field does not refer to a guardian invitation known to Classroom.>
+
+  take student-id
+    like native-string
+    note <The ID of the student whose guardian invitation is to be modified.>
+  take invitation-id
+    like native-string
+    note <The `id` field of the `GuardianInvitation` to be modified.>
+  take update-mask
+    like native-string
+    note <Mask that identifies which fields on the course to update. This field is required to do an update. The update fails if invalid fields are specified. The following fields are valid: * `state` When set in a query parameter, this field should be specified as `updateMask=,,...`>
+    void take
+  take guardian-invitation, like guardian-invitation
+    void take
+
+  line </v1/userProfiles/{student-id}/guardianInvitations/{invitation-id}>
+
+  find <updateMask>, loan update-mask
+
+  seed json, loan guardian-invitation
+
+  loot 200
+    seed json, like guardian-invitation
+    note <Successful response>

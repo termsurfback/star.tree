@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-snapshots-result
+  take form describe-snapshots-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-snapshots, name <POST_DescribeSnapshots>
+  note <Describes the specified EBS snapshots available to you or all of the EBS snapshots available to you.
+
+The snapshots available to you include public snapshots, private snapshots that you own, and private snapshots owned by other Amazon Web Services accounts for which you have explicit create volume permissions.
+
+The create volume permissions fall into the following categories:
+
+- _public_: The owner of the snapshot granted create volume permissions for the snapshot to the `all` group. All Amazon Web Services accounts have create volume permissions for these snapshots.
+
+- _explicit_: The owner of the snapshot granted create volume permissions to a specific Amazon Web Services account.
+
+- _implicit_: An Amazon Web Services account has implicit create volume permissions for all snapshots it owns.
+
+The list of snapshots returned can be filtered by specifying snapshot IDs, snapshot owners, or Amazon Web Services accounts with create volume permissions. If no options are specified, Amazon EC2 returns all snapshots for which you have create volume permissions.
+
+If you specify one or more snapshot IDs, only snapshots that have the specified IDs are returned. If you specify an invalid snapshot ID, an error is returned. If you specify a snapshot ID for which you do not have access, it is not included in the returned results.
+
+If you specify one or more snapshot owners using the `OwnerIds` option, only snapshots from the specified owners and for which you have access are returned. The results can include the Amazon Web Services account IDs of the specified owners, `amazon` for snapshots owned by Amazon, or `self` for snapshots that you own.
+
+If you specify a list of restorable users, only snapshots with create snapshot permissions for those users are returned. You can specify Amazon Web Services account IDs (if you own the snapshots), `self` for snapshots for which you own or have explicit permissions, or `all` for public snapshots.
+
+If you are describing a long list of snapshots, we recommend that you paginate the output to make the list more manageable. The `MaxResults` parameter sets the maximum number of results returned in a single page. If the list of results exceeds your `MaxResults` value, then that number of results is returned along with a `NextToken` value that can be passed to a subsequent `DescribeSnapshots` request to retrieve the remaining results.
+
+To get the state of fast snapshot restores for a snapshot, use DescribeFastSnapshotRestores.
+
+For more information about EBS snapshots, see [Amazon EBS snapshots](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSSnapshots.html) in the _Amazon Elastic Compute Cloud User Guide_.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-snapshots-request, like describe-snapshots-request
+    void take
+
+  line </#Action=DescribeSnapshots>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-snapshots-request
+
+  loot 200
+    seed xml, like describe-snapshots-result
+    note <Success>

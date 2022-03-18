@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/already-exists-fault
+  take form already-exists-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/limit-exceeded-fault
+  take form limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/service-linked-role-failure
+  take form service-linked-role-failure
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-auto-scaling-group, name <POST_CreateAutoScalingGroup>
+  note <**We strongly recommend using a launch template when calling this operation to ensure full functionality for Amazon EC2 Auto Scaling and Amazon EC2.** Creates an Auto Scaling group with the specified name and attributes.
+
+If you exceed your maximum limit of Auto Scaling groups, the call fails. To query this limit, call the DescribeAccountLimits API. For information about updating this limit, see [Amazon EC2 Auto Scaling service quotas](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-account-limits.html) in the _Amazon EC2 Auto Scaling User Guide_.
+
+For introductory exercises for creating an Auto Scaling group, see [Getting started with Amazon EC2 Auto Scaling](https://docs.aws.amazon.com/autoscaling/ec2/userguide/GettingStartedTutorial.html) and [Tutorial: Set up a scaled and load-balanced application](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-register-lbs-with-asg.html) in the _Amazon EC2 Auto Scaling User Guide_. For more information, see [Auto Scaling groups](https://docs.aws.amazon.com/autoscaling/ec2/userguide/AutoScalingGroup.html) in the _Amazon EC2 Auto Scaling User Guide_.
+
+Every Auto Scaling group has three size parameters (`DesiredCapacity`, `MaxSize`, and `MinSize`). Usually, you set these sizes based on a specific number of instances. However, if you configure a mixed instances policy that defines weights for the instance types, you must specify these sizes with the same units that you use for weighting instances.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-auto-scaling-group-type, like create-auto-scaling-group-type
+    void take
+
+  line </#Action=CreateAutoScalingGroup>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-auto-scaling-group-type
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like already-exists-fault
+    note <AlreadyExistsFault>
+  loot 481
+    seed xml, like limit-exceeded-fault
+    note <LimitExceededFault>
+  loot 482
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>
+  loot 483
+    seed xml, like service-linked-role-failure
+    note <ServiceLinkedRoleFailure>

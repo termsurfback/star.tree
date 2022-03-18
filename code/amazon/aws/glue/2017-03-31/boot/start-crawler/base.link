@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/crawler-running-exception
+  take form crawler-running-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/entity-not-found-exception
+  take form entity-not-found-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/operation-timeout-exception
+  take form operation-timeout-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/start-crawler-response
+  take form start-crawler-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-crawler, name <StartCrawler>
+  note <Starts a crawl using the specified crawler, regardless of what is scheduled. If the crawler is already running, returns a [CrawlerRunningException](https://docs.aws.amazon.com/glue/latest/dg/aws-glue-api-exceptions.html#aws-glue-api-exceptions-CrawlerRunningException).>
+
+  take x-amz-target
+    like native-string
+  take start-crawler-request, like start-crawler-request
+
+  line </#X-Amz-Target=AWSGlue.StartCrawler>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan start-crawler-request
+
+  loot 200
+    seed json, like start-crawler-response
+    note <Success>
+  loot 480
+    seed json, like entity-not-found-exception
+    note <EntityNotFoundException>
+  loot 481
+    seed json, like crawler-running-exception
+    note <CrawlerRunningException>
+  loot 482
+    seed json, like operation-timeout-exception
+    note <OperationTimeoutException>

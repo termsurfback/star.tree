@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/container-in-use-exception
+  take form container-in-use-exception
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/container-not-found-exception
+  take form container-not-found-exception
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/mediastore/2017-09-01/base/put-lifecycle-policy-output
+  take form put-lifecycle-policy-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot put-lifecycle-policy, name <PutLifecyclePolicy>
+  note <Writes an object lifecycle policy to a container. If the container already has an object lifecycle policy, the service replaces the existing policy with the new policy. It takes up to 20 minutes for the change to take effect.
+
+For information about how to construct an object lifecycle policy, see [Components of an Object Lifecycle Policy](https://docs.aws.amazon.com/mediastore/latest/ug/policies-object-lifecycle-components.html).>
+
+  take x-amz-target
+    like native-string
+  take put-lifecycle-policy-input, like put-lifecycle-policy-input
+
+  line </#X-Amz-Target=MediaStore_20170901.PutLifecyclePolicy>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan put-lifecycle-policy-input
+
+  loot 200
+    seed json, like put-lifecycle-policy-output
+    note <Success>
+  loot 480
+    seed json, like container-in-use-exception
+    note <ContainerInUseException>
+  loot 481
+    seed json, like container-not-found-exception
+    note <ContainerNotFoundException>
+  loot 482
+    seed json, like internal-server-error
+    note <InternalServerError>

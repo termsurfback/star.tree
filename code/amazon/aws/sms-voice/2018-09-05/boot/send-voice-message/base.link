@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/sms-voice/2018-09-05/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/sms-voice/2018-09-05/base/internal-service-error-exception
+  take form internal-service-error-exception
+
+load @drumwork/snow/amazonaws.com/sms-voice/2018-09-05/base/send-voice-message-body
+  take form send-voice-message-body
+
+load @drumwork/snow/amazonaws.com/sms-voice/2018-09-05/base/send-voice-message-response
+  take form send-voice-message-response
+
+load @drumwork/snow/amazonaws.com/sms-voice/2018-09-05/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+boot send-voice-message, name <SendVoiceMessage>
+  note <Create a new voice message and send it to a recipient's phone number.>
+
+  take send-voice-message-body, like send-voice-message-body
+
+  line </v1/sms-voice/voice/message>
+
+  seed json, loan send-voice-message-body
+
+  loot 200
+    seed json, like send-voice-message-response
+    note <Success>
+  loot 480
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 481
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 482
+    seed json, like internal-service-error-exception
+    note <InternalServiceErrorException>

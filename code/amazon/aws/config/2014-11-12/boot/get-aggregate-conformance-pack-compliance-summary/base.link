@@ -1,0 +1,60 @@
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/get-aggregate-conformance-pack-compliance-summary-response
+  take form get-aggregate-conformance-pack-compliance-summary-response
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-limit-exception
+  take form invalid-limit-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/no-such-configuration-aggregator-exception
+  take form no-such-configuration-aggregator-exception
+
+load @drumwork/snow/amazonaws.com/config/2014-11-12/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-aggregate-conformance-pack-compliance-summary, name <GetAggregateConformancePackComplianceSummary>
+  note <Returns the count of compliant and noncompliant conformance packs across all Amazon Web Services accounts and Amazon Web Services Regions in an aggregator. You can filter based on Amazon Web Services account ID or Amazon Web Services Region.
+
+The results can return an empty result page, but if you have a nextToken, the results are displayed on the next page.>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-aggregate-conformance-pack-compliance-summary-request, like get-aggregate-conformance-pack-compliance-summary-request
+
+  line </#X-Amz-Target=StarlingDoveService.GetAggregateConformancePackComplianceSummary>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <Limit>, loan limit
+  find <NextToken>, loan next-token
+
+  seed json, loan get-aggregate-conformance-pack-compliance-summary-request
+
+  loot 200
+    seed json, like get-aggregate-conformance-pack-compliance-summary-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like invalid-limit-exception
+    note <InvalidLimitException>
+  loot 482
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 483
+    seed json, like no-such-configuration-aggregator-exception
+    note <NoSuchConfigurationAggregatorException>

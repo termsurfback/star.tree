@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/appflow/2020-08-23/base/describe-connector-profiles-body
+  take form describe-connector-profiles-body
+
+load @drumwork/snow/amazonaws.com/appflow/2020-08-23/base/describe-connector-profiles-response
+  take form describe-connector-profiles-response
+
+load @drumwork/snow/amazonaws.com/appflow/2020-08-23/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/appflow/2020-08-23/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-connector-profiles, name <DescribeConnectorProfiles>
+  note <Returns a list of `connector-profile` details matching the provided `connector-profile` names and `connector-types`. Both input lists are optional, and you can use them to filter the result.
+
+If no names or `connector-types` are provided, returns all connector profiles in a paginated form. If there is no match, this operation returns an empty list.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-connector-profiles-body, like describe-connector-profiles-body
+
+  line </describe-connector-profiles>
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan describe-connector-profiles-body
+
+  loot 200
+    seed json, like describe-connector-profiles-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>

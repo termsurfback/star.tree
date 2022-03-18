@@ -1,0 +1,42 @@
+
+load @drumwork/snow/amazonaws.com/servicecatalog-appregistry/2020-06-24/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog-appregistry/2020-06-24/base/list-applications-response
+  take form list-applications-response
+
+load @drumwork/snow/amazonaws.com/servicecatalog-appregistry/2020-06-24/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-applications, name <ListApplications>
+  note <Retrieves a list of all of your applications. Results are paginated.>
+
+  take next-token
+    like native-string
+    note <The token to use to get the next page of results after a previous API call.>
+    void take
+  take max-results
+    like native-integer
+    note <The upper bound of the number of results to return (cannot exceed 25). If this parameter is omitted, it defaults to 25. This value is optional.>
+    void take
+
+  line </applications>
+
+  find <nextToken>, loan next-token
+  find <maxResults>, loan max-results
+
+  loot 200
+    seed json, like list-applications-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>

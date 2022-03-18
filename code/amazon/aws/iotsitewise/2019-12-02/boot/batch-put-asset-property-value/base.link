@@ -1,0 +1,73 @@
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/batch-put-asset-property-value-body
+  take form batch-put-asset-property-value-body
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/batch-put-asset-property-value-response
+  take form batch-put-asset-property-value-response
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/conflicting-operation-exception
+  take form conflicting-operation-exception
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/throttling-exception
+  take form throttling-exception
+
+boot batch-put-asset-property-value, name <BatchPutAssetPropertyValue>
+  note <Sends a list of asset property values to IoT SiteWise. Each value is a timestamp-quality-value (TQV) data point. For more information, see [Ingesting data using the API](https://docs.aws.amazon.com/iot-sitewise/latest/userguide/ingest-api.html) in the _IoT SiteWise User Guide_.
+
+To identify an asset property, you must specify one of the following:
+
+- The `assetId` and `propertyId` of an asset property.
+
+- A `propertyAlias`, which is a data stream alias (for example, `/company/windfarm/3/turbine/7/temperature`). To define an asset property's alias, see [UpdateAssetProperty](https://docs.aws.amazon.com/iot-sitewise/latest/APIReference/API_UpdateAssetProperty.html).
+
+With respect to Unix epoch time, IoT SiteWise accepts only TQVs that have a timestamp of no more than 7 days in the past and no more than 10 minutes in the future. IoT SiteWise rejects timestamps outside of the inclusive range of [-7 days, +10 minutes] and returns a `TimestampOutOfRangeException` error.
+
+For each asset property, IoT SiteWise overwrites TQVs with duplicate timestamps unless the newer TQV has a different quality. For example, if you store a TQV `{T1, GOOD, V1}`, then storing `{T1, GOOD, V2}` replaces the existing TQV.
+
+IoT SiteWise authorizes access to each `BatchPutAssetPropertyValue` entry individually. For more information, see [BatchPutAssetPropertyValue authorization](https://docs.aws.amazon.com/iot-sitewise/latest/userguide/security_iam_service-with-iam.html#security_iam_service-with-iam-id-based-policies-batchputassetpropertyvalue-action) in the _IoT SiteWise User Guide_.>
+
+  take batch-put-asset-property-value-body, like batch-put-asset-property-value-body
+
+  line </properties>
+
+  seed json, loan batch-put-asset-property-value-body
+
+  loot 200
+    seed json, like batch-put-asset-property-value-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 484
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 485
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 486
+    seed json, like conflicting-operation-exception
+    note <ConflictingOperationException>

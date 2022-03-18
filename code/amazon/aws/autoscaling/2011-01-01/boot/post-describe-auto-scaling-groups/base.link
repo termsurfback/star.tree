@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/auto-scaling-groups-type
+  take form auto-scaling-groups-type
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/amazonaws.com/autoscaling/2011-01-01/base/resource-contention-fault
+  take form resource-contention-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-auto-scaling-groups, name <POST_DescribeAutoScalingGroups>
+  note <Gets information about the Auto Scaling groups in the account and Region.
+
+This operation returns information about instances in Auto Scaling groups. To retrieve information about the instances in a warm pool, you must call the DescribeWarmPool API.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take auto-scaling-group-names-type, like auto-scaling-group-names-type
+    void take
+
+  line </#Action=DescribeAutoScalingGroups>
+
+  find <MaxRecords>, loan max-records
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan auto-scaling-group-names-type
+
+  loot 200
+    seed xml, like auto-scaling-groups-type
+    note <Success>
+  loot 480
+    seed xml, like invalid-next-token
+    note <InvalidNextToken>
+  loot 481
+    seed xml, like resource-contention-fault
+    note <ResourceContentionFault>

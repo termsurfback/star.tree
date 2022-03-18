@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/update-gateway-software-now-output
+  take form update-gateway-software-now-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-gateway-software-now, name <UpdateGatewaySoftwareNow>
+  note <Updates the gateway virtual machine (VM) software. The request immediately triggers the software update.
+
+When you make this request, you get a `200 OK` success response immediately. However, it might take some time for the update to complete. You can call DescribeGatewayInformation to verify the gateway is in the `STATE_RUNNING` state.
+
+A software update forces a system restart of your gateway. You can minimize the chance of any disruption to your applications by increasing your iSCSI Initiators' timeouts. For more information about increasing iSCSI Initiator timeouts for Windows and Linux, see [Customizing your Windows iSCSI settings](https://docs.aws.amazon.com/storagegateway/latest/userguide/ConfiguringiSCSIClientInitiatorWindowsClient.html#CustomizeWindowsiSCSISettings) and [Customizing your Linux iSCSI settings](https://docs.aws.amazon.com/storagegateway/latest/userguide/ConfiguringiSCSIClientInitiatorRedHatClient.html#CustomizeLinuxiSCSISettings), respectively.>
+
+  take x-amz-target
+    like native-string
+  take update-gateway-software-now-input, like update-gateway-software-now-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.UpdateGatewaySoftwareNow>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-gateway-software-now-input
+
+  loot 200
+    seed json, like update-gateway-software-now-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

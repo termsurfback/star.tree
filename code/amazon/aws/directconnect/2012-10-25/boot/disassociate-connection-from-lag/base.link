@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/connection
+  take form connection
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/direct-connect-client-exception
+  take form direct-connect-client-exception
+
+load @drumwork/snow/amazonaws.com/directconnect/2012-10-25/base/direct-connect-server-exception
+  take form direct-connect-server-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot disassociate-connection-from-lag, name <DisassociateConnectionFromLag>
+  note <Disassociates a connection from a link aggregation group (LAG). The connection is interrupted and re-established as a standalone connection (the connection is not deleted; to delete the connection, use the DeleteConnection request). If the LAG has associated virtual interfaces or hosted connections, they remain associated with the LAG. A disassociated connection owned by an Direct Connect Partner is automatically converted to an interconnect.
+
+If disassociating the connection would cause the LAG to fall below its setting for minimum number of operational connections, the request fails, except when it's the last member of the LAG. If all connections are disassociated, the LAG continues to exist as an empty LAG with no physical connections.>
+
+  take x-amz-target
+    like native-string
+  take disassociate-connection-from-lag-request, like disassociate-connection-from-lag-request
+
+  line </#X-Amz-Target=OvertureService.DisassociateConnectionFromLag>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan disassociate-connection-from-lag-request
+
+  loot 200
+    seed json, like connection
+    note <Success>
+  loot 480
+    seed json, like direct-connect-server-exception
+    note <DirectConnectServerException>
+  loot 481
+    seed json, like direct-connect-client-exception
+    note <DirectConnectClientException>

@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-detach-group-policy, name <GET_DetachGroupPolicy>
+  note <Removes the specified managed policy from the specified IAM group.
+
+A group can also have inline policies embedded with it. To delete an inline policy, use DeleteGroupPolicy. For information about policies, see [Managed policies and inline policies](https://docs.aws.amazon.com/IAM/latest/UserGuide/policies-managed-vs-inline.html) in the _IAM User Guide_.>
+
+  take group-name
+    like native-string
+    note <The name (friendly name, not ARN) of the IAM group to detach the policy from.
+
+This parameter allows (through its [regex pattern](http://wikipedia.org/wiki/regex)) a string of characters consisting of upper and lowercase alphanumeric characters with no spaces. You can also include any of the following characters: _+=,.@->
+  take policy-arn
+    like native-string
+    note <The Amazon Resource Name (ARN) of the IAM policy you want to detach.
+
+For more information about ARNs, see [Amazon Resource Names (ARNs)](https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html) in the _Amazon Web Services General Reference_.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DetachGroupPolicy>
+
+  find <GroupName>, loan group-name
+  find <PolicyArn>, loan policy-arn
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 482
+    seed xml, like invalid-input-exception
+    note <InvalidInputException>
+  loot 483
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

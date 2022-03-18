@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/create-app-response
+  take form create-app-response
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-in-use
+  take form resource-in-use
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-limit-exceeded
+  take form resource-limit-exceeded
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-app, name <CreateApp>
+  note <Creates a running app for the specified UserProfile. Supported apps are `JupyterServer` and `KernelGateway`. This operation is automatically invoked by Amazon SageMaker Studio upon access to the associated Domain, and when new kernel configurations are selected by the user. A user may have multiple Apps active simultaneously.>
+
+  take x-amz-target
+    like native-string
+  take create-app-request, like create-app-request
+
+  line </#X-Amz-Target=SageMaker.CreateApp>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-app-request
+
+  loot 200
+    seed json, like create-app-response
+    note <Success>
+  loot 480
+    seed json, like resource-limit-exceeded
+    note <ResourceLimitExceeded>
+  loot 481
+    seed json, like resource-in-use
+    note <ResourceInUse>

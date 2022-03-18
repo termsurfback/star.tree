@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/delete-service-action-output
+  take form delete-service-action-output
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-service-action, name <DeleteServiceAction>
+  note <Deletes a self-service action.>
+
+  take x-amz-target
+    like native-string
+  take delete-service-action-input, like delete-service-action-input
+
+  line </#X-Amz-Target=AWS242ServiceCatalogService.DeleteServiceAction>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-service-action-input
+
+  loot 200
+    seed json, like delete-service-action-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>

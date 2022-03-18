@@ -1,0 +1,117 @@
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/dependency-timeout-exception
+  take form dependency-timeout-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/disabled-exception
+  take form disabled-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/incorrect-key-exception
+  take form incorrect-key-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-ciphertext-exception
+  take form invalid-ciphertext-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-grant-token-exception
+  take form invalid-grant-token-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/invalid-key-usage-exception
+  take form invalid-key-usage-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/key-unavailable-exception
+  take form key-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-internal-exception
+  take form kms-internal-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/kms-invalid-state-exception
+  take form kms-invalid-state-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/kms/2014-11-01/base/re-encrypt-response
+  take form re-encrypt-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot re-encrypt, name <ReEncrypt>
+  note <Decrypts ciphertext and then reencrypts it entirely within KMS. You can use this operation to change the KMS key under which data is encrypted, such as when you [manually rotate](https://docs.aws.amazon.com/kms/latest/developerguide/rotate-keys.html#rotate-keys-manually) a KMS key or change the KMS key that protects a ciphertext. You can also use it to reencrypt ciphertext under the same KMS key, such as to change the [encryption context](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#encrypt_context) of a ciphertext.
+
+The `ReEncrypt` operation can decrypt ciphertext that was encrypted by using an KMS KMS key in an KMS operation, such as Encrypt or GenerateDataKey. It can also decrypt ciphertext that was encrypted by using the public key of an [asymmetric KMS key](https://docs.aws.amazon.com/kms/latest/developerguide/symm-asymm-concepts.html#asymmetric-cmks) outside of KMS. However, it cannot decrypt ciphertext produced by other libraries, such as the [Amazon Web Services Encryption SDK](https://docs.aws.amazon.com/encryption-sdk/latest/developer-guide/) or [Amazon S3 client-side encryption](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingClientSideEncryption.html). These libraries return a ciphertext format that is incompatible with KMS.
+
+When you use the `ReEncrypt` operation, you need to provide information for the decrypt operation and the subsequent encrypt operation.
+
+- If your ciphertext was encrypted under an asymmetric KMS key, you must use the `SourceKeyId` parameter to identify the KMS key that encrypted the ciphertext. You must also supply the encryption algorithm that was used. This information is required to decrypt the data.
+
+- If your ciphertext was encrypted under a symmetric KMS key, the `SourceKeyId` parameter is optional. KMS can get this information from metadata that it adds to the symmetric ciphertext blob. This feature adds durability to your implementation by ensuring that authorized users can decrypt ciphertext decades after it was encrypted, even if they've lost track of the key ID. However, specifying the source KMS key is always recommended as a best practice. When you use the `SourceKeyId` parameter to specify a KMS key, KMS uses only the KMS key you specify. If the ciphertext was encrypted under a different KMS key, the `ReEncrypt` operation fails. This practice ensures that you use the KMS key that you intend.
+
+- To reencrypt the data, you must use the `DestinationKeyId` parameter specify the KMS key that re-encrypts the data after it is decrypted. You can select a symmetric or asymmetric KMS key. If the destination KMS key is an asymmetric KMS key, you must also provide the encryption algorithm. The algorithm that you choose must be compatible with the KMS key.
+
+  When you use an asymmetric KMS key to encrypt or reencrypt data, be sure to record the KMS key and encryption algorithm that you choose. You will be required to provide the same KMS key and encryption algorithm when you decrypt the data. If the KMS key and algorithm do not match the values used to encrypt the data, the decrypt operation fails.
+
+  You are not required to supply the key ID and encryption algorithm when you decrypt with symmetric KMS keys because KMS stores this information in the ciphertext blob. KMS cannot store metadata in ciphertext generated with asymmetric keys. The standard format for asymmetric key ciphertext does not include configurable fields.
+
+The KMS key that you use for this operation must be in a compatible key state. For details, see [Key state: Effect on your KMS key](https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html) in the _Key Management Service Developer Guide_.
+
+**Cross-account use**: Yes. The source KMS key and destination KMS key can be in different Amazon Web Services accounts. Either or both KMS keys can be in a different account than the caller. To specify a KMS key in a different account, you must use its key ARN or alias ARN.
+
+**Required permissions**:
+
+- [kms:ReEncryptFrom](https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html) permission on the source KMS key (key policy)
+
+- [kms:ReEncryptTo](https://docs.aws.amazon.com/kms/latest/developerguide/kms-api-permissions-reference.html) permission on the destination KMS key (key policy)
+
+To permit reencryption from or to a KMS key, include the `"kms:ReEncrypt*"` permission in your [key policy](https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html). This permission is automatically included in the key policy when you use the console to create a KMS key. But you must include it manually when you create a KMS key programmatically or when you use the PutKeyPolicy operation to set a key policy.
+
+**Related operations:** - Decrypt
+
+- Encrypt
+
+- GenerateDataKey
+
+- GenerateDataKeyPair>
+
+  take x-amz-target
+    like native-string
+  take re-encrypt-request, like re-encrypt-request
+
+  line </#X-Amz-Target=TrentService.ReEncrypt>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan re-encrypt-request
+
+  loot 200
+    seed json, like re-encrypt-response
+    note <Success>
+  loot 480
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 481
+    seed json, like disabled-exception
+    note <DisabledException>
+  loot 482
+    seed json, like invalid-ciphertext-exception
+    note <InvalidCiphertextException>
+  loot 483
+    seed json, like key-unavailable-exception
+    note <KeyUnavailableException>
+  loot 484
+    seed json, like incorrect-key-exception
+    note <IncorrectKeyException>
+  loot 485
+    seed json, like dependency-timeout-exception
+    note <DependencyTimeoutException>
+  loot 486
+    seed json, like invalid-key-usage-exception
+    note <InvalidKeyUsageException>
+  loot 487
+    seed json, like invalid-grant-token-exception
+    note <InvalidGrantTokenException>
+  loot 488
+    seed json, like kms-internal-exception
+    note <KMSInternalException>
+  loot 489
+    seed json, like kms-invalid-state-exception
+    note <KMSInvalidStateException>

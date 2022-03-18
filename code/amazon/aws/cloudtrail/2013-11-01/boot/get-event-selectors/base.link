@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/get-event-selectors-response
+  take form get-event-selectors-response
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/invalid-trail-name-exception
+  take form invalid-trail-name-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/operation-not-permitted-exception
+  take form operation-not-permitted-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/trail-not-found-exception
+  take form trail-not-found-exception
+
+load @drumwork/snow/amazonaws.com/cloudtrail/2013-11-01/base/unsupported-operation-exception
+  take form unsupported-operation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-event-selectors, name <GetEventSelectors>
+  note <Describes the settings for the event selectors that you configured for your trail. The information returned for your event selectors includes the following:
+
+- If your event selector includes read-only events, write-only events, or all events. This applies to both management events and data events.
+
+- If your event selector includes management events.
+
+- If your event selector includes data events, the resources on which you are logging data events.
+
+For more information, see [Logging Data and Management Events for Trails](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-management-and-data-events-with-cloudtrail.html) in the _CloudTrail User Guide_.>
+
+  take x-amz-target
+    like native-string
+  take get-event-selectors-request, like get-event-selectors-request
+
+  line </#X-Amz-Target=com.amazonaws.cloudtrail.v20131101.CloudTrail_20131101.GetEventSelectors>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-event-selectors-request
+
+  loot 200
+    seed json, like get-event-selectors-response
+    note <Success>
+  loot 480
+    seed json, like trail-not-found-exception
+    note <TrailNotFoundException>
+  loot 481
+    seed json, like invalid-trail-name-exception
+    note <InvalidTrailNameException>
+  loot 482
+    seed json, like unsupported-operation-exception
+    note <UnsupportedOperationException>
+  loot 483
+    seed json, like operation-not-permitted-exception
+    note <OperationNotPermittedException>

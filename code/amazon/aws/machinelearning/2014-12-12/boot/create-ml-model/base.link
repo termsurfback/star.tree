@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/create-ml-model-output
+  take form create-ml-model-output
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/idempotent-parameter-mismatch-exception
+  take form idempotent-parameter-mismatch-exception
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/machinelearning/2014-12-12/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-ml-model, name <CreateMLModel>
+  note <Creates a new `MLModel` using the `DataSource` and the recipe as information sources.
+
+An `MLModel` is nearly immutable. Users can update only the `MLModelName` and the `ScoreThreshold` in an `MLModel` without creating a new `MLModel`.
+
+`CreateMLModel` is an asynchronous operation. In response to `CreateMLModel`, Amazon Machine Learning (Amazon ML) immediately returns and sets the `MLModel` status to `PENDING`. After the `MLModel` has been created and ready is for use, Amazon ML sets the status to `COMPLETED`.
+
+You can use the `GetMLModel` operation to check the progress of the `MLModel` during the creation operation.
+
+`CreateMLModel` requires a `DataSource` with computed statistics, which can be created by setting `ComputeStatistics` to `true` in `CreateDataSourceFromRDS`, `CreateDataSourceFromS3`, or `CreateDataSourceFromRedshift` operations.>
+
+  take x-amz-target
+    like native-string
+  take create-ml-model-input, like create-ml-model-input
+
+  line </#X-Amz-Target=AmazonML_20141212.CreateMLModel>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-ml-model-input
+
+  loot 200
+    seed json, like create-ml-model-output
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like idempotent-parameter-mismatch-exception
+    note <IdempotentParameterMismatchException>

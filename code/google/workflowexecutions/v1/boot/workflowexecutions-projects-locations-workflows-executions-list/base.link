@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/workflowexecutions/v1/base/list-executions-response
+  take form list-executions-response
+
+boot workflowexecutions-projects-locations-workflows-executions-list, name <workflowexecutions.projects.locations.workflows.executions.list>
+  note <Returns a list of executions which belong to the workflow with the given name. The method returns executions of all workflow revisions. Returned executions are ordered by their start time (newest first).>
+
+  take parent
+    like native-string
+    note <Required. Name of the workflow for which the executions should be listed. Format: projects/{project}/locations/{location}/workflows/{workflow}>
+  take page-size
+    like native-integer
+    note <Maximum number of executions to return per call. Max supported value depends on the selected Execution view: it's 10000 for BASIC and 100 for FULL. The default value used if the field is not specified is 100, regardless of the selected view. Values greater than the max value will be coerced down to it.>
+    void take
+  take page-token
+    like native-string
+    note <A page token, received from a previous `ListExecutions` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListExecutions` must match the call that provided the page token.>
+    void take
+  take view
+    like native-string
+    note <Optional. A view defining which fields should be filled in the returned executions. The API will default to the BASIC view.>
+    void take
+
+  line </v1/{parent}/executions>
+
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+  find <view>, loan view
+
+  loot 200
+    seed json, like list-executions-response
+    note <Successful response>

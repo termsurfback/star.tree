@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-limit-exceeded
+  take form resource-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/update-endpoint-output
+  take form update-endpoint-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-endpoint, name <UpdateEndpoint>
+  note <Deploys the new `EndpointConfig` specified in the request, switches to using newly created endpoint, and then deletes resources provisioned for the endpoint using the previous `EndpointConfig` (there is no availability loss).
+
+When Amazon SageMaker receives the request, it sets the endpoint status to `Updating`. After updating the endpoint, it sets the status to `InService`. To check the status of an endpoint, use the DescribeEndpoint API.
+
+You must not delete an `EndpointConfig` in use by an endpoint that is live or while the `UpdateEndpoint` or `CreateEndpoint` operations are being performed on the endpoint. To update an endpoint, you must create a new `EndpointConfig`.
+
+If you delete the `EndpointConfig` of an endpoint that is active or being created or updated you may lose visibility into the instance type the endpoint is using. The endpoint must be deleted in order to stop incurring charges.>
+
+  take x-amz-target
+    like native-string
+  take update-endpoint-input, like update-endpoint-input
+
+  line </#X-Amz-Target=SageMaker.UpdateEndpoint>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan update-endpoint-input
+
+  loot 200
+    seed json, like update-endpoint-output
+    note <Success>
+  loot 480
+    seed json, like resource-limit-exceeded
+    note <ResourceLimitExceeded>

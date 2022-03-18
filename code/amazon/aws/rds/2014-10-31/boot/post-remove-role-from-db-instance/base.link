@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-instance-role-not-found-fault
+  take form db-instance-role-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-instance-state-fault
+  take form invalid-db-instance-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-remove-role-from-db-instance, name <POST_RemoveRoleFromDBInstance>
+  note <Disassociates an Amazon Web Services Identity and Access Management (IAM) role from a DB instance.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take remove-role-from-db-instance-message, like remove-role-from-db-instance-message
+    void take
+
+  line </#Action=RemoveRoleFromDBInstance>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan remove-role-from-db-instance-message
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>
+  loot 481
+    seed xml, like db-instance-role-not-found-fault
+    note <DBInstanceRoleNotFoundFault>
+  loot 482
+    seed xml, like invalid-db-instance-state-fault
+    note <InvalidDBInstanceStateFault>

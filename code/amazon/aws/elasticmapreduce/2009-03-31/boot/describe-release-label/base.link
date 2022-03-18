@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/describe-release-label-output
+  take form describe-release-label-output
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/elasticmapreduce/2009-03-31/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-release-label, name <DescribeReleaseLabel>
+  note <Provides EMR release label details, such as releases available the region where the API request is run, and the available applications for a specific EMR release label. Can also list EMR release versions that support a specified version of Spark.>
+
+  take x-amz-target
+    like native-string
+  take describe-release-label-input, like describe-release-label-input
+
+  line </#X-Amz-Target=ElasticMapReduce.DescribeReleaseLabel>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-release-label-input
+
+  loot 200
+    seed json, like describe-release-label-output
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

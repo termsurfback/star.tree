@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/pinpoint-email/2018-07-26/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/pinpoint-email/2018-07-26/base/concurrent-modification-exception
+  take form concurrent-modification-exception
+
+load @drumwork/snow/amazonaws.com/pinpoint-email/2018-07-26/base/create-email-identity-body
+  take form create-email-identity-body
+
+load @drumwork/snow/amazonaws.com/pinpoint-email/2018-07-26/base/create-email-identity-response
+  take form create-email-identity-response
+
+load @drumwork/snow/amazonaws.com/pinpoint-email/2018-07-26/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/pinpoint-email/2018-07-26/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+boot create-email-identity, name <CreateEmailIdentity>
+  note <Verifies an email identity for use with Amazon Pinpoint. In Amazon Pinpoint, an identity is an email address or domain that you use when you send email. Before you can use an identity to send email with Amazon Pinpoint, you first have to verify it. By verifying an address, you demonstrate that you're the owner of the address, and that you've given Amazon Pinpoint permission to send email from the address.
+
+When you verify an email address, Amazon Pinpoint sends an email to the address. Your email address is verified as soon as you follow the link in the verification email.
+
+When you verify a domain, this operation provides a set of DKIM tokens, which you can convert into CNAME tokens. You add these CNAME tokens to the DNS configuration for your domain. Your domain is verified when Amazon Pinpoint detects these records in the DNS configuration for your domain. It usually takes around 72 hours to complete the domain verification process.>
+
+  take create-email-identity-body, like create-email-identity-body
+
+  line </v1/email/identities>
+
+  seed json, loan create-email-identity-body
+
+  loot 200
+    seed json, like create-email-identity-response
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>
+  loot 482
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 483
+    seed json, like concurrent-modification-exception
+    note <ConcurrentModificationException>

@@ -1,0 +1,67 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/create-placement-group-result
+  take form create-placement-group-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/tag-specification
+  take form tag-specification
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-placement-group, name <GET_CreatePlacementGroup>
+  note <Creates a placement group in which to launch instances. The strategy of the placement group determines how the instances are organized within the group.
+
+A `cluster` placement group is a logical grouping of instances within a single Availability Zone that benefit from low network latency, high network throughput. A `spread` placement group places instances on distinct hardware. A `partition` placement group places groups of instances in different partitions, where instances in one partition do not share the same hardware with instances in another partition.
+
+For more information, see [Placement groups](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html) in the _Amazon EC2 User Guide_.>
+
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take group-name
+    like native-string
+    note <A name for the placement group. Must be unique within the scope of your account for the Region.
+
+Constraints: Up to 255 ASCII characters>
+    void take
+  take strategy
+    like native-string
+    note <The placement strategy.>
+    void take
+  take partition-count
+    like native-integer
+    note <The number of partitions. Valid only when **Strategy** is set to `partition`.>
+    void take
+  take tag-specification
+    like list
+      like tag-specification
+    note <The tags to apply to the new placement group.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreatePlacementGroup>
+
+  find <DryRun>, loan dry-run
+  find <GroupName>, loan group-name
+  find <Strategy>, loan strategy
+  find <PartitionCount>, loan partition-count
+  find <TagSpecification>, loan tag-specification
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like create-placement-group-result
+    note <Success>

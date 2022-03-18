@@ -1,0 +1,58 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-usage-record, name <ListUsageRecord>
+  take sim-sid
+    like native-string
+    note <The SID of the \[Sim resource\](https://www.twilio.com/docs/wireless/api/sim-resource) to read the usage from.>
+  take end
+    like native-string
+    note <Only include usage that occurred on or before this date, specified in \[ISO 8601\](https://www.iso.org/iso-8601-date-and-time-format.html). The default is the current time.>
+    void take
+  take start
+    like native-string
+    note <Only include usage that has occurred on or after this date, specified in \[ISO 8601\](https://www.iso.org/iso-8601-date-and-time-format.html). The default is one month before the \`end\` parameter value.>
+    void take
+  take granularity
+    like native-string
+    note <How to summarize the usage by time. Can be: \`daily\`, \`hourly\`, or \`all\`. The default is \`all\`. A value of \`all\` returns one Usage Record that describes the usage for the entire period.>
+    void take
+  take page-size
+    like native-integer
+    note <How many resources to return in each list page. The default is 50, and the maximum is 1000.>
+    void take
+
+  line </v1/Sims/{sim-sid}/UsageRecords>
+
+  find <End>, loan end
+  find <Start>, loan start
+  find <Granularity>, loan granularity
+  find <PageSize>, loan page-size
+
+  loot 200
+    seed json
+      like form
+        like take meta, name <meta>
+        like   like form
+        like     take first-page-url, name <first_page_url>
+        like       void take
+        like     take key, name <key>
+        like       void take
+        like     take next-page-url, name <next_page_url>
+        like       void take
+        like     take page, name <page>
+        like       void take
+        like     take page-size, name <page_size>
+        like       void take
+        like     take previous-page-url, name <previous_page_url>
+        like       void take
+        like     take url, name <url>
+        like       void take
+        like   void take
+        like take usage-records, name <usage_records>
+        like   void take
+    note <OK>

@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/base-exception
+  take form base-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/describe-stemming-options-response
+  take form describe-stemming-options-response
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/cloudsearch/2011-02-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-stemming-options, name <POST_DescribeStemmingOptions>
+  note <Gets the stemming dictionary configured for the search domain.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-stemming-options-request, like describe-stemming-options-request
+    void take
+
+  line </#Action=DescribeStemmingOptions>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-stemming-options-request
+
+  loot 200
+    seed xml, like describe-stemming-options-response
+    note <Success>
+  loot 409
+    seed xml, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 480
+    seed xml, like base-exception
+    note <BaseException>
+  loot 500
+    seed xml, like internal-exception
+    note <InternalException>

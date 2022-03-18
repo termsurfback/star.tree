@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-subnet-group-already-exists-fault
+  take form cache-subnet-group-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-subnet-group-quota-exceeded-fault
+  take form cache-subnet-group-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/cache-subnet-quota-exceeded-fault
+  take form cache-subnet-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/create-cache-subnet-group-result
+  take form create-cache-subnet-group-result
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-subnet
+  take form invalid-subnet
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/subnet-not-allowed-fault
+  take form subnet-not-allowed-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/tag-quota-per-resource-exceeded
+  take form tag-quota-per-resource-exceeded
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-cache-subnet-group, name <POST_CreateCacheSubnetGroup>
+  note <Creates a new cache subnet group.
+
+Use this parameter only when you are creating a cluster in an Amazon Virtual Private Cloud (Amazon VPC).>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-cache-subnet-group-message, like create-cache-subnet-group-message
+    void take
+
+  line </#Action=CreateCacheSubnetGroup>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-cache-subnet-group-message
+
+  loot 200
+    seed xml, like create-cache-subnet-group-result
+    note <Success>
+  loot 480
+    seed xml, like cache-subnet-group-already-exists-fault
+    note <CacheSubnetGroupAlreadyExistsFault>
+  loot 481
+    seed xml, like cache-subnet-group-quota-exceeded-fault
+    note <CacheSubnetGroupQuotaExceededFault>
+  loot 482
+    seed xml, like cache-subnet-quota-exceeded-fault
+    note <CacheSubnetQuotaExceededFault>
+  loot 483
+    seed xml, like tag-quota-per-resource-exceeded
+    note <TagQuotaPerResourceExceeded>
+  loot 484
+    seed xml, like invalid-subnet
+    note <InvalidSubnet>
+  loot 485
+    seed xml, like subnet-not-allowed-fault
+    note <SubnetNotAllowedFault>

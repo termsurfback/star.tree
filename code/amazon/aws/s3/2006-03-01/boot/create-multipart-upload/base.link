@@ -1,0 +1,299 @@
+
+load @drumwork/snow/amazonaws.com/s3/2006-03-01/base/create-multipart-upload-body
+  take form create-multipart-upload-body
+
+load @drumwork/snow/amazonaws.com/s3/2006-03-01/base/create-multipart-upload-output
+  take form create-multipart-upload-output
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-multipart-upload, name <CreateMultipartUpload>
+  note <This action initiates a multipart upload and returns an upload ID. This upload ID is used to associate all of the parts in the specific multipart upload. You specify this upload ID in each of your subsequent upload part requests (see [UploadPart](https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html)). You also include this upload ID in the final request to either complete or abort the multipart upload request.
+
+For more information about multipart uploads, see [Multipart Upload Overview](https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuoverview.html).
+
+If you have configured a lifecycle rule to abort incomplete multipart uploads, the upload must complete within the number of days specified in the bucket lifecycle configuration. Otherwise, the incomplete multipart upload becomes eligible for an abort action and Amazon S3 aborts the multipart upload. For more information, see [Aborting Incomplete Multipart Uploads Using a Bucket Lifecycle Policy](https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuoverview.html#mpu-abort-incomplete-mpu-lifecycle-config).
+
+For information about the permissions required to use the multipart upload API, see [Multipart Upload and Permissions](https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuAndPermissions.html).
+
+For request signing, multipart upload is just a series of regular requests. You initiate a multipart upload, send one or more requests to upload parts, and then complete the multipart upload process. You sign each request individually. There is nothing special about signing multipart upload requests. For more information about signing, see [Authenticating Requests (Amazon Web Services Signature Version 4)](https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-authenticating-requests.html).
+
+After you initiate a multipart upload and upload one or more parts, to stop being charged for storing the uploaded parts, you must either complete or abort the multipart upload. Amazon S3 frees up the space used to store the parts and stop charging you for storing them only after you either complete or abort a multipart upload.
+
+You can optionally request server-side encryption. For server-side encryption, Amazon S3 encrypts your data as it writes it to disks in its data centers and decrypts it when you access it. You can provide your own encryption key, or use Amazon Web Services KMS keys or Amazon S3-managed encryption keys. If you choose to provide your own encryption key, the request headers you provide in [UploadPart](https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html) and [UploadPartCopy](https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPartCopy.html) requests must match the headers you used in the request to initiate the upload by using `CreateMultipartUpload`.
+
+To perform a multipart upload with encryption using an Amazon Web Services KMS key, the requester must have permission to the `kms:Decrypt` and `kms:GenerateDataKey*` actions on the key. These permissions are required because Amazon S3 must decrypt and read data from the encrypted file parts before it completes the multipart upload. For more information, see [Multipart upload API and permissions](https://docs.aws.amazon.com/AmazonS3/latest/userguide/mpuoverview.html#mpuAndPermissions) in the _Amazon S3 User Guide_.
+
+If your Identity and Access Management (IAM) user or role is in the same Amazon Web Services account as the KMS key, then you must have these permissions on the key policy. If your IAM user or role belongs to a different account than the key, then you must have the permissions on both the key policy and your IAM user or role.
+
+For more information, see [Protecting Data Using Server-Side Encryption](https://docs.aws.amazon.com/AmazonS3/latest/dev/serv-side-encryption.html).
+
+Access Permissions
+
+When copying an object, you can optionally specify the accounts or groups that should be granted specific permissions on the new object. There are two ways to grant the permissions using the request headers:
+
+- Specify a canned ACL with the `x-amz-acl` request header. For more information, see [Canned ACL](https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#CannedACL).
+
+- Specify access permissions explicitly with the `x-amz-grant-read`, `x-amz-grant-read-acp`, `x-amz-grant-write-acp`, and `x-amz-grant-full-control` headers. These parameters map to the set of permissions that Amazon S3 supports in an ACL. For more information, see [Access Control List (ACL) Overview](https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html).
+
+You can use either a canned ACL or specify access permissions explicitly. You cannot do both.
+
+Server-Side- Encryption-Specific Request Headers
+
+You can optionally tell Amazon S3 to encrypt data at rest using server-side encryption. Server-side encryption is for data encryption at rest. Amazon S3 encrypts your data as it writes it to disks in its data centers and decrypts it when you access it. The option you use depends on whether you want to use Amazon Web Services managed encryption keys or provide your own encryption key.
+
+- Use encryption keys managed by Amazon S3 or customer managed key stored in Amazon Web Services Key Management Service (Amazon Web Services KMS) - If you want Amazon Web Services to manage the keys used to encrypt data, specify the following headers in the request.
+
+  - x-amz-server-side-encryption
+
+  - x-amz-server-side-encryption-aws-kms-key-id
+
+  - x-amz-server-side-encryption-context
+
+  If you specify `x-amz-server-side-encryption:aws:kms`, but don't provide `x-amz-server-side-encryption-aws-kms-key-id`, Amazon S3 uses the Amazon Web Services managed key in Amazon Web Services KMS to protect the data.
+
+  All GET and PUT requests for an object protected by Amazon Web Services KMS fail if you don't make them with SSL or by using SigV4.
+
+  For more information about server-side encryption with KMS key (SSE-KMS), see [Protecting Data Using Server-Side Encryption with KMS keys](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingKMSEncryption.html).
+
+- Use customer-provided encryption keys - If you want to manage your own encryption keys, provide all the following headers in the request.
+
+  - x-amz-server-side-encryption-customer-algorithm
+
+  - x-amz-server-side-encryption-customer-key
+
+  - x-amz-server-side-encryption-customer-key-MD5
+
+  For more information about server-side encryption with KMS keys (SSE-KMS), see [Protecting Data Using Server-Side Encryption with KMS keys](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingKMSEncryption.html).
+
+Access-Control-List (ACL)-Specific Request Headers
+
+You also can use the following access control-related headers with this operation. By default, all objects are private. Only the owner has full access control. When adding a new object, you can grant permissions to individual Amazon Web Services accounts or to predefined groups defined by Amazon S3. These permissions are then added to the access control list (ACL) on the object. For more information, see [Using ACLs](https://docs.aws.amazon.com/AmazonS3/latest/dev/S3_ACLs_UsingACLs.html). With this operation, you can grant access permissions using one of the following two methods:
+
+- Specify a canned ACL (`x-amz-acl`) — Amazon S3 supports a set of predefined ACLs, known as _canned ACLs_. Each canned ACL has a predefined set of grantees and permissions. For more information, see [Canned ACL](https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#CannedACL).
+
+- Specify access permissions explicitly — To explicitly grant access permissions to specific Amazon Web Services accounts or groups, use the following headers. Each header maps to specific permissions that Amazon S3 supports in an ACL. For more information, see [Access Control List (ACL) Overview](https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html). In the header, you specify a list of grantees who get the specific permission. To grant permissions explicitly, use:
+
+  - x-amz-grant-read
+
+  - x-amz-grant-write
+
+  - x-amz-grant-read-acp
+
+  - x-amz-grant-write-acp
+
+  - x-amz-grant-full-control
+
+  You specify each grantee as a type=value pair, where the type is one of the following:
+
+  - `id` - if the value specified is the canonical user ID of an Amazon Web Services account
+
+  - `uri` - if you are granting permissions to a predefined group
+
+  - `emailAddress` - if the value specified is the email address of an Amazon Web Services account
+
+    Using email addresses to specify a grantee is only supported in the following Amazon Web Services Regions:
+
+    - US East (N. Virginia)
+
+    - US West (N. California)
+
+    - US West (Oregon)
+
+    - Asia Pacific (Singapore)
+
+    - Asia Pacific (Sydney)
+
+    - Asia Pacific (Tokyo)
+
+    - Europe (Ireland)
+
+    - South America (São Paulo)
+
+    For a list of all the Amazon S3 supported Regions and endpoints, see [Regions and Endpoints](https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region) in the Amazon Web Services General Reference.
+
+  For example, the following `x-amz-grant-read` header grants the Amazon Web Services accounts identified by account IDs permissions to read object data and its metadata:
+
+  `x-amz-grant-read: id="11112222333", id="444455556666"`
+
+The following operations are related to `CreateMultipartUpload`:
+
+- [UploadPart](https://docs.aws.amazon.com/AmazonS3/latest/API/API_UploadPart.html)
+
+- [CompleteMultipartUpload](https://docs.aws.amazon.com/AmazonS3/latest/API/API_CompleteMultipartUpload.html)
+
+- [AbortMultipartUpload](https://docs.aws.amazon.com/AmazonS3/latest/API/API_AbortMultipartUpload.html)
+
+- [ListParts](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListParts.html)
+
+- [ListMultipartUploads](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListMultipartUploads.html)>
+
+  take bucket
+    like native-string
+    note <The name of the bucket to which to initiate the upload
+
+When using this action with an access point, you must direct requests to the access point hostname. The access point hostname takes the form _AccessPointName_-_AccountId_.s3-accesspoint._Region_.amazonaws.com. When using this action with an access point through the Amazon Web Services SDKs, you provide the access point ARN in place of the bucket name. For more information about access point ARNs, see [Using access points](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-access-points.html) in the _Amazon S3 User Guide_.
+
+When using this action with Amazon S3 on Outposts, you must direct requests to the S3 on Outposts hostname. The S3 on Outposts hostname takes the form _AccessPointName_-_AccountId_._outpostID_.s3-outposts._Region_.amazonaws.com. When using this action using S3 on Outposts through the Amazon Web Services SDKs, you provide the Outposts bucket ARN in place of the bucket name. For more information about S3 on Outposts ARNs, see [Using S3 on Outposts](https://docs.aws.amazon.com/AmazonS3/latest/userguide/S3onOutposts.html) in the _Amazon S3 User Guide_.>
+  take key
+    like native-string
+    note <Object key for which the multipart upload is to be initiated.>
+  take x-amz-acl
+    like native-string
+    note <The canned ACL to apply to the object.
+
+This action is not supported by Amazon S3 on Outposts.>
+    void take
+  take cache-control
+    like native-string
+    note <Specifies caching behavior along the request/reply chain.>
+    void take
+  take content-disposition
+    like native-string
+    note <Specifies presentational information for the object.>
+    void take
+  take content-encoding
+    like native-string
+    note <Specifies what content encodings have been applied to the object and thus what decoding mechanisms must be applied to obtain the media-type referenced by the Content-Type header field.>
+    void take
+  take content-language
+    like native-string
+    note <The language the content is in.>
+    void take
+  take content-type
+    like native-string
+    note <A standard MIME type describing the format of the object data.>
+    void take
+  take expires
+    like native-string
+    note <The date and time at which the object is no longer cacheable.>
+    void take
+  take x-amz-grant-full-control
+    like native-string
+    note <Gives the grantee READ, READ_ACP, and WRITE_ACP permissions on the object.
+
+This action is not supported by Amazon S3 on Outposts.>
+    void take
+  take x-amz-grant-read
+    like native-string
+    note <Allows grantee to read the object data and its metadata.
+
+This action is not supported by Amazon S3 on Outposts.>
+    void take
+  take x-amz-grant-read-acp
+    like native-string
+    note <Allows grantee to read the object ACL.
+
+This action is not supported by Amazon S3 on Outposts.>
+    void take
+  take x-amz-grant-write-acp
+    like native-string
+    note <Allows grantee to write the ACL for the applicable object.
+
+This action is not supported by Amazon S3 on Outposts.>
+    void take
+  take x-amz-server-side-encryption
+    like native-string
+    note <The server-side encryption algorithm used when storing this object in Amazon S3 (for example, AES256, aws:kms).>
+    void take
+  take x-amz-storage-class
+    like native-string
+    note <By default, Amazon S3 uses the STANDARD Storage Class to store newly created objects. The STANDARD storage class provides high durability and high availability. Depending on performance needs, you can specify a different Storage Class. Amazon S3 on Outposts only uses the OUTPOSTS Storage Class. For more information, see [Storage Classes](https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-class-intro.html) in the _Amazon S3 User Guide_.>
+    void take
+  take x-amz-website-redirect-location
+    like native-string
+    note <If the bucket is configured as a website, redirects requests for this object to another object in the same bucket or to an external URL. Amazon S3 stores the value of this header in the object metadata.>
+    void take
+  take x-amz-server-side-encryption-customer-algorithm
+    like native-string
+    note <Specifies the algorithm to use to when encrypting the object (for example, AES256).>
+    void take
+  take x-amz-server-side-encryption-customer-key
+    like native-string
+    note <Specifies the customer-provided encryption key for Amazon S3 to use in encrypting data. This value is used to store the object and then it is discarded; Amazon S3 does not store the encryption key. The key must be appropriate for use with the algorithm specified in the `x-amz-server-side-encryption-customer-algorithm` header.>
+    void take
+  take x-amz-server-side-encryption-customer-key-md5
+    like native-string
+    note <Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321. Amazon S3 uses this header for a message integrity check to ensure that the encryption key was transmitted without error.>
+    void take
+  take x-amz-server-side-encryption-aws-kms-key-id
+    like native-string
+    note <Specifies the ID of the symmetric customer managed key to use for object encryption. All GET and PUT requests for an object protected by Amazon Web Services KMS will fail if not made via SSL or using SigV4. For information about configuring using any of the officially supported Amazon Web Services SDKs and Amazon Web Services CLI, see [Specifying the Signature Version in Request Authentication](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingAWSSDK.html#specify-signature-version) in the _Amazon S3 User Guide_.>
+    void take
+  take x-amz-server-side-encryption-context
+    like native-string
+    note <Specifies the Amazon Web Services KMS Encryption Context to use for object encryption. The value of this header is a base64-encoded UTF-8 string holding JSON with the encryption context key-value pairs.>
+    void take
+  take x-amz-server-side-encryption-bucket-key-enabled
+    like native-boolean
+    note <Specifies whether Amazon S3 should use an S3 Bucket Key for object encryption with server-side encryption using AWS KMS (SSE-KMS). Setting this header to `true` causes Amazon S3 to use an S3 Bucket Key for object encryption with SSE-KMS.
+
+Specifying this header with an object action doesn’t affect bucket-level settings for S3 Bucket Key.>
+    void take
+  take x-amz-request-payer
+    like native-string
+    void take
+  take x-amz-tagging
+    like native-string
+    note <The tag-set for the object. The tag-set must be encoded as URL Query parameters.>
+    void take
+  take x-amz-object-lock-mode
+    like native-string
+    note <Specifies the Object Lock mode that you want to apply to the uploaded object.>
+    void take
+  take x-amz-object-lock-retain-until-date
+    like native-string
+    note <Specifies the date and time when you want the Object Lock to expire.>
+    void take
+  take x-amz-object-lock-legal-hold
+    like native-string
+    note <Specifies whether you want to apply a Legal Hold to the uploaded object.>
+    void take
+  take x-amz-expected-bucket-owner
+    like native-string
+    note <The account ID of the expected bucket owner. If the bucket is owned by a different account, the request will fail with an HTTP `403 (Access Denied)` error.>
+    void take
+  take uploads
+    like native-boolean
+  take create-multipart-upload-body, like create-multipart-upload-body
+
+  line </{bucket}/{key}#uploads>
+
+  hint <x-amz-acl>, loan x-amz-acl
+  hint <Cache-Control>, loan cache-control
+  hint <Content-Disposition>, loan content-disposition
+  hint <Content-Encoding>, loan content-encoding
+  hint <Content-Language>, loan content-language
+  hint <Content-Type>, loan content-type
+  hint <Expires>, loan expires
+  hint <x-amz-grant-full-control>, loan x-amz-grant-full-control
+  hint <x-amz-grant-read>, loan x-amz-grant-read
+  hint <x-amz-grant-read-acp>, loan x-amz-grant-read-acp
+  hint <x-amz-grant-write-acp>, loan x-amz-grant-write-acp
+  hint <x-amz-server-side-encryption>, loan x-amz-server-side-encryption
+  hint <x-amz-storage-class>, loan x-amz-storage-class
+  hint <x-amz-website-redirect-location>, loan x-amz-website-redirect-location
+  hint <x-amz-server-side-encryption-customer-algorithm>, loan x-amz-server-side-encryption-customer-algorithm
+  hint <x-amz-server-side-encryption-customer-key>, loan x-amz-server-side-encryption-customer-key
+  hint <x-amz-server-side-encryption-customer-key-MD5>, loan x-amz-server-side-encryption-customer-key-md5
+  hint <x-amz-server-side-encryption-aws-kms-key-id>, loan x-amz-server-side-encryption-aws-kms-key-id
+  hint <x-amz-server-side-encryption-context>, loan x-amz-server-side-encryption-context
+  hint <x-amz-server-side-encryption-bucket-key-enabled>, loan x-amz-server-side-encryption-bucket-key-enabled
+  hint <x-amz-request-payer>, loan x-amz-request-payer
+  hint <x-amz-tagging>, loan x-amz-tagging
+  hint <x-amz-object-lock-mode>, loan x-amz-object-lock-mode
+  hint <x-amz-object-lock-retain-until-date>, loan x-amz-object-lock-retain-until-date
+  hint <x-amz-object-lock-legal-hold>, loan x-amz-object-lock-legal-hold
+  hint <x-amz-expected-bucket-owner>, loan x-amz-expected-bucket-owner
+
+  find <uploads>, loan uploads
+
+  seed xml, loan create-multipart-upload-body
+
+  loot 200
+    seed xml, like create-multipart-upload-output
+    note <Success>

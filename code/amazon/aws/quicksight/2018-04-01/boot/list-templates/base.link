@@ -1,0 +1,79 @@
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/list-templates-response
+  take form list-templates-response
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/quicksight/2018-04-01/base/unsupported-user-edition-exception
+  take form unsupported-user-edition-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-templates, name <ListTemplates>
+  note <Lists all the templates in the current Amazon QuickSight account.>
+
+  take aws-account-id
+    like native-string
+    note <The ID of the Amazon Web Services account that contains the templates that you're listing.>
+  take next-token
+    like native-string
+    note <The token for the next set of results, or null if there are no more results.>
+    void take
+  take max-result
+    like native-integer
+    note <The maximum number of results to be returned per request.>
+    void take
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+
+  line </accounts/{aws-account-id}/templates>
+
+  find <next-token>, loan next-token
+  find <max-result>, loan max-result
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like list-templates-response
+    note <Success>
+  loot 480
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 481
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 484
+    seed json, like unsupported-user-edition-exception
+    note <UnsupportedUserEditionException>
+  loot 485
+    seed json, like internal-failure-exception
+    note <InternalFailureException>

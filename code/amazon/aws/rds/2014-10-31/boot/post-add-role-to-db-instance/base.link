@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-instance-not-found-fault
+  take form db-instance-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-instance-role-already-exists-fault
+  take form db-instance-role-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-instance-role-quota-exceeded-fault
+  take form db-instance-role-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-instance-state-fault
+  take form invalid-db-instance-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-add-role-to-db-instance, name <POST_AddRoleToDBInstance>
+  note <Associates an Amazon Web Services Identity and Access Management (IAM) role with a DB instance.
+
+To add a role to a DB instance, the status of the DB instance must be `available`.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take add-role-to-db-instance-message, like add-role-to-db-instance-message
+    void take
+
+  line </#Action=AddRoleToDBInstance>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan add-role-to-db-instance-message
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like db-instance-not-found-fault
+    note <DBInstanceNotFoundFault>
+  loot 481
+    seed xml, like db-instance-role-already-exists-fault
+    note <DBInstanceRoleAlreadyExistsFault>
+  loot 482
+    seed xml, like invalid-db-instance-state-fault
+    note <InvalidDBInstanceStateFault>
+  loot 483
+    seed xml, like db-instance-role-quota-exceeded-fault
+    note <DBInstanceRoleQuotaExceededFault>

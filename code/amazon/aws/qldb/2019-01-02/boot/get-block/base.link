@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/get-block-body
+  take form get-block-body
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/get-block-response
+  take form get-block-response
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/qldb/2019-01-02/base/resource-precondition-not-met-exception
+  take form resource-precondition-not-met-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-block, name <GetBlock>
+  note <Returns a block object at a specified address in a journal. Also returns a proof of the specified block for verification if `DigestTipAddress` is provided.
+
+For information about the data contents in a block, see [Journal contents](https://docs.aws.amazon.com/qldb/latest/developerguide/journal-contents.html) in the _Amazon QLDB Developer Guide_.
+
+If the specified ledger doesn't exist or is in `DELETING` status, then throws `ResourceNotFoundException`.
+
+If the specified ledger is in `CREATING` status, then throws `ResourcePreconditionNotMetException`.
+
+If no block exists with the specified address, then throws `InvalidParameterException`.>
+
+  take name
+    like native-string
+    note <The name of the ledger.>
+  take get-block-body, like get-block-body
+
+  line </ledgers/{name}/block>
+
+  seed json, loan get-block-body
+
+  loot 200
+    seed json, like get-block-response
+    note <Success>
+  loot 480
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like resource-precondition-not-met-exception
+    note <ResourcePreconditionNotMetException>

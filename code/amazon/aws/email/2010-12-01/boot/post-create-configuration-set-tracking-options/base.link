@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/configuration-set-does-not-exist-exception
+  take form configuration-set-does-not-exist-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/create-configuration-set-tracking-options-response
+  take form create-configuration-set-tracking-options-response
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/invalid-tracking-options-exception
+  take form invalid-tracking-options-exception
+
+load @drumwork/snow/amazonaws.com/email/2010-12-01/base/tracking-options-already-exists-exception
+  take form tracking-options-already-exists-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-configuration-set-tracking-options, name <POST_CreateConfigurationSetTrackingOptions>
+  note <Creates an association between a configuration set and a custom domain for open and click event tracking.
+
+By default, images and links used for tracking open and click events are hosted on domains operated by Amazon SES. You can configure a subdomain of your own to handle these events. For information about using custom domains, see the [Amazon SES Developer Guide](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/configure-custom-open-click-domains.html).>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-configuration-set-tracking-options-request, like create-configuration-set-tracking-options-request
+    void take
+
+  line </#Action=CreateConfigurationSetTrackingOptions>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-configuration-set-tracking-options-request
+
+  loot 200
+    seed xml, like create-configuration-set-tracking-options-response
+    note <Success>
+  loot 480
+    seed xml, like configuration-set-does-not-exist-exception
+    note <ConfigurationSetDoesNotExistException>
+  loot 481
+    seed xml, like tracking-options-already-exists-exception
+    note <TrackingOptionsAlreadyExistsException>
+  loot 482
+    seed xml, like invalid-tracking-options-exception
+    note <InvalidTrackingOptionsException>

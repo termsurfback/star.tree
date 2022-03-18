@@ -1,0 +1,84 @@
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/get-text-detection-response
+  take form get-text-detection-response
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/invalid-pagination-token-exception
+  take form invalid-pagination-token-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/provisioned-throughput-exceeded-exception
+  take form provisioned-throughput-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/rekognition/2016-06-27/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-text-detection, name <GetTextDetection>
+  note <Gets the text detection results of a Amazon Rekognition Video analysis started by StartTextDetection.
+
+Text detection with Amazon Rekognition Video is an asynchronous operation. You start text detection by calling StartTextDetection which returns a job identifier (`JobId`) When the text detection operation finishes, Amazon Rekognition publishes a completion status to the Amazon Simple Notification Service topic registered in the initial call to `StartTextDetection`. To get the results of the text detection operation, first check that the status value published to the Amazon SNS topic is `SUCCEEDED`. if so, call `GetTextDetection` and pass the job identifier (`JobId`) from the initial call of `StartLabelDetection`.
+
+`GetTextDetection` returns an array of detected text (`TextDetections`) sorted by the time the text was detected, up to 50 words per frame of video.
+
+Each element of the array includes the detected text, the precentage confidence in the acuracy of the detected text, the time the text was detected, bounding box information for where the text was located, and unique identifiers for words and their lines.
+
+Use MaxResults parameter to limit the number of text detections returned. If there are more results than specified in `MaxResults`, the value of `NextToken` in the operation response contains a pagination token for getting the next set of results. To get the next page of results, call `GetTextDetection` and populate the `NextToken` request parameter with the token value returned from the previous call to `GetTextDetection`.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-text-detection-request, like get-text-detection-request
+
+  line </#X-Amz-Target=RekognitionService.GetTextDetection>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan get-text-detection-request
+
+  loot 200
+    seed json, like get-text-detection-response
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 483
+    seed json, like invalid-pagination-token-exception
+    note <InvalidPaginationTokenException>
+  loot 484
+    seed json, like provisioned-throughput-exceeded-exception
+    note <ProvisionedThroughputExceededException>
+  loot 485
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 486
+    seed json, like throttling-exception
+    note <ThrottlingException>

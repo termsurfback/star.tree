@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/delete-ops-metadata-result
+  take form delete-ops-metadata-result
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/ops-metadata-invalid-argument-exception
+  take form ops-metadata-invalid-argument-exception
+
+load @drumwork/snow/amazonaws.com/ssm/2014-11-06/base/ops-metadata-not-found-exception
+  take form ops-metadata-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-ops-metadata, name <DeleteOpsMetadata>
+  note <Delete OpsMetadata related to an application.>
+
+  take x-amz-target
+    like native-string
+  take delete-ops-metadata-request, like delete-ops-metadata-request
+
+  line </#X-Amz-Target=AmazonSSM.DeleteOpsMetadata>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-ops-metadata-request
+
+  loot 200
+    seed json, like delete-ops-metadata-result
+    note <Success>
+  loot 480
+    seed json, like ops-metadata-not-found-exception
+    note <OpsMetadataNotFoundException>
+  loot 481
+    seed json, like ops-metadata-invalid-argument-exception
+    note <OpsMetadataInvalidArgumentException>
+  loot 482
+    seed json, like internal-server-error
+    note <InternalServerError>

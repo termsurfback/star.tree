@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/invalid-response-exception
+  take form invalid-response-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/service-unavailable-exception
+  take form service-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/test-invoke-authorizer-body
+  take form test-invoke-authorizer-body
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/test-invoke-authorizer-response
+  take form test-invoke-authorizer-response
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/iot/2015-05-28/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot test-invoke-authorizer, name <TestInvokeAuthorizer>
+  note <Tests a custom authorization behavior by invoking a specified custom authorizer. Use this to test and debug the custom authorization behavior of devices that connect to the IoT device gateway.
+
+Requires permission to access the [TestInvokeAuthorizer](https://docs.aws.amazon.com/service-authorization/latest/reference/list_awsiot.html#awsiot-actions-as-permissions) action.>
+
+  take authorizer-name
+    like native-string
+    note <The custom authorizer name.>
+  take test-invoke-authorizer-body, like test-invoke-authorizer-body
+
+  line </authorizer/{authorizer-name}/test>
+
+  seed json, loan test-invoke-authorizer-body
+
+  loot 200
+    seed json, like test-invoke-authorizer-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 484
+    seed json, like service-unavailable-exception
+    note <ServiceUnavailableException>
+  loot 485
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 486
+    seed json, like invalid-response-exception
+    note <InvalidResponseException>

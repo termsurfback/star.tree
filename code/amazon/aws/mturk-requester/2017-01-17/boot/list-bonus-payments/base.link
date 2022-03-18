@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/list-bonus-payments-response
+  take form list-bonus-payments-response
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/request-error
+  take form request-error
+
+load @drumwork/snow/amazonaws.com/mturk-requester/2017-01-17/base/service-fault
+  take form service-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-bonus-payments, name <ListBonusPayments>
+  note <The `ListBonusPayments` operation retrieves the amounts of bonuses you have paid to Workers for a given HIT or assignment.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-bonus-payments-request, like list-bonus-payments-request
+
+  line </#X-Amz-Target=MTurkRequesterServiceV20170117.ListBonusPayments>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-bonus-payments-request
+
+  loot 200
+    seed json, like list-bonus-payments-response
+    note <Success>
+  loot 480
+    seed json, like service-fault
+    note <ServiceFault>
+  loot 481
+    seed json, like request-error
+    note <RequestError>

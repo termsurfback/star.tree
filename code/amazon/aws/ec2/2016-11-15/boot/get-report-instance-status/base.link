@@ -1,0 +1,85 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/instance-id
+  take form instance-id
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/report-instance-reason-codes
+  take form report-instance-reason-codes
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-report-instance-status, name <GET_ReportInstanceStatus>
+  note <Submits feedback about the status of an instance. The instance must be in the `running` state. If your experience with the instance differs from the instance status returned by DescribeInstanceStatus, use ReportInstanceStatus to report your experience with the instance. Amazon EC2 collects this information to improve the accuracy of status checks.
+
+Use of this action does not change the value returned by DescribeInstanceStatus.>
+
+  take description
+    like native-string
+    note <Descriptive text about the health state of your instance.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take end-time
+    like native-string
+    note <The time at which the reported instance health state ended.>
+    void take
+  take instance-id
+    like list
+      like instance-id
+    note <The instances.>
+  take reason-code
+    like list
+      like report-instance-reason-codes
+    note <The reason codes that describe the health state of your instance.
+
+- `instance-stuck-in-state`: My instance is stuck in a state.
+
+- `unresponsive`: My instance is unresponsive.
+
+- `not-accepting-credentials`: My instance is not accepting my credentials.
+
+- `password-not-available`: A password is not available for my instance.
+
+- `performance-network`: My instance is experiencing performance problems that I believe are network related.
+
+- `performance-instance-store`: My instance is experiencing performance problems that I believe are related to the instance stores.
+
+- `performance-ebs-volume`: My instance is experiencing performance problems that I believe are related to an EBS volume.
+
+- `performance-other`: My instance is experiencing performance problems.
+
+- `other`: [explain using the description parameter]>
+  take start-time
+    like native-string
+    note <The time at which the reported instance health state began.>
+    void take
+  take status
+    like native-string
+    note <The status of all instances listed.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ReportInstanceStatus>
+
+  find <Description>, loan description
+  find <DryRun>, loan dry-run
+  find <EndTime>, loan end-time
+  find <InstanceId>, loan instance-id
+  find <ReasonCode>, loan reason-code
+  find <StartTime>, loan start-time
+  find <Status>, loan status
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>

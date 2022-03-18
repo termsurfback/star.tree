@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/cloudchannel/v1/base/google-cloud-channel-v1-list-subscribers-response
+  take form google-cloud-channel-v1-list-subscribers-response
+
+boot cloudchannel-accounts-list-subscribers, name <cloudchannel.accounts.listSubscribers>
+  note <Lists service accounts with subscriber privileges on the Cloud Pub/Sub topic created for this Channel Services account. Possible error codes: * PERMISSION_DENIED: The reseller account making the request and the provided reseller account are different, or the impersonated user is not a super admin. * INVALID_ARGUMENT: Required request parameters are missing or invalid. * NOT_FOUND: The topic resource doesn't exist. * INTERNAL: Any non-user error related to a technical issue in the backend. Contact Cloud Channel support. * UNKNOWN: Any non-user error related to a technical issue in the backend. Contact Cloud Channel support. Return value: A list of service email addresses.>
+
+  take account
+    like native-string
+    note <Required. Resource name of the account.>
+  take page-size
+    like native-integer
+    note <Optional. The maximum number of service accounts to return. The service may return fewer than this value. If unspecified, returns at most 100 service accounts. The maximum value is 1000; the server will coerce values above 1000.>
+    void take
+  take page-token
+    like native-string
+    note <Optional. A page token, received from a previous `ListSubscribers` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListSubscribers` must match the call that provided the page token.>
+    void take
+
+  line </v1/{account}:listSubscribers>
+
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like google-cloud-channel-v1-list-subscribers-response
+    note <Successful response>

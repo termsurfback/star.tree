@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/list-partner-event-source-accounts-response
+  take form list-partner-event-source-accounts-response
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/operation-disabled-exception
+  take form operation-disabled-exception
+
+load @drumwork/snow/amazonaws.com/events/2015-10-07/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-partner-event-source-accounts, name <ListPartnerEventSourceAccounts>
+  note <An SaaS partner can use this operation to display the Amazon Web Services account ID that a particular partner event source name is associated with. This operation is not used by Amazon Web Services customers.>
+
+  take x-amz-target
+    like native-string
+  take list-partner-event-source-accounts-request, like list-partner-event-source-accounts-request
+
+  line </#X-Amz-Target=AWSEvents.ListPartnerEventSourceAccounts>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan list-partner-event-source-accounts-request
+
+  loot 200
+    seed json, like list-partner-event-source-accounts-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like internal-exception
+    note <InternalException>
+  loot 482
+    seed json, like operation-disabled-exception
+    note <OperationDisabledException>

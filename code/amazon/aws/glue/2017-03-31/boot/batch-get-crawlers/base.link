@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/batch-get-crawlers-response
+  take form batch-get-crawlers-response
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/operation-timeout-exception
+  take form operation-timeout-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot batch-get-crawlers, name <BatchGetCrawlers>
+  note <Returns a list of resource metadata for a given list of crawler names. After calling the `ListCrawlers` operation, you can call this operation to access the data to which you have been granted permissions. This operation supports all IAM permissions, including permission conditions that uses tags.>
+
+  take x-amz-target
+    like native-string
+  take batch-get-crawlers-request, like batch-get-crawlers-request
+
+  line </#X-Amz-Target=AWSGlue.BatchGetCrawlers>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan batch-get-crawlers-request
+
+  loot 200
+    seed json, like batch-get-crawlers-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like operation-timeout-exception
+    note <OperationTimeoutException>

@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/reserved-cache-nodes-offering-message
+  take form reserved-cache-nodes-offering-message
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/reserved-cache-nodes-offering-not-found-fault
+  take form reserved-cache-nodes-offering-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-reserved-cache-nodes-offerings, name <POST_DescribeReservedCacheNodesOfferings>
+  note <Lists available reserved cache node offerings.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-reserved-cache-nodes-offerings-message, like describe-reserved-cache-nodes-offerings-message
+    void take
+
+  line </#Action=DescribeReservedCacheNodesOfferings>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-reserved-cache-nodes-offerings-message
+
+  loot 200
+    seed xml, like reserved-cache-nodes-offering-message
+    note <Success>
+  loot 480
+    seed xml, like reserved-cache-nodes-offering-not-found-fault
+    note <ReservedCacheNodesOfferingNotFoundFault>
+  loot 481
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 482
+    seed xml, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

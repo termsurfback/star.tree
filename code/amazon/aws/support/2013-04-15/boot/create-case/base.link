@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/attachment-set-expired
+  take form attachment-set-expired
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/attachment-set-id-not-found
+  take form attachment-set-id-not-found
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/case-creation-limit-exceeded
+  take form case-creation-limit-exceeded
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/create-case-response
+  take form create-case-response
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-case, name <CreateCase>
+  note <Creates a case in the AWS Support Center. This operation is similar to how you create a case in the AWS Support Center [Create Case](https://console.aws.amazon.com/support/home#/case/create) page.
+
+The AWS Support API doesn't support requesting service limit increases. You can submit a service limit increase in the following ways:
+
+- Submit a request from the AWS Support Center [Create Case](https://console.aws.amazon.com/support/home#/case/create) page.
+
+- Use the Service Quotas [RequestServiceQuotaIncrease](https://docs.aws.amazon.com/servicequotas/2019-06-24/apireference/API_RequestServiceQuotaIncrease.html) operation.
+
+A successful `CreateCase` request returns an AWS Support case number. You can use the DescribeCases operation and specify the case number to get existing AWS Support cases. After you create a case, use the AddCommunicationToCase operation to add additional communication or attachments to an existing case.
+
+The `caseId` is separate from the `displayId` that appears in the [AWS Support Center](https://console.aws.amazon.com/support). Use the DescribeCases operation to get the `displayId`.
+
+- You must have a Business or Enterprise Support plan to use the AWS Support API.
+
+- If you call the AWS Support API from an account that does not have a Business or Enterprise Support plan, the `SubscriptionRequiredException` error message appears. For information about changing your support plan, see [AWS Support](http://aws.amazon.com/premiumsupport/).>
+
+  take x-amz-target
+    like native-string
+  take create-case-request, like create-case-request
+
+  line </#X-Amz-Target=AWSSupport_20130415.CreateCase>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-case-request
+
+  loot 200
+    seed json, like create-case-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like case-creation-limit-exceeded
+    note <CaseCreationLimitExceeded>
+  loot 482
+    seed json, like attachment-set-id-not-found
+    note <AttachmentSetIdNotFound>
+  loot 483
+    seed json, like attachment-set-expired
+    note <AttachmentSetExpired>

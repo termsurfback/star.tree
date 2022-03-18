@@ -1,0 +1,46 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/dfareporting/v3.3/base/cities-list-response
+  take form cities-list-response
+
+boot dfareporting-cities-list, name <dfareporting.cities.list>
+  note <Retrieves a list of cities, possibly filtered.>
+
+  take profile-id
+    like native-string
+    note <User profile ID associated with this request.>
+  take country-dart-ids
+    like list
+      like native-string
+    note <Select only cities from these countries.>
+    void take
+  take dart-ids
+    like list
+      like native-string
+    note <Select only cities with these DART IDs.>
+    void take
+  take name-prefix
+    like native-string
+    note <Select only cities with names starting with this prefix.>
+    void take
+  take region-dart-ids
+    like list
+      like native-string
+    note <Select only cities from these regions.>
+    void take
+
+  line </userprofiles/{profile-id}/cities>
+
+  find <countryDartIds>, loan country-dart-ids
+  find <dartIds>, loan dart-ids
+  find <namePrefix>, loan name-prefix
+  find <regionDartIds>, loan region-dart-ids
+
+  loot 200
+    seed json, like cities-list-response
+    note <Successful response>

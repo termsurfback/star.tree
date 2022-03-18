@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/list-invitations-body
+  take form list-invitations-body
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/list-invitations-response
+  take form list-invitations-response
+
+load @drumwork/snow/amazonaws.com/detective/2018-10-26/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-invitations, name <ListInvitations>
+  note <Retrieves the list of open and accepted behavior graph invitations for the member account. This operation can only be called by a member account.
+
+Open invitations are invitations that the member account has not responded to.
+
+The results do not include behavior graphs for which the member account declined the invitation. The results also do not include behavior graphs that the member account resigned from or was removed from.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-invitations-body, like list-invitations-body
+
+  line </invitations/list>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-invitations-body
+
+  loot 200
+    seed json, like list-invitations-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>

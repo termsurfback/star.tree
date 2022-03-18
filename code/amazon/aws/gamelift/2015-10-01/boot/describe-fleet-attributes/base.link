@@ -1,0 +1,74 @@
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/describe-fleet-attributes-output
+  take form describe-fleet-attributes-output
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/gamelift/2015-10-01/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-fleet-attributes, name <DescribeFleetAttributes>
+  note <Retrieves core fleet-wide properties, including the computing hardware and deployment configuration for all instances in the fleet.
+
+This operation can be used in the following ways:
+
+- To get attributes for one or more specific fleets, provide a list of fleet IDs or fleet ARNs.
+
+- To get attributes for all fleets, do not provide a fleet identifier.
+
+When requesting attributes for multiple fleets, use the pagination parameters to retrieve results as a set of sequential pages.
+
+If successful, a `FleetAttributes` object is returned for each fleet requested, unless the fleet identifier is not found.
+
+Some API operations limit the number of fleet IDs that allowed in one request. If a request exceeds this limit, the request fails and the error message contains the maximum allowed number.
+
+**Learn more** [Setting up GameLift fleets](https://docs.aws.amazon.com/gamelift/latest/developerguide/fleets-intro.html)
+
+**Related actions** ListFleets | DescribeEC2InstanceLimits | DescribeFleetAttributes | DescribeFleetCapacity | DescribeFleetEvents | DescribeFleetLocationAttributes | DescribeFleetPortSettings | DescribeFleetUtilization | DescribeRuntimeConfiguration | DescribeScalingPolicies | [All APIs by task](https://docs.aws.amazon.com/gamelift/latest/developerguide/reference-awssdk.html#reference-awssdk-resources-fleets)>
+
+  take x-amz-target
+    like native-string
+  take limit
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-fleet-attributes-input, like describe-fleet-attributes-input
+
+  line </#X-Amz-Target=GameLift.DescribeFleetAttributes>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <Limit>, loan limit
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-fleet-attributes-input
+
+  loot 200
+    seed json, like describe-fleet-attributes-output
+    note <Success>
+  loot 480
+    seed json, like internal-service-exception
+    note <InternalServiceException>
+  loot 481
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 482
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 483
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>

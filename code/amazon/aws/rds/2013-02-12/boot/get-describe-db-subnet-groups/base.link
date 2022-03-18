@@ -1,0 +1,42 @@
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/db-subnet-group-message
+  take form db-subnet-group-message
+
+load @drumwork/snow/amazonaws.com/rds/2013-02-12/base/db-subnet-group-not-found-fault
+  take form db-subnet-group-not-found-fault
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-db-subnet-groups, name <GET_DescribeDBSubnetGroups>
+  take db-subnet-group-name
+    like native-string
+    void take
+  take max-records
+    like native-integer
+    void take
+  take marker
+    like native-string
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeDBSubnetGroups>
+
+  find <DBSubnetGroupName>, loan db-subnet-group-name
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like db-subnet-group-message
+    note <Success>
+  loot 480
+    seed xml, like db-subnet-group-not-found-fault
+    note <DBSubnetGroupNotFoundFault>

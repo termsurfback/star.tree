@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/purchase-reserved-db-instances-offering-result
+  take form purchase-reserved-db-instances-offering-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/reserved-db-instance-already-exists-fault
+  take form reserved-db-instance-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/reserved-db-instance-quota-exceeded-fault
+  take form reserved-db-instance-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/reserved-db-instances-offering-not-found-fault
+  take form reserved-db-instances-offering-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-09-01/base/tag
+  take form tag
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-purchase-reserved-db-instances-offering, name <GET_PurchaseReservedDBInstancesOffering>
+  take reserved-db-instances-offering-id
+    like native-string
+  take reserved-db-instance-id
+    like native-string
+    void take
+  take db-instance-count
+    like native-integer
+    void take
+  take tags
+    like list
+      like tag
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=PurchaseReservedDBInstancesOffering>
+
+  find <ReservedDBInstancesOfferingId>, loan reserved-db-instances-offering-id
+  find <ReservedDBInstanceId>, loan reserved-db-instance-id
+  find <DBInstanceCount>, loan db-instance-count
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like purchase-reserved-db-instances-offering-result
+    note <Success>
+  loot 480
+    seed xml, like reserved-db-instances-offering-not-found-fault
+    note <ReservedDBInstancesOfferingNotFoundFault>
+  loot 481
+    seed xml, like reserved-db-instance-already-exists-fault
+    note <ReservedDBInstanceAlreadyExistsFault>
+  loot 482
+    seed xml, like reserved-db-instance-quota-exceeded-fault
+    note <ReservedDBInstanceQuotaExceededFault>

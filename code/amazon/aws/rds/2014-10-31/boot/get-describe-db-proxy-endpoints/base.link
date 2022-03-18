@@ -1,0 +1,74 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-endpoint-not-found-fault
+  take form db-proxy-endpoint-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-not-found-fault
+  take form db-proxy-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/describe-db-proxy-endpoints-response
+  take form describe-db-proxy-endpoints-response
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/filter
+  take form filter
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-db-proxy-endpoints, name <GET_DescribeDBProxyEndpoints>
+  note <Returns information about DB proxy endpoints.>
+
+  take db-proxy-name
+    like native-string
+    note <The name of the DB proxy whose endpoints you want to describe. If you omit this parameter, the output includes information about all DB proxy endpoints associated with all your DB proxies.>
+    void take
+  take db-proxy-endpoint-name
+    like native-string
+    note <The name of a DB proxy endpoint to describe. If you omit this parameter, the output includes information about all DB proxy endpoints associated with the specified proxy.>
+    void take
+  take filters
+    like list
+      like filter
+    note <This parameter is not currently supported.>
+    void take
+  take marker
+    like native-string
+    note <An optional pagination token provided by a previous request. If this parameter is specified, the response includes only records beyond the marker, up to the value specified by `MaxRecords`.>
+    void take
+  take max-records
+    like native-integer
+    note <The maximum number of records to include in the response. If more records exist than the specified `MaxRecords` value, a pagination token called a marker is included in the response so that the remaining results can be retrieved.
+
+Default: 100
+
+Constraints: Minimum 20, maximum 100.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeDBProxyEndpoints>
+
+  find <DBProxyName>, loan db-proxy-name
+  find <DBProxyEndpointName>, loan db-proxy-endpoint-name
+  find <Filters>, loan filters
+  find <Marker>, loan marker
+  find <MaxRecords>, loan max-records
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-db-proxy-endpoints-response
+    note <Success>
+  loot 480
+    seed xml, like db-proxy-not-found-fault
+    note <DBProxyNotFoundFault>
+  loot 481
+    seed xml, like db-proxy-endpoint-not-found-fault
+    note <DBProxyEndpointNotFoundFault>

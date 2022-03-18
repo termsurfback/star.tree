@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/invalid-parameters-exception
+  take form invalid-parameters-exception
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/list-principals-for-portfolio-output
+  take form list-principals-for-portfolio-output
+
+load @drumwork/snow/amazonaws.com/servicecatalog/2015-12-10/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-principals-for-portfolio, name <ListPrincipalsForPortfolio>
+  note <Lists all principal ARNs associated with the specified portfolio.>
+
+  take x-amz-target
+    like native-string
+  take page-size
+    like native-string
+    note <Pagination limit>
+    void take
+  take page-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-principals-for-portfolio-input, like list-principals-for-portfolio-input
+
+  line </#X-Amz-Target=AWS242ServiceCatalogService.ListPrincipalsForPortfolio>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <PageSize>, loan page-size
+  find <PageToken>, loan page-token
+
+  seed json, loan list-principals-for-portfolio-input
+
+  loot 200
+    seed json, like list-principals-for-portfolio-output
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-parameters-exception
+    note <InvalidParametersException>

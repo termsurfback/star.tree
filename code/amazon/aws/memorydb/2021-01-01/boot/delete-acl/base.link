@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/acl-not-found-fault
+  take form acl-not-found-fault
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/delete-acl-response
+  take form delete-acl-response
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/invalid-acl-state-fault
+  take form invalid-acl-state-fault
+
+load @drumwork/snow/amazonaws.com/memorydb/2021-01-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-acl, name <DeleteACL>
+  note <Deletes an Access Control List. The ACL must first be disassociated from the cluster before it can be deleted. For more information, see [Authenticating users with Access Contol Lists (ACLs)](https://docs.aws.amazon.com/MemoryDB/latest/devguide/clusters.acls.html).>
+
+  take x-amz-target
+    like native-string
+  take delete-acl-request, like delete-acl-request
+
+  line </#X-Amz-Target=AmazonMemoryDB.DeleteACL>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan delete-acl-request
+
+  loot 200
+    seed json, like delete-acl-response
+    note <Success>
+  loot 480
+    seed json, like acl-not-found-fault
+    note <ACLNotFoundFault>
+  loot 481
+    seed json, like invalid-acl-state-fault
+    note <InvalidACLStateFault>
+  loot 482
+    seed json, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>

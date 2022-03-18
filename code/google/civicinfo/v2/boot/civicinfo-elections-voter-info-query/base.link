@@ -1,0 +1,39 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/civicinfo/v2/base/voter-info-response
+  take form voter-info-response
+
+boot civicinfo-elections-voter-info-query, name <civicinfo.elections.voterInfoQuery>
+  note <Looks up information relevant to a voter based on the voter's registered address.>
+
+  take address
+    like native-string
+    note <The registered address of the voter to look up.>
+  take election-id
+    like native-string
+    note <The unique ID of the election to look up. A list of election IDs can be obtained at https://www.googleapis.com/civicinfo/{version}/elections. If no election ID is specified in the query and there is more than one election with data for the given voter, the additional elections are provided in the otherElections response field.>
+    void take
+  take official-only
+    like native-boolean
+    note <If set to true, only data from official state sources will be returned.>
+    void take
+  take return-all-available-data
+    like native-boolean
+    note <If set to true, the query will return the success code and include any partial information when it is unable to determine a matching address or unable to determine the election for electionId=0 queries.>
+    void take
+
+  line </civicinfo/v2/voterinfo>
+
+  find <address>, loan address
+  find <electionId>, loan election-id
+  find <officialOnly>, loan official-only
+  find <returnAllAvailableData>, loan return-all-available-data
+
+  loot 200
+    seed json, like voter-info-response
+    note <Successful response>

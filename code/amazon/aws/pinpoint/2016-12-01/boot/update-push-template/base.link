@@ -1,0 +1,93 @@
+
+load @drumwork/snow/amazonaws.com/pinpoint/2016-12-01/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/pinpoint/2016-12-01/base/forbidden-exception
+  take form forbidden-exception
+
+load @drumwork/snow/amazonaws.com/pinpoint/2016-12-01/base/internal-server-error-exception
+  take form internal-server-error-exception
+
+load @drumwork/snow/amazonaws.com/pinpoint/2016-12-01/base/method-not-allowed-exception
+  take form method-not-allowed-exception
+
+load @drumwork/snow/amazonaws.com/pinpoint/2016-12-01/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/pinpoint/2016-12-01/base/payload-too-large-exception
+  take form payload-too-large-exception
+
+load @drumwork/snow/amazonaws.com/pinpoint/2016-12-01/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/amazonaws.com/pinpoint/2016-12-01/base/update-push-template-body
+  take form update-push-template-body
+
+load @drumwork/snow/amazonaws.com/pinpoint/2016-12-01/base/update-push-template-response
+  take form update-push-template-response
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-push-template, name <UpdatePushTemplate>
+  note <Updates an existing message template for messages that are sent through a push notification channel.>
+
+  take template-name
+    like native-string
+    note <The name of the message template. A template name must start with an alphanumeric character and can contain a maximum of 128 characters. The characters can be alphanumeric characters, underscores (_), or hyphens (-). Template names are case sensitive.>
+  take create-new-version
+    like native-boolean
+    note <Specifies whether to save the updates as a new version of the message template. Valid values are: true, save the updates as a new version; and, false, save the updates to (overwrite) the latest existing version of the template.
+
+If you don't specify a value for this parameter, Amazon Pinpoint saves the updates to (overwrites) the latest existing version of the template. If you specify a value of true for this parameter, don't specify a value for the version parameter. Otherwise, an error will occur.>
+    void take
+  take version
+    like native-string
+    note <The unique identifier for the version of the message template to update, retrieve information about, or delete. To retrieve identifiers and other information for all the versions of a template, use the Template Versions resource.
+
+If specified, this value must match the identifier for an existing template version. If specified for an update operation, this value must match the identifier for the latest existing version of the template. This restriction helps ensure that race conditions don't occur.
+
+If you don't specify a value for this parameter, Amazon Pinpoint does the following:
+
+- For a get operation, retrieves information about the active version of the template.
+
+- For an update operation, saves the updates to (overwrites) the latest existing version of the template, if the create-new-version parameter isn't used or is set to false.
+
+- For a delete operation, deletes the template, including all versions of the template.>
+    void take
+  take update-push-template-body, like update-push-template-body
+
+  line </v1/templates/{template-name}/push>
+
+  find <create-new-version>, loan create-new-version
+  find <version>, loan version
+
+  seed json, loan update-push-template-body
+
+  loot 202
+    seed json, like update-push-template-response
+    note <Success>
+  loot 480
+    seed json, like bad-request-exception
+    note <BadRequestException>
+  loot 481
+    seed json, like internal-server-error-exception
+    note <InternalServerErrorException>
+  loot 482
+    seed json, like payload-too-large-exception
+    note <PayloadTooLargeException>
+  loot 483
+    seed json, like forbidden-exception
+    note <ForbiddenException>
+  loot 484
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 485
+    seed json, like method-not-allowed-exception
+    note <MethodNotAllowedException>
+  loot 486
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>

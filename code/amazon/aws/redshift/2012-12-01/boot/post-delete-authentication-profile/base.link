@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/authentication-profile-not-found-fault
+  take form authentication-profile-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/delete-authentication-profile-result
+  take form delete-authentication-profile-result
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-authentication-profile-request-fault
+  take form invalid-authentication-profile-request-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-delete-authentication-profile, name <POST_DeleteAuthenticationProfile>
+  note <Deletes an authentication profile.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take delete-authentication-profile-message, like delete-authentication-profile-message
+    void take
+
+  line </#Action=DeleteAuthenticationProfile>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan delete-authentication-profile-message
+
+  loot 200
+    seed xml, like delete-authentication-profile-result
+    note <Success>
+  loot 480
+    seed xml, like authentication-profile-not-found-fault
+    note <AuthenticationProfileNotFoundFault>
+  loot 481
+    seed xml, like invalid-authentication-profile-request-fault
+    note <InvalidAuthenticationProfileRequestFault>

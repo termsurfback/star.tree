@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/argument-exception
+  take form argument-exception
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/list-devices-result
+  take form list-devices-result
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/service-account-exception
+  take form service-account-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-devices, name <ListDevices>
+  note <Gets information about unique device types.>
+
+  take x-amz-target
+    like native-string
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-devices-request, like list-devices-request
+
+  line </#X-Amz-Target=DeviceFarm_20150623.ListDevices>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <nextToken>, loan next-token
+
+  seed json, loan list-devices-request
+
+  loot 200
+    seed json, like list-devices-result
+    note <Success>
+  loot 480
+    seed json, like argument-exception
+    note <ArgumentException>
+  loot 481
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 482
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 483
+    seed json, like service-account-exception
+    note <ServiceAccountException>

@@ -1,0 +1,40 @@
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/get-classifiers-response
+  take form get-classifiers-response
+
+load @drumwork/snow/amazonaws.com/glue/2017-03-31/base/operation-timeout-exception
+  take form operation-timeout-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-classifiers, name <GetClassifiers>
+  note <Lists all classifier objects in the Data Catalog.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take get-classifiers-request, like get-classifiers-request
+
+  line </#X-Amz-Target=AWSGlue.GetClassifiers>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan get-classifiers-request
+
+  loot 200
+    seed json, like get-classifiers-response
+    note <Success>
+  loot 480
+    seed json, like operation-timeout-exception
+    note <OperationTimeoutException>

@@ -1,0 +1,64 @@
+
+load @drumwork/snow/amazonaws.com/es/2015-01-01/base/base-exception
+  take form base-exception
+
+load @drumwork/snow/amazonaws.com/es/2015-01-01/base/describe-elasticsearch-instance-type-limits-response
+  take form describe-elasticsearch-instance-type-limits-response
+
+load @drumwork/snow/amazonaws.com/es/2015-01-01/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/es/2015-01-01/base/invalid-type-exception
+  take form invalid-type-exception
+
+load @drumwork/snow/amazonaws.com/es/2015-01-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/es/2015-01-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/es/2015-01-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-elasticsearch-instance-type-limits, name <DescribeElasticsearchInstanceTypeLimits>
+  note <Describe Elasticsearch Limits for a given InstanceType and ElasticsearchVersion. When modifying existing Domain, specify the `DomainName` to know what Limits are supported for modifying.>
+
+  take instance-type
+    like native-string
+    note <The instance type for an Elasticsearch cluster for which Elasticsearch `Limits` are needed.>
+  take elasticsearch-version
+    like native-string
+    note <Version of Elasticsearch for which `Limits` are needed.>
+  take domain-name
+    like native-string
+    note <DomainName represents the name of the Domain that we are trying to modify. This should be present only if we are querying for Elasticsearch `Limits` for existing domain.>
+    void take
+
+  line </2015-01-01/es/instanceTypeLimits/{elasticsearch-version}/{instance-type}>
+
+  find <domainName>, loan domain-name
+
+  loot 200
+    seed json, like describe-elasticsearch-instance-type-limits-response
+    note <Success>
+  loot 480
+    seed json, like base-exception
+    note <BaseException>
+  loot 481
+    seed json, like internal-exception
+    note <InternalException>
+  loot 482
+    seed json, like invalid-type-exception
+    note <InvalidTypeException>
+  loot 483
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 484
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 485
+    seed json, like validation-exception
+    note <ValidationException>

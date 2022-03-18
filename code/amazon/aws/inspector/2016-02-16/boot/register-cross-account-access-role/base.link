@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/inspector/2016-02-16/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/inspector/2016-02-16/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/inspector/2016-02-16/base/invalid-cross-account-role-exception
+  take form invalid-cross-account-role-exception
+
+load @drumwork/snow/amazonaws.com/inspector/2016-02-16/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/inspector/2016-02-16/base/service-temporarily-unavailable-exception
+  take form service-temporarily-unavailable-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot register-cross-account-access-role, name <RegisterCrossAccountAccessRole>
+  note <Registers the IAM role that grants Amazon Inspector access to AWS Services needed to perform security assessments.>
+
+  take x-amz-target
+    like native-string
+  take register-cross-account-access-role-request, like register-cross-account-access-role-request
+
+  line </#X-Amz-Target=InspectorService.RegisterCrossAccountAccessRole>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan register-cross-account-access-role-request
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like internal-exception
+    note <InternalException>
+  loot 481
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 482
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 483
+    seed json, like invalid-cross-account-role-exception
+    note <InvalidCrossAccountRoleException>
+  loot 484
+    seed json, like service-temporarily-unavailable-exception
+    note <ServiceTemporarilyUnavailableException>

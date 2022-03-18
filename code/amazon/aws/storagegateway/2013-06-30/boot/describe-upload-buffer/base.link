@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/describe-upload-buffer-output
+  take form describe-upload-buffer-output
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-upload-buffer, name <DescribeUploadBuffer>
+  note <Returns information about the upload buffer of a gateway. This operation is supported for the stored volume, cached volume, and tape gateway types.
+
+The response includes disk IDs that are configured as upload buffer space, and it includes the amount of upload buffer space allocated and used.>
+
+  take x-amz-target
+    like native-string
+  take describe-upload-buffer-input, like describe-upload-buffer-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.DescribeUploadBuffer>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-upload-buffer-input
+
+  loot 200
+    seed json, like describe-upload-buffer-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/argument-exception
+  take form argument-exception
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/not-found-exception
+  take form not-found-exception
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/service-account-exception
+  take form service-account-exception
+
+load @drumwork/snow/amazonaws.com/devicefarm/2015-06-23/base/stop-job-result
+  take form stop-job-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot stop-job, name <StopJob>
+  note <Initiates a stop request for the current job. AWS Device Farm immediately stops the job on the device where tests have not started. You are not billed for this device. On the device where tests have started, setup suite and teardown suite tests run to completion on the device. You are billed for setup, teardown, and any tests that were in progress or already completed.>
+
+  take x-amz-target
+    like native-string
+  take stop-job-request, like stop-job-request
+
+  line </#X-Amz-Target=DeviceFarm_20150623.StopJob>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan stop-job-request
+
+  loot 200
+    seed json, like stop-job-result
+    note <Success>
+  loot 480
+    seed json, like argument-exception
+    note <ArgumentException>
+  loot 481
+    seed json, like not-found-exception
+    note <NotFoundException>
+  loot 482
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 483
+    seed json, like service-account-exception
+    note <ServiceAccountException>

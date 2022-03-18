@@ -1,0 +1,56 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-parameter-group-name-message
+  take form cluster-parameter-group-name-message
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-parameter-group-not-found-fault
+  take form cluster-parameter-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-parameter-group-state-fault
+  take form invalid-cluster-parameter-group-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/parameter
+  take form parameter
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-modify-cluster-parameter-group, name <GET_ModifyClusterParameterGroup>
+  note <Modifies the parameters of a parameter group. For the parameters parameter, it can't contain ASCII characters.
+
+For more information about parameters and parameter groups, go to [Amazon Redshift Parameter Groups](https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-parameter-groups.html) in the _Amazon Redshift Cluster Management Guide_.>
+
+  take parameter-group-name
+    like native-string
+    note <The name of the parameter group to be modified.>
+  take parameters
+    like list
+      like parameter
+    note <An array of parameters to be modified. A maximum of 20 parameters can be modified in a single request.
+
+For each parameter to be modified, you must supply at least the parameter name and parameter value; other name-value pairs of the parameter are optional.
+
+For the workload management (WLM) configuration, you must supply all the name-value pairs in the wlm_json_configuration parameter.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyClusterParameterGroup>
+
+  find <ParameterGroupName>, loan parameter-group-name
+  find <Parameters>, loan parameters
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like cluster-parameter-group-name-message
+    note <Success>
+  loot 480
+    seed xml, like cluster-parameter-group-not-found-fault
+    note <ClusterParameterGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-cluster-parameter-group-state-fault
+    note <InvalidClusterParameterGroupStateFault>

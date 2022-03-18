@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-proxy-not-found-fault
+  take form db-proxy-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/delete-db-proxy-response
+  take form delete-db-proxy-response
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-proxy-state-fault
+  take form invalid-db-proxy-state-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-db-proxy, name <GET_DeleteDBProxy>
+  note <Deletes an existing DB proxy.>
+
+  take db-proxy-name
+    like native-string
+    note <The name of the DB proxy to delete.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteDBProxy>
+
+  find <DBProxyName>, loan db-proxy-name
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-db-proxy-response
+    note <Success>
+  loot 480
+    seed xml, like db-proxy-not-found-fault
+    note <DBProxyNotFoundFault>
+  loot 481
+    seed xml, like invalid-db-proxy-state-fault
+    note <InvalidDBProxyStateFault>

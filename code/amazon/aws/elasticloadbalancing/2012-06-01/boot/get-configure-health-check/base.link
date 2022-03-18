@@ -1,0 +1,82 @@
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/access-point-not-found-exception
+  take form access-point-not-found-exception
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/configure-health-check-output
+  take form configure-health-check-output
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/health-check-interval
+  take form health-check-interval
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/health-check-target
+  take form health-check-target
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/health-check-timeout
+  take form health-check-timeout
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/healthy-threshold
+  take form healthy-threshold
+
+load @drumwork/snow/amazonaws.com/elasticloadbalancing/2012-06-01/base/unhealthy-threshold
+  take form unhealthy-threshold
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-configure-health-check, name <GET_ConfigureHealthCheck>
+  note <Specifies the health check settings to use when evaluating the health state of your EC2 instances.
+
+For more information, see [Configure Health Checks for Your Load Balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/elb-healthchecks.html) in the _Classic Load Balancers Guide_.>
+
+  take load-balancer-name
+    like native-string
+    note <The name of the load balancer.>
+  take health-check
+    like form
+      take target, name <Target>
+        like health-check-target
+        note <The instance being checked. The protocol is either TCP, HTTP, HTTPS, or SSL. The range of valid ports is one (1) through 65535.
+
+TCP is the default, specified as a TCP: port pair, for example "TCP:5000". In this case, a health check simply attempts to open a TCP connection to the instance on the specified port. Failure to connect within the configured timeout is considered unhealthy.
+
+SSL is also specified as SSL: port pair, for example, SSL:5000.
+
+For HTTP/HTTPS, you must include a ping path in the string. HTTP is specified as a HTTP:port;/;PathToPing; grouping, for example "HTTP:80/weather/us/wa/seattle". In this case, a HTTP GET request is issued to the instance on the given port and path. Any answer other than "200 OK" within the timeout period is considered unhealthy.
+
+The total length of the HTTP ping target must be 1024 16-bit Unicode characters or less.>
+      take interval, name <Interval>
+        like health-check-interval
+        note <The approximate interval, in seconds, between health checks of an individual instance.>
+      take timeout, name <Timeout>
+        like health-check-timeout
+        note <The amount of time, in seconds, during which no response means a failed health check.
+
+This value must be less than the `Interval` value.>
+      take unhealthy-threshold, name <UnhealthyThreshold>
+        like unhealthy-threshold
+        note <The number of consecutive health check failures required before moving the instance to the `Unhealthy` state.>
+      take healthy-threshold, name <HealthyThreshold>
+        like healthy-threshold
+        note <The number of consecutive health checks successes required before moving the instance to the `Healthy` state.>
+    note <The configuration information.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ConfigureHealthCheck>
+
+  find <LoadBalancerName>, loan load-balancer-name
+  find <HealthCheck>, loan health-check
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like configure-health-check-output
+    note <Success>
+  loot 480
+    seed xml, like access-point-not-found-exception
+    note <AccessPointNotFoundException>

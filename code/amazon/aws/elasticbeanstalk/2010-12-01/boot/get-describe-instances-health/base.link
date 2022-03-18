@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/describe-instances-health-result
+  take form describe-instances-health-result
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/elastic-beanstalk-service-exception
+  take form elastic-beanstalk-service-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/instances-health-attribute
+  take form instances-health-attribute
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-instances-health, name <GET_DescribeInstancesHealth>
+  note <Retrieves detailed information about the health of instances in your AWS Elastic Beanstalk. This operation requires [enhanced health reporting](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/health-enhanced.html).>
+
+  take environment-name
+    like native-string
+    note <Specify the AWS Elastic Beanstalk environment by name.>
+    void take
+  take environment-id
+    like native-string
+    note <Specify the AWS Elastic Beanstalk environment by ID.>
+    void take
+  take attribute-names
+    like list
+      like instances-health-attribute
+    note <Specifies the response elements you wish to receive. To retrieve all attributes, set to `All`. If no attribute names are specified, returns a list of instances.>
+    void take
+  take next-token
+    like native-string
+    note <Specify the pagination token returned by a previous call.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeInstancesHealth>
+
+  find <EnvironmentName>, loan environment-name
+  find <EnvironmentId>, loan environment-id
+  find <AttributeNames>, loan attribute-names
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-instances-health-result
+    note <Success>
+  loot 480
+    seed xml, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed xml, like elastic-beanstalk-service-exception
+    note <ElasticBeanstalkServiceException>

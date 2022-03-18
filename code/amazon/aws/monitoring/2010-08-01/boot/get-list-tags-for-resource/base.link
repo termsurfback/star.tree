@@ -1,0 +1,51 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/internal-service-fault
+  take form internal-service-fault
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/list-tags-for-resource-output
+  take form list-tags-for-resource-output
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-list-tags-for-resource, name <GET_ListTagsForResource>
+  note <Displays the tags associated with a CloudWatch resource. Currently, alarms and Contributor Insights rules support tagging.>
+
+  take resource-arn
+    like native-string
+    note <The ARN of the CloudWatch resource that you want to view tags for.
+
+The ARN format of an alarm is `arn:aws:cloudwatch:_Region_:_account-id_:alarm:_alarm-name_`
+
+The ARN format of a Contributor Insights rule is `arn:aws:cloudwatch:_Region_:_account-id_:insight-rule:_insight-rule-name_`
+
+For more information about ARN format, see [Resource Types Defined by Amazon CloudWatch](https://docs.aws.amazon.com/IAM/latest/UserGuide/list_amazoncloudwatch.html#amazoncloudwatch-resources-for-iam-policies) in the _Amazon Web Services General Reference_.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ListTagsForResource>
+
+  find <ResourceARN>, loan resource-arn
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like list-tags-for-resource-output
+    note <Success>
+  loot 480
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 481
+    seed xml, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed xml, like internal-service-fault
+    note <InternalServiceFault>

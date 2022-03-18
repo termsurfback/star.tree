@@ -1,0 +1,57 @@
+
+load @drumwork/snow/amazonaws.com/worklink/2018-09-25/base/internal-server-error-exception
+  take form internal-server-error-exception
+
+load @drumwork/snow/amazonaws.com/worklink/2018-09-25/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/worklink/2018-09-25/base/list-website-certificate-authorities-body
+  take form list-website-certificate-authorities-body
+
+load @drumwork/snow/amazonaws.com/worklink/2018-09-25/base/list-website-certificate-authorities-response
+  take form list-website-certificate-authorities-response
+
+load @drumwork/snow/amazonaws.com/worklink/2018-09-25/base/too-many-requests-exception
+  take form too-many-requests-exception
+
+load @drumwork/snow/amazonaws.com/worklink/2018-09-25/base/unauthorized-exception
+  take form unauthorized-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-website-certificate-authorities, name <ListWebsiteCertificateAuthorities>
+  note <Retrieves a list of certificate authorities added for the current account and Region.>
+
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take list-website-certificate-authorities-body, like list-website-certificate-authorities-body
+
+  line </listWebsiteCertificateAuthorities>
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan list-website-certificate-authorities-body
+
+  loot 200
+    seed json, like list-website-certificate-authorities-response
+    note <Success>
+  loot 480
+    seed json, like unauthorized-exception
+    note <UnauthorizedException>
+  loot 481
+    seed json, like internal-server-error-exception
+    note <InternalServerErrorException>
+  loot 482
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 483
+    seed json, like too-many-requests-exception
+    note <TooManyRequestsException>

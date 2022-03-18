@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/invalid-resource-state-fault
+  take form invalid-resource-state-fault
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/kms-key-not-accessible-fault
+  take form kms-key-not-accessible-fault
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/refresh-schemas-response
+  take form refresh-schemas-response
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/resource-not-found-fault
+  take form resource-not-found-fault
+
+load @drumwork/snow/amazonaws.com/dms/2016-01-01/base/resource-quota-exceeded-fault
+  take form resource-quota-exceeded-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot refresh-schemas, name <RefreshSchemas>
+  note <Populates the schema for the specified endpoint. This is an asynchronous operation and can take several minutes. You can check the status of this operation by calling the DescribeRefreshSchemasStatus operation.>
+
+  take x-amz-target
+    like native-string
+  take refresh-schemas-message, like refresh-schemas-message
+
+  line </#X-Amz-Target=AmazonDMSv20160101.RefreshSchemas>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan refresh-schemas-message
+
+  loot 200
+    seed json, like refresh-schemas-response
+    note <Success>
+  loot 480
+    seed json, like invalid-resource-state-fault
+    note <InvalidResourceStateFault>
+  loot 481
+    seed json, like resource-not-found-fault
+    note <ResourceNotFoundFault>
+  loot 482
+    seed json, like kms-key-not-accessible-fault
+    note <KMSKeyNotAccessibleFault>
+  loot 483
+    seed json, like resource-quota-exceeded-fault
+    note <ResourceQuotaExceededFault>

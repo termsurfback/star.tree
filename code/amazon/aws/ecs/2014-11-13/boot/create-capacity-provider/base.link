@@ -1,0 +1,55 @@
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/client-exception
+  take form client-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/create-capacity-provider-response
+  take form create-capacity-provider-response
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/invalid-parameter-exception
+  take form invalid-parameter-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/server-exception
+  take form server-exception
+
+load @drumwork/snow/amazonaws.com/ecs/2014-11-13/base/update-in-progress-exception
+  take form update-in-progress-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-capacity-provider, name <CreateCapacityProvider>
+  note <Creates a new capacity provider. Capacity providers are associated with an Amazon ECS cluster and are used in capacity provider strategies to facilitate cluster auto scaling.
+
+Only capacity providers using an Auto Scaling group can be created. Amazon ECS tasks on Fargate use the `FARGATE` and `FARGATE_SPOT` capacity providers which are already created and available to all accounts in Regions supported by Fargate.>
+
+  take x-amz-target
+    like native-string
+  take create-capacity-provider-request, like create-capacity-provider-request
+
+  line </#X-Amz-Target=AmazonEC2ContainerServiceV20141113.CreateCapacityProvider>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-capacity-provider-request
+
+  loot 200
+    seed json, like create-capacity-provider-response
+    note <Success>
+  loot 480
+    seed json, like server-exception
+    note <ServerException>
+  loot 481
+    seed json, like client-exception
+    note <ClientException>
+  loot 482
+    seed json, like invalid-parameter-exception
+    note <InvalidParameterException>
+  loot 483
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 484
+    seed json, like update-in-progress-exception
+    note <UpdateInProgressException>

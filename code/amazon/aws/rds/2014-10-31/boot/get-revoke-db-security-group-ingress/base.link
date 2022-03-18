@@ -1,0 +1,65 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/authorization-not-found-fault
+  take form authorization-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-security-group-not-found-fault
+  take form db-security-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-security-group-state-fault
+  take form invalid-db-security-group-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/revoke-db-security-group-ingress-result
+  take form revoke-db-security-group-ingress-result
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-revoke-db-security-group-ingress, name <GET_RevokeDBSecurityGroupIngress>
+  note <Revokes ingress from a DBSecurityGroup for previously authorized IP ranges or EC2 or VPC security groups. Required parameters for this API are one of CIDRIP, EC2SecurityGroupId for VPC, or (EC2SecurityGroupOwnerId and either EC2SecurityGroupName or EC2SecurityGroupId).>
+
+  take db-security-group-name
+    like native-string
+    note <The name of the DB security group to revoke ingress from.>
+  take cidrip
+    like native-string
+    note <The IP range to revoke access from. Must be a valid CIDR range. If `CIDRIP` is specified, `EC2SecurityGroupName`, `EC2SecurityGroupId` and `EC2SecurityGroupOwnerId` can't be provided.>
+    void take
+  take ec2-security-group-name
+    like native-string
+    note <The name of the EC2 security group to revoke access from. For VPC DB security groups, `EC2SecurityGroupId` must be provided. Otherwise, EC2SecurityGroupOwnerId and either `EC2SecurityGroupName` or `EC2SecurityGroupId` must be provided.>
+    void take
+  take ec2-security-group-id
+    like native-string
+    note <The id of the EC2 security group to revoke access from. For VPC DB security groups, `EC2SecurityGroupId` must be provided. Otherwise, EC2SecurityGroupOwnerId and either `EC2SecurityGroupName` or `EC2SecurityGroupId` must be provided.>
+    void take
+  take ec2-security-group-owner-id
+    like native-string
+    note <The Amazon Web Services account number of the owner of the EC2 security group specified in the `EC2SecurityGroupName` parameter. The Amazon Web Services access key ID isn't an acceptable value. For VPC DB security groups, `EC2SecurityGroupId` must be provided. Otherwise, EC2SecurityGroupOwnerId and either `EC2SecurityGroupName` or `EC2SecurityGroupId` must be provided.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=RevokeDBSecurityGroupIngress>
+
+  find <DBSecurityGroupName>, loan db-security-group-name
+  find <CIDRIP>, loan cidrip
+  find <EC2SecurityGroupName>, loan ec2-security-group-name
+  find <EC2SecurityGroupId>, loan ec2-security-group-id
+  find <EC2SecurityGroupOwnerId>, loan ec2-security-group-owner-id
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like revoke-db-security-group-ingress-result
+    note <Success>
+  loot 480
+    seed xml, like db-security-group-not-found-fault
+    note <DBSecurityGroupNotFoundFault>
+  loot 481
+    seed xml, like authorization-not-found-fault
+    note <AuthorizationNotFoundFault>
+  loot 482
+    seed xml, like invalid-db-security-group-state-fault
+    note <InvalidDBSecurityGroupStateFault>

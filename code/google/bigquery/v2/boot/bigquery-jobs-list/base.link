@@ -1,0 +1,70 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/bigquery/v2/base/job-list
+  take form job-list
+
+boot bigquery-jobs-list, name <bigquery.jobs.list>
+  note <Lists all jobs that you started in the specified project. Job information is available for a six month period after creation. The job list is sorted in reverse chronological order, by job creation time. Requires the Can View project role, or the Is Owner project role if you set the allUsers property.>
+
+  take project-id
+    like native-string
+    note <Project ID of the jobs to list>
+  take all-users
+    like native-boolean
+    note <Whether to display jobs owned by all users in the project. Default false>
+    void take
+  take max-creation-time
+    like native-string
+    note <Max value for job creation time, in milliseconds since the POSIX epoch. If set, only jobs created before or at this timestamp are returned>
+    void take
+  take max-results
+    like native-integer
+    note <Maximum number of results to return>
+    void take
+  take min-creation-time
+    like native-string
+    note <Min value for job creation time, in milliseconds since the POSIX epoch. If set, only jobs created after or at this timestamp are returned>
+    void take
+  take page-token
+    like native-string
+    note <Page token, returned by a previous call, to request the next page of results>
+    void take
+  take parent-job-id
+    like native-string
+    note <If set, retrieves only jobs whose parent is this job. Otherwise, retrieves only jobs which have no parent>
+    void take
+  take projection
+    like native-string
+    note <Restrict information returned to a set of selected fields>
+    void take
+  take state-filter
+    like list
+      like native-string
+    note <Filter for job state>
+    void take
+
+  line </projects/{project-id}/jobs>
+
+  find <allUsers>, loan all-users
+  find <maxCreationTime>, loan max-creation-time
+  find <maxResults>, loan max-results
+  find <minCreationTime>, loan min-creation-time
+  find <pageToken>, loan page-token
+  find <parentJobId>, loan parent-job-id
+  find <projection>, loan projection
+  find <stateFilter>, loan state-filter
+
+  loot 200
+    seed json, like job-list
+    note <Successful response>

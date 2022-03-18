@@ -1,0 +1,56 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/application-resource-lifecycle-description-message
+  take form application-resource-lifecycle-description-message
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/application-version-lifecycle-config
+  take form application-version-lifecycle-config
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/insufficient-privileges-exception
+  take form insufficient-privileges-exception
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/base/string
+  take form string
+
+boot get-update-application-resource-lifecycle, name <GET_UpdateApplicationResourceLifecycle>
+  note <Modifies lifecycle settings for an application.>
+
+  take application-name
+    like native-string
+    note <The name of the application.>
+  take resource-lifecycle-config
+    like form
+      take service-role, name <ServiceRole>
+        like string
+        void take
+        note <The ARN of an IAM service role that Elastic Beanstalk has permission to assume.
+
+The `ServiceRole` property is required the first time that you provide a `VersionLifecycleConfig` for the application in one of the supporting calls (`CreateApplication` or `UpdateApplicationResourceLifecycle`). After you provide it once, in either one of the calls, Elastic Beanstalk persists the Service Role with the application, and you don't need to specify it again in subsequent `UpdateApplicationResourceLifecycle` calls. You can, however, specify it in subsequent calls to change the Service Role to another value.>
+      take version-lifecycle-config, name <VersionLifecycleConfig>
+        like application-version-lifecycle-config
+        void take
+        note <Defines lifecycle settings for application versions.>
+    note <The lifecycle configuration.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=UpdateApplicationResourceLifecycle>
+
+  find <ApplicationName>, loan application-name
+  find <ResourceLifecycleConfig>, loan resource-lifecycle-config
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like application-resource-lifecycle-description-message
+    note <Success>
+  loot 480
+    seed xml, like insufficient-privileges-exception
+    note <InsufficientPrivilegesException>

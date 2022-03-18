@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/batch-modify-cluster-snapshots-limit-exceeded-fault
+  take form batch-modify-cluster-snapshots-limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/batch-modify-cluster-snapshots-output-message
+  take form batch-modify-cluster-snapshots-output-message
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-retention-period-fault
+  take form invalid-retention-period-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-batch-modify-cluster-snapshots, name <POST_BatchModifyClusterSnapshots>
+  note <Modifies the settings for a set of cluster snapshots.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take batch-modify-cluster-snapshots-message, like batch-modify-cluster-snapshots-message
+    void take
+
+  line </#Action=BatchModifyClusterSnapshots>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan batch-modify-cluster-snapshots-message
+
+  loot 200
+    seed xml, like batch-modify-cluster-snapshots-output-message
+    note <Success>
+  loot 480
+    seed xml, like invalid-retention-period-fault
+    note <InvalidRetentionPeriodFault>
+  loot 481
+    seed xml, like batch-modify-cluster-snapshots-limit-exceeded-fault
+    note <BatchModifyClusterSnapshotsLimitExceededFault>

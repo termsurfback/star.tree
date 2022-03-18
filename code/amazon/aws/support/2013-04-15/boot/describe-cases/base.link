@@ -1,0 +1,58 @@
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/case-id-not-found
+  take form case-id-not-found
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/describe-cases-response
+  take form describe-cases-response
+
+load @drumwork/snow/amazonaws.com/support/2013-04-15/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-cases, name <DescribeCases>
+  note <Returns a list of cases that you specify by passing one or more case IDs. You can use the `afterTime` and `beforeTime` parameters to filter the cases by date. You can set values for the `includeResolvedCases` and `includeCommunications` parameters to specify how much information to return.
+
+The response returns the following in JSON format:
+
+- One or more [CaseDetails](https://docs.aws.amazon.com/awssupport/latest/APIReference/API_CaseDetails.html) data types.
+
+- One or more `nextToken` values, which specify where to paginate the returned records represented by the `CaseDetails` objects.
+
+Case data is available for 12 months after creation. If a case was created more than 12 months ago, a request might return an error.
+
+- You must have a Business or Enterprise Support plan to use the AWS Support API.
+
+- If you call the AWS Support API from an account that does not have a Business or Enterprise Support plan, the `SubscriptionRequiredException` error message appears. For information about changing your support plan, see [AWS Support](http://aws.amazon.com/premiumsupport/).>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-cases-request, like describe-cases-request
+
+  line </#X-Amz-Target=AWSSupport_20130415.DescribeCases>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan describe-cases-request
+
+  loot 200
+    seed json, like describe-cases-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-error
+    note <InternalServerError>
+  loot 481
+    seed json, like case-id-not-found
+    note <CaseIdNotFound>

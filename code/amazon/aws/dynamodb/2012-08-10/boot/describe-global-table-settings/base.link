@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/describe-global-table-settings-output
+  take form describe-global-table-settings-output
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/global-table-not-found-exception
+  take form global-table-not-found-exception
+
+load @drumwork/snow/amazonaws.com/dynamodb/2012-08-10/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-global-table-settings, name <DescribeGlobalTableSettings>
+  note <Describes Region-specific settings for a global table.
+
+This operation only applies to [Version 2017.11.29](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/globaltables.V1.html) of global tables.>
+
+  take x-amz-target
+    like native-string
+  take describe-global-table-settings-input, like describe-global-table-settings-input
+
+  line </#X-Amz-Target=DynamoDB_20120810.DescribeGlobalTableSettings>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-global-table-settings-input
+
+  loot 200
+    seed json, like describe-global-table-settings-output
+    note <Success>
+  loot 480
+    seed json, like global-table-not-found-exception
+    note <GlobalTableNotFoundException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

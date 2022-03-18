@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/get-user-policy-response
+  take form get-user-policy-response
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/no-such-entity-exception
+  take form no-such-entity-exception
+
+load @drumwork/snow/amazonaws.com/iam/2010-05-08/base/service-failure-exception
+  take form service-failure-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-get-user-policy, name <POST_GetUserPolicy>
+  note <Retrieves the specified inline policy document that is embedded in the specified IAM user.
+
+Policies returned by this operation are URL-encoded compliant with [RFC 3986](https://tools.ietf.org/html/rfc3986). You can use a URL decoding method to convert the policy back to plain JSON text. For example, if you use Java, you can use the `decode` method of the `java.net.URLDecoder` utility class in the Java SDK. Other languages and SDKs provide similar functionality.
+
+An IAM user can also have managed policies attached to it. To retrieve a managed policy document that is attached to a user, use GetPolicy to determine the policy's default version. Then use GetPolicyVersion to retrieve the policy document.
+
+For more information about policies, see [Managed policies and inline policies](https://docs.aws.amazon.com/IAM/latest/UserGuide/policies-managed-vs-inline.html) in the _IAM User Guide_.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take get-user-policy-request, like get-user-policy-request
+    void take
+
+  line </#Action=GetUserPolicy>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan get-user-policy-request
+
+  loot 200
+    seed xml, like get-user-policy-response
+    note <Success>
+  loot 480
+    seed xml, like no-such-entity-exception
+    note <NoSuchEntityException>
+  loot 481
+    seed xml, like service-failure-exception
+    note <ServiceFailureException>

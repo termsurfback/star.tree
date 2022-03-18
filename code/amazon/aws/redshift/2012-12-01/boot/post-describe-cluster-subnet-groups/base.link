@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-subnet-group-message
+  take form cluster-subnet-group-message
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-subnet-group-not-found-fault
+  take form cluster-subnet-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-tag-fault
+  take form invalid-tag-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-cluster-subnet-groups, name <POST_DescribeClusterSubnetGroups>
+  note <Returns one or more cluster subnet group objects, which contain metadata about your cluster subnet groups. By default, this operation returns information about all cluster subnet groups that are defined in your Amazon Web Services account.
+
+If you specify both tag keys and tag values in the same request, Amazon Redshift returns all subnet groups that match any combination of the specified keys and values. For example, if you have `owner` and `environment` for tag keys, and `admin` and `test` for tag values, all subnet groups that have any combination of those values are returned.
+
+If both tag keys and values are omitted from the request, subnet groups are returned regardless of whether they have tag keys or values associated with them.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-cluster-subnet-groups-message, like describe-cluster-subnet-groups-message
+    void take
+
+  line </#Action=DescribeClusterSubnetGroups>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-cluster-subnet-groups-message
+
+  loot 200
+    seed xml, like cluster-subnet-group-message
+    note <Success>
+  loot 480
+    seed xml, like cluster-subnet-group-not-found-fault
+    note <ClusterSubnetGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-tag-fault
+    note <InvalidTagFault>

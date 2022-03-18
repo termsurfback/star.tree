@@ -1,0 +1,35 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/cloudbilling/v1/base/list-billing-accounts-response
+  take form list-billing-accounts-response
+
+boot cloudbilling-billing-accounts-list, name <cloudbilling.billingAccounts.list>
+  note <Lists the billing accounts that the current authenticated user has permission to [view](https://cloud.google.com/billing/docs/how-to/billing-access).>
+
+  take filter
+    like native-string
+    note <Options for how to filter the returned billing accounts. Currently this only supports filtering for [subaccounts](https://cloud.google.com/billing/docs/concepts) under a single provided reseller billing account. (e.g. "master_billing_account=billingAccounts/012345-678901-ABCDEF"). Boolean algebra and other fields are not currently supported.>
+    void take
+  take page-size
+    like native-integer
+    note <Requested page size. The maximum page size is 100; this is also the default.>
+    void take
+  take page-token
+    like native-string
+    note <A token identifying a page of results to return. This should be a `next_page_token` value returned from a previous `ListBillingAccounts` call. If unspecified, the first page of results is returned.>
+    void take
+
+  line </v1/billingAccounts>
+
+  find <filter>, loan filter
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-billing-accounts-response
+    note <Successful response>

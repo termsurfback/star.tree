@@ -1,0 +1,126 @@
+
+load @drumwork/snow/amazonaws.com/imagebuilder/2019-12-02/base/component-configuration-list
+  take form component-configuration-list
+
+load @drumwork/snow/amazonaws.com/imagebuilder/2019-12-02/base/container-type
+  take form container-type
+
+load @drumwork/snow/amazonaws.com/imagebuilder/2019-12-02/base/date-time
+  take form date-time
+
+load @drumwork/snow/amazonaws.com/imagebuilder/2019-12-02/base/docker-file-template
+  take form docker-file-template
+
+load @drumwork/snow/amazonaws.com/imagebuilder/2019-12-02/base/image-builder-arn
+  take form image-builder-arn
+
+load @drumwork/snow/amazonaws.com/imagebuilder/2019-12-02/base/instance-configuration
+  take form instance-configuration
+
+load @drumwork/snow/amazonaws.com/imagebuilder/2019-12-02/base/non-empty-string
+  take form non-empty-string
+
+load @drumwork/snow/amazonaws.com/imagebuilder/2019-12-02/base/nullable-boolean
+  take form nullable-boolean
+
+load @drumwork/snow/amazonaws.com/imagebuilder/2019-12-02/base/platform
+  take form platform
+
+load @drumwork/snow/amazonaws.com/imagebuilder/2019-12-02/base/resource-name
+  take form resource-name
+
+load @drumwork/snow/amazonaws.com/imagebuilder/2019-12-02/base/tag-map
+  take form tag-map
+
+load @drumwork/snow/amazonaws.com/imagebuilder/2019-12-02/base/target-container-repository
+  take form target-container-repository
+
+load @drumwork/snow/amazonaws.com/imagebuilder/2019-12-02/base/version-number
+  take form version-number
+
+form container-recipe, name <ContainerRecipe>
+  note <A container recipe.>
+  take arn, name <arn>
+    like image-builder-arn
+    void take
+    note <The Amazon Resource Name (ARN) of the container recipe.
+
+Semantic versioning is included in each object's Amazon Resource Name (ARN), at the level that applies to that object as follows:
+
+1. Versionless ARNs and Name ARNs do not include specific values in any of the nodes. The nodes are either left off entirely, or they are specified as wildcards, for example: x.x.x.
+
+2. Version ARNs have only the first three nodes: &lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;
+
+3. Build version ARNs have all four nodes, and point to a specific build for a specific version of an object.>
+  take container-type, name <containerType>
+    like container-type
+    void take
+    note <Specifies the type of container, such as Docker.>
+  take name, name <name>
+    like resource-name
+    void take
+    note <The name of the container recipe.>
+  take description, name <description>
+    like non-empty-string
+    void take
+    note <The description of the container recipe.>
+  take platform, name <platform>
+    like platform
+    void take
+    note <The system platform for the container, such as Windows or Linux.>
+  take owner, name <owner>
+    like non-empty-string
+    void take
+    note <The owner of the container recipe.>
+  take version, name <version>
+    like version-number
+    void take
+    note <The semantic version of the container recipe.
+
+The semantic version has four nodes: &lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;/&lt;build&gt;. You can assign values for the first three, and can filter on all of them.
+
+**Assignment:** For the first three nodes you can assign any positive integer value, including zero, with an upper limit of 2^30-1, or 1073741823 for each node. Image Builder automatically assigns the build number, and that is not open for updates.
+
+**Patterns:** You can use any numeric pattern that adheres to the assignment requirements for the nodes that you can assign. For example, you might choose a software version pattern, such as 1.0.0, or a date, such as 2021.01.01.
+
+**Filtering:** When you retrieve or reference a resource with a semantic version, you can use wildcards (x) to filter your results. When you use a wildcard in any node, all nodes to the right of the first wildcard must also be wildcards. For example, specifying "1.2.x", or "1.x.x" works to filter list results, but neither "1.x.2", nor "x.2.x" will work. You do not have to specify the build - Image Builder automatically uses a wildcard for that, if applicable.>
+  take components, name <components>
+    like component-configuration-list
+    void take
+    note <Components for build and test that are included in the container recipe.>
+  take instance-configuration, name <instanceConfiguration>
+    like instance-configuration
+    void take
+    note <A group of options that can be used to configure an instance for building and testing container images.>
+  take dockerfile-template-data, name <dockerfileTemplateData>
+    like docker-file-template
+    void take
+    note <Dockerfiles are text documents that are used to build Docker containers, and ensure that they contain all of the elements required by the application running inside. The template data consists of contextual variables where Image Builder places build information or scripts, based on your container image recipe.>
+  take kms-key-id, name <kmsKeyId>
+    like non-empty-string
+    void take
+    note <Identifies which KMS key is used to encrypt the container image for distribution to the target Region.>
+  take encrypted, name <encrypted>
+    like nullable-boolean
+    void take
+    note <A flag that indicates if the target container is encrypted.>
+  take parent-image, name <parentImage>
+    like non-empty-string
+    void take
+    note <The source image for the container recipe.>
+  take date-created, name <dateCreated>
+    like date-time
+    void take
+    note <The date when this container recipe was created.>
+  take tags, name <tags>
+    like tag-map
+    void take
+    note <Tags that are attached to the container recipe.>
+  take working-directory, name <workingDirectory>
+    like non-empty-string
+    void take
+    note <The working directory for use during build and test workflows.>
+  take target-repository, name <targetRepository>
+    like target-container-repository
+    void take
+    note <The destination repository for the container image.>

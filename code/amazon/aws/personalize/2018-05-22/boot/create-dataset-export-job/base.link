@@ -1,0 +1,59 @@
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/create-dataset-export-job-response
+  take form create-dataset-export-job-response
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/resource-already-exists-exception
+  take form resource-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/resource-in-use-exception
+  take form resource-in-use-exception
+
+load @drumwork/snow/amazonaws.com/personalize/2018-05-22/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-dataset-export-job, name <CreateDatasetExportJob>
+  note <Creates a job that exports data from your dataset to an Amazon S3 bucket. To allow Amazon Personalize to export the training data, you must specify an service-linked IAM role that gives Amazon Personalize `PutObject` permissions for your Amazon S3 bucket. For information, see [Exporting a dataset](https://docs.aws.amazon.com/personalize/latest/dg/export-data.html) in the Amazon Personalize developer guide.
+
+**Status** A dataset export job can be in one of the following states:
+
+- CREATE PENDING &gt; CREATE IN_PROGRESS &gt; ACTIVE -or- CREATE FAILED
+
+To get the status of the export job, call DescribeDatasetExportJob, and specify the Amazon Resource Name (ARN) of the dataset export job. The dataset export is complete when the status shows as ACTIVE. If the status shows as CREATE FAILED, the response includes a `failureReason` key, which describes why the job failed.>
+
+  take x-amz-target
+    like native-string
+  take create-dataset-export-job-request, like create-dataset-export-job-request
+
+  line </#X-Amz-Target=AmazonPersonalize.CreateDatasetExportJob>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-dataset-export-job-request
+
+  loot 200
+    seed json, like create-dataset-export-job-response
+    note <Success>
+  loot 480
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 481
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 482
+    seed json, like resource-already-exists-exception
+    note <ResourceAlreadyExistsException>
+  loot 483
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 484
+    seed json, like resource-in-use-exception
+    note <ResourceInUseException>

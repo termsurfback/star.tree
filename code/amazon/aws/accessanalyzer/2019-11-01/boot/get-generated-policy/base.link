@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/get-generated-policy-response
+  take form get-generated-policy-response
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/accessanalyzer/2019-11-01/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-generated-policy, name <GetGeneratedPolicy>
+  note <Retrieves the policy that was generated using `StartPolicyGeneration`.>
+
+  take job-id
+    like native-string
+    note <The `JobId` that is returned by the `StartPolicyGeneration` operation. The `JobId` can be used with `GetGeneratedPolicy` to retrieve the generated policies or used with `CancelPolicyGeneration` to cancel the policy generation request.>
+  take include-resource-placeholders
+    like native-boolean
+    note <The level of detail that you want to generate. You can specify whether to generate policies with placeholders for resource ARNs for actions that support resource level granularity in policies.
+
+For example, in the resource section of a policy, you can receive a placeholder such as `"Resource":"arn:aws:s3:::${BucketName}"` instead of `"*"`.>
+    void take
+  take include-service-level-template
+    like native-boolean
+    note <The level of detail that you want to generate. You can specify whether to generate service-level policies.
+
+IAM Access Analyzer uses `iam:servicelastaccessed` to identify services that have been used recently to create this service-level template.>
+    void take
+
+  line </policy/generation/{job-id}>
+
+  find <includeResourcePlaceholders>, loan include-resource-placeholders
+  find <includeServiceLevelTemplate>, loan include-service-level-template
+
+  loot 200
+    seed json, like get-generated-policy-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>
+  loot 483
+    seed json, like access-denied-exception
+    note <AccessDeniedException>

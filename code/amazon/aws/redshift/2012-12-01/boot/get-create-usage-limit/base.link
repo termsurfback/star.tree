@@ -1,0 +1,106 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-state-fault
+  take form invalid-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-usage-limit-fault
+  take form invalid-usage-limit-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/limit-exceeded-fault
+  take form limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/tag
+  take form tag
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/tag-limit-exceeded-fault
+  take form tag-limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/unsupported-operation-fault
+  take form unsupported-operation-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/usage-limit
+  take form usage-limit
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/usage-limit-already-exists-fault
+  take form usage-limit-already-exists-fault
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-create-usage-limit, name <GET_CreateUsageLimit>
+  note <Creates a usage limit for a specified Amazon Redshift feature on a cluster. The usage limit is identified by the returned usage limit identifier.>
+
+  take cluster-identifier
+    like native-string
+    note <The identifier of the cluster that you want to limit usage.>
+  take feature-type
+    like native-string
+    note <The Amazon Redshift feature that you want to limit.>
+  take limit-type
+    like native-string
+    note <The type of limit. Depending on the feature type, this can be based on a time duration or data size. If `FeatureType` is `spectrum`, then `LimitType` must be `data-scanned`. If `FeatureType` is `concurrency-scaling`, then `LimitType` must be `time`.>
+  take amount
+    like native-integer
+    note <The limit amount. If time-based, this amount is in minutes. If data-based, this amount is in terabytes (TB). The value must be a positive number.>
+  take period
+    like native-string
+    note <The time period that the amount applies to. A `weekly` period begins on Sunday. The default is `monthly`.>
+    void take
+  take breach-action
+    like native-string
+    note <The action that Amazon Redshift takes when the limit is reached. The default is log. For more information about this parameter, see UsageLimit.>
+    void take
+  take tags
+    like list
+      like tag
+    note <A list of tag instances.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=CreateUsageLimit>
+
+  find <ClusterIdentifier>, loan cluster-identifier
+  find <FeatureType>, loan feature-type
+  find <LimitType>, loan limit-type
+  find <Amount>, loan amount
+  find <Period>, loan period
+  find <BreachAction>, loan breach-action
+  find <Tags>, loan tags
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like usage-limit
+    note <Success>
+  loot 480
+    seed xml, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 481
+    seed xml, like invalid-cluster-state-fault
+    note <InvalidClusterStateFault>
+  loot 482
+    seed xml, like limit-exceeded-fault
+    note <LimitExceededFault>
+  loot 483
+    seed xml, like usage-limit-already-exists-fault
+    note <UsageLimitAlreadyExistsFault>
+  loot 484
+    seed xml, like invalid-usage-limit-fault
+    note <InvalidUsageLimitFault>
+  loot 485
+    seed xml, like tag-limit-exceeded-fault
+    note <TagLimitExceededFault>
+  loot 486
+    seed xml, like unsupported-operation-fault
+    note <UnsupportedOperationFault>

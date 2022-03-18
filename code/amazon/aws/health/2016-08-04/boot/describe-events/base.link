@@ -1,0 +1,52 @@
+
+load @drumwork/snow/amazonaws.com/health/2016-08-04/base/describe-events-response
+  take form describe-events-response
+
+load @drumwork/snow/amazonaws.com/health/2016-08-04/base/invalid-pagination-token
+  take form invalid-pagination-token
+
+load @drumwork/snow/amazonaws.com/health/2016-08-04/base/unsupported-locale
+  take form unsupported-locale
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-events, name <DescribeEvents>
+  note <Returns information about events that meet the specified filter criteria. Events are returned in a summary form and do not include the detailed description, any additional metadata that depends on the event type, or any affected resources. To retrieve that information, use the [DescribeEventDetails](https://docs.aws.amazon.com/health/latest/APIReference/API_DescribeEventDetails.html) and [DescribeAffectedEntities](https://docs.aws.amazon.com/health/latest/APIReference/API_DescribeAffectedEntities.html) operations.
+
+If no filter criteria are specified, all events are returned. Results are sorted by `lastModifiedTime`, starting with the most recent event.
+
+- When you call the `DescribeEvents` operation and specify an entity for the `entityValues` parameter, AWS Health might return public events that aren't specific to that resource. For example, if you call `DescribeEvents` and specify an ID for an Amazon Elastic Compute Cloud (Amazon EC2) instance, AWS Health might return events that aren't specific to that resource or service. To get events that are specific to a service, use the `services` parameter in the `filter` object. For more information, see [Event](https://docs.aws.amazon.com/health/latest/APIReference/API_Event.html).
+
+- This API operation uses pagination. Specify the `nextToken` parameter in the next request to return more results.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-events-request, like describe-events-request
+
+  line </#X-Amz-Target=AWSHealth_20160804.DescribeEvents>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <maxResults>, loan max-results
+  find <nextToken>, loan next-token
+
+  seed json, loan describe-events-request
+
+  loot 200
+    seed json, like describe-events-response
+    note <Success>
+  loot 480
+    seed json, like invalid-pagination-token
+    note <InvalidPaginationToken>
+  loot 481
+    seed json, like unsupported-locale
+    note <UnsupportedLocale>

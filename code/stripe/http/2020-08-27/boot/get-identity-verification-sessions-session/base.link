@@ -1,0 +1,43 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-identity-verification-sessions-session-body
+  take form get-identity-verification-sessions-session-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/identity-verification-session
+  take form identity-verification-session
+
+boot get-identity-verification-sessions-session, name <GetIdentityVerificationSessionsSession>
+  note <Retrieves the details of a VerificationSession that was previously created.
+
+When the session status is `requires_input`, you can use this method to retrieve a valid `client_secret` or `url` to allow re-submission.>
+
+  take session
+    like native-string
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take get-identity-verification-sessions-session-body, like get-identity-verification-sessions-session-body
+    void take
+
+  line </v1/identity/verification_sessions/{session}>
+
+  find <expand>, loan expand
+
+  seed x-www-form-urlencoded, loan get-identity-verification-sessions-session-body
+
+  loot 200
+    seed json, like identity-verification-session
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

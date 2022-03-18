@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/environment-description
+  take form environment-description
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/insufficient-privileges-exception
+  take form insufficient-privileges-exception
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/too-many-buckets-exception
+  take form too-many-buckets-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-update-environment, name <POST_UpdateEnvironment>
+  note <Updates the environment description, deploys a new application version, updates the configuration settings to an entirely new configuration template, or updates select configuration option values in the running environment.
+
+Attempting to update both the release and configuration is not allowed and AWS Elastic Beanstalk returns an `InvalidParameterCombination` error.
+
+When updating the configuration settings to a new template or individual settings, a draft configuration is created and DescribeConfigurationSettings for this environment returns two setting descriptions with different `DeploymentStatus` values.>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take update-environment-message, like update-environment-message
+    void take
+
+  line </#Action=UpdateEnvironment>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan update-environment-message
+
+  loot 200
+    seed xml, like environment-description
+    note <Success>
+  loot 480
+    seed xml, like insufficient-privileges-exception
+    note <InsufficientPrivilegesException>
+  loot 481
+    seed xml, like too-many-buckets-exception
+    note <TooManyBucketsException>

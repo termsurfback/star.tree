@@ -1,0 +1,43 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/civicinfo/v2/base/representative-info-data
+  take form representative-info-data
+
+boot civicinfo-representatives-representative-info-by-division, name <civicinfo.representatives.representativeInfoByDivision>
+  note <Looks up representative information for a single geographic division.>
+
+  take ocd-id
+    like native-string
+    note <The Open Civic Data division identifier of the division to look up.>
+  take levels
+    like list
+      like native-string
+    note <A list of office levels to filter by. Only offices that serve at least one of these levels will be returned. Divisions that don't contain a matching office will not be returned.>
+    void take
+  take recursive
+    like native-boolean
+    note <If true, information about all divisions contained in the division requested will be included as well. For example, if querying ocd-division/country:us/district:dc, this would also return all DC's wards and ANCs.>
+    void take
+  take roles
+    like list
+      like native-string
+    note <A list of office roles to filter by. Only offices fulfilling one of these roles will be returned. Divisions that don't contain a matching office will not be returned.>
+    void take
+
+  line </civicinfo/v2/representatives/{ocd-id}>
+
+  find <levels>, loan levels
+  find <recursive>, loan recursive
+  find <roles>, loan roles
+
+  loot 200
+    seed json, like representative-info-data
+    note <Successful response>

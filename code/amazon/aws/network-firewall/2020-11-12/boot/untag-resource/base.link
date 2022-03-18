@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/network-firewall/2020-11-12/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/network-firewall/2020-11-12/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/network-firewall/2020-11-12/base/untag-resource-response
+  take form untag-resource-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot untag-resource, name <UntagResource>
+  note <Removes the tags with the specified keys from the specified resource. Tags are key:value pairs that you can use to categorize and manage your resources, for purposes like billing. For example, you might set the tag key to "customer" and the value to the customer name or ID. You can specify one or more tags to add to each AWS resource, up to 50 tags for a resource.
+
+You can manage tags for the AWS resources that you manage through AWS Network Firewall: firewalls, firewall policies, and rule groups.>
+
+  take x-amz-target
+    like native-string
+  take untag-resource-request, like untag-resource-request
+
+  line </#X-Amz-Target=NetworkFirewall_20201112.UntagResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan untag-resource-request
+
+  loot 200
+    seed json, like untag-resource-response
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

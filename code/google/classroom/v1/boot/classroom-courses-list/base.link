@@ -1,0 +1,49 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/classroom/v1/base/list-courses-response
+  take form list-courses-response
+
+boot classroom-courses-list, name <classroom.courses.list>
+  note <Returns a list of courses that the requesting user is permitted to view, restricted to those that match the request. Returned courses are ordered by creation time, with the most recently created coming first. This method returns the following error codes: * `PERMISSION_DENIED` for access errors. * `INVALID_ARGUMENT` if the query argument is malformed. * `NOT_FOUND` if any users specified in the query arguments do not exist.>
+
+  take course-states
+    like list
+      like native-string
+    note <Restricts returned courses to those in one of the specified states The default value is ACTIVE, ARCHIVED, PROVISIONED, DECLINED.>
+    void take
+  take page-size
+    like native-integer
+    note <Maximum number of items to return. Zero or unspecified indicates that the server may assign a maximum. The server may return fewer than the specified number of results.>
+    void take
+  take page-token
+    like native-string
+    note <nextPageToken value returned from a previous list call, indicating that the subsequent page of results should be returned. The list request must be otherwise identical to the one that resulted in this token.>
+    void take
+  take student-id
+    like native-string
+    note <Restricts returned courses to those having a student with the specified identifier. The identifier can be one of the following: * the numeric identifier for the user * the email address of the user * the string literal `"me"`, indicating the requesting user>
+    void take
+  take teacher-id
+    like native-string
+    note <Restricts returned courses to those having a teacher with the specified identifier. The identifier can be one of the following: * the numeric identifier for the user * the email address of the user * the string literal `"me"`, indicating the requesting user>
+    void take
+
+  line </v1/courses>
+
+  find <courseStates>, loan course-states
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+  find <studentId>, loan student-id
+  find <teacherId>, loan teacher-id
+
+  loot 200
+    seed json, like list-courses-response
+    note <Successful response>

@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/describe-users-result
+  take form describe-users-result
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/invalid-parameter-combination-exception
+  take form invalid-parameter-combination-exception
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-users, name <DescribeUsers>
+  note <Retrieves a list that describes one or more specified users in the user pool.>
+
+  take x-amz-target
+    like native-string
+  take describe-users-request, like describe-users-request
+
+  line </#X-Amz-Target=PhotonAdminProxyService.DescribeUsers>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-users-request
+
+  loot 200
+    seed json, like describe-users-result
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like invalid-parameter-combination-exception
+    note <InvalidParameterCombinationException>

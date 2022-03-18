@@ -1,0 +1,35 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/cloudsupport/v2beta/base/search-cases-response
+  take form search-cases-response
+
+boot cloudsupport-cases-search, name <cloudsupport.cases.search>
+  note <Search cases using the specified query.>
+
+  take page-size
+    like native-integer
+    note <The maximum number of cases fetched with each request. The default page size is 10.>
+    void take
+  take page-token
+    like native-string
+    note <A token identifying the page of results to return. If unspecified, the first page is retrieved.>
+    void take
+  take query
+    like native-string
+    note <An expression written in the Cloud filter language. Filter strings can use the following fields: - organization (A name of the form organizations/) - project (A name of the form projects/) - customer (A name of the form customers/) - state (Accepted values: OPEN or CLOSED) - severity (Accepted values: S0, S1, S2, S3, or S4) - creator.email with the operators equals (=) and AND. Additionally, a global restriction (with no key/operator) can be used to search across display_name, description, and comments (e.g. "my search"). One of organization, project, or customer field must be specified.>
+    void take
+
+  line </v2beta/cases:search>
+
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+  find <query>, loan query
+
+  loot 200
+    seed json, like search-cases-response
+    note <Successful response>

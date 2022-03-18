@@ -1,0 +1,90 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-not-found-fault
+  take form db-cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/db-cluster-snapshot-already-exists-fault
+  take form db-cluster-snapshot-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/delete-db-cluster-result
+  take form delete-db-cluster-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-cluster-snapshot-state-fault
+  take form invalid-db-cluster-snapshot-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/invalid-db-cluster-state-fault
+  take form invalid-db-cluster-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/snapshot-quota-exceeded-fault
+  take form snapshot-quota-exceeded-fault
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-db-cluster, name <GET_DeleteDBCluster>
+  note <The DeleteDBCluster action deletes a previously provisioned DB cluster. When you delete a DB cluster, all automated backups for that DB cluster are deleted and can't be recovered. Manual DB cluster snapshots of the specified DB cluster are not deleted.
+
+For more information on Amazon Aurora, see [What Is Amazon Aurora?](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_AuroraOverview.html) in the _Amazon Aurora User Guide._
+
+This action only applies to Aurora DB clusters.>
+
+  take db-cluster-identifier
+    like native-string
+    note <The DB cluster identifier for the DB cluster to be deleted. This parameter isn't case-sensitive.
+
+Constraints:
+
+- Must match an existing DBClusterIdentifier.>
+  take skip-final-snapshot
+    like native-boolean
+    note <A value that indicates whether to skip the creation of a final DB cluster snapshot before the DB cluster is deleted. If skip is specified, no DB cluster snapshot is created. If skip isn't specified, a DB cluster snapshot is created before the DB cluster is deleted. By default, skip isn't specified, and the DB cluster snapshot is created. By default, this parameter is disabled.
+
+You must specify a `FinalDBSnapshotIdentifier` parameter if `SkipFinalSnapshot` is disabled.>
+    void take
+  take final-db-snapshot-identifier
+    like native-string
+    note <The DB cluster snapshot identifier of the new DB cluster snapshot created when `SkipFinalSnapshot` is disabled.
+
+Specifying this parameter and also skipping the creation of a final DB cluster snapshot with the `SkipFinalShapshot` parameter results in an error.
+
+Constraints:
+
+- Must be 1 to 255 letters, numbers, or hyphens.
+
+- First character must be a letter
+
+- Can't end with a hyphen or contain two consecutive hyphens>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteDBCluster>
+
+  find <DBClusterIdentifier>, loan db-cluster-identifier
+  find <SkipFinalSnapshot>, loan skip-final-snapshot
+  find <FinalDBSnapshotIdentifier>, loan final-db-snapshot-identifier
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-db-cluster-result
+    note <Success>
+  loot 480
+    seed xml, like db-cluster-not-found-fault
+    note <DBClusterNotFoundFault>
+  loot 481
+    seed xml, like invalid-db-cluster-state-fault
+    note <InvalidDBClusterStateFault>
+  loot 482
+    seed xml, like db-cluster-snapshot-already-exists-fault
+    note <DBClusterSnapshotAlreadyExistsFault>
+  loot 483
+    seed xml, like snapshot-quota-exceeded-fault
+    note <SnapshotQuotaExceededFault>
+  loot 484
+    seed xml, like invalid-db-cluster-snapshot-state-fault
+    note <InvalidDBClusterSnapshotStateFault>

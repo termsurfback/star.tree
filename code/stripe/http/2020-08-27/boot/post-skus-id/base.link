@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/post-skus-id-body
+  take form post-skus-id-body
+
+load @drumwork/snow/stripe.com/2020-08-27/base/sku
+  take form sku
+
+boot post-skus-id, name <PostSkusId>
+  note <Updates the specific SKU by setting the values of the parameters passed. Any parameters not provided will be left unchanged.
+
+Note that a SKU’s `attributes` are not editable. Instead, you would need to deactivate the existing SKU and create a new one with the new attribute values.>
+
+  take id
+    like native-string
+  take post-skus-id-body, like post-skus-id-body
+    void take
+
+  line </v1/skus/{id}>
+
+  seed x-www-form-urlencoded, loan post-skus-id-body
+
+  loot 200
+    seed json, like sku
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

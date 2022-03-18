@@ -1,0 +1,83 @@
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/list-associated-assets-response
+  take form list-associated-assets-response
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/iotsitewise/2019-12-02/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-associated-assets, name <ListAssociatedAssets>
+  note <Retrieves a paginated list of associated assets.
+
+You can use this operation to do the following:
+
+- List child assets associated to a parent asset by a hierarchy that you specify.
+
+- List an asset's parent asset.>
+
+  take asset-id
+    like native-string
+    note <The ID of the asset to query.>
+  take hierarchy-id
+    like native-string
+    note <The ID of the hierarchy by which child assets are associated to the asset. To find a hierarchy ID, use the [DescribeAsset](https://docs.aws.amazon.com/iot-sitewise/latest/APIReference/API_DescribeAsset.html) or [DescribeAssetModel](https://docs.aws.amazon.com/iot-sitewise/latest/APIReference/API_DescribeAssetModel.html) operations. This parameter is required if you choose `CHILD` for `traversalDirection`.
+
+For more information, see [Asset hierarchies](https://docs.aws.amazon.com/iot-sitewise/latest/userguide/asset-hierarchies.html) in the _IoT SiteWise User Guide_.>
+    void take
+  take traversal-direction
+    like native-string
+    note <The direction to list associated assets. Choose one of the following options:
+
+- `CHILD` - The list includes all child assets associated to the asset. The `hierarchyId` parameter is required if you choose `CHILD`.
+
+- `PARENT` - The list includes the asset's parent asset.
+
+Default: `CHILD`>
+    void take
+  take next-token
+    like native-string
+    note <The token to be used for the next set of paginated results.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return for each paginated request.
+
+Default: 50>
+    void take
+
+  line </assets/{asset-id}/hierarchies>
+
+  find <hierarchyId>, loan hierarchy-id
+  find <traversalDirection>, loan traversal-direction
+  find <nextToken>, loan next-token
+  find <maxResults>, loan max-results
+
+  loot 200
+    seed json, like list-associated-assets-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 483
+    seed json, like throttling-exception
+    note <ThrottlingException>

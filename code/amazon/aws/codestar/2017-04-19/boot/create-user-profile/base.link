@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/codestar/2017-04-19/base/create-user-profile-result
+  take form create-user-profile-result
+
+load @drumwork/snow/amazonaws.com/codestar/2017-04-19/base/user-profile-already-exists-exception
+  take form user-profile-already-exists-exception
+
+load @drumwork/snow/amazonaws.com/codestar/2017-04-19/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-user-profile, name <CreateUserProfile>
+  note <Creates a profile for a user that includes user preferences, such as the display name and email address assocciated with the user, in AWS CodeStar. The user profile is not project-specific. Information in the user profile is displayed wherever the user's information appears to other users in AWS CodeStar.>
+
+  take x-amz-target
+    like native-string
+  take create-user-profile-request, like create-user-profile-request
+
+  line </#X-Amz-Target=CodeStar_20170419.CreateUserProfile>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-user-profile-request
+
+  loot 200
+    seed json, like create-user-profile-result
+    note <Success>
+  loot 480
+    seed json, like user-profile-already-exists-exception
+    note <UserProfileAlreadyExistsException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>

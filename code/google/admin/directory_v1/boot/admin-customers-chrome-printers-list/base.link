@@ -1,0 +1,48 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/admin/directory_v1/base/list-printers-response
+  take form list-printers-response
+
+boot admin-customers-chrome-printers-list, name <admin.customers.chrome.printers.list>
+  note <List printers configs.>
+
+  take parent
+    like native-string
+    note <Required. The name of the customer who owns this collection of printers. Format: customers/{customer_id}>
+  take filter
+    like native-string
+    note <Search query. Search syntax is shared between this api and Admin Console printers pages.>
+    void take
+  take order-by
+    like native-string
+    note <The order to sort results by. Must be one of display_name, description, make_and_model, or create_time. Default order is ascending, but descending order can be returned by appending "desc" to the order_by field. For instance, "description desc" will return the printers sorted by description in descending order.>
+    void take
+  take org-unit-id
+    like native-string
+    note <Organization Unit that we want to list the printers for. When org_unit is not present in the request then all printers of the customer are returned (or filtered). When org_unit is present in the request then only printers available to this OU will be returned (owned or inherited). You may see if printer is owned or inherited for this OU by looking at Printer.org_unit_id.>
+    void take
+  take page-size
+    like native-integer
+    note <The maximum number of objects to return. The service may return fewer than this value.>
+    void take
+  take page-token
+    like native-string
+    note <A page token, received from a previous call.>
+    void take
+
+  line </admin/directory/v1/{parent}/chrome/printers>
+
+  find <filter>, loan filter
+  find <orderBy>, loan order-by
+  find <orgUnitId>, loan org-unit-id
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like list-printers-response
+    note <Successful response>

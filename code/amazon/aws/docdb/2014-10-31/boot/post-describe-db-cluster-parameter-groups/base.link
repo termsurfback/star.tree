@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-cluster-parameter-groups-message
+  take form db-cluster-parameter-groups-message
+
+load @drumwork/snow/amazonaws.com/docdb/2014-10-31/base/db-parameter-group-not-found-fault
+  take form db-parameter-group-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-db-cluster-parameter-groups, name <POST_DescribeDBClusterParameterGroups>
+  note <Returns a list of `DBClusterParameterGroup` descriptions. If a `DBClusterParameterGroupName` parameter is specified, the list contains only the description of the specified cluster parameter group.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take marker
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-db-cluster-parameter-groups-message, like describe-db-cluster-parameter-groups-message
+    void take
+
+  line </#Action=DescribeDBClusterParameterGroups>
+
+  find <MaxRecords>, loan max-records
+  find <Marker>, loan marker
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-db-cluster-parameter-groups-message
+
+  loot 200
+    seed xml, like db-cluster-parameter-groups-message
+    note <Success>
+  loot 480
+    seed xml, like db-parameter-group-not-found-fault
+    note <DBParameterGroupNotFoundFault>

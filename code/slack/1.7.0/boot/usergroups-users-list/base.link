@@ -1,0 +1,49 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+boot usergroups-users-list, name <usergroups_users_list>
+  note <List all users in a User Group>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `usergroups:read`>
+  take include-disabled
+    like native-boolean
+    note <Allow results that involve disabled User Groups.>
+    void take
+  take usergroup
+    like native-string
+    note <The encoded ID of the User Group to update.>
+
+  line </usergroups.users.list>
+
+  find <token>, loan token
+  find <include_disabled>, loan include-disabled
+  find <usergroup>, loan usergroup
+
+  loot 200
+    seed json
+      like form
+        take ok, name <ok>
+          like defs-ok-true
+        take users, name <users>
+    note <Standard success response when used with a user token>
+  loot fall
+    seed json
+      like form
+        take callstack, name <callstack>
+          void take
+        take error, name <error>
+        take ok, name <ok>
+          like defs-ok-false
+    note <Standard failure response when used with an invalid token>

@@ -1,0 +1,35 @@
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/create-image-response
+  take form create-image-response
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-in-use
+  take form resource-in-use
+
+load @drumwork/snow/amazonaws.com/sagemaker/2017-07-24/base/resource-limit-exceeded
+  take form resource-limit-exceeded
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-image, name <CreateImage>
+  note <Creates a custom SageMaker image. A SageMaker image is a set of image versions. Each image version represents a container image stored in Amazon Container Registry (ECR). For more information, see [Bring your own SageMaker image](https://docs.aws.amazon.com/sagemaker/latest/dg/studio-byoi.html).>
+
+  take x-amz-target
+    like native-string
+  take create-image-request, like create-image-request
+
+  line </#X-Amz-Target=SageMaker.CreateImage>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-image-request
+
+  loot 200
+    seed json, like create-image-response
+    note <Success>
+  loot 480
+    seed json, like resource-in-use
+    note <ResourceInUse>
+  loot 481
+    seed json, like resource-limit-exceeded
+    note <ResourceLimitExceeded>

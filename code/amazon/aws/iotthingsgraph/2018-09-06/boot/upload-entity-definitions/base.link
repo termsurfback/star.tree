@@ -1,0 +1,47 @@
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/internal-failure-exception
+  take form internal-failure-exception
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/throttling-exception
+  take form throttling-exception
+
+load @drumwork/snow/amazonaws.com/iotthingsgraph/2018-09-06/base/upload-entity-definitions-response
+  take form upload-entity-definitions-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot upload-entity-definitions, name <UploadEntityDefinitions>
+  note <Asynchronously uploads one or more entity definitions to the user's namespace. The `document` parameter is required if `syncWithPublicNamespace` and `deleteExistingEntites` are false. If the `syncWithPublicNamespace` parameter is set to `true`, the user's namespace will synchronize with the latest version of the public namespace. If `deprecateExistingEntities` is set to true, all entities in the latest version will be deleted before the new `DefinitionDocument` is uploaded.
+
+When a user uploads entity definitions for the first time, the service creates a new namespace for the user. The new namespace tracks the public namespace. Currently users can have only one namespace. The namespace version increments whenever a user uploads entity definitions that are backwards-incompatible and whenever a user sets the `syncWithPublicNamespace` parameter or the `deprecateExistingEntities` parameter to `true`.
+
+The IDs for all of the entities should be in URN format. Each entity must be in the user's namespace. Users can't create entities in the public namespace, but entity definitions can refer to entities in the public namespace.
+
+Valid entities are `Device`, `DeviceModel`, `Service`, `Capability`, `State`, `Action`, `Event`, `Property`, `Mapping`, `Enum`.>
+
+  take x-amz-target
+    like native-string
+  take upload-entity-definitions-request, like upload-entity-definitions-request
+
+  line </#X-Amz-Target=IotThingsGraphFrontEndService.UploadEntityDefinitions>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan upload-entity-definitions-request
+
+  loot 200
+    seed json, like upload-entity-definitions-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like internal-failure-exception
+    note <InternalFailureException>
+  loot 482
+    seed json, like throttling-exception
+    note <ThrottlingException>

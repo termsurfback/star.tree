@@ -1,0 +1,39 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/spanner/v1/base/operation
+  take form operation
+
+boot spanner-projects-instances-backups-create, name <spanner.projects.instances.backups.create>
+  note <Starts creating a new Cloud Spanner Backup. The returned backup long-running operation will have a name of the format `projects//instances//backups//operations/` and can be used to track creation of the backup. The metadata field type is CreateBackupMetadata. The response field type is Backup, if successful. Cancelling the returned operation will stop the creation and delete the backup. There can be only one pending backup creation per database. Backup creation of different databases can run concurrently.>
+
+  take parent
+    like native-string
+    note <Required. The name of the instance in which the backup will be created. This must be the same instance that contains the database the backup will be created from. The backup will be stored in the location(s) specified in the instance configuration of this instance. Values are of the form `projects//instances/`.>
+  take backup-id
+    like native-string
+    note <Required. The id of the backup to be created. The `backup_id` appended to `parent` forms the full backup name of the form `projects//instances//backups/`.>
+    void take
+  take encryption-config-encryption-type
+    like native-string
+    note <Required. The encryption type of the backup.>
+    void take
+  take encryption-config-kms-key-name
+    like native-string
+    note <Optional. The Cloud KMS key that will be used to protect the backup. This field should be set only when encryption_type is `CUSTOMER_MANAGED_ENCRYPTION`. Values are of the form `projects//locations//keyRings//cryptoKeys/`.>
+    void take
+  take backup, like backup
+    void take
+
+  line </v1/{parent}/backups>
+
+  find <backupId>, loan backup-id
+  find <encryptionConfig.encryptionType>, loan encryption-config-encryption-type
+  find <encryptionConfig.kmsKeyName>, loan encryption-config-kms-key-name
+
+  seed json, loan backup
+
+  loot 200
+    seed json, like operation
+    note <Successful response>

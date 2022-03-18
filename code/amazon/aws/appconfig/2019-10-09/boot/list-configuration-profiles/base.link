@@ -1,0 +1,61 @@
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/bad-request-exception
+  take form bad-request-exception
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/configuration-profiles
+  take form configuration-profiles
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/appconfig/2019-10-09/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot list-configuration-profiles, name <ListConfigurationProfiles>
+  note <Lists the configuration profiles for an application.>
+
+  take application-id
+    like native-string
+    note <The application ID.>
+  take max-results
+    like native-integer
+    note <The maximum number of items to return for this call. The call also returns a token that you can specify in a subsequent call to get the next set of results.>
+    void take
+  take next-token
+    like native-string
+    note <A token to start the list. Use this token to get the next set of results.>
+    void take
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+
+  line </applications/{application-id}/configurationprofiles>
+
+  find <max_results>, loan max-results
+  find <next_token>, loan next-token
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  loot 200
+    seed json, like configuration-profiles
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>
+  loot 481
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 482
+    seed json, like bad-request-exception
+    note <BadRequestException>

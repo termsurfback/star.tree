@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/lightsail/2016-11-28/base/access-denied-exception
+  take form access-denied-exception
+
+load @drumwork/snow/amazonaws.com/lightsail/2016-11-28/base/create-bucket-result
+  take form create-bucket-result
+
+load @drumwork/snow/amazonaws.com/lightsail/2016-11-28/base/invalid-input-exception
+  take form invalid-input-exception
+
+load @drumwork/snow/amazonaws.com/lightsail/2016-11-28/base/service-exception
+  take form service-exception
+
+load @drumwork/snow/amazonaws.com/lightsail/2016-11-28/base/unauthenticated-exception
+  take form unauthenticated-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot create-bucket, name <CreateBucket>
+  note <Creates an Amazon Lightsail bucket.
+
+A bucket is a cloud storage resource available in the Lightsail object storage service. Use buckets to store objects such as data and its descriptive metadata. For more information about buckets, see [Buckets in Amazon Lightsail](https://lightsail.aws.amazon.com/ls/docs/en_us/articles/buckets-in-amazon-lightsail) in the _Amazon Lightsail Developer Guide_.>
+
+  take x-amz-target
+    like native-string
+  take create-bucket-request, like create-bucket-request
+
+  line </#X-Amz-Target=Lightsail_20161128.CreateBucket>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan create-bucket-request
+
+  loot 200
+    seed json, like create-bucket-result
+    note <Success>
+  loot 480
+    seed json, like access-denied-exception
+    note <AccessDeniedException>
+  loot 481
+    seed json, like invalid-input-exception
+    note <InvalidInputException>
+  loot 482
+    seed json, like service-exception
+    note <ServiceException>
+  loot 483
+    seed json, like unauthenticated-exception
+    note <UnauthenticatedException>

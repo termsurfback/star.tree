@@ -1,0 +1,78 @@
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/application-name
+  take form application-name
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/configuration-option-settings-list
+  take form configuration-option-settings-list
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/configuration-template-name
+  take form configuration-template-name
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/description
+  take form description
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/environment-id
+  take form environment-id
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/platform-arn
+  take form platform-arn
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/solution-stack-name
+  take form solution-stack-name
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/source-configuration
+  take form source-configuration
+
+load @drumwork/snow/amazonaws.com/elasticbeanstalk/2010-12-01/base/tags
+  take form tags
+
+form create-configuration-template-message, name <CreateConfigurationTemplateMessage>
+  note <Request to create a configuration template.>
+  take application-name, name <ApplicationName>
+    like application-name
+    note <The name of the Elastic Beanstalk application to associate with this configuration template.>
+  take template-name, name <TemplateName>
+    like configuration-template-name
+    note <The name of the configuration template.
+
+Constraint: This name must be unique per application.>
+  take solution-stack-name, name <SolutionStackName>
+    like solution-stack-name
+    void take
+    note <The name of an Elastic Beanstalk solution stack (platform version) that this configuration uses. For example, `64bit Amazon Linux 2013.09 running Tomcat 7 Java 7`. A solution stack specifies the operating system, runtime, and application server for a configuration template. It also determines the set of configuration options as well as the possible and default values. For more information, see [Supported Platforms](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/concepts.platforms.html) in the _AWS Elastic Beanstalk Developer Guide_.
+
+You must specify `SolutionStackName` if you don't specify `PlatformArn`, `EnvironmentId`, or `SourceConfiguration`.
+
+Use the [`ListAvailableSolutionStacks`](https://docs.aws.amazon.com/elasticbeanstalk/latest/api/API_ListAvailableSolutionStacks.html) API to obtain a list of available solution stacks.>
+  take platform-arn, name <PlatformArn>
+    like platform-arn
+    void take
+    note <The Amazon Resource Name (ARN) of the custom platform. For more information, see [Custom Platforms](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/custom-platforms.html) in the _AWS Elastic Beanstalk Developer Guide_.
+
+If you specify `PlatformArn`, then don't specify `SolutionStackName`.>
+  take source-configuration, name <SourceConfiguration>
+    like source-configuration
+    void take
+    note <An Elastic Beanstalk configuration template to base this one on. If specified, Elastic Beanstalk uses the configuration values from the specified configuration template to create a new configuration.
+
+Values specified in `OptionSettings` override any values obtained from the `SourceConfiguration`.
+
+You must specify `SourceConfiguration` if you don't specify `PlatformArn`, `EnvironmentId`, or `SolutionStackName`.
+
+Constraint: If both solution stack name and source configuration are specified, the solution stack of the source configuration template must match the specified solution stack name.>
+  take environment-id, name <EnvironmentId>
+    like environment-id
+    void take
+    note <The ID of an environment whose settings you want to use to create the configuration template. You must specify `EnvironmentId` if you don't specify `PlatformArn`, `SolutionStackName`, or `SourceConfiguration`.>
+  take description, name <Description>
+    like description
+    void take
+    note <An optional description for this configuration.>
+  take option-settings, name <OptionSettings>
+    like configuration-option-settings-list
+    void take
+    note <Option values for the Elastic Beanstalk configuration, such as the instance type. If specified, these values override the values obtained from the solution stack or the source configuration template. For a complete list of Elastic Beanstalk configuration options, see [Option Values](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options.html) in the _AWS Elastic Beanstalk Developer Guide_.>
+  take tags, name <Tags>
+    like tags
+    void take
+    note <Specifies the tags applied to the configuration template.>

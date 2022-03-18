@@ -1,0 +1,37 @@
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/limit-exceeded-fault
+  take form limit-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/operation-not-permitted-fault
+  take form operation-not-permitted-fault
+
+load @drumwork/snow/amazonaws.com/swf/2012-01-25/base/unknown-resource-fault
+  take form unknown-resource-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot untag-resource, name <UntagResource>
+  note <Remove a tag from a Amazon SWF domain.>
+
+  take x-amz-target
+    like native-string
+  take untag-resource-input, like untag-resource-input
+
+  line </#X-Amz-Target=SimpleWorkflowService.UntagResource>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan untag-resource-input
+
+  loot 200
+    note <Success>
+  loot 480
+    seed json, like unknown-resource-fault
+    note <UnknownResourceFault>
+  loot 481
+    seed json, like limit-exceeded-fault
+    note <LimitExceededFault>
+  loot 482
+    seed json, like operation-not-permitted-fault
+    note <OperationNotPermittedFault>

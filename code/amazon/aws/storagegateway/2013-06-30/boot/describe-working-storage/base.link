@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/describe-working-storage-output
+  take form describe-working-storage-output
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-working-storage, name <DescribeWorkingStorage>
+  note <Returns information about the working storage of a gateway. This operation is only supported in the stored volumes gateway type. This operation is deprecated in cached volumes API version (20120630). Use DescribeUploadBuffer instead.
+
+Working storage is also referred to as upload buffer. You can also use the DescribeUploadBuffer operation to add upload buffer to a stored volume gateway.
+
+The response includes disk IDs that are configured as working storage, and it includes the amount of working storage allocated and used.>
+
+  take x-amz-target
+    like native-string
+  take describe-working-storage-input, like describe-working-storage-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.DescribeWorkingStorage>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-working-storage-input
+
+  loot 200
+    seed json, like describe-working-storage-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

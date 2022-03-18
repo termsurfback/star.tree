@@ -1,0 +1,37 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/storage/v1/base/bucket-access-control
+  take form bucket-access-control
+
+boot storage-bucket-access-controls-patch, name <storage.bucketAccessControls.patch>
+  note <Patches an ACL entry on the specified bucket.>
+
+  take bucket
+    like native-string
+    note <Name of a bucket.>
+  take entity
+    like native-string
+    note <The entity holding the permission. Can be user-userId, user-emailAddress, group-groupId, group-emailAddress, allUsers, or allAuthenticatedUsers.>
+  take provisional-user-project
+    like native-string
+    note <The project to be billed for this request if the target bucket is requester-pays bucket.>
+    void take
+  take user-project
+    like native-string
+    note <The project to be billed for this request. Required for Requester Pays buckets.>
+    void take
+  take bucket-access-control, like bucket-access-control
+    void take
+
+  line </b/{bucket}/acl/{entity}>
+
+  find <provisionalUserProject>, loan provisional-user-project
+  find <userProject>, loan user-project
+
+  seed json, loan bucket-access-control
+
+  loot 200
+    seed json, like bucket-access-control
+    note <Successful response>

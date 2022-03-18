@@ -1,0 +1,79 @@
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/describe-transit-gateway-peering-attachments-result
+  take form describe-transit-gateway-peering-attachments-result
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/filter
+  take form filter
+
+load @drumwork/snow/amazonaws.com/ec2/2016-11-15/base/transit-gateway-attachment-id
+  take form transit-gateway-attachment-id
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-describe-transit-gateway-peering-attachments, name <GET_DescribeTransitGatewayPeeringAttachments>
+  note <Describes your transit gateway peering attachments.>
+
+  take transit-gateway-attachment-ids
+    like list
+      like transit-gateway-attachment-id
+    note <One or more IDs of the transit gateway peering attachments.>
+    void take
+  take filter
+    like list
+      like filter
+    note <One or more filters. The possible values are:
+
+- `transit-gateway-attachment-id` - The ID of the transit gateway attachment.
+
+- `local-owner-id` - The ID of your Amazon Web Services account.
+
+- `remote-owner-id` - The ID of the Amazon Web Services account in the remote Region that owns the transit gateway.
+
+- `state` - The state of the peering attachment. Valid values are `available` | `deleted` | `deleting` | `failed` | `failing` | `initiatingRequest` | `modifying` | `pendingAcceptance` | `pending` | `rollingBack` | `rejected` | `rejecting`).
+
+- `tag`:&lt;key&gt; - The key/value combination of a tag assigned to the resource. Use the tag key in the filter name and the tag value as the filter value. For example, to find all resources that have a tag with the key `Owner` and the value `TeamA`, specify `tag:Owner` for the filter name and `TeamA` for the filter value.
+
+- `tag-key` - The key of a tag assigned to the resource. Use this filter to find all resources that have a tag with a specific key, regardless of the tag value.
+
+- `transit-gateway-id` - The ID of the transit gateway.>
+    void take
+  take max-results
+    like native-integer
+    note <The maximum number of results to return with a single call. To retrieve the remaining results, make another call with the returned `nextToken` value.>
+    void take
+  take next-token
+    like native-string
+    note <The token for the next page of results.>
+    void take
+  take dry-run
+    like native-boolean
+    note <Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is `DryRunOperation`. Otherwise, it is `UnauthorizedOperation`.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DescribeTransitGatewayPeeringAttachments>
+
+  find <TransitGatewayAttachmentIds>, loan transit-gateway-attachment-ids
+  find <Filter>, loan filter
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+  find <DryRun>, loan dry-run
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like describe-transit-gateway-peering-attachments-result
+    note <Success>

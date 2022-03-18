@@ -1,0 +1,55 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/fitness/v1/base/list-sessions-response
+  take form list-sessions-response
+
+boot fitness-users-sessions-list, name <fitness.users.sessions.list>
+  note <Lists sessions previously created.>
+
+  take user-id
+    like native-string
+    note <List sessions for the person identified. Use me to indicate the authenticated user. Only me is supported at this time.>
+  take activity-type
+    like list
+      like native-integer
+    note <If non-empty, only sessions with these activity types should be returned.>
+    void take
+  take end-time
+    like native-string
+    note <An RFC3339 timestamp. Only sessions ending between the start and end times will be included in the response. If this time is omitted but startTime is specified, all sessions from startTime to the end of time will be returned.>
+    void take
+  take include-deleted
+    like native-boolean
+    note <If true, and if both startTime and endTime are omitted, session deletions will be returned.>
+    void take
+  take page-token
+    like native-string
+    note <The continuation token, which is used for incremental syncing. To get the next batch of changes, set this parameter to the value of nextPageToken from the previous response. The page token is ignored if either start or end time is specified. If none of start time, end time, and the page token is specified, sessions modified in the last 30 days are returned.>
+    void take
+  take start-time
+    like native-string
+    note <An RFC3339 timestamp. Only sessions ending between the start and end times will be included in the response. If this time is omitted but endTime is specified, all sessions from the start of time up to endTime will be returned.>
+    void take
+
+  line </{user-id}/sessions>
+
+  find <activityType>, loan activity-type
+  find <endTime>, loan end-time
+  find <includeDeleted>, loan include-deleted
+  find <pageToken>, loan page-token
+  find <startTime>, loan start-time
+
+  loot 200
+    seed json, like list-sessions-response
+    note <Successful response>

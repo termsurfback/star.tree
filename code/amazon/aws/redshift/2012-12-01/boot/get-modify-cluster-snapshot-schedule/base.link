@@ -1,0 +1,54 @@
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/cluster-not-found-fault
+  take form cluster-not-found-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/invalid-cluster-snapshot-schedule-state-fault
+  take form invalid-cluster-snapshot-schedule-state-fault
+
+load @drumwork/snow/amazonaws.com/redshift/2012-12-01/base/snapshot-schedule-not-found-fault
+  take form snapshot-schedule-not-found-fault
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-modify-cluster-snapshot-schedule, name <GET_ModifyClusterSnapshotSchedule>
+  note <Modifies a snapshot schedule for a cluster.>
+
+  take cluster-identifier
+    like native-string
+    note <A unique identifier for the cluster whose snapshot schedule you want to modify.>
+  take schedule-identifier
+    like native-string
+    note <A unique alphanumeric identifier for the schedule that you want to associate with the cluster.>
+    void take
+  take disassociate-schedule
+    like native-boolean
+    note <A boolean to indicate whether to remove the assoiciation between the cluster and the schedule.>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyClusterSnapshotSchedule>
+
+  find <ClusterIdentifier>, loan cluster-identifier
+  find <ScheduleIdentifier>, loan schedule-identifier
+  find <DisassociateSchedule>, loan disassociate-schedule
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    note <Success>
+  loot 480
+    seed xml, like cluster-not-found-fault
+    note <ClusterNotFoundFault>
+  loot 481
+    seed xml, like snapshot-schedule-not-found-fault
+    note <SnapshotScheduleNotFoundFault>
+  loot 482
+    seed xml, like invalid-cluster-snapshot-schedule-state-fault
+    note <InvalidClusterSnapshotScheduleStateFault>

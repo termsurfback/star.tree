@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/twilio.com/twilio_chat_v2/1.27.2/base/chat-v2-service-channel
+  take form chat-v2-service-channel
+
+load @drumwork/snow/twilio.com/twilio_chat_v2/1.27.2/base/update-channel-body
+  take form update-channel-body
+
+boot update-channel, name <UpdateChannel>
+  take service-sid
+    like native-string
+    note <The SID of the \[Service\](https://www.twilio.com/docs/chat/rest/service-resource) to update the Channel resource in.>
+  take sid
+    like native-string
+    note <The SID of the Channel resource to update. This value can be either the \`sid\` or the \`unique\_name\` of the Channel resource to update.>
+  take x-twilio-webhook-enabled
+    like native-string
+    note <The X-Twilio-Webhook-Enabled HTTP request header>
+    void take
+  take update-channel-body, like update-channel-body
+    void take
+
+  line </v2/Services/{service-sid}/Channels/{sid}>
+
+  hint <X-Twilio-Webhook-Enabled>, loan x-twilio-webhook-enabled
+
+  seed x-www-form-urlencoded, loan update-channel-body
+
+  loot 200
+    seed json, like chat-v2-service-channel
+    note <OK>

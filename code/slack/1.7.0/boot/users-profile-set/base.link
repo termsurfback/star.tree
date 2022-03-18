@@ -1,0 +1,51 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-false
+  take form defs-ok-false
+
+load @drumwork/snow/slack.com/1.7.0/base/defs-ok-true
+  take form defs-ok-true
+
+load @drumwork/snow/slack.com/1.7.0/base/objs-user-profile
+  take form objs-user-profile
+
+load @drumwork/snow/slack.com/1.7.0/base/users-profile-set-body
+  take form users-profile-set-body
+
+boot users-profile-set, name <users_profile_set>
+  note <Set the profile information for a user.>
+
+  take token
+    like native-string
+    note <Authentication token. Requires scope: `users.profile:write`>
+  take users-profile-set-body, like users-profile-set-body
+    void take
+
+  line </users.profile.set>
+
+  hint <token>, loan token
+
+  seed x-www-form-urlencoded, loan users-profile-set-body
+
+  loot 200
+    seed json
+      like form
+        take email-pending, name <email_pending>
+          void take
+        take ok, name <ok>
+          like defs-ok-true
+        take profile, name <profile>
+          like objs-user-profile
+        take username, name <username>
+    note <Typical success response>
+  loot fall
+    seed json
+      like form
+        take callstack, name <callstack>
+          void take
+        take error, name <error>
+        take ok, name <ok>
+          like defs-ok-false
+    note <Typical error response>

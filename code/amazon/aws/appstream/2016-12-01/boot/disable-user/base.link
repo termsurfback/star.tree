@@ -1,0 +1,29 @@
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/disable-user-result
+  take form disable-user-result
+
+load @drumwork/snow/amazonaws.com/appstream/2016-12-01/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot disable-user, name <DisableUser>
+  note <Disables the specified user in the user pool. Users can't sign in to AppStream 2.0 until they are re-enabled. This action does not delete the user.>
+
+  take x-amz-target
+    like native-string
+  take disable-user-request, like disable-user-request
+
+  line </#X-Amz-Target=PhotonAdminProxyService.DisableUser>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan disable-user-request
+
+  loot 200
+    seed json, like disable-user-result
+    note <Success>
+  loot 480
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

@@ -1,0 +1,69 @@
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/default-user-required
+  take form default-user-required
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/duplicate-user-name-fault
+  take form duplicate-user-name-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/tag-quota-per-resource-exceeded
+  take form tag-quota-per-resource-exceeded
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/user-group
+  take form user-group
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/user-group-already-exists-fault
+  take form user-group-already-exists-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/user-group-quota-exceeded-fault
+  take form user-group-quota-exceeded-fault
+
+load @drumwork/snow/amazonaws.com/elasticache/2015-02-02/base/user-not-found-fault
+  take form user-not-found-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-create-user-group, name <POST_CreateUserGroup>
+  note <For Redis engine version 6.x onwards: Creates a Redis user group. For more information, see [Using Role Based Access Control (RBAC)](http://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/Clusters.RBAC.html)>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take create-user-group-message, like create-user-group-message
+    void take
+
+  line </#Action=CreateUserGroup>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan create-user-group-message
+
+  loot 200
+    seed xml, like user-group
+    note <Success>
+  loot 480
+    seed xml, like user-not-found-fault
+    note <UserNotFoundFault>
+  loot 481
+    seed xml, like duplicate-user-name-fault
+    note <DuplicateUserNameFault>
+  loot 482
+    seed xml, like user-group-already-exists-fault
+    note <UserGroupAlreadyExistsFault>
+  loot 483
+    seed xml, like default-user-required
+    note <DefaultUserRequired>
+  loot 484
+    seed xml, like user-group-quota-exceeded-fault
+    note <UserGroupQuotaExceededFault>
+  loot 485
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 486
+    seed xml, like tag-quota-per-resource-exceeded
+    note <TagQuotaPerResourceExceeded>

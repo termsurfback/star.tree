@@ -1,0 +1,39 @@
+
+load @drumwork/snow/amazonaws.com/datasync/2018-11-09/base/internal-exception
+  take form internal-exception
+
+load @drumwork/snow/amazonaws.com/datasync/2018-11-09/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/datasync/2018-11-09/base/start-task-execution-response
+  take form start-task-execution-response
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot start-task-execution, name <StartTaskExecution>
+  note <Starts a specific invocation of a task. A `TaskExecution` value represents an individual run of a task. Each task can have at most one `TaskExecution` at a time.
+
+`TaskExecution` has the following transition phases: INITIALIZING | PREPARING | TRANSFERRING | VERIFYING | SUCCESS/FAILURE.
+
+For detailed information, see the Task Execution section in the Components and Terminology topic in the _DataSync User Guide_.>
+
+  take x-amz-target
+    like native-string
+  take start-task-execution-request, like start-task-execution-request
+
+  line </#X-Amz-Target=FmrsService.StartTaskExecution>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan start-task-execution-request
+
+  loot 200
+    seed json, like start-task-execution-response
+    note <Success>
+  loot 480
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>
+  loot 481
+    seed json, like internal-exception
+    note <InternalException>

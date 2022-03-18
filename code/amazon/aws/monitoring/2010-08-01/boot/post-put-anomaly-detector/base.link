@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/internal-service-fault
+  take form internal-service-fault
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-parameter-value-exception
+  take form invalid-parameter-value-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/missing-required-parameter-exception
+  take form missing-required-parameter-exception
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/put-anomaly-detector-output
+  take form put-anomaly-detector-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-put-anomaly-detector, name <POST_PutAnomalyDetector>
+  note <Creates an anomaly detection model for a CloudWatch metric. You can use the model to display a band of expected normal values when the metric is graphed.
+
+For more information, see [CloudWatch Anomaly Detection](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Anomaly_Detection.html).>
+
+  take action
+    like native-string
+  take version
+    like native-string
+  take put-anomaly-detector-input, like put-anomaly-detector-input
+    void take
+
+  line </#Action=PutAnomalyDetector>
+
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan put-anomaly-detector-input
+
+  loot 200
+    seed xml, like put-anomaly-detector-output
+    note <Success>
+  loot 480
+    seed xml, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed xml, like internal-service-fault
+    note <InternalServiceFault>
+  loot 482
+    seed xml, like invalid-parameter-value-exception
+    note <InvalidParameterValueException>
+  loot 483
+    seed xml, like missing-required-parameter-exception
+    note <MissingRequiredParameterException>

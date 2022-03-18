@@ -1,0 +1,62 @@
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/concurrent-update-exception
+  take form concurrent-update-exception
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/describe-scheduled-actions-response
+  take form describe-scheduled-actions-response
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/internal-service-exception
+  take form internal-service-exception
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/application-autoscaling/2016-02-06/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-scheduled-actions, name <DescribeScheduledActions>
+  note <Describes the Application Auto Scaling scheduled actions for the specified service namespace.
+
+You can filter the results using the `ResourceId`, `ScalableDimension`, and `ScheduledActionNames` parameters.
+
+For more information, see [Scheduled scaling](https://docs.aws.amazon.com/autoscaling/application/userguide/application-auto-scaling-scheduled-scaling.html) and [Managing scheduled scaling](https://docs.aws.amazon.com/autoscaling/application/userguide/scheduled-scaling-additional-cli-commands.html) in the _Application Auto Scaling User Guide_.>
+
+  take x-amz-target
+    like native-string
+  take max-results
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take describe-scheduled-actions-request, like describe-scheduled-actions-request
+
+  line </#X-Amz-Target=AnyScaleFrontendService.DescribeScheduledActions>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  find <MaxResults>, loan max-results
+  find <NextToken>, loan next-token
+
+  seed json, loan describe-scheduled-actions-request
+
+  loot 200
+    seed json, like describe-scheduled-actions-response
+    note <Success>
+  loot 480
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 481
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 482
+    seed json, like concurrent-update-exception
+    note <ConcurrentUpdateException>
+  loot 483
+    seed json, like internal-service-exception
+    note <InternalServiceException>

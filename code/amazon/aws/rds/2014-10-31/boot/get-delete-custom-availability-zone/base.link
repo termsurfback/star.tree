@@ -1,0 +1,43 @@
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/custom-availability-zone-not-found-fault
+  take form custom-availability-zone-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/delete-custom-availability-zone-result
+  take form delete-custom-availability-zone-result
+
+load @drumwork/snow/amazonaws.com/rds/2014-10-31/base/kms-key-not-accessible-fault
+  take form kms-key-not-accessible-fault
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-delete-custom-availability-zone, name <GET_DeleteCustomAvailabilityZone>
+  note <Deletes a custom Availability Zone (AZ).
+
+A custom AZ is an on-premises AZ that is integrated with a VMware vSphere cluster.
+
+For more information about RDS on VMware, see the [RDS on VMware User Guide.](https://docs.aws.amazon.com/AmazonRDS/latest/RDSonVMwareUserGuide/rds-on-vmware.html)>
+
+  take custom-availability-zone-id
+    like native-string
+    note <The custom AZ identifier.>
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=DeleteCustomAvailabilityZone>
+
+  find <CustomAvailabilityZoneId>, loan custom-availability-zone-id
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like delete-custom-availability-zone-result
+    note <Success>
+  loot 480
+    seed xml, like custom-availability-zone-not-found-fault
+    note <CustomAvailabilityZoneNotFoundFault>
+  loot 481
+    seed xml, like kms-key-not-accessible-fault
+    note <KMSKeyNotAccessibleFault>

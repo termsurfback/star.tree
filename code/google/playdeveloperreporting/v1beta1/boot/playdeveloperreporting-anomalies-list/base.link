@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/playdeveloperreporting/v1beta1/base/google-play-developer-reporting-v1beta1-list-anomalies-response
+  take form google-play-developer-reporting-v1beta1-list-anomalies-response
+
+boot playdeveloperreporting-anomalies-list, name <playdeveloperreporting.anomalies.list>
+  note <Lists anomalies in any of the datasets.>
+
+  take parent
+    like native-string
+    note <Required. Parent app for which anomalies were detected. Format: apps/{app}>
+  take filter
+    like native-string
+    note <Filtering criteria for anomalies. For basic filter guidance, please check: https://google.aip.dev/160. **Supported functions:** * `activeBetween(startTime, endTime)`: If specified, only list anomalies that were active in between `startTime` (inclusive) and `endTime` (exclusive). Both parameters are expected to conform to an RFC-3339 formatted string (e.g. `2012-04-21T11:30:00-04:00`). UTC offsets are supported. Both `startTime` and `endTime` accept the special value `UNBOUNDED`, to signify intervals with no lower or upper bound, respectively. Examples: * `activeBetween("2021-04-21T11:30:00Z", "2021-07-21T00:00:00Z")` * `activeBetween(UNBOUNDED, "2021-11-21T00:00:00-04:00")` * `activeBetween("2021-07-21T00:00:00-04:00", UNBOUNDED)`>
+    void take
+  take page-size
+    like native-integer
+    note <Maximum size of the returned data. If unspecified, at most 10 anomalies will be returned. The maximum value is 100; values above 100 will be coerced to 100.>
+    void take
+  take page-token
+    like native-string
+    note <A page token, received from a previous `ListErrorReports` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListErrorReports` must match the call that provided the page token.>
+    void take
+
+  line </v1beta1/{parent}/anomalies>
+
+  find <filter>, loan filter
+  find <pageSize>, loan page-size
+  find <pageToken>, loan page-token
+
+  loot 200
+    seed json, like google-play-developer-reporting-v1beta1-list-anomalies-response
+    note <Successful response>

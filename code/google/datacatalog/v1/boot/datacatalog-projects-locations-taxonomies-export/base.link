@@ -1,0 +1,37 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/googleapis.com/datacatalog/v1/base/google-cloud-datacatalog-v1-export-taxonomies-response
+  take form google-cloud-datacatalog-v1-export-taxonomies-response
+
+boot datacatalog-projects-locations-taxonomies-export, name <datacatalog.projects.locations.taxonomies.export>
+  note <Exports taxonomies in the requested type and returns them, including their policy tags. The requested taxonomies must belong to the same project. This method generates `SerializedTaxonomy` protocol buffers with nested policy tags that can be used as input for `ImportTaxonomies` calls.>
+
+  take parent
+    like native-string
+    note <Required. Resource name of the project that the exported taxonomies belong to.>
+  take serialized-taxonomies
+    like native-boolean
+    note <Serialized export taxonomies that contain all the policy tags as nested protocol buffers.>
+    void take
+  take taxonomies
+    like list
+      like native-string
+    note <Required. Resource names of the taxonomies to export.>
+    void take
+
+  line </v1/{parent}/taxonomies:export>
+
+  find <serializedTaxonomies>, loan serialized-taxonomies
+  find <taxonomies>, loan taxonomies
+
+  loot 200
+    seed json, like google-cloud-datacatalog-v1-export-taxonomies-response
+    note <Successful response>

@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/describe-alarm-history-output
+  take form describe-alarm-history-output
+
+load @drumwork/snow/amazonaws.com/monitoring/2010-08-01/base/invalid-next-token
+  take form invalid-next-token
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-describe-alarm-history, name <POST_DescribeAlarmHistory>
+  note <Retrieves the history for the specified alarm. You can filter the results by date range or item type. If an alarm name is not specified, the histories for either all metric alarms or all composite alarms are returned.
+
+CloudWatch retains the history of an alarm even if you delete the alarm.>
+
+  take max-records
+    like native-string
+    note <Pagination limit>
+    void take
+  take next-token
+    like native-string
+    note <Pagination token>
+    void take
+  take action
+    like native-string
+  take version
+    like native-string
+  take describe-alarm-history-input, like describe-alarm-history-input
+    void take
+
+  line </#Action=DescribeAlarmHistory>
+
+  find <MaxRecords>, loan max-records
+  find <NextToken>, loan next-token
+  find <Action>, loan action
+  find <Version>, loan version
+
+  seed xml, loan describe-alarm-history-input
+
+  loot 200
+    seed xml, like describe-alarm-history-output
+    note <Success>
+  loot 480
+    seed xml, like invalid-next-token
+    note <InvalidNextToken>

@@ -1,0 +1,41 @@
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/describe-observation-response
+  take form describe-observation-response
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/internal-server-exception
+  take form internal-server-exception
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/resource-not-found-exception
+  take form resource-not-found-exception
+
+load @drumwork/snow/amazonaws.com/application-insights/2018-11-25/base/validation-exception
+  take form validation-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-observation, name <DescribeObservation>
+  note <Describes an anomaly or error with the application.>
+
+  take x-amz-target
+    like native-string
+  take describe-observation-request, like describe-observation-request
+
+  line </#X-Amz-Target=EC2WindowsBarleyService.DescribeObservation>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-observation-request
+
+  loot 200
+    seed json, like describe-observation-response
+    note <Success>
+  loot 480
+    seed json, like internal-server-exception
+    note <InternalServerException>
+  loot 481
+    seed json, like validation-exception
+    note <ValidationException>
+  loot 482
+    seed json, like resource-not-found-exception
+    note <ResourceNotFoundException>

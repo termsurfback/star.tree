@@ -1,0 +1,110 @@
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/stripe.com/2020-08-27/base/error
+  take form error
+
+load @drumwork/snow/stripe.com/2020-08-27/base/get-invoices-body
+  take form get-invoices-body
+
+boot get-invoices, name <GetInvoices>
+  note <You can list all invoices, or list the invoices for a specific customer. The invoices are returned sorted by creation date, with the most recently created invoices appearing first.>
+
+  take collection-method
+    like native-string
+    note <The collection method of the invoice to retrieve. Either `charge_automatically` or `send_invoice`.>
+    void take
+  take created
+    like sink
+      like form
+        take gt, name <gt>
+          void take
+        take gte, name <gte>
+          void take
+        take lt, name <lt>
+          void take
+        take lte, name <lte>
+          void take
+      like native-integer
+    void take
+  take customer
+    like native-string
+    note <Only return invoices for the customer specified by this customer ID.>
+    void take
+  take due-date
+    like sink
+      like form
+        take gt, name <gt>
+          void take
+        take gte, name <gte>
+          void take
+        take lt, name <lt>
+          void take
+        take lte, name <lte>
+          void take
+      like native-integer
+    void take
+  take ending-before
+    like native-string
+    note <A cursor for use in pagination. `ending_before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with `obj_bar`, your subsequent call can include `ending_before=obj_bar` in order to fetch the previous page of the list.>
+    void take
+  take expand
+    like list
+      like native-string
+    note <Specifies which fields in the response should be expanded.>
+    void take
+  take limit
+    like native-integer
+    note <A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.>
+    void take
+  take starting-after
+    like native-string
+    note <A cursor for use in pagination. `starting_after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with `obj_foo`, your subsequent call can include `starting_after=obj_foo` in order to fetch the next page of the list.>
+    void take
+  take status
+    like native-string
+    note <The status of the invoice, one of `draft`, `open`, `paid`, `uncollectible`, or `void`. [Learn more](https://stripe.com/docs/billing/invoices/workflow#workflow-overview)>
+    void take
+  take subscription
+    like native-string
+    note <Only return invoices for the subscription specified by this subscription ID.>
+    void take
+  take get-invoices-body, like get-invoices-body
+    void take
+
+  line </v1/invoices>
+
+  find <collection_method>, loan collection-method
+  find <created>, loan created
+  find <customer>, loan customer
+  find <due_date>, loan due-date
+  find <ending_before>, loan ending-before
+  find <expand>, loan expand
+  find <limit>, loan limit
+  find <starting_after>, loan starting-after
+  find <status>, loan status
+  find <subscription>, loan subscription
+
+  seed x-www-form-urlencoded, loan get-invoices-body
+
+  loot 200
+    seed json
+      like form
+        take data, name <data>
+        take has-more, name <has_more>
+        take object, name <object>
+        take url, name <url>
+    note <Successful response.>
+  loot fall
+    seed json, like error
+    note <Error response.>

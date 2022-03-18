@@ -1,0 +1,45 @@
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/internal-server-error
+  take form internal-server-error
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/invalid-gateway-request-exception
+  take form invalid-gateway-request-exception
+
+load @drumwork/snow/amazonaws.com/storagegateway/2013-06-30/base/shutdown-gateway-output
+  take form shutdown-gateway-output
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot shutdown-gateway, name <ShutdownGateway>
+  note <Shuts down a gateway. To specify which gateway to shut down, use the Amazon Resource Name (ARN) of the gateway in the body of your request.
+
+The operation shuts down the gateway service component running in the gateway's virtual machine (VM) and not the host VM.
+
+If you want to shut down the VM, it is recommended that you first shut down the gateway component in the VM to avoid unpredictable conditions.
+
+After the gateway is shutdown, you cannot call any other API except StartGateway, DescribeGatewayInformation, and ListGateways. For more information, see ActivateGateway. Your applications cannot read from or write to the gateway's storage volumes, and there are no snapshots taken.
+
+When you make a shutdown request, you will get a `200 OK` success response immediately. However, it might take some time for the gateway to shut down. You can call the DescribeGatewayInformation API to check the status. For more information, see ActivateGateway.
+
+If do not intend to use the gateway again, you must delete the gateway (using DeleteGateway) to no longer pay software charges associated with the gateway.>
+
+  take x-amz-target
+    like native-string
+  take shutdown-gateway-input, like shutdown-gateway-input
+
+  line </#X-Amz-Target=StorageGateway_20130630.ShutdownGateway>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan shutdown-gateway-input
+
+  loot 200
+    seed json, like shutdown-gateway-output
+    note <Success>
+  loot 480
+    seed json, like invalid-gateway-request-exception
+    note <InvalidGatewayRequestException>
+  loot 481
+    seed json, like internal-server-error
+    note <InternalServerError>

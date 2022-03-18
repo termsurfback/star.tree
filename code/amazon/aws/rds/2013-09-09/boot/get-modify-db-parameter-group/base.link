@@ -1,0 +1,46 @@
+
+load @drumwork/snow/amazonaws.com/rds/2013-09-09/base/db-parameter-group-name-message
+  take form db-parameter-group-name-message
+
+load @drumwork/snow/amazonaws.com/rds/2013-09-09/base/db-parameter-group-not-found-fault
+  take form db-parameter-group-not-found-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-09-09/base/invalid-db-parameter-group-state-fault
+  take form invalid-db-parameter-group-state-fault
+
+load @drumwork/snow/amazonaws.com/rds/2013-09-09/base/parameter
+  take form parameter
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-modify-db-parameter-group, name <GET_ModifyDBParameterGroup>
+  take db-parameter-group-name
+    like native-string
+  take parameters
+    like list
+      like parameter
+  take action
+    like native-string
+  take version
+    like native-string
+
+  line </#Action=ModifyDBParameterGroup>
+
+  find <DBParameterGroupName>, loan db-parameter-group-name
+  find <Parameters>, loan parameters
+  find <Action>, loan action
+  find <Version>, loan version
+
+  loot 200
+    seed xml, like db-parameter-group-name-message
+    note <Success>
+  loot 480
+    seed xml, like db-parameter-group-not-found-fault
+    note <DBParameterGroupNotFoundFault>
+  loot 481
+    seed xml, like invalid-db-parameter-group-state-fault
+    note <InvalidDBParameterGroupStateFault>

@@ -1,0 +1,49 @@
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/describe-pipelines-output
+  take form describe-pipelines-output
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/internal-service-error
+  take form internal-service-error
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/invalid-request-exception
+  take form invalid-request-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/pipeline-deleted-exception
+  take form pipeline-deleted-exception
+
+load @drumwork/snow/amazonaws.com/datapipeline/2012-10-29/base/pipeline-not-found-exception
+  take form pipeline-not-found-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot describe-pipelines, name <DescribePipelines>
+  note <Retrieves metadata about one or more pipelines. The information retrieved includes the name of the pipeline, the pipeline identifier, its current state, and the user account that owns the pipeline. Using account credentials, you can retrieve metadata about pipelines that you or your IAM users have created. If you are using an IAM user account, you can retrieve metadata about only those pipelines for which you have read permissions.
+
+To retrieve the full pipeline definition instead of metadata about the pipeline, call GetPipelineDefinition.>
+
+  take x-amz-target
+    like native-string
+  take describe-pipelines-input, like describe-pipelines-input
+
+  line </#X-Amz-Target=DataPipeline.DescribePipelines>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan describe-pipelines-input
+
+  loot 200
+    seed json, like describe-pipelines-output
+    note <Success>
+  loot 480
+    seed json, like pipeline-not-found-exception
+    note <PipelineNotFoundException>
+  loot 481
+    seed json, like pipeline-deleted-exception
+    note <PipelineDeletedException>
+  loot 482
+    seed json, like internal-service-error
+    note <InternalServiceError>
+  loot 483
+    seed json, like invalid-request-exception
+    note <InvalidRequestException>

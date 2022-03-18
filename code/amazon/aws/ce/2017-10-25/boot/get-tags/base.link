@@ -1,0 +1,53 @@
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/bill-expiration-exception
+  take form bill-expiration-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/data-unavailable-exception
+  take form data-unavailable-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/get-tags-response
+  take form get-tags-response
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/invalid-next-token-exception
+  take form invalid-next-token-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/limit-exceeded-exception
+  take form limit-exceeded-exception
+
+load @drumwork/snow/amazonaws.com/ce/2017-10-25/base/request-changed-exception
+  take form request-changed-exception
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-tags, name <GetTags>
+  note <Queries for available tag keys and tag values for a specified period. You can search the tag values for an arbitrary string.>
+
+  take x-amz-target
+    like native-string
+  take get-tags-request, like get-tags-request
+
+  line </#X-Amz-Target=AWSInsightsIndexService.GetTags>
+
+  hint <X-Amz-Target>, loan x-amz-target
+
+  seed json, loan get-tags-request
+
+  loot 200
+    seed json, like get-tags-response
+    note <Success>
+  loot 480
+    seed json, like limit-exceeded-exception
+    note <LimitExceededException>
+  loot 481
+    seed json, like bill-expiration-exception
+    note <BillExpirationException>
+  loot 482
+    seed json, like data-unavailable-exception
+    note <DataUnavailableException>
+  loot 483
+    seed json, like invalid-next-token-exception
+    note <InvalidNextTokenException>
+  loot 484
+    seed json, like request-changed-exception
+    note <RequestChangedException>
