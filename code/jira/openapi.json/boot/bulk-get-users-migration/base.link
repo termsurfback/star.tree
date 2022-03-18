@@ -1,0 +1,56 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/user-migration-bean
+  take form user-migration-bean
+
+boot bulk-get-users-migration, name <bulkGetUsersMigration>
+  deed get
+  note <Returns the account IDs for the users specified in the `key` or `username` parameters. Note that multiple `key` or `username` parameters can be specified. **[Permissions](#permissions) required:** Permission to access Jira.>
+
+  take start-at
+    like native-integer
+      bind lace, lace int64
+        fall <0>
+    note <The index of the first item to return in a page of results (page offset).>
+    void take
+  take max-results
+    like native-integer
+      bind lace, lace int32
+        fall <10>
+    note <The maximum number of items to return per page.>
+    void take
+  take username
+    like list
+      like native-string
+    note <Username of a user. To specify multiple users, pass multiple copies of this parameter. For example, `username=fred&username=barney`. Required if `key` isn't provided. Cannot be provided if `key` is present.>
+    void take
+  take key
+    like list
+      like native-string
+    note <Key of a user. To specify multiple users, pass multiple copies of this parameter. For example, `key=fred&key=barney`. Required if `username` isn't provided. Cannot be provided if `username` is present.>
+    void take
+
+  line </rest/api/3/user/bulk/migration>
+
+  find <startAt>, loan start-at
+  find <maxResults>, loan max-results
+  find <username>, loan username
+  find <key>, loan key
+
+  loot 200
+    seed json
+      like list
+        like user-migration-bean
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if `key` or `username`>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>

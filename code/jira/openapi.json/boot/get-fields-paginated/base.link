@@ -1,0 +1,76 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/error-collection
+  take form error-collection
+
+load @drumwork/snow/jira/openapi.json/base/page-bean-field
+  take form page-bean-field
+
+boot get-fields-paginated, name <getFieldsPaginated>
+  deed get
+  note <Returns a [paginated](#pagination) list of fields for Classic Jira projects. The list can include: * all fields. * specific fields, by defining `id`. * fields that contain a string in the field name or description, by defining `query`. * specific fields that contain a string in the field name or description, by defining `id` and `query`. Only custom fields can be queried, `type` must be set to `custom`. **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take start-at
+    like native-integer
+      bind lace, lace int64
+        fall <0>
+    note <The index of the first item to return in a page of results (page offset).>
+    void take
+  take max-results
+    like native-integer
+      bind lace, lace int32
+        fall <50>
+    note <The maximum number of items to return per page.>
+    void take
+  take type
+    like list
+      like native-string
+    note <The type of fields to search.>
+    void take
+  take id
+    like list
+      like native-string
+    note <The IDs of the custom fields to return or, where `query` is specified, filter.>
+    void take
+  take query
+    like native-string
+    note <String used to perform a case-insensitive partial match with field names or descriptions.>
+    void take
+  take order-by
+    like native-string
+    note <[Order](#ordering) the results by a field: * `contextsCount` Sorts by the number of contexts related to a field. * `lastUsed` Sorts by the date when the value of the field last changed. * `name` Sorts by the field name. * `screensCount` Sorts by the number of screens related to a field.>
+    void take
+  take expand
+    like native-string
+    note <Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Expand options include: * `key` Returns the key for each field. * `lastUsed` Returns the date when the value of the field last changed. * `screensCount` Returns the number of screens related to a field. * `contextsCount` Returns the number of contexts related to a field. * `isLocked` Returns information about whether the field is [locked](https://confluence.atlassian.com/x/ZSN7Og). * `searcherKey` Returns the searcher key for each custom field.>
+    void take
+
+  line </rest/api/3/field/search>
+
+  find <startAt>, loan start-at
+  find <maxResults>, loan max-results
+  find <type>, loan type
+  find <id>, loan id
+  find <query>, loan query
+  find <orderBy>, loan order-by
+  find <expand>, loan expand
+
+  loot 200
+    seed json, like page-bean-field
+    note <Returned if the request is successful.>
+  loot 400
+    seed json, like error-collection
+    note <Returned if the request is invalid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    seed json, like error-collection
+    note <Returned if the user does not have the necessary permission.>

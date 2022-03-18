@@ -1,0 +1,27 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/jira/openapi.json/base/project-issue-type-hierarchy
+  take form project-issue-type-hierarchy
+
+boot get-hierarchy, name <getHierarchy>
+  deed get
+  note <Get the issue type hierarchy for a next-gen project. The issue type hierarchy for a project consists of: * *Epic* at level 1 (optional). * One or more issue types at level 0 such as *Story*, *Task*, or *Bug*. Where the issue type *Epic* is defined, these issue types are used to break down the content of an epic. * *Subtask* at level -1 (optional). This issue type enables level 0 issue types to be broken down into components. Issues based on a level -1 issue type must have a parent issue. **[Permissions](#permissions) required:** *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project.>
+
+  take project-id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the project.>
+
+  line </rest/api/3/project/{project-id}/hierarchy>
+
+  loot 200
+    seed json, like project-issue-type-hierarchy
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if the request is invalid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 404
+    note <Returned if the project is not found or the user does not have the necessary permission.>

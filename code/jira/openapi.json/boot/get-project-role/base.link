@@ -1,0 +1,42 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/project-role
+  take form project-role
+
+boot get-project-role, name <getProjectRole>
+  deed get
+  note <Returns a project role's details and actors associated with the project. The list of actors is sorted by display name. To check whether a user belongs to a role based on their group memberships, use [Get user](#api-rest-api-3-user-get) with the `groups` expand parameter selected. Then check whether the user keys and groups match with the actors returned for the project. This operation can be accessed anonymously. **[Permissions](#permissions) required:** *Administer Projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project or *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take project-id-or-key
+    like native-string
+    note <The project ID or project key (case sensitive).>
+  take id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the project role. Use [Get all project roles](#api-rest-api-3-role-get) to get a list of project role IDs.>
+  take exclude-inactive-users
+    like native-boolean
+    note <Exclude inactive users.>
+    void take
+
+  line </rest/api/3/project/{project-id-or-key}/role/{id}>
+
+  find <excludeInactiveUsers>, loan exclude-inactive-users
+
+  loot 200
+    seed json, like project-role
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if the request is not valid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 404
+    note <Returned if: * the project or project role is not found. * the user does not have administrative permission.>

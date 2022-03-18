@@ -1,0 +1,28 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/page-bean-comment
+  take form page-bean-comment
+
+boot get-comments-by-ids, name <getCommentsByIds>
+  deed post
+  note <Returns a [paginated](#pagination) list of comments specified by a list of comment IDs. This operation can be accessed anonymously. **[Permissions](#permissions) required:** Comments are returned where the user: * has *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project containing the comment. * If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue. * If the comment has visibility restrictions, belongs to the group or has the role visibility is restricted to.>
+
+  take expand
+    like native-string
+    note <Use [expand](#expansion) to include additional information about comments in the response. This parameter accepts a comma-separated list. Expand options include: * `renderedBody` Returns the comment body rendered in HTML. * `properties` Returns the comment's properties.>
+    void take
+  take issue-comment-list-request-bean, like issue-comment-list-request-bean
+
+  line </rest/api/3/comment/list>
+
+  find <expand>, loan expand
+
+  seed json, loan issue-comment-list-request-bean
+
+  loot 200
+    seed json, like page-bean-comment
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if the request contains more than 1000 IDs or is empty.>

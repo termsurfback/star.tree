@@ -1,0 +1,32 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/jira/openapi.json/base/workflow-scheme
+  take form workflow-scheme
+
+boot update-default-workflow, name <updateDefaultWorkflow>
+  deed put
+  note <Sets the default workflow for a workflow scheme. Note that active workflow schemes cannot be edited. If the workflow scheme is active, set `updateDraftIfNeeded` to `true` in the request object and a draft workflow scheme is created or updated with the new default workflow. The draft workflow scheme can be published in Jira. **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the workflow scheme.>
+  take default-workflow, like default-workflow
+
+  line </rest/api/3/workflowscheme/{id}/default>
+
+  seed json, loan default-workflow
+
+  loot 200
+    seed json, like workflow-scheme
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if the workflow scheme cannot be edited and `updateDraftIfNeeded` is not `true`.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    note <Returned if the user does not have the necessary permission.>
+  loot 404
+    note <Returned if the workflow scheme is not found.>

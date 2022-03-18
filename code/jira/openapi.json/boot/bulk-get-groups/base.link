@@ -1,0 +1,57 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/page-bean-group-details
+  take form page-bean-group-details
+
+boot bulk-get-groups, name <bulkGetGroups>
+  deed get
+  note <Returns a [paginated](#pagination) list of groups. **[Permissions](#permissions) required:** *Browse users and groups* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take start-at
+    like native-integer
+      bind lace, lace int64
+        fall <0>
+    note <The index of the first item to return in a page of results (page offset).>
+    void take
+  take max-results
+    like native-integer
+      bind lace, lace int32
+        fall <50>
+    note <The maximum number of items to return per page.>
+    void take
+  take group-id
+    like list
+      like native-string
+    note <The ID of a group. To specify multiple IDs, pass multiple `groupId` parameters. For example, `groupId=5b10a2844c20165700ede21g&groupId=5b10ac8d82e05b22cc7d4ef5`.>
+    void take
+  take group-name
+    like list
+      like native-string
+    note <The name of a group. To specify multiple names, pass multiple `groupName` parameters. For example, `groupName=administrators&groupName=jira-software-users`.>
+    void take
+
+  line </rest/api/3/group/bulk>
+
+  find <startAt>, loan start-at
+  find <maxResults>, loan max-results
+  find <groupId>, loan group-id
+  find <groupName>, loan group-name
+
+  loot 200
+    seed json, like page-bean-group-details
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if the request is not valid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    seed json
+    note <Returned if the user does not have the necessary permission.>

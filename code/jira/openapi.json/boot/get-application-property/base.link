@@ -1,0 +1,42 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/application-property
+  take form application-property
+
+boot get-application-property, name <getApplicationProperty>
+  deed get
+  note <Returns all application properties or an application property. If you specify a value for the `key` parameter, then an application property is returned as an object (not in an array). Otherwise, an array of all editable application properties is returned. See [Set application property](#api-rest-api-3-application-properties-id-put) for descriptions of editable properties. **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take key
+    like native-string
+    note <The key of the application property.>
+    void take
+  take permission-level
+    like native-string
+    note <The permission level of all items being returned in the list.>
+    void take
+  take key-filter
+    like native-string
+    note <When a `key` isn't provided, this filters the list of results by the application property `key` using a regular expression. For example, using `jira.lf.*` will return all application properties with keys that start with *jira.lf.*.>
+    void take
+
+  line </rest/api/3/application-properties>
+
+  find <key>, loan key
+  find <permissionLevel>, loan permission-level
+  find <keyFilter>, loan key-filter
+
+  loot 200
+    seed json
+      like list
+        like application-property
+    note <Returned if the request is successful.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 404
+    note <Returned if the application property is not found or the user does not have permission to view it.>

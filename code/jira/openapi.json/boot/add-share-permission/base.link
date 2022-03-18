@@ -1,0 +1,35 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/jira/openapi.json/base/share-permission
+  take form share-permission
+
+boot add-share-permission, name <addSharePermission>
+  deed post
+  note <Add a share permissions to a filter. If you add a global share permission (one for all logged-in users or the public) it will overwrite all share permissions for the filter. Be aware that this operation uses different objects for updating share permissions compared to [Update filter](#api-rest-api-3-filter-id-put). **[Permissions](#permissions) required:** *Share dashboards and filters* [global permission](https://confluence.atlassian.com/x/x4dKLg) and the user must own the filter.>
+
+  take id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the filter.>
+  take share-permission-input-bean, like share-permission-input-bean
+
+  line </rest/api/3/filter/{id}/permission>
+
+  seed json, loan share-permission-input-bean
+
+  loot 201
+    seed json
+      like list
+        like share-permission
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if: * the request object is invalid. For example, it contains an invalid type, the ID does not match the type, or the project or group is not found. * the user does not own the filter. * the user does not have the required permissions.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 404
+    note <Returned if: * the filter is not found. * the user does not have permission to view the filter.>

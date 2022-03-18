@@ -1,0 +1,49 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/error-collection
+  take form error-collection
+
+load @drumwork/snow/jira/openapi.json/base/page-of-dashboards
+  take form page-of-dashboards
+
+boot get-all-dashboards, name <getAllDashboards>
+  deed get
+  note <Returns a list of dashboards owned by or shared with the user. The list may be filtered to include only favorite or owned dashboards. This operation can be accessed anonymously. **[Permissions](#permissions) required:** None.>
+
+  take filter
+    like native-string
+    note <The filter applied to the list of dashboards. Valid values are: * `favourite` Returns dashboards the user has marked as favorite. * `my` Returns dashboards owned by the user.>
+    void take
+  take start-at
+    like native-integer
+      bind lace, lace int32
+        fall <0>
+    note <The index of the first item to return in a page of results (page offset).>
+    void take
+  take max-results
+    like native-integer
+      bind lace, lace int32
+        fall <20>
+    note <The maximum number of items to return per page.>
+    void take
+
+  line </rest/api/3/dashboard>
+
+  find <filter>, loan filter
+  find <startAt>, loan start-at
+  find <maxResults>, loan max-results
+
+  loot 200
+    seed json, like page-of-dashboards
+    note <Returned if the request is successful.>
+  loot 400
+    seed json, like error-collection
+    note <Returned if the request is invalid.>
+  loot 401
+    seed json, like error-collection
+    note <Returned if the authentication credentials are incorrect or missing.>

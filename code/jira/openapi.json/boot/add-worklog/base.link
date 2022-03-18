@@ -1,0 +1,65 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/worklog
+  take form worklog
+
+boot add-worklog, name <addWorklog>
+  deed post
+  note <Adds a worklog to an issue. Time tracking must be enabled in Jira, otherwise this operation returns an error. For more information, see [Configuring time tracking](https://confluence.atlassian.com/x/qoXKM). This operation can be accessed anonymously. **[Permissions](#permissions) required:** * *Browse projects* and *Work on issues* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue is in. * If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.>
+
+  take issue-id-or-key
+    like native-string
+    note <The ID or key the issue.>
+  take notify-users
+    like native-boolean
+    note <Whether users watching the issue are notified by email.>
+    void take
+  take adjust-estimate
+    like native-string
+        fall <auto>
+    note <Defines how to update the issue's time estimate, the options are: * `new` Sets the estimate to a specific value, defined in `newEstimate`. * `leave` Leaves the estimate unchanged. * `manual` Reduces the estimate by amount specified in `reduceBy`. * `auto` Reduces the estimate by the value of `timeSpent` in the worklog.>
+    void take
+  take new-estimate
+    like native-string
+    note <The value to set as the issue's remaining time estimate, as days (\#d), hours (\#h), or minutes (\#m or \#). For example, *2d*. Required when `adjustEstimate` is `new`.>
+    void take
+  take reduce-by
+    like native-string
+    note <The amount to reduce the issue's remaining estimate by, as days (\#d), hours (\#h), or minutes (\#m). For example, *2d*. Required when `adjustEstimate` is `manual`.>
+    void take
+  take expand
+    like native-string
+        fall <>
+    note <Use [expand](#expansion) to include additional information about work logs in the response. This parameter accepts `properties`, which returns worklog properties.>
+    void take
+  take override-editable-flag
+    like native-boolean
+    note <Whether the worklog entry should be added to the issue even if the issue is not editable, because jira.issue.editable set to false or missing. For example, the issue is closed. Connect app users with admin permission and Forge app users with the `manage:jira-configuration` scope can use this flag.>
+    void take
+  take worklog, like worklog
+
+  line </rest/api/3/issue/{issue-id-or-key}/worklog>
+
+  find <notifyUsers>, loan notify-users
+  find <adjustEstimate>, loan adjust-estimate
+  find <newEstimate>, loan new-estimate
+  find <reduceBy>, loan reduce-by
+  find <expand>, loan expand
+  find <overrideEditableFlag>, loan override-editable-flag
+
+  seed json, loan worklog
+
+  loot 201
+    seed json, like worklog
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if: * `adjustEstimate` is set to `new` but `newEstimate` is not provided or is invalid. * `adjustEstimate` is set to `manual` but `reduceBy` is not provided or is invalid. * the user does not have permission to add the worklog. * the request JSON is malformed.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect.>
+  loot 404
+    note <Returned if the issue is not found or the user does not have permission to view it.>

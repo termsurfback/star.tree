@@ -1,0 +1,29 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/error-message
+  take form error-message
+
+boot dynamic-modules-resource-remove-modules-delete, name <DynamicModulesResource.removeModules_delete>
+  deed delete
+  note <Remove all or a list of modules registered by the calling app. **[Permissions](#permissions) required:** Only Connect apps can make this request.>
+
+  take module-key
+    like list
+      like native-string
+    note <The key of the module to remove. To include multiple module keys, provide multiple copies of this parameter. For example, `moduleKey=dynamic-attachment-entity-property&moduleKey=dynamic-select-field`. Nonexistent keys are ignored.>
+    void take
+
+  line </rest/atlassian-connect/1/app/module/dynamic>
+
+  find <moduleKey>, loan module-key
+
+  loot 204
+    note <Returned if the request is successful.>
+  loot 401
+    seed json, like error-message
+    note <Returned if the call is not from a Connect app.>

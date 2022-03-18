@@ -1,0 +1,30 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/unrestricted-user-email
+  take form unrestricted-user-email
+
+boot get-user-email, name <getUserEmail>
+  deed get
+  note <Returns a user's email address. This API is only available to apps approved by Atlassian, according to these [guidelines](https://community.developer.atlassian.com/t/guidelines-for-requesting-access-to-email-address/27603).>
+
+  take account-id
+    like native-string
+    note <The account ID of the user, which uniquely identifies the user across all Atlassian products. For example, `5b10ac8d82e05b22cc7d4ef5`.>
+
+  line </rest/api/3/user/email>
+
+  find <accountId>, loan account-id
+
+  loot 200
+    seed json, like unrestricted-user-email
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if the calling app is not approved to use this API.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing from the request (for example if a user is trying to access this API).>
+  loot 404
+    note <Returned if a user with the given `accountId` doesn't exist>
+  loot 503
+    note <Indicates the API is not currently enabled>

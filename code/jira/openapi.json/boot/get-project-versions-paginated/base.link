@@ -1,0 +1,60 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/page-bean-version
+  take form page-bean-version
+
+boot get-project-versions-paginated, name <getProjectVersionsPaginated>
+  deed get
+  note <Returns a [paginated](#pagination) list of all versions in a project. See the [Get project versions](#api-rest-api-3-project-projectIdOrKey-versions-get) resource if you want to get a full list of versions without pagination. This operation can be accessed anonymously. **[Permissions](#permissions) required:** *Browse Projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project.>
+
+  take project-id-or-key
+    like native-string
+    note <The project ID or project key (case sensitive).>
+  take start-at
+    like native-integer
+      bind lace, lace int64
+        fall <0>
+    note <The index of the first item to return in a page of results (page offset).>
+    void take
+  take max-results
+    like native-integer
+      bind lace, lace int32
+        fall <50>
+    note <The maximum number of items to return per page.>
+    void take
+  take order-by
+    like native-string
+    note <[Order](#ordering) the results by a field: * `description` Sorts by version description. * `name` Sorts by version name. * `releaseDate` Sorts by release date, starting with the oldest date. Versions with no release date are listed last. * `sequence` Sorts by the order of appearance in the user interface. * `startDate` Sorts by start date, starting with the oldest date. Versions with no start date are listed last.>
+    void take
+  take query
+    like native-string
+    note <Filter the results using a literal string. Versions with matching `name` or `description` are returned (case insensitive).>
+    void take
+  take status
+    like native-string
+    note <A list of status values used to filter the results by version status. This parameter accepts a comma-separated list. The status values are `released`, `unreleased`, and `archived`.>
+    void take
+  take expand
+    like native-string
+    note <Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Expand options include: * `issuesstatus` Returns the number of issues in each status category for each version. * `operations` Returns actions that can be performed on the specified version.>
+    void take
+
+  line </rest/api/3/project/{project-id-or-key}/version>
+
+  find <startAt>, loan start-at
+  find <maxResults>, loan max-results
+  find <orderBy>, loan order-by
+  find <query>, loan query
+  find <status>, loan status
+  find <expand>, loan expand
+
+  loot 200
+    seed json, like page-bean-version
+    note <Returned if the request is successful.>
+  loot 404
+    note <Returned if the project is not found or the user does not have permission to view it.>

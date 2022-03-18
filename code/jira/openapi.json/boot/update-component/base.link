@@ -1,0 +1,31 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/project-component
+  take form project-component
+
+boot update-component, name <updateComponent>
+  deed put
+  note <Updates a component. Any fields included in the request are overwritten. If `leadAccountId` is an empty string ("") the component lead is removed. This operation can be accessed anonymously. **[Permissions](#permissions) required:** *Administer projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project containing the component or *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take id
+    like native-string
+    note <The ID of the component.>
+  take project-component, like project-component
+
+  line </rest/api/3/component/{id}>
+
+  seed json, loan project-component
+
+  loot 200
+    seed json, like project-component
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if: * the user is not found. * `assigneeType` is an invalid value. * `name` is over 255 characters in length.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    note <Returned if the user does not have permission to manage the project containing the component or does not have permission to administer Jira.>
+  loot 404
+    note <Returned if the component is not found or the user does not have permission to browse the project containing the component.>

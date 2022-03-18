@@ -1,0 +1,32 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-issue-type, name <deleteIssueType>
+  deed delete
+  note <Deletes the issue type. If the issue type is in use, all uses are updated with the alternative issue type (`alternativeIssueTypeId`). A list of alternative issue types are obtained from the [Get alternative issue types](#api-rest-api-3-issuetype-id-alternatives-get) resource. **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take id
+    like native-string
+    note <The ID of the issue type.>
+  take alternative-issue-type-id
+    like native-string
+    note <The ID of the replacement issue type.>
+    void take
+
+  line </rest/api/3/issuetype/{id}>
+
+  find <alternativeIssueTypeId>, loan alternative-issue-type-id
+
+  loot 204
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if any issues cannot be updated with the alternative issue type.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    note <Returned if the user does not have the necessary permission.>
+  loot 404
+    note <Returned if: * the issue type is in use and an alternative issue type is not specified. * the issue type or alternative issue type is not found.>
+  loot 409
+    note <Returned if the issue type is in use and: * also specified as the alternative issue type. * is a *standard* issue type and the alternative issue type is a *subtask*.>

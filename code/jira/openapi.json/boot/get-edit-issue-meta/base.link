@@ -1,0 +1,40 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/issue-update-metadata
+  take form issue-update-metadata
+
+boot get-edit-issue-meta, name <getEditIssueMeta>
+  deed get
+  note <Returns the edit screen fields for an issue that are visible to and editable by the user. Use the information to populate the requests in [Edit issue](#api-rest-api-3-issue-issueIdOrKey-put). Connect apps having an app user with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg), and Forge apps acting on behalf of users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg), can return additional details using: * `overrideScreenSecurity` Returns hidden fields. * `overrideEditableFlag` Returns uneditable fields. For example, where an issue has a workflow status of closed none of its fields are editable. This operation can be accessed anonymously. **[Permissions](#permissions) required:** * *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue is in. * If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue. Note: For any fields to be editable the user must have the *Edit issues* [project permission](https://confluence.atlassian.com/x/yodKLg) for the issue.>
+
+  take issue-id-or-key
+    like native-string
+    note <The ID or key of the issue.>
+  take override-screen-security
+    like native-boolean
+    note <Whether hidden fields are returned. Available to Connect app users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg) and Forge apps acting on behalf of users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+    void take
+  take override-editable-flag
+    like native-boolean
+    note <Whether non-editable fields are returned. Available to Connect app users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg) and Forge apps acting on behalf of users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+    void take
+
+  line </rest/api/3/issue/{issue-id-or-key}/editmeta>
+
+  find <overrideScreenSecurity>, loan override-screen-security
+  find <overrideEditableFlag>, loan override-editable-flag
+
+  loot 200
+    seed json, like issue-update-metadata
+    note <Returned if the request is successful.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    note <Returned if the user uses an override parameter but doesn't have permission to do so.>
+  loot 404
+    note <Returned if the issue is not found or the user does not have permission to view it.>

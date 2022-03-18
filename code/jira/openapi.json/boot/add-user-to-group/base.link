@@ -1,0 +1,39 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/group
+  take form group
+
+boot add-user-to-group, name <addUserToGroup>
+  deed post
+  note <Adds a user to a group. **[Permissions](#permissions) required:** Site administration (that is, member of the *site-admin* [group](https://confluence.atlassian.com/x/24xjL)).>
+
+  take groupname
+    like native-string
+    note <As a group's name can change, use of `groupId` is recommended to identify a group. The name of the group. This parameter cannot be used with the `groupId` parameter.>
+    void take
+  take group-id
+    like native-string
+    note <The ID of the group. This parameter cannot be used with the `groupName` parameter.>
+    void take
+  take update-user-to-group-bean, like update-user-to-group-bean
+
+  line </rest/api/3/group/user>
+
+  find <groupname>, loan groupname
+  find <groupId>, loan group-id
+
+  seed json, loan update-user-to-group-bean
+
+  loot 201
+    seed json, like group
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if: * `groupname` is not provided. * `accountId` is missing.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing from the request.>
+  loot 403
+    note <Returned if the calling user does not have the necessary permission.>
+  loot 404
+    note <Returned if the group or user are not found.>

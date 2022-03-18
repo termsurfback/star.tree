@@ -1,0 +1,48 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/page-bean-issue-field-option
+  take form page-bean-issue-field-option
+
+boot get-selectable-issue-field-options, name <getSelectableIssueFieldOptions>
+  deed get
+  note <Returns a [paginated](#pagination) list of options for a select list issue field that can be viewed and selected by the user. Note that this operation **only works for issue field select list options added by Connect apps**, it cannot be used with issue field select list options created in Jira or using operations from the [Issue custom field options](#api-group-Issue-custom-field-options) resource. **[Permissions](#permissions) required:** Permission to access Jira.>
+
+  take field-key
+    like native-string
+    note <The field key is specified in the following format: **$(app-key)\_\_$(field-key)**. For example, *example-add-on\_\_example-issue-field*. To determine the `fieldKey` value, do one of the following: * open the app's plugin descriptor, then **app-key** is the key at the top and **field-key** is the key in the `jiraIssueFields` module. **app-key** can also be found in the app listing in the Atlassian Universal Plugin Manager. * run [Get fields](#api-rest-api-3-field-get) and in the field details the value is returned in `key`. For example, `"key": "teams-add-on__team-issue-field"`>
+  take start-at
+    like native-integer
+      bind lace, lace int64
+        fall <0>
+    note <The index of the first item to return in a page of results (page offset).>
+    void take
+  take max-results
+    like native-integer
+      bind lace, lace int32
+        fall <50>
+    note <The maximum number of items to return per page.>
+    void take
+  take project-id
+    like native-integer
+      bind lace, lace int64
+    note <Filters the results to options that are only available in the specified project.>
+    void take
+
+  line </rest/api/3/field/{field-key}/option/suggestions/edit>
+
+  find <startAt>, loan start-at
+  find <maxResults>, loan max-results
+  find <projectId>, loan project-id
+
+  loot 200
+    seed json, like page-bean-issue-field-option
+    note <Returned if the request is successful.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 404
+    note <Returned if the field is not found or does not support options.>

@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/error-collection
+  take form error-collection
+
+load @drumwork/snow/jira/openapi.json/base/task-progress-bean-object
+  take form task-progress-bean-object
+
+boot delete-custom-field, name <deleteCustomField>
+  deed delete
+  note <Deletes a custom field. The custom field is deleted whether it is in the trash or not. See [Edit or delete a custom field](https://confluence.atlassian.com/x/Z44fOw) for more information on trashing and deleting custom fields. This operation is [asynchronous](#async). Follow the `location` link in the response to determine the status of the task and use [Get task](#api-rest-api-3-task-taskId-get) to obtain subsequent updates. **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take id
+    like native-string
+    note <The ID of a custom field.>
+
+  line </rest/api/3/field/{id}>
+
+  loot 303
+    seed json, like task-progress-bean-object
+    note <Returned if the request is successful.>
+  loot 400
+    seed json, like error-collection
+    note <Returned if any of these are true: * The custom field is locked. * The custom field is used in a issue security scheme or a permission scheme. * The custom field ID format is incorrect.>
+  loot 401
+    seed json, like error-collection
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    seed json, like error-collection
+    note <Returned if the user does not have the necessary permission.>
+  loot 404
+    seed json, like error-collection
+    note <Returned if the custom field is not found.>
+  loot 409
+    seed json, like error-collection
+    note <Returned if a task to delete the custom field is running.>

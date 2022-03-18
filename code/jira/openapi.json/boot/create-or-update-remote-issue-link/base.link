@@ -1,0 +1,35 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/remote-issue-link-identifies
+  take form remote-issue-link-identifies
+
+boot create-or-update-remote-issue-link, name <createOrUpdateRemoteIssueLink>
+  deed post
+  note <Creates or updates a remote issue link for an issue. If a `globalId` is provided and a remote issue link with that global ID is found it is updated. Any fields without values in the request are set to null. Otherwise, the remote issue link is created. This operation requires [issue linking to be active](https://confluence.atlassian.com/x/yoXKM). This operation can be accessed anonymously. **[Permissions](#permissions) required:** * *Browse projects* and *Link issues* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue is in. * If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.>
+
+  take issue-id-or-key
+    like native-string
+    note <The ID or key of the issue.>
+  take remote-issue-link-request, like remote-issue-link-request
+
+  line </rest/api/3/issue/{issue-id-or-key}/remotelink>
+
+  seed json, loan remote-issue-link-request
+
+  loot 200
+    seed json, like remote-issue-link-identifies
+    note <Returned if the remote issue link is updated.>
+  loot 201
+    seed json, like remote-issue-link-identifies
+    note <Returned if the remote issue link is created.>
+  loot 400
+    seed json
+    note <Returned if the request is invalid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    note <Returned if the user does not have permission to link issues.>
+  loot 404
+    note <Returned if the issue is not found or the user does not have permission to view the issue.>

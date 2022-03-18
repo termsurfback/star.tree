@@ -1,0 +1,27 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/entity-property
+  take form entity-property
+
+boot get-issue-property, name <getIssueProperty>
+  deed get
+  note <Returns the key and value of an issue's property. This operation can be accessed anonymously. **[Permissions](#permissions) required:** * *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project containing the issue. * If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.>
+
+  take issue-id-or-key
+    like native-string
+    note <The key or ID of the issue.>
+  take property-key
+    like native-string
+    note <The key of the property.>
+
+  line </rest/api/3/issue/{issue-id-or-key}/properties/{property-key}>
+
+  loot 200
+    seed json, like entity-property
+    note <Returned if the request is successful.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 404
+    note <Returned if the issue or property is not found or the user does not have permission to see the issue.>

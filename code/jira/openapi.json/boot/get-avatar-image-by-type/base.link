@@ -1,0 +1,56 @@
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/error-collection
+  take form error-collection
+
+boot get-avatar-image-by-type, name <getAvatarImageByType>
+  deed get
+  note <Returns the default project or issue type avatar image. This operation can be accessed anonymously. **[Permissions](#permissions) required:** None.>
+
+  take type
+    like native-string
+    note <The icon type of the avatar.>
+  take size
+    like native-string
+    note <The size of the avatar image. If not provided the default size is returned.>
+    void take
+  take format
+    like native-string
+    note <The format to return the avatar image in. If not provided the original content format is returned.>
+    void take
+
+  line </rest/api/3/universal_avatar/view/type/{type}>
+
+  find <size>, loan size
+  find <format>, loan format
+
+  loot 200
+    seed json
+      like form
+    seed png
+    seed svg+xml
+    seed *
+    note <Returned if the request is successful.>
+  loot 401
+    seed json, like error-collection
+    seed png
+    seed svg+xml
+    seed *
+    note <Returned if the authentication credentials are incorrect.>
+  loot 403
+    seed json, like error-collection
+    seed png
+    seed svg+xml
+    seed *
+    note <Returned if the user does not have the necessary permission.>
+  loot 404
+    seed json, like error-collection
+    seed png
+    seed svg+xml
+    seed *
+    note <Returned if an avatar is not found or an avatar matching the requested size is not found.>

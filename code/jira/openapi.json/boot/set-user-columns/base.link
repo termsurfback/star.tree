@@ -1,0 +1,36 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/set-user-columns-body
+  take form set-user-columns-body
+
+boot set-user-columns, name <setUserColumns>
+  deed put
+  note <Sets the default [ issue table columns](https://confluence.atlassian.com/x/XYdKLg) for the user. If an account ID is not passed, the calling user's default columns are set. If no column details are sent, then all default columns are removed. The parameters for this resource are expressed as HTML form data. For example, in curl: `curl -X PUT -d columns=summary -d columns=description https://your-domain.atlassian.net/rest/api/3/user/columns?accountId=5b10ac8d82e05b22cc7d4ef5'` **[Permissions](#permissions) required:** * *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg), to set the columns on any user. * Permission to access Jira, to set the calling user's columns.>
+
+  take account-id
+    like native-string
+    note <The account ID of the user, which uniquely identifies the user across all Atlassian products. For example, *5b10ac8d82e05b22cc7d4ef5*.>
+    void take
+  take set-user-columns-body, like set-user-columns-body
+    void take
+
+  line </rest/api/3/user/columns>
+
+  find <accountId>, loan account-id
+
+  seed *, loan set-user-columns-body
+  seed form-data, loan set-user-columns-body
+
+  loot 200
+    seed json
+    note <Returned if the request is successful.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    note <Returned if the user does not have the necessary permission or is not accessing their user record.>
+  loot 404
+    note <Returned if the requested user is not found.>
+  loot 500
+    note <Returned if an invalid issue table column ID is sent.>

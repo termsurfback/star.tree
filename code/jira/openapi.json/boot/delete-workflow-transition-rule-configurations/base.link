@@ -1,0 +1,26 @@
+
+load @drumwork/snow/jira/openapi.json/base/error-collection
+  take form error-collection
+
+load @drumwork/snow/jira/openapi.json/base/workflow-transition-rules-update-errors
+  take form workflow-transition-rules-update-errors
+
+boot delete-workflow-transition-rule-configurations, name <deleteWorkflowTransitionRuleConfigurations>
+  deed put
+  note <Deletes workflow transition rules from one or more workflows. These rule types are supported: * [post functions](https://developer.atlassian.com/cloud/jira/platform/modules/workflow-post-function/) * [conditions](https://developer.atlassian.com/cloud/jira/platform/modules/workflow-condition/) * [validators](https://developer.atlassian.com/cloud/jira/platform/modules/workflow-validator/) Only rules created by the calling Connect app can be deleted. **[Permissions](#permissions) required:** Only Connect apps can use this operation.>
+
+  take workflows-with-transition-rules-details, like workflows-with-transition-rules-details
+
+  line </rest/api/3/workflow/rule/config/delete>
+
+  seed json, loan workflows-with-transition-rules-details
+
+  loot 200
+    seed json, like workflow-transition-rules-update-errors
+    note <Returned if the request is successful.>
+  loot 400
+    seed json, like error-collection
+    note <Returned if the request is invalid.>
+  loot 403
+    seed json, like error-collection
+    note <Returned if the caller is not a Connect app.>

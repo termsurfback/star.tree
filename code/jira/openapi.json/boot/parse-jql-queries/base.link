@@ -1,0 +1,35 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/error-collection
+  take form error-collection
+
+load @drumwork/snow/jira/openapi.json/base/parsed-jql-queries
+  take form parsed-jql-queries
+
+boot parse-jql-queries, name <parseJqlQueries>
+  deed post
+  note <Parses and validates JQL queries. Validation is performed in context of the current user. This operation can be accessed anonymously. **[Permissions](#permissions) required:** None.>
+
+  take validation
+    like native-string
+        fall <strict>
+    note <How to validate the JQL query and treat the validation results. Validation options include: * `strict` Returns all errors. If validation fails, the query structure is not returned. * `warn` Returns all errors. If validation fails but the JQL query is correctly formed, the query structure is returned. * `none` No validation is performed. If JQL query is correctly formed, the query structure is returned.>
+    void take
+  take jql-queries-to-parse, like jql-queries-to-parse
+
+  line </rest/api/3/jql/parse>
+
+  find <validation>, loan validation
+
+  seed json, loan jql-queries-to-parse
+
+  loot 200
+    seed json, like parsed-jql-queries
+    note <Returned if the request is successful.>
+  loot 400
+    seed json, like error-collection
+    note <Returned if the request is invalid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect.>

@@ -1,0 +1,31 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/add-watcher-body
+  take form add-watcher-body
+
+boot add-watcher, name <addWatcher>
+  deed post
+  note <Adds a user as a watcher of an issue by passing the account ID of the user. For example, `"5b10ac8d82e05b22cc7d4ef5"`. If no user is specified the calling user is added. This operation requires the **Allow users to watch issues** option to be *ON*. This option is set in General configuration for Jira. See [Configuring Jira application options](https://confluence.atlassian.com/x/uYXKM) for details. **[Permissions](#permissions) required:** * *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue is in. * If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue. * To add users other than themselves to the watchlist, *Manage watcher list* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue is in.>
+
+  take issue-id-or-key
+    like native-string
+    note <The ID or key of the issue.>
+  take add-watcher-body, like add-watcher-body
+
+  line </rest/api/3/issue/{issue-id-or-key}/watchers>
+
+  seed json, loan add-watcher-body
+
+  loot 204
+    seed json
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if the request is invalid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    note <Returned if the user does not have the permission to manage the watcher list.>
+  loot 404
+    note <Returned if the issue or the user is not found or the user does not have permission to view the issue.>

@@ -1,0 +1,42 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/project-role-details
+  take form project-role-details
+
+boot get-project-role-details, name <getProjectRoleDetails>
+  deed get
+  note <Returns all [project roles](https://confluence.atlassian.com/x/3odKLg) and the details for each role. Note that the list of project roles is common to all projects. This operation can be accessed anonymously. **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg) or *Administer projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project.>
+
+  take project-id-or-key
+    like native-string
+    note <The project ID or project key (case sensitive).>
+  take current-member
+    like native-boolean
+    note <Whether the roles should be filtered to include only those the user is assigned to.>
+    void take
+  take exclude-connect-addons
+    like native-boolean
+    void take
+
+  line </rest/api/3/project/{project-id-or-key}/roledetails>
+
+  find <currentMember>, loan current-member
+  find <excludeConnectAddons>, loan exclude-connect-addons
+
+  loot 200
+    seed json
+      like list
+        like project-role-details
+    note <Returned if the request is successful.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 404
+    note <Returned if the project is not found or if the user does not have the necessary permissions for the project.>

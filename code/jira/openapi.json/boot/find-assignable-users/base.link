@@ -1,0 +1,89 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/user
+  take form user
+
+boot find-assignable-users, name <findAssignableUsers>
+  deed get
+  note <Returns a list of users that can be assigned to an issue. Use this operation to find the list of users who can be assigned to: * a new issue, by providing the `projectKeyOrId`. * an updated issue, by providing the `issueKey`. * to an issue during a transition (workflow action), by providing the `issueKey` and the transition id in `actionDescriptorId`. You can obtain the IDs of an issue's valid transitions using the `transitions` option in the `expand` parameter of [ Get issue](#api-rest-api-3-issue-issueIdOrKey-get). In all these cases, you can pass an account ID to determine if a user can be assigned to an issue. The user is returned in the response if they can be assigned to the issue or issue transition. This operation takes the users in the range defined by `startAt` and `maxResults`, up to the thousandth user, and then returns only the users from that range that can be assigned the issue. This means the operation usually returns fewer users than specified in `maxResults`. To get all the users who can be assigned the issue, use [Get all users](#api-rest-api-3-users-search-get) and filter the records in your code. Privacy controls are applied to the response based on the users' preferences. This could mean, for example, that the user's email address is hidden. See the [Profile visibility overview](https://developer.atlassian.com/cloud/jira/platform/profile-visibility/) for more details. **[Permissions](#permissions) required:** Permission to access Jira.>
+
+  take query
+    like native-string
+    note <A query string that is matched against user attributes, such as `displayName`, and `emailAddress`, to find relevant users. The string can match the prefix of the attribute's value. For example, *query=john* matches a user with a `displayName` of *John Smith* and a user with an `emailAddress` of *johnson@example.com*. Required, unless `username` or `accountId` is specified.>
+    void take
+  take session-id
+    like native-string
+    note <The sessionId of this request. SessionId is the same until the assignee is set.>
+    void take
+  take username
+    like native-string
+    note <This parameter is no longer available. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details.>
+    void take
+  take account-id
+    like native-string
+    note <A query string that is matched exactly against user `accountId`. Required, unless `query` is specified.>
+    void take
+  take project
+    like native-string
+    note <The project ID or project key (case sensitive). Required, unless `issueKey` is specified.>
+    void take
+  take issue-key
+    like native-string
+    note <The key of the issue. Required, unless `project` is specified.>
+    void take
+  take start-at
+    like native-integer
+      bind lace, lace int32
+        fall <0>
+    note <The index of the first item to return in a page of results (page offset).>
+    void take
+  take max-results
+    like native-integer
+      bind lace, lace int32
+        fall <50>
+    note <The maximum number of items to return. This operation may return less than the maximum number of items even if more are available. The operation fetches users up to the maximum and then, from the fetched users, returns only the users that can be assigned to the issue.>
+    void take
+  take action-descriptor-id
+    like native-integer
+      bind lace, lace int32
+    note <The ID of the transition.>
+    void take
+  take recommend
+    like native-boolean
+    void take
+
+  line </rest/api/3/user/assignable/search>
+
+  find <query>, loan query
+  find <sessionId>, loan session-id
+  find <username>, loan username
+  find <accountId>, loan account-id
+  find <project>, loan project
+  find <issueKey>, loan issue-key
+  find <startAt>, loan start-at
+  find <maxResults>, loan max-results
+  find <actionDescriptorId>, loan action-descriptor-id
+  find <recommend>, loan recommend
+
+  loot 200
+    seed json
+      like list
+        like user
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if: * `issueKey` or `project` is missing. * `query` or `accountId` is missing. * `query` and `accountId` are provided.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 404
+    note <Returned if the project, issue, or transition is not found.>

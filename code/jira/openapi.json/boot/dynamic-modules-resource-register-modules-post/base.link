@@ -1,0 +1,22 @@
+
+load @drumwork/snow/jira/openapi.json/base/error-message
+  take form error-message
+
+boot dynamic-modules-resource-register-modules-post, name <DynamicModulesResource.registerModules_post>
+  deed post
+  note <Registers a list of modules. **[Permissions](#permissions) required:** Only Connect apps can make this request.>
+
+  take connect-modules, like connect-modules
+
+  line </rest/atlassian-connect/1/app/module/dynamic>
+
+  seed json, loan connect-modules
+
+  loot 200
+    note <Returned if the request is successful.>
+  loot 400
+    seed json, like error-message
+    note <Returned if: * any of the provided modules is invalid. For example, required properties are missing. * any of the modules conflict with registered dynamic modules or modules defined in the app descriptor. For example, there are duplicate keys. Details of the issues encountered are included in the error message.>
+  loot 401
+    seed json, like error-message
+    note <Returned if the call is not from a Connect app.>

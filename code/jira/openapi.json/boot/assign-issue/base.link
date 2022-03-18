@@ -1,0 +1,26 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot assign-issue, name <assignIssue>
+  deed put
+  note <Assigns an issue to a user. Use this operation when the calling user does not have the *Edit Issues* permission but has the *Assign issue* permission for the project that the issue is in. If `name` or `accountId` is set to: * `"-1"`, the issue is assigned to the default assignee for the project. * `null`, the issue is set to unassigned. This operation can be accessed anonymously. **[Permissions](#permissions) required:** * *Browse Projects* and *Assign Issues* [ project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue is in. * If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.>
+
+  take issue-id-or-key
+    like native-string
+    note <The ID or key of the issue to be assigned.>
+  take user, like user
+
+  line </rest/api/3/issue/{issue-id-or-key}/assignee>
+
+  seed json, loan user
+
+  loot 204
+    seed json
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if: * the user is not found. * `name`, `key`, or `accountId` is missing. * more than one of `name`, `key`, and `accountId` are provided.>
+  loot 403
+    note <Returned if the user does not have the necessary permission.>
+  loot 404
+    note <Returned if the issue is not found.>

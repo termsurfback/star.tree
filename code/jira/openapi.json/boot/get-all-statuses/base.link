@@ -1,0 +1,29 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/issue-type-with-status
+  take form issue-type-with-status
+
+boot get-all-statuses, name <getAllStatuses>
+  deed get
+  note <Returns the valid statuses for a project. The statuses are grouped by issue type, as each project has a set of valid issue types and each issue type has a set of valid statuses. This operation can be accessed anonymously. **[Permissions](#permissions) required:** *Browse Projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project.>
+
+  take project-id-or-key
+    like native-string
+    note <The project ID or project key (case sensitive).>
+
+  line </rest/api/3/project/{project-id-or-key}/statuses>
+
+  loot 200
+    seed json
+      like list
+        like issue-type-with-status
+    note <Returned if the request is successful.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 404
+    note <Returned if the project is not found or the user does not have permission to view it.>

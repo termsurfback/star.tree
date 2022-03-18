@@ -1,0 +1,27 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/avatars
+  take form avatars
+
+boot get-avatars, name <getAvatars>
+  deed get
+  note <Returns the system and custom avatars for a project or issue type. This operation can be accessed anonymously. **[Permissions](#permissions) required:** * for custom project avatars, *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project the avatar belongs to. * for custom issue type avatars, *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for at least one project the issue type is used in. * for system avatars, none.>
+
+  take type
+    like native-string
+    note <The avatar type.>
+  take entity-id
+    like native-string
+    note <The ID of the item the avatar is associated with.>
+
+  line </rest/api/3/universal_avatar/type/{type}/owner/{entity-id}>
+
+  loot 200
+    seed json, like avatars
+    note <Returned if the request is successful.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 404
+    note <Returned if the avatar type is invalid, the associated item ID is missing, or the item is not found.>

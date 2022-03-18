@@ -1,0 +1,26 @@
+
+load @drumwork/snow/jira/openapi.json/base/error-collection
+  take form error-collection
+
+load @drumwork/snow/jira/openapi.json/base/webhooks-expiration-date
+  take form webhooks-expiration-date
+
+boot refresh-webhooks, name <refreshWebhooks>
+  deed put
+  note <Extends the life of webhook. Webhooks registered through the REST API expire after 30 days. Call this operation to keep them alive. Unrecognized webhook IDs (those that are not found or belong to other apps) are ignored. **[Permissions](#permissions) required:** Only [Connect](https://developer.atlassian.com/cloud/jira/platform/#connect-apps) and [OAuth 2.0](https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps) apps can use this operation.>
+
+  take container-for-webhook-i-ds, like container-for-webhook-i-ds
+
+  line </rest/api/3/webhook/refresh>
+
+  seed json, loan container-for-webhook-i-ds
+
+  loot 200
+    seed json, like webhooks-expiration-date
+    note <Returned if the request is successful.>
+  loot 400
+    seed json, like error-collection
+    note <Returned if the request is invalid.>
+  loot 403
+    seed json, like error-collection
+    note <Returned if the caller is not an app.>

@@ -1,0 +1,27 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+boot change-filter-owner, name <changeFilterOwner>
+  deed put
+  note <Changes the owner of the filter. **[Permissions](#permissions) required:** Permission to access Jira. However, the user must own the filter or have the *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the filter to update.>
+  take change-filter-owner, like change-filter-owner
+
+  line </rest/api/3/filter/{id}/owner>
+
+  seed json, loan change-filter-owner
+
+  loot 204
+    seed json
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned when: * The new owner of the filter owns a filter with the same name. * An attempt is made to change owner of the default filter.>
+  loot 403
+    note <Returned if the requesting user is not an owner of the filter or does not have *Administer Jira* global permission.>
+  loot 404
+    note <Returned if the filter or the new owner of the filter is not found.>

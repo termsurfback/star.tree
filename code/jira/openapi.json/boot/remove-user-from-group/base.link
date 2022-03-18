@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot remove-user-from-group, name <removeUserFromGroup>
+  deed delete
+  note <Removes a user from a group. **[Permissions](#permissions) required:** Site administration (that is, member of the *site-admin* [group](https://confluence.atlassian.com/x/24xjL)).>
+
+  take groupname
+    like native-string
+    note <As a group's name can change, use of `groupId` is recommended to identify a group. The name of the group. This parameter cannot be used with the `groupId` parameter.>
+    void take
+  take group-id
+    like native-string
+    note <The ID of the group. This parameter cannot be used with the `groupName` parameter.>
+    void take
+  take username
+    like native-string
+    note <This parameter is no longer available. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details.>
+    void take
+  take account-id
+    like native-string
+    note <The account ID of the user, which uniquely identifies the user across all Atlassian products. For example, *5b10ac8d82e05b22cc7d4ef5*.>
+
+  line </rest/api/3/group/user>
+
+  find <groupname>, loan groupname
+  find <groupId>, loan group-id
+  find <username>, loan username
+  find <accountId>, loan account-id
+
+  loot 200
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if: * `groupName` is missing. * `accountId` is missing.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing from the request.>
+  loot 403
+    note <Returned if the user does not have the necessary permission.>
+  loot 404
+    note <Returned if the group or user are not found.>

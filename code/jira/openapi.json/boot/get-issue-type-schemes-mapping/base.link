@@ -1,0 +1,48 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/jira/openapi.json/base/page-bean-issue-type-scheme-mapping
+  take form page-bean-issue-type-scheme-mapping
+
+boot get-issue-type-schemes-mapping, name <getIssueTypeSchemesMapping>
+  deed get
+  note <Returns a [paginated](#pagination) list of issue type scheme items. Only issue type scheme items used in classic projects are returned. **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take start-at
+    like native-integer
+      bind lace, lace int64
+        fall <0>
+    note <The index of the first item to return in a page of results (page offset).>
+    void take
+  take max-results
+    like native-integer
+      bind lace, lace int32
+        fall <50>
+    note <The maximum number of items to return per page.>
+    void take
+  take issue-type-scheme-id
+    like list
+      like native-integer
+        bind lace, lace int64
+    note <The list of issue type scheme IDs. To include multiple IDs, provide an ampersand-separated list. For example, `issueTypeSchemeId=10000&issueTypeSchemeId=10001`.>
+    void take
+
+  line </rest/api/3/issuetypescheme/mapping>
+
+  find <startAt>, loan start-at
+  find <maxResults>, loan max-results
+  find <issueTypeSchemeId>, loan issue-type-scheme-id
+
+  loot 200
+    seed json, like page-bean-issue-type-scheme-mapping
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if the request is not valid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    note <Returned if the user does not have the required permissions.>

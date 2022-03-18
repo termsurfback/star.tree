@@ -1,0 +1,35 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/comment
+  take form comment
+
+boot add-comment, name <addComment>
+  deed post
+  note <Adds a comment to an issue. This operation can be accessed anonymously. **[Permissions](#permissions) required:** * *Browse projects* and *Add comments* [ project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue containing the comment is in. * If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.>
+
+  take issue-id-or-key
+    like native-string
+    note <The ID or key of the issue.>
+  take expand
+    like native-string
+    note <Use [expand](#expansion) to include additional information about comments in the response. This parameter accepts `renderedBody`, which returns the comment body rendered in HTML.>
+    void take
+  take comment, like comment
+
+  line </rest/api/3/issue/{issue-id-or-key}/comment>
+
+  find <expand>, loan expand
+
+  seed json, loan comment
+
+  loot 201
+    seed json, like comment
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if the request is invalid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect.>
+  loot 404
+    note <Returned if the issue is not found or the user does not have permission to view it.>

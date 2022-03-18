@@ -1,0 +1,59 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/page-bean-user
+  take form page-bean-user
+
+boot bulk-get-users, name <bulkGetUsers>
+  deed get
+  note <Returns a [paginated](#pagination) list of the users specified by one or more account IDs. **[Permissions](#permissions) required:** Permission to access Jira.>
+
+  take start-at
+    like native-integer
+      bind lace, lace int64
+        fall <0>
+    note <The index of the first item to return in a page of results (page offset).>
+    void take
+  take max-results
+    like native-integer
+      bind lace, lace int32
+        fall <10>
+    note <The maximum number of items to return per page.>
+    void take
+  take username
+    like list
+      like native-string
+    note <This parameter is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details.>
+    void take
+  take key
+    like list
+      like native-string
+    note <This parameter is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details.>
+    void take
+  take account-id
+    like list
+      like native-string
+    note <The account ID of a user. To specify multiple users, pass multiple `accountId` parameters. For example, `accountId=5b10a2844c20165700ede21g&accountId=5b10ac8d82e05b22cc7d4ef5`.>
+
+  line </rest/api/3/user/bulk>
+
+  find <startAt>, loan start-at
+  find <maxResults>, loan max-results
+  find <username>, loan username
+  find <key>, loan key
+  find <accountId>, loan account-id
+
+  loot 200
+    seed json, like page-bean-user
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if `accountID` is missing.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>

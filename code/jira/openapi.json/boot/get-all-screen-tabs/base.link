@@ -1,0 +1,43 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/screenable-tab
+  take form screenable-tab
+
+boot get-all-screen-tabs, name <getAllScreenTabs>
+  deed get
+  note <Returns the list of tabs for a screen. **[Permissions](#permissions) required:** * *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg). * *Administer projects* [project permission](https://confluence.atlassian.com/x/yodKLg) when the project key is specified, providing that the screen is associated with the project through a Screen Scheme and Issue Type Screen Scheme.>
+
+  take screen-id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the screen.>
+  take project-key
+    like native-string
+    note <The key of the project.>
+    void take
+
+  line </rest/api/3/screens/{screen-id}/tabs>
+
+  find <projectKey>, loan project-key
+
+  loot 200
+    seed json
+      like list
+        like screenable-tab
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if the screen ID is invalid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    note <Returned if the user does not have the necessary permission.>
+  loot 404
+    note <Returned if the screen is not found.>

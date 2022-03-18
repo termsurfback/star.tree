@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/addon-properties-resource-put-addon-property-put-body
+  take form addon-properties-resource-put-addon-property-put-body
+
+load @drumwork/snow/jira/openapi.json/base/operation-message
+  take form operation-message
+
+boot addon-properties-resource-put-addon-property-put, name <AddonPropertiesResource.putAddonProperty_put>
+  deed put
+  note <Sets the value of an app's property. Use this resource to store custom data for your app. The value of the request body must be a [valid](http://tools.ietf.org/html/rfc4627), non-empty JSON blob. The maximum length is 32768 characters. **[Permissions](#permissions) required:** Only a Connect app whose key matches `addonKey` can make this request.>
+
+  take addon-key
+    like native-string
+    note <The key of the app, as defined in its descriptor.>
+  take property-key
+    like native-string
+    note <The key of the property.>
+  take addon-properties-resource-put-addon-property-put-body, like addon-properties-resource-put-addon-property-put-body
+
+  line </rest/atlassian-connect/1/addons/{addon-key}/properties/{property-key}>
+
+  seed json, loan addon-properties-resource-put-addon-property-put-body
+
+  loot 200
+    seed json, like operation-message
+    note <Returned if the property is updated.>
+  loot 201
+    seed json, like operation-message
+    note <Returned is the property is created.>
+  loot 400
+    seed json, like operation-message
+    note <Returned if: * the property key is longer than 127 characters. * the value is not valid JSON. * the value is longer than 32768 characters.>
+  loot 401
+    seed json, like operation-message
+    note <Returned if the authentication credentials are incorrect or missing.>

@@ -1,0 +1,34 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/container-for-project-features
+  take form container-for-project-features
+
+boot toggle-feature-for-project, name <toggleFeatureForProject>
+  deed put
+  note <Sets the state of a project feature.>
+
+  take project-id-or-key
+    like native-string
+    note <The ID or (case-sensitive) key of the project.>
+  take feature-key
+    like native-string
+    note <The key of the feature.>
+  take project-feature-state, like project-feature-state
+
+  line </rest/api/3/project/{project-id-or-key}/features/{feature-key}>
+
+  seed json, loan project-feature-state
+
+  loot 200
+    seed json, like container-for-project-features
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if the request is not valid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    note <Returned if the user does not have the required permissions.>
+  loot 404
+    note <Returned if the project or project feature is not found.>

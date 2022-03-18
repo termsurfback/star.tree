@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-actor, name <deleteActor>
+  deed delete
+  note <Deletes actors from a project role for the project. To remove default actors from the project role, use [Delete default actors from project role](#api-rest-api-3-role-id-actors-delete). This operation can be accessed anonymously. **[Permissions](#permissions) required:** *Administer Projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project or *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take project-id-or-key
+    like native-string
+    note <The project ID or project key (case sensitive).>
+  take id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the project role. Use [Get all project roles](#api-rest-api-3-role-get) to get a list of project role IDs.>
+  take user
+    like native-string
+    note <The user account ID of the user to remove from the project role.>
+    void take
+  take group
+    like native-string
+    note <The name of the group to remove from the project role.>
+    void take
+
+  line </rest/api/3/project/{project-id-or-key}/role/{id}>
+
+  find <user>, loan user
+  find <group>, loan group
+
+  loot 204
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if the request is not valid.>
+  loot 404
+    note <Returned if: * the project or project role is not found. * the calling user does not have administrative permission.>

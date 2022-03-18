@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot delete-workflow-mapping, name <deleteWorkflowMapping>
+  deed delete
+  note <Deletes the workflow-issue type mapping for a workflow in a workflow scheme. Note that active workflow schemes cannot be edited. If the workflow scheme is active, set `updateDraftIfNeeded` to `true` and a draft workflow scheme is created or updated with the workflow-issue type mapping deleted. The draft workflow scheme can be published in Jira. **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the workflow scheme.>
+  take workflow-name
+    like native-string
+    note <The name of the workflow.>
+  take update-draft-if-needed
+    like native-boolean
+    note <Set to true to create or update the draft of a workflow scheme and delete the mapping from the draft, when the workflow scheme cannot be edited. Defaults to `false`.>
+    void take
+
+  line </rest/api/3/workflowscheme/{id}/workflow>
+
+  find <workflowName>, loan workflow-name
+  find <updateDraftIfNeeded>, loan update-draft-if-needed
+
+  loot 200
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if the workflow cannot be edited and `updateDraftIfNeeded` is not true.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    note <Returned if the user does not have the necessary permission.>
+  loot 404
+    note <Returned if any of the following is true: * The workflow scheme is not found. * The workflow is not found. * The workflow is not specified.>

@@ -1,0 +1,40 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/page-bean-changelog
+  take form page-bean-changelog
+
+boot get-change-logs, name <getChangeLogs>
+  deed get
+  note <Returns a [paginated](#pagination) list of all changelogs for an issue sorted by date, starting from the oldest. This operation can be accessed anonymously. **[Permissions](#permissions) required:** * *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue is in. * If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.>
+
+  take issue-id-or-key
+    like native-string
+    note <The ID or key of the issue.>
+  take start-at
+    like native-integer
+      bind lace, lace int32
+        fall <0>
+    note <The index of the first item to return in a page of results (page offset).>
+    void take
+  take max-results
+    like native-integer
+      bind lace, lace int32
+        fall <100>
+    note <The maximum number of items to return per page.>
+    void take
+
+  line </rest/api/3/issue/{issue-id-or-key}/changelog>
+
+  find <startAt>, loan start-at
+  find <maxResults>, loan max-results
+
+  loot 200
+    seed json, like page-bean-changelog
+    note <Returned if the request is successful.>
+  loot 404
+    note <Returned if the issue is not found or the user does not have permission to view it.>

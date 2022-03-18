@@ -1,0 +1,53 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/transitions
+  take form transitions
+
+boot get-transitions, name <getTransitions>
+  deed get
+  note <Returns either all transitions or a transition that can be performed by the user on an issue, based on the issue's status. Note, if a request is made for a transition that does not exist or cannot be performed on the issue, given its status, the response will return any empty transitions list. This operation can be accessed anonymously. **[Permissions](#permissions) required: A list or transition is returned only when the user has:** * *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue is in. * If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue. However, if the user does not have the *Transition issues* [ project permission](https://confluence.atlassian.com/x/yodKLg) the response will not list any transitions.>
+
+  take issue-id-or-key
+    like native-string
+    note <The ID or key of the issue.>
+  take expand
+    like native-string
+    note <Use [expand](#expansion) to include additional information about transitions in the response. This parameter accepts `transitions.fields`, which returns information about the fields in the transition screen for each transition. Fields hidden from the screen are not returned. Use this information to populate the `fields` and `update` fields in [Transition issue](#api-rest-api-3-issue-issueIdOrKey-transitions-post).>
+    void take
+  take transition-id
+    like native-string
+    note <The ID of the transition.>
+    void take
+  take skip-remote-only-condition
+    like native-boolean
+    note <Whether transitions with the condition *Hide From User Condition* are included in the response.>
+    void take
+  take include-unavailable-transitions
+    like native-boolean
+    note <Whether details of transitions that fail a condition are included in the response>
+    void take
+  take sort-by-ops-bar-and-status
+    like native-boolean
+    note <Whether the transitions are sorted by ops-bar sequence value first then category order (Todo, In Progress, Done) or only by ops-bar sequence value.>
+    void take
+
+  line </rest/api/3/issue/{issue-id-or-key}/transitions>
+
+  find <expand>, loan expand
+  find <transitionId>, loan transition-id
+  find <skipRemoteOnlyCondition>, loan skip-remote-only-condition
+  find <includeUnavailableTransitions>, loan include-unavailable-transitions
+  find <sortByOpsBarAndStatus>, loan sort-by-ops-bar-and-status
+
+  loot 200
+    seed json, like transitions
+    note <Returned if the request is successful.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 404
+    note <Returned if the issue is not found or the user does not have permission to view it.>

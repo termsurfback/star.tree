@@ -1,0 +1,27 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/property-keys
+  take form property-keys
+
+boot get-dashboard-item-property-keys, name <getDashboardItemPropertyKeys>
+  deed get
+  note <Returns the keys of all properties for a dashboard item. This operation can be accessed anonymously. **[Permissions](#permissions) required:** The user must be the owner of the dashboard or have the dashboard shared with them. Note, users with the *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg) are considered owners of the System dashboard. The System dashboard is considered to be shared with all other users, and is accessible to anonymous users when Jira’s anonymous access is permitted.>
+
+  take dashboard-id
+    like native-string
+    note <The ID of the dashboard.>
+  take item-id
+    like native-string
+    note <The ID of the dashboard item.>
+
+  line </rest/api/3/dashboard/{dashboard-id}/items/{item-id}/properties>
+
+  loot 200
+    seed json, like property-keys
+    note <Returned if the request is successful.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 404
+    note <Returned if the dashboard or dashboard item is not found, or the dashboard is not owned by or shared with the user.>

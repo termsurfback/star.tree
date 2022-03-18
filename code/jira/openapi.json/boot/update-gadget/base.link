@@ -1,0 +1,36 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/jira/openapi.json/base/error-collection
+  take form error-collection
+
+boot update-gadget, name <updateGadget>
+  deed put
+  note <Changes the title, position, and color of the gadget on a dashboard. **[Permissions](#permissions) required:** None.>
+
+  take dashboard-id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the dashboard.>
+  take gadget-id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the gadget.>
+  take dashboard-gadget-update-request, like dashboard-gadget-update-request
+
+  line </rest/api/3/dashboard/{dashboard-id}/gadget/{gadget-id}>
+
+  seed json, loan dashboard-gadget-update-request
+
+  loot 204
+    seed json
+    note <Returned if the request is successful.>
+  loot 400
+    seed json, like error-collection
+    note <Returned if the request is invalid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect.>
+  loot 404
+    seed json, like error-collection
+    note <Returned if the gadget or the dashboard is not found.>

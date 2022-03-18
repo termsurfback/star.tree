@@ -1,0 +1,54 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/audit-records
+  take form audit-records
+
+boot get-audit-records, name <getAuditRecords>
+  deed get
+  note <Returns a list of audit records. The list can be filtered to include items: * where each item in `filter` has at least one match in any of these fields: * `summary` * `category` * `eventSource` * `objectItem.name` If the object is a user, account ID is available to filter. * `objectItem.parentName` * `objectItem.typeName` * `changedValues.changedFrom` * `changedValues.changedTo` * `remoteAddress` For example, if `filter` contains *man ed*, an audit record containing `summary": "User added to group"` and `"category": "group management"` is returned. * created on or after a date and time. * created or or before a date and time. **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take offset
+    like native-integer
+      bind lace, lace int32
+        fall <0>
+    note <The number of records to skip before returning the first result.>
+    void take
+  take limit
+    like native-integer
+      bind lace, lace int32
+        fall <1000>
+    note <The maximum number of results to return.>
+    void take
+  take filter
+    like native-string
+    note <The strings to match with audit field content, space separated.>
+    void take
+  take from
+    like native-string
+    note <The date and time on or after which returned audit records must have been created. If `to` is provided `from` must be before `to` or no audit records are returned.>
+    void take
+  take to
+    like native-string
+    note <The date and time on or before which returned audit results must have been created. If `from` is provided `to` must be after `from` or no audit records are returned.>
+    void take
+
+  line </rest/api/3/auditing/record>
+
+  find <offset>, loan offset
+  find <limit>, loan limit
+  find <filter>, loan filter
+  find <from>, loan from
+  find <to>, loan to
+
+  loot 200
+    seed json, like audit-records
+    note <Returned if the request is successful.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    note <Returned if: * the user does not have the required permissions. * all Jira products are on free plans. Audit logs are available when at least one Jira product is on a paid plan.>

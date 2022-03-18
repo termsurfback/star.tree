@@ -1,0 +1,44 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/entity-property
+  take form entity-property
+
+boot get-user-property, name <getUserProperty>
+  deed get
+  note <Returns the value of a user's property. If no property key is provided [Get user property keys](#api-rest-api-3-user-properties-get) is called. Note: This operation does not access the [user properties](https://confluence.atlassian.com/x/8YxjL) created and maintained in Jira. **[Permissions](#permissions) required:** * *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg), to get a property from any user. * Access to Jira, to get a property from the calling user's record.>
+
+  take property-key
+    like native-string
+    note <The key of the user's property.>
+  take account-id
+    like native-string
+    note <The account ID of the user, which uniquely identifies the user across all Atlassian products. For example, *5b10ac8d82e05b22cc7d4ef5*.>
+    void take
+  take user-key
+    like native-string
+    note <This parameter is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details.>
+    void take
+  take username
+    like native-string
+    note <This parameter is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details.>
+    void take
+
+  line </rest/api/3/user/properties/{property-key}>
+
+  find <accountId>, loan account-id
+  find <userKey>, loan user-key
+  find <username>, loan username
+
+  loot 200
+    seed json, like entity-property
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if `accountId` is missing.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    note <Returned if the user does not have the necessary permission or is not accessing their user record.>
+  loot 404
+    note <Returned if the user is not found.>

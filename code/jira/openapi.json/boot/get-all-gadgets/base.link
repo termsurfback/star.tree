@@ -1,0 +1,55 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/dashboard-gadget-response
+  take form dashboard-gadget-response
+
+load @drumwork/snow/jira/openapi.json/base/error-collection
+  take form error-collection
+
+boot get-all-gadgets, name <getAllGadgets>
+  deed get
+  note <Returns a list of dashboard gadgets on a dashboard. This operation returns: * Gadgets from a list of IDs, when `id` is set. * Gadgets with a module key, when `moduleKey` is set. * Gadgets from a list of URIs, when `uri` is set. * All gadgets, when no other parameters are set. This operation can be accessed anonymously. **[Permissions](#permissions) required:** None.>
+
+  take dashboard-id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the dashboard.>
+  take module-key
+    like list
+      like native-string
+    note <The list of gadgets module keys. To include multiple module keys, separate module keys with ampersand: `moduleKey=key:one&moduleKey=key:two`.>
+    void take
+  take uri
+    like list
+      like native-string
+    note <The list of gadgets URIs. To include multiple URIs, separate URIs with ampersand: `uri=/rest/example/uri/1&uri=/rest/example/uri/2`.>
+    void take
+  take gadget-id
+    like list
+      like native-integer
+        bind lace, lace int64
+    note <The list of gadgets IDs. To include multiple IDs, separate IDs with ampersand: `gadgetId=10000&gadgetId=10001`.>
+    void take
+
+  line </rest/api/3/dashboard/{dashboard-id}/gadget>
+
+  find <moduleKey>, loan module-key
+  find <uri>, loan uri
+  find <gadgetId>, loan gadget-id
+
+  loot 200
+    seed json, like dashboard-gadget-response
+    note <Returned if the request is successful.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect.>
+  loot 404
+    seed json, like error-collection
+    note <Returned if the dashboard is not found.>

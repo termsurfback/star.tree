@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/jira/openapi.json/base/error-collection
+  take form error-collection
+
+load @drumwork/snow/jira/openapi.json/base/page-bean-webhook
+  take form page-bean-webhook
+
+boot get-dynamic-webhooks-for-app, name <getDynamicWebhooksForApp>
+  deed get
+  note <Returns a [paginated](#pagination) list of the webhooks registered by the calling app. **[Permissions](#permissions) required:** Only [Connect](https://developer.atlassian.com/cloud/jira/platform/#connect-apps) and [OAuth 2.0](https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps) apps can use this operation.>
+
+  take start-at
+    like native-integer
+      bind lace, lace int64
+        fall <0>
+    note <The index of the first item to return in a page of results (page offset).>
+    void take
+  take max-results
+    like native-integer
+      bind lace, lace int32
+        fall <100>
+    note <The maximum number of items to return per page.>
+    void take
+
+  line </rest/api/3/webhook>
+
+  find <startAt>, loan start-at
+  find <maxResults>, loan max-results
+
+  loot 200
+    seed json, like page-bean-webhook
+    note <Returned if the request is successful.>
+  loot 400
+    seed json, like error-collection
+    note <Returned if the request is invalid.>
+  loot 403
+    seed json, like error-collection
+    note <Returned if the caller is not an app.>

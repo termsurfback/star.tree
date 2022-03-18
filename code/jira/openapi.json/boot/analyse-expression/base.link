@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/error-collection
+  take form error-collection
+
+load @drumwork/snow/jira/openapi.json/base/jira-expressions-analysis
+  take form jira-expressions-analysis
+
+boot analyse-expression, name <analyseExpression>
+  deed post
+  note <Analyses and validates Jira expressions. As an experimental feature, this operation can also attempt to type-check the expressions. Learn more about Jira expressions in the [documentation](https://developer.atlassian.com/cloud/jira/platform/jira-expressions/). **[Permissions](#permissions) required**: None.>
+
+  take check
+    like native-string
+        fall <syntax>
+    note <The check to perform: * `syntax` Each expression's syntax is checked to ensure the expression can be parsed. Also, syntactic limits are validated. For example, the expression's length. * `type` EXPERIMENTAL. Each expression is type checked and the final type of the expression inferred. Any type errors that would result in the expression failure at runtime are reported. For example, accessing properties that don't exist or passing the wrong number of arguments to functions. Also performs the syntax check. * `complexity` EXPERIMENTAL. Determines the formulae for how many [expensive operations](https://developer.atlassian.com/cloud/jira/platform/jira-expressions/#expensive-operations) each expression may execute.>
+    void take
+  take jira-expression-for-analysis, like jira-expression-for-analysis
+
+  line </rest/api/3/expression/analyse>
+
+  find <check>, loan check
+
+  seed json, loan jira-expression-for-analysis
+
+  loot 200
+    seed json, like jira-expressions-analysis
+    note <Returned if the request is successful.>
+  loot 400
+    seed json, like error-collection
+    note <400 response>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 404
+    seed json, like error-collection
+    note <404 response>

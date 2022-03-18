@@ -1,0 +1,36 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/jira/openapi.json/base/screenable-field
+  take form screenable-field
+
+boot add-screen-tab-field, name <addScreenTabField>
+  deed post
+  note <Adds a field to a screen tab. **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take screen-id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the screen.>
+  take tab-id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the screen tab.>
+  take add-field-bean, like add-field-bean
+
+  line </rest/api/3/screens/{screen-id}/tabs/{tab-id}/fields>
+
+  seed json, loan add-field-bean
+
+  loot 200
+    seed json, like screenable-field
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if the request is invalid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    note <Returned if the user does not have the necessary permission.>
+  loot 404
+    note <Returned if the screen, screen tab, or field is not found.>

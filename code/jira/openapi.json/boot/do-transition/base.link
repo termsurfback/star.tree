@@ -1,0 +1,26 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot do-transition, name <doTransition>
+  deed post
+  note <Performs an issue transition and, if the transition has a screen, updates the fields from the transition screen. sortByCategory To update the fields on the transition screen, specify the fields in the `fields` or `update` parameters in the request body. Get details about the fields using [ Get transitions](#api-rest-api-3-issue-issueIdOrKey-transitions-get) with the `transitions.fields` expand. This operation can be accessed anonymously. **[Permissions](#permissions) required:** * *Browse projects* and *Transition issues* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue is in. * If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.>
+
+  take issue-id-or-key
+    like native-string
+    note <The ID or key of the issue.>
+  take issue-update-details, like issue-update-details
+
+  line </rest/api/3/issue/{issue-id-or-key}/transitions>
+
+  seed json, loan issue-update-details
+
+  loot 204
+    seed json
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if: * no transition is specified. * the user does not have permission to transition the issue. * a field that isn't included on the transition screen is defined in `fields` or `update`. * a field is specified in both `fields` and `update`. * the request is invalid for any other reason.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 404
+    note <Returned if the issue is not found or the user does not have permission to view it.>

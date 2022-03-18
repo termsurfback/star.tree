@@ -1,0 +1,21 @@
+
+load @drumwork/snow/jira/openapi.json/base/converted-jql-queries
+  take form converted-jql-queries
+
+boot migrate-queries, name <migrateQueries>
+  deed post
+  note <Converts one or more JQL queries with user identifiers (username or user key) to equivalent JQL queries with account IDs. You may wish to use this operation if your system stores JQL queries and you want to make them GDPR-compliant. For more information about GDPR-related changes, see the [migration guide](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/). **[Permissions](#permissions) required:** Permission to access Jira.>
+
+  take jql-personal-data-migration-request, like jql-personal-data-migration-request
+
+  line </rest/api/3/jql/pdcleaner>
+
+  seed json, loan jql-personal-data-migration-request
+
+  loot 200
+    seed json, like converted-jql-queries
+    note <Returned if the request is successful. Note that the JQL queries are returned in the same order that they were passed.>
+  loot 400
+    note <Returned if at least one of the queries cannot be converted. For example, the JQL has invalid operators or invalid keywords, or the users in the query cannot be found.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>

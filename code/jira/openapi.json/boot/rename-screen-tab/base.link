@@ -1,0 +1,36 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/jira/openapi.json/base/screenable-tab
+  take form screenable-tab
+
+boot rename-screen-tab, name <renameScreenTab>
+  deed put
+  note <Updates the name of a screen tab. **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take screen-id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the screen.>
+  take tab-id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the screen tab.>
+  take screenable-tab, like screenable-tab
+
+  line </rest/api/3/screens/{screen-id}/tabs/{tab-id}>
+
+  seed json, loan screenable-tab
+
+  loot 200
+    seed json, like screenable-tab
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if the request is invalid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    note <Returned if the user does not have the necessary permission.>
+  loot 404
+    note <Returned if the screen or screen tab is not found.>

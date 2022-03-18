@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/group
+  take form group
+
+boot get-group, name <getGroup>
+  deed get
+  note <This operation is deprecated, use [`group/member`](#api-rest-api-3-group-member-get). Returns all users in a group. **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take groupname
+    like native-string
+    note <As a group's name can change, use of `groupId` is recommended to identify a group. The name of the group. This parameter cannot be used with the `groupId` parameter.>
+    void take
+  take group-id
+    like native-string
+    note <The ID of the group. This parameter cannot be used with the `groupName` parameter.>
+    void take
+  take expand
+    like native-string
+    note <List of fields to expand.>
+    void take
+
+  line </rest/api/3/group>
+
+  find <groupname>, loan groupname
+  find <groupId>, loan group-id
+  find <expand>, loan expand
+
+  loot 200
+    seed json, like group
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if the group name is not specified.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    note <Returned if the calling user does not have the Administer Jira global permission.>
+  loot 404
+    note <Returned if the group is not found.>

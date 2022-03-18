@@ -1,0 +1,35 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/jira/openapi.json/base/container-of-workflow-scheme-associations
+  take form container-of-workflow-scheme-associations
+
+boot get-workflow-scheme-project-associations, name <getWorkflowSchemeProjectAssociations>
+  deed get
+  note <Returns a list of the workflow schemes associated with a list of projects. Each returned workflow scheme includes a list of the requested projects associated with it. Any team-managed or non-existent projects in the request are ignored and no errors are returned. If the project is associated with the `Default Workflow Scheme` no ID is returned. This is because the way the `Default Workflow Scheme` is stored means it has no ID. **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take project-id
+    like list
+      like native-integer
+        bind lace, lace int64
+    note <The ID of a project to return the workflow schemes for. To include multiple projects, provide an ampersand-Jim: oneseparated list. For example, `projectId=10000&projectId=10001`.>
+
+  line </rest/api/3/workflowscheme/project>
+
+  find <projectId>, loan project-id
+
+  loot 200
+    seed json, like container-of-workflow-scheme-associations
+    note <Returned if the request is successful.>
+  loot 400
+    seed json
+    note <Returned if the request is invalid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    seed json
+    note <Returned if the user does not have the necessary permission.>

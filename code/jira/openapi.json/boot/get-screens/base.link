@@ -1,0 +1,66 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/page-bean-screen
+  take form page-bean-screen
+
+boot get-screens, name <getScreens>
+  deed get
+  note <Returns a [paginated](#pagination) list of all screens or those specified by one or more screen IDs. **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take start-at
+    like native-integer
+      bind lace, lace int64
+        fall <0>
+    note <The index of the first item to return in a page of results (page offset).>
+    void take
+  take max-results
+    like native-integer
+      bind lace, lace int32
+        fall <100>
+    note <The maximum number of items to return per page.>
+    void take
+  take id
+    like list
+      like native-integer
+        bind lace, lace int64
+    note <The list of screen IDs. To include multiple IDs, provide an ampersand-separated list. For example, `id=10000&id=10001`.>
+    void take
+  take query-string
+    like native-string
+        fall <>
+    note <String used to perform a case-insensitive partial match with screen name.>
+    void take
+  take scope
+    like list
+      like native-string
+    note <The scope filter string. To filter by multiple scope, provide an ampersand-separated list. For example, `scope=GLOBAL&scope=PROJECT`.>
+    void take
+  take order-by
+    like native-string
+    note <[Order](#ordering) the results by a field: * `id` Sorts by screen ID. * `name` Sorts by screen name.>
+    void take
+
+  line </rest/api/3/screens>
+
+  find <startAt>, loan start-at
+  find <maxResults>, loan max-results
+  find <id>, loan id
+  find <queryString>, loan query-string
+  find <scope>, loan scope
+  find <orderBy>, loan order-by
+
+  loot 200
+    seed json, like page-bean-screen
+    note <Returned if the request is successful.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    note <Returned if the user does not have the necessary permission.>

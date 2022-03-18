@@ -1,0 +1,67 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/found-users
+  take form found-users
+
+boot find-users-for-picker, name <findUsersForPicker>
+  deed get
+  note <Returns a list of users whose attributes match the query term. The returned object includes the `html` field where the matched query term is highlighted with the HTML strong tag. A list of account IDs can be provided to exclude users from the results. This operation takes the users in the range defined by `maxResults`, up to the thousandth user, and then returns only the users from that range that match the query term. This means the operation usually returns fewer users than specified in `maxResults`. To get all the users who match the query term, use [Get all users](#api-rest-api-3-users-search-get) and filter the records in your code. Privacy controls are applied to the response based on the users' preferences. This could mean, for example, that the user's email address is hidden. See the [Profile visibility overview](https://developer.atlassian.com/cloud/jira/platform/profile-visibility/) for more details. This operation can be accessed anonymously. **[Permissions](#permissions) required:** *Browse users and groups* [global permission](https://confluence.atlassian.com/x/x4dKLg). Anonymous calls and calls by users without the required permission return search results for an exact name match only.>
+
+  take query
+    like native-string
+    note <A query string that is matched against user attributes, such as `displayName`, and `emailAddress`, to find relevant users. The string can match the prefix of the attribute's value. For example, *query=john* matches a user with a `displayName` of *John Smith* and a user with an `emailAddress` of *johnson@example.com*.>
+  take max-results
+    like native-integer
+      bind lace, lace int32
+        fall <50>
+    note <The maximum number of items to return. The total number of matched users is returned in `total`.>
+    void take
+  take show-avatar
+    like native-boolean
+    note <Include the URI to the user's avatar.>
+    void take
+  take exclude
+    like list
+      like native-string
+    note <This parameter is no longer available. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details.>
+    void take
+  take exclude-account-ids
+    like list
+      like native-string
+    note <A list of account IDs to exclude from the search results. This parameter accepts a comma-separated list. Multiple account IDs can also be provided using an ampersand-separated list. For example, `excludeAccountIds=5b10a2844c20165700ede21g,5b10a0effa615349cb016cd8&excludeAccountIds=5b10ac8d82e05b22cc7d4ef5`. Cannot be provided with `exclude`.>
+    void take
+  take avatar-size
+    like native-string
+    void take
+  take exclude-connect-users
+    like native-boolean
+    void take
+
+  line </rest/api/3/user/picker>
+
+  find <query>, loan query
+  find <maxResults>, loan max-results
+  find <showAvatar>, loan show-avatar
+  find <exclude>, loan exclude
+  find <excludeAccountIds>, loan exclude-account-ids
+  find <avatarSize>, loan avatar-size
+  find <excludeConnectUsers>, loan exclude-connect-users
+
+  loot 200
+    seed json, like found-users
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if `exclude` and `excludeAccountIds` are provided.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>

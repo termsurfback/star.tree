@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/custom-field-created-context-options-list
+  take form custom-field-created-context-options-list
+
+boot create-custom-field-option, name <createCustomFieldOption>
+  deed post
+  note <Creates options and, where the custom select field is of the type Select List (cascading), cascading options for a custom select field. The options are added to a context of the field. The maximum number of options that can be created per request is 1000 and each field can have a maximum of 10000 options. This operation works for custom field options created in Jira or the operations from this resource. **To work with issue field select list options created for Connect apps use the [Issue custom field options (apps)](#api-group-issue-custom-field-options--apps-) operations.** **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take field-id
+    like native-string
+    note <The ID of the custom field.>
+  take context-id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the context.>
+  take bulk-custom-field-option-create-request, like bulk-custom-field-option-create-request
+
+  line </rest/api/3/field/{field-id}/context/{context-id}/option>
+
+  seed json, loan bulk-custom-field-option-create-request
+
+  loot 200
+    seed json, like custom-field-created-context-options-list
+    note <Returned if the request is successful.>
+  loot 400
+    seed json
+    note <Returned if the request is not valid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    seed json
+    note <Returned if the user does not have the necessary permission.>
+  loot 404
+    seed json
+    note <Returned if the custom field is not found or the context doesn't match the custom field.>

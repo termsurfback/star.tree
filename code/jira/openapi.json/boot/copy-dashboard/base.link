@@ -1,0 +1,34 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/dashboard
+  take form dashboard
+
+load @drumwork/snow/jira/openapi.json/base/error-collection
+  take form error-collection
+
+boot copy-dashboard, name <copyDashboard>
+  deed post
+  note <Copies a dashboard. Any values provided in the `dashboard` parameter replace those in the copied dashboard. **[Permissions](#permissions) required:** None The dashboard to be copied must be owned by or shared with the user.>
+
+  take id
+    like native-string
+  take dashboard-details, like dashboard-details
+
+  line </rest/api/3/dashboard/{id}/copy>
+
+  seed json, loan dashboard-details
+
+  loot 200
+    seed json, like dashboard
+    note <Returned if the request is successful.>
+  loot 400
+    seed json, like error-collection
+    note <Returned if the request is not valid.>
+  loot 401
+    seed json, like error-collection
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 404
+    seed json, like error-collection
+    note <Returned if the dashboard is not found or the dashboard is not owned by or shared with the user.>

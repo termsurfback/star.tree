@@ -1,0 +1,36 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/project-role
+  take form project-role
+
+boot add-actor-users, name <addActorUsers>
+  deed post
+  note <Adds actors to a project role for the project. To replace all actors for the project, use [Set actors for project role](#api-rest-api-3-project-projectIdOrKey-role-id-put). This operation can be accessed anonymously. **[Permissions](#permissions) required:** *Administer Projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project or *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take project-id-or-key
+    like native-string
+    note <The project ID or project key (case sensitive).>
+  take id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the project role. Use [Get all project roles](#api-rest-api-3-role-get) to get a list of project role IDs.>
+  take actors-map, like actors-map
+
+  line </rest/api/3/project/{project-id-or-key}/role/{id}>
+
+  seed json, loan actors-map
+
+  loot 200
+    seed json, like project-role
+    note <Returned if the request is successful. The complete list of actors for the project is returned. For example, the cURL request above adds a group, *jira-developers*. For the response below to be returned as a result of that request, the user *Mia Krystof* would have previously been added as a `user` actor for this project.>
+  loot 400
+    note <Returned if the request is not valid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing or if the calling user lacks administrative permissions for the project.>
+  loot 404
+    note <Returned if: * the project is not found. * the user or group is not found. * the group or user is not active.>

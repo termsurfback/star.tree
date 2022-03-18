@@ -1,0 +1,61 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/page-bean-user-details
+  take form page-bean-user-details
+
+boot get-users-from-group, name <getUsersFromGroup>
+  deed get
+  note <Returns a [paginated](#pagination) list of all users in a group. Note that users are ordered by username, however the username is not returned in the results due to privacy reasons. **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take groupname
+    like native-string
+    note <As a group's name can change, use of `groupId` is recommended to identify a group. The name of the group. This parameter cannot be used with the `groupId` parameter.>
+    void take
+  take group-id
+    like native-string
+    note <The ID of the group. This parameter cannot be used with the `groupName` parameter.>
+    void take
+  take include-inactive-users
+    like native-boolean
+    note <Include inactive users.>
+    void take
+  take start-at
+    like native-integer
+      bind lace, lace int64
+        fall <0>
+    note <The index of the first item to return in a page of results (page offset).>
+    void take
+  take max-results
+    like native-integer
+      bind lace, lace int32
+        fall <50>
+    note <The maximum number of items to return per page.>
+    void take
+
+  line </rest/api/3/group/member>
+
+  find <groupname>, loan groupname
+  find <groupId>, loan group-id
+  find <includeInactiveUsers>, loan include-inactive-users
+  find <startAt>, loan start-at
+  find <maxResults>, loan max-results
+
+  loot 200
+    seed json, like page-bean-user-details
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if the group name is not specified.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    note <Returned if the calling user does not have the Administer Jira global permission.>
+  loot 404
+    note <Returned if the group is not found.>

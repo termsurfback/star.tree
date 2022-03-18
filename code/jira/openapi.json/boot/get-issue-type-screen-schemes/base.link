@@ -1,0 +1,69 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/page-bean-issue-type-screen-scheme
+  take form page-bean-issue-type-screen-scheme
+
+boot get-issue-type-screen-schemes, name <getIssueTypeScreenSchemes>
+  deed get
+  note <Returns a [paginated](#pagination) list of issue type screen schemes. Only issue type screen schemes used in classic projects are returned. **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take start-at
+    like native-integer
+      bind lace, lace int64
+        fall <0>
+    note <The index of the first item to return in a page of results (page offset).>
+    void take
+  take max-results
+    like native-integer
+      bind lace, lace int32
+        fall <50>
+    note <The maximum number of items to return per page.>
+    void take
+  take id
+    like list
+      like native-integer
+        bind lace, lace int64
+    note <The list of issue type screen scheme IDs. To include multiple IDs, provide an ampersand-separated list. For example, `id=10000&id=10001`.>
+    void take
+  take query-string
+    like native-string
+        fall <>
+    note <String used to perform a case-insensitive partial match with issue type screen scheme name.>
+    void take
+  take order-by
+    like native-string
+        fall <id>
+    note <[Order](#ordering) the results by a field: * `name` Sorts by issue type screen scheme name. * `id` Sorts by issue type screen scheme ID.>
+    void take
+  take expand
+    like native-string
+        fall <>
+    note <Use [expand](#expansion) to include additional information in the response. This parameter accepts `projects` that, for each issue type screen schemes, returns information about the projects the issue type screen scheme is assigned to.>
+    void take
+
+  line </rest/api/3/issuetypescreenscheme>
+
+  find <startAt>, loan start-at
+  find <maxResults>, loan max-results
+  find <id>, loan id
+  find <queryString>, loan query-string
+  find <orderBy>, loan order-by
+  find <expand>, loan expand
+
+  loot 200
+    seed json, like page-bean-issue-type-screen-scheme
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if the request is not valid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    note <Returned if the user does not have the required permissions.>

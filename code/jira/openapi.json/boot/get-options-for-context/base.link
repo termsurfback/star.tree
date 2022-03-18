@@ -1,0 +1,67 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/page-bean-custom-field-context-option
+  take form page-bean-custom-field-context-option
+
+boot get-options-for-context, name <getOptionsForContext>
+  deed get
+  note <Returns a [paginated](#pagination) list of all custom field option for a context. Options are returned first then cascading options, in the order they display in Jira. This operation works for custom field options created in Jira or the operations from this resource. **To work with issue field select list options created for Connect apps use the [Issue custom field options (apps)](#api-group-issue-custom-field-options--apps-) operations.** **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take field-id
+    like native-string
+    note <The ID of the custom field.>
+  take context-id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the context.>
+  take option-id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the option.>
+    void take
+  take only-options
+    like native-boolean
+    note <Whether only options are returned.>
+    void take
+  take start-at
+    like native-integer
+      bind lace, lace int64
+        fall <0>
+    note <The index of the first item to return in a page of results (page offset).>
+    void take
+  take max-results
+    like native-integer
+      bind lace, lace int32
+        fall <100>
+    note <The maximum number of items to return per page.>
+    void take
+
+  line </rest/api/3/field/{field-id}/context/{context-id}/option>
+
+  find <optionId>, loan option-id
+  find <onlyOptions>, loan only-options
+  find <startAt>, loan start-at
+  find <maxResults>, loan max-results
+
+  loot 200
+    seed json, like page-bean-custom-field-context-option
+    note <Returned if the request is successful.>
+  loot 400
+    seed json
+    note <Returned if the request is not valid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    seed json
+    note <Returned if the user does not have the necessary permission.>
+  loot 404
+    seed json
+    note <Returned if the custom field is not found or the context doesn't match the custom field.>

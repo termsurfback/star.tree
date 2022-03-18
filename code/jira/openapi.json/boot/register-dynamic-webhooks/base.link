@@ -1,0 +1,26 @@
+
+load @drumwork/snow/jira/openapi.json/base/container-for-registered-webhooks
+  take form container-for-registered-webhooks
+
+load @drumwork/snow/jira/openapi.json/base/error-collection
+  take form error-collection
+
+boot register-dynamic-webhooks, name <registerDynamicWebhooks>
+  deed post
+  note <Registers webhooks. **[Permissions](#permissions) required:** Only [Connect](https://developer.atlassian.com/cloud/jira/platform/#connect-apps) and [OAuth 2.0](https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps) apps can use this operation.>
+
+  take webhook-registration-details, like webhook-registration-details
+
+  line </rest/api/3/webhook>
+
+  seed json, loan webhook-registration-details
+
+  loot 200
+    seed json, like container-for-registered-webhooks
+    note <Returned if the request is successful.>
+  loot 400
+    seed json, like error-collection
+    note <Returned if the request is invalid.>
+  loot 403
+    seed json, like error-collection
+    note <Returned if the caller is not an app.>

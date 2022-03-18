@@ -1,0 +1,41 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot add-issue-types-to-context, name <addIssueTypesToContext>
+  deed put
+  note <Adds issue types to a custom field context, appending the issue types to the issue types list. A custom field context without any issue types applies to all issue types. Adding issue types to such a custom field context would result in it applying to only the listed issue types. If any of the issue types exists in the custom field context, the operation fails and no issue types are added. **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take field-id
+    like native-string
+    note <The ID of the custom field.>
+  take context-id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the context.>
+  take issue-type-ids, like issue-type-ids
+
+  line </rest/api/3/field/{field-id}/context/{context-id}/issuetype>
+
+  seed json, loan issue-type-ids
+
+  loot 204
+    seed json
+    note <Returned if operation is successful.>
+  loot 400
+    seed json
+    note <Returned if the request is not valid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    seed json
+    note <Returned if the user does not have the required permissions.>
+  loot 404
+    seed json
+    note <Returned if the custom field, context, or one or more issue types are not found.>
+  loot 409
+    seed json
+    note <Returned if the issue type is a sub-task, but sub-tasks are disabled in Jira settings.>

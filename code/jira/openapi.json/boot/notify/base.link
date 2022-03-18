@@ -1,0 +1,26 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot notify, name <notify>
+  deed post
+  note <Creates an email notification for an issue and adds it to the mail queue. **[Permissions](#permissions) required:** * *Browse Projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue is in. * If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.>
+
+  take issue-id-or-key
+    like native-string
+    note <ID or key of the issue that the notification is sent for.>
+  take notification, like notification
+
+  line </rest/api/3/issue/{issue-id-or-key}/notify>
+
+  seed json, loan notification
+
+  loot 204
+    seed json
+    note <Returned if the email is queued for sending.>
+  loot 400
+    note <Returned if: * the recipient is the same as the calling user. * the recipient is invalid. For example, the recipient is set to the assignee, but the issue is unassigned. * the request is invalid. For example, required fields are missing or have invalid values.>
+  loot 403
+    note <Returned if: * outgoing emails are disabled. * no SMTP server is configured.>
+  loot 404
+    note <Returned if the issue is not found.>

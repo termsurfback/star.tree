@@ -1,0 +1,40 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/workflow-scheme
+  take form workflow-scheme
+
+boot update-draft-workflow-mapping, name <updateDraftWorkflowMapping>
+  deed put
+  note <Sets the issue types for a workflow in a workflow scheme's draft. The workflow can also be set as the default workflow for the draft workflow scheme. Unmapped issues types are mapped to the default workflow. **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the workflow scheme that the draft belongs to.>
+  take workflow-name
+    like native-string
+    note <The name of the workflow.>
+  take issue-types-workflow-mapping, like issue-types-workflow-mapping
+
+  line </rest/api/3/workflowscheme/{id}/draft/workflow>
+
+  find <workflowName>, loan workflow-name
+
+  seed json, loan issue-types-workflow-mapping
+
+  loot 200
+    seed json, like workflow-scheme
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if the request is invalid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    note <Returned if the user does not have the necessary permission.>
+  loot 404
+    note <Returned if any of the following is true: * The workflow scheme is not found. * The workflow scheme does not have a draft. * The workflow is not found. * The workflow is not specified.>

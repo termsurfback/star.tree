@@ -1,0 +1,35 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/permission-scheme
+  take form permission-scheme
+
+boot assign-permission-scheme, name <assignPermissionScheme>
+  deed put
+  note <Assigns a permission scheme with a project. See [Managing project permissions](https://confluence.atlassian.com/x/yodKLg) for more information about permission schemes. **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg)>
+
+  take project-key-or-id
+    like native-string
+    note <The project ID or project key (case sensitive).>
+  take expand
+    like native-string
+    note <Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Note that permissions are included when you specify any value. Expand options include: * `all` Returns all expandable information. * `field` Returns information about the custom field granted the permission. * `group` Returns information about the group that is granted the permission. * `permissions` Returns all permission grants for each permission scheme. * `projectRole` Returns information about the project role granted the permission. * `user` Returns information about the user who is granted the permission.>
+    void take
+  take id-bean, like id-bean
+
+  line </rest/api/3/project/{project-key-or-id}/permissionscheme>
+
+  find <expand>, loan expand
+
+  seed json, loan id-bean
+
+  loot 200
+    seed json, like permission-scheme
+    note <Returned if the request is successful.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    note <Returned if: * the user does not have the necessary permission to edit the project's configuration. * the Jira instance is Jira Core Free or Jira Software Free. Permission schemes cannot be assigned to projects on free plans.>
+  loot 404
+    note <Returned if the project or permission scheme is not found.>

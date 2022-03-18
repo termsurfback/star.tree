@@ -1,0 +1,29 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/workflow-rules-search-details
+  take form workflow-rules-search-details
+
+boot migration-resource-workflow-rule-search-post, name <MigrationResource.workflowRuleSearch_post>
+  deed post
+  note <Returns configurations for workflow transition rules migrated from server to cloud and owned by the calling Connect app.>
+
+  take atlassian-transfer-id
+    like native-string
+    note <The app migration transfer ID.>
+  take workflow-rules-search, like workflow-rules-search
+
+  line </rest/atlassian-connect/1/migration/workflow/rule/search>
+
+  hint <Atlassian-Transfer-Id>, loan atlassian-transfer-id
+
+  seed json, loan workflow-rules-search
+
+  loot 200
+    seed json, like workflow-rules-search-details
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if the request is not valid.>
+  loot 403
+    note <Returned if the authorisation credentials are incorrect or missing.>

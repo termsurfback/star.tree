@@ -1,0 +1,35 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-custom-field-value, name <updateCustomFieldValue>
+  deed put
+  note <Updates the value of a custom field on one or more issues. Custom fields can only be updated by the Forge app that created them. **[Permissions](#permissions) required:** Only the app that created the custom field can update its values with this operation.>
+
+  take field-id-or-key
+    like native-string
+    note <The ID or key of the custom field. For example, `customfield_10010`.>
+  take generate-changelog
+    like native-boolean
+    note <Whether to generate a changelog for this update.>
+    void take
+  take custom-field-value-update-details, like custom-field-value-update-details
+
+  line </rest/api/3/app/field/{field-id-or-key}/value>
+
+  find <generateChangelog>, loan generate-changelog
+
+  seed json, loan custom-field-value-update-details
+
+  loot 204
+    seed json
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if the request is invalid.>
+  loot 403
+    note <Returned if the request is not authenticated as the app that provided the field.>
+  loot 404
+    note <Returned if the field is not found.>

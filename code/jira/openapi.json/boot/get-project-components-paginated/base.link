@@ -1,0 +1,52 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/page-bean-component-with-issue-count
+  take form page-bean-component-with-issue-count
+
+boot get-project-components-paginated, name <getProjectComponentsPaginated>
+  deed get
+  note <Returns a [paginated](#pagination) list of all components in a project. See the [Get project components](#api-rest-api-3-project-projectIdOrKey-components-get) resource if you want to get a full list of versions without pagination. This operation can be accessed anonymously. **[Permissions](#permissions) required:** *Browse Projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project.>
+
+  take project-id-or-key
+    like native-string
+    note <The project ID or project key (case sensitive).>
+  take start-at
+    like native-integer
+      bind lace, lace int64
+        fall <0>
+    note <The index of the first item to return in a page of results (page offset).>
+    void take
+  take max-results
+    like native-integer
+      bind lace, lace int32
+        fall <50>
+    note <The maximum number of items to return per page.>
+    void take
+  take order-by
+    like native-string
+    note <[Order](#ordering) the results by a field: * `description` Sorts by the component description. * `issueCount` Sorts by the count of issues associated with the component. * `lead` Sorts by the user key of the component's project lead. * `name` Sorts by component name.>
+    void take
+  take query
+    like native-string
+    note <Filter the results using a literal string. Components with a matching `name` or `description` are returned (case insensitive).>
+    void take
+
+  line </rest/api/3/project/{project-id-or-key}/component>
+
+  find <startAt>, loan start-at
+  find <maxResults>, loan max-results
+  find <orderBy>, loan order-by
+  find <query>, loan query
+
+  loot 200
+    seed json, like page-bean-component-with-issue-count
+    note <Returned if the request is successful.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 404
+    note <Returned if the project is not found or the user does not have permission to view it.>

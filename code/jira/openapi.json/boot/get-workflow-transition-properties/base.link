@@ -1,0 +1,56 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/workflow-transition-property
+  take form workflow-transition-property
+
+boot get-workflow-transition-properties, name <getWorkflowTransitionProperties>
+  deed get
+  note <Returns the properties on a workflow transition. Transition properties are used to change the behavior of a transition. For more information, see [Transition properties](https://confluence.atlassian.com/x/zIhKLg#Advancedworkflowconfiguration-transitionproperties) and [Workflow properties](https://confluence.atlassian.com/x/JYlKLg). **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take transition-id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the transition. To get the ID, view the workflow in text mode in the Jira administration console. The ID is shown next to the transition.>
+  take include-reserved-keys
+    like native-boolean
+    note <Some properties with keys that have the *jira.* prefix are reserved, which means they are not editable. To include these properties in the results, set this parameter to *true*.>
+    void take
+  take key
+    like native-string
+    note <The key of the property being returned, also known as the name of the property. If this parameter is not specified, all properties on the transition are returned.>
+    void take
+  take workflow-name
+    like native-string
+    note <The name of the workflow that the transition belongs to.>
+  take workflow-mode
+    like native-string
+        fall <live>
+    note <The workflow status. Set to *live* for active and inactive workflows, or *draft* for draft workflows.>
+    void take
+
+  line </rest/api/3/workflow/transitions/{transition-id}/properties>
+
+  find <includeReservedKeys>, loan include-reserved-keys
+  find <key>, loan key
+  find <workflowName>, loan workflow-name
+  find <workflowMode>, loan workflow-mode
+
+  loot 200
+    seed json, like workflow-transition-property
+    note <200 response>
+  loot 400
+    note <Returned if the request is invalid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    note <Returned if the user does not have admin permission>
+  loot 404
+    note <Returned if the workflow transition or property is not found.>

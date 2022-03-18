@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/comment
+  take form comment
+
+boot get-comment, name <getComment>
+  deed get
+  note <Returns a comment. This operation can be accessed anonymously. **[Permissions](#permissions) required:** * *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project containing the comment. * If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue. * If the comment has visibility restrictions, the user belongs to the group or has the role visibility is restricted to.>
+
+  take issue-id-or-key
+    like native-string
+    note <The ID or key of the issue.>
+  take id
+    like native-string
+    note <The ID of the comment.>
+  take expand
+    like native-string
+    note <Use [expand](#expansion) to include additional information about comments in the response. This parameter accepts `renderedBody`, which returns the comment body rendered in HTML.>
+    void take
+
+  line </rest/api/3/issue/{issue-id-or-key}/comment/{id}>
+
+  find <expand>, loan expand
+
+  loot 200
+    seed json, like comment
+    note <Returned if the request is successful.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 404
+    note <Returned if the issue or comment is not found or the user does not have permission to view the issue or comment.>

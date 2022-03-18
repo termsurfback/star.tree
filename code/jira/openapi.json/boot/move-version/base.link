@@ -1,0 +1,29 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/version
+  take form version
+
+boot move-version, name <moveVersion>
+  deed post
+  note <Modifies the version's sequence within the project, which affects the display order of the versions in Jira. This operation can be accessed anonymously. **[Permissions](#permissions) required:** *Browse projects* project permission for the project that contains the version.>
+
+  take id
+    like native-string
+    note <The ID of the version to be moved.>
+  take version-move-bean, like version-move-bean
+
+  line </rest/api/3/version/{id}/move>
+
+  seed json, loan version-move-bean
+
+  loot 200
+    seed json, like version
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if: * no body parameters are provided. * `after` and `position` are provided. * `position` is invalid.>
+  loot 401
+    note <Returned if: * the authentication credentials are incorrect or missing * the user does not have the required commissions.>
+  loot 404
+    note <Returned if the version or move after version are not found.>

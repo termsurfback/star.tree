@@ -1,0 +1,24 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/watchers
+  take form watchers
+
+boot get-issue-watchers, name <getIssueWatchers>
+  deed get
+  note <Returns the watchers for an issue. This operation requires the **Allow users to watch issues** option to be *ON*. This option is set in General configuration for Jira. See [Configuring Jira application options](https://confluence.atlassian.com/x/uYXKM) for details. This operation can be accessed anonymously. **[Permissions](#permissions) required:** * *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue is ini * If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue. * To see details of users on the watchlist other than themselves, *View voters and watchers* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue is in.>
+
+  take issue-id-or-key
+    like native-string
+    note <The ID or key of the issue.>
+
+  line </rest/api/3/issue/{issue-id-or-key}/watchers>
+
+  loot 200
+    seed json, like watchers
+    note <Returned if the request is successful>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 404
+    note <Returned if the issue is not found or the user does not have permission to view it.>

@@ -1,0 +1,35 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/dashboard
+  take form dashboard
+
+load @drumwork/snow/jira/openapi.json/base/error-collection
+  take form error-collection
+
+boot update-dashboard, name <updateDashboard>
+  deed put
+  note <Updates a dashboard, replacing all the dashboard details with those provided. **[Permissions](#permissions) required:** None The dashboard to be updated must be owned by the user.>
+
+  take id
+    like native-string
+    note <The ID of the dashboard to update.>
+  take dashboard-details, like dashboard-details
+
+  line </rest/api/3/dashboard/{id}>
+
+  seed json, loan dashboard-details
+
+  loot 200
+    seed json, like dashboard
+    note <Returned if the request is successful.>
+  loot 400
+    seed json, like error-collection
+    note <Returned if the request is not valid.>
+  loot 401
+    seed json, like error-collection
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 404
+    seed json, like error-collection
+    note <Returned if the dashboard is not found or the dashboard is not owned by the user.>

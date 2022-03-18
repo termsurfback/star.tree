@@ -1,0 +1,71 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/user
+  take form user
+
+boot find-users-with-browse-permission, name <findUsersWithBrowsePermission>
+  deed get
+  note <Returns a list of users who fulfill these criteria: * their user attributes match a search string. * they have permission to browse issues. Use this resource to find users who can browse: * an issue, by providing the `issueKey`. * any issue in a project, by providing the `projectKey`. This operation takes the users in the range defined by `startAt` and `maxResults`, up to the thousandth user, and then returns only the users from that range that match the search string and have permission to browse issues. This means the operation usually returns fewer users than specified in `maxResults`. To get all the users who match the search string and have permission to browse issues, use [Get all users](#api-rest-api-3-users-search-get) and filter the records in your code. Privacy controls are applied to the response based on the users' preferences. This could mean, for example, that the user's email address is hidden. See the [Profile visibility overview](https://developer.atlassian.com/cloud/jira/platform/profile-visibility/) for more details. This operation can be accessed anonymously. **[Permissions](#permissions) required:** *Browse users and groups* [global permission](https://confluence.atlassian.com/x/x4dKLg). Anonymous calls and calls by users without the required permission return empty search results.>
+
+  take query
+    like native-string
+    note <A query string that is matched against user attributes, such as `displayName` and `emailAddress`, to find relevant users. The string can match the prefix of the attribute's value. For example, *query=john* matches a user with a `displayName` of *John Smith* and a user with an `emailAddress` of *johnson@example.com*. Required, unless `accountId` is specified.>
+    void take
+  take username
+    like native-string
+    note <This parameter is no longer available. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details.>
+    void take
+  take account-id
+    like native-string
+    note <A query string that is matched exactly against user `accountId`. Required, unless `query` is specified.>
+    void take
+  take issue-key
+    like native-string
+    note <The issue key for the issue. Required, unless `projectKey` is specified.>
+    void take
+  take project-key
+    like native-string
+    note <The project key for the project (case sensitive). Required, unless `issueKey` is specified.>
+    void take
+  take start-at
+    like native-integer
+      bind lace, lace int32
+        fall <0>
+    note <The index of the first item to return in a page of results (page offset).>
+    void take
+  take max-results
+    like native-integer
+      bind lace, lace int32
+        fall <50>
+    note <The maximum number of items to return per page.>
+    void take
+
+  line </rest/api/3/user/viewissue/search>
+
+  find <query>, loan query
+  find <username>, loan username
+  find <accountId>, loan account-id
+  find <issueKey>, loan issue-key
+  find <projectKey>, loan project-key
+  find <startAt>, loan start-at
+  find <maxResults>, loan max-results
+
+  loot 200
+    seed json
+      like list
+        like user
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if: * `issueKey` or `projectKey` is missing. * `query` or `accountId` is missing. * `query` and `accountId` are provided.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 404
+    note <Returned if the issue or project is not found.>

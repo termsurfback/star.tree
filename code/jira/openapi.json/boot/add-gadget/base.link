@@ -1,0 +1,35 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/jira/openapi.json/base/dashboard-gadget
+  take form dashboard-gadget
+
+load @drumwork/snow/jira/openapi.json/base/error-collection
+  take form error-collection
+
+boot add-gadget, name <addGadget>
+  deed post
+  note <Adds a gadget to a dashboard. **[Permissions](#permissions) required:** None.>
+
+  take dashboard-id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the dashboard.>
+  take dashboard-gadget-settings, like dashboard-gadget-settings
+
+  line </rest/api/3/dashboard/{dashboard-id}/gadget>
+
+  seed json, loan dashboard-gadget-settings
+
+  loot 200
+    seed json, like dashboard-gadget
+    note <Returned if the request is successful.>
+  loot 400
+    seed json, like error-collection
+    note <Returned if the request is invalid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 404
+    seed json, like error-collection
+    note <Returned if the dashboard is not found.>

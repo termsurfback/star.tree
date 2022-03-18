@@ -1,0 +1,111 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/page-bean-project
+  take form page-bean-project
+
+load @drumwork/snow/jira/openapi.json/base/string-list
+  take form string-list
+
+boot search-projects, name <searchProjects>
+  deed get
+  note <Returns a [paginated](#pagination) list of projects visible to the user. This operation can be accessed anonymously. **[Permissions](#permissions) required:** Projects are returned only where the user has one of: * *Browse Projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project. * *Administer Projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project. * *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take start-at
+    like native-integer
+      bind lace, lace int64
+        fall <0>
+    note <The index of the first item to return in a page of results (page offset).>
+    void take
+  take max-results
+    like native-integer
+      bind lace, lace int32
+        fall <50>
+    note <The maximum number of items to return per page.>
+    void take
+  take order-by
+    like native-string
+        fall <key>
+    note <[Order](#ordering) the results by a field. * `category` Sorts by project category. A complete list of category IDs is found using [Get all project categories](#api-rest-api-3-projectCategory-get). * `issueCount` Sorts by the total number of issues in each project. * `key` Sorts by project key. * `lastIssueUpdatedTime` Sorts by the last issue update time. * `name` Sorts by project name. * `owner` Sorts by project lead. * `archivedDate` EXPERIMENTAL. Sorts by project archived date. * `deletedDate` EXPERIMENTAL. Sorts by project deleted date.>
+    void take
+  take id
+    like list
+      like native-integer
+        bind lace, lace int64
+    note <The project IDs to filter the results by. To include multiple IDs, provide an ampersand-separated list. For example, `id=10000&id=10001`. Up to 50 project IDs can be provided.>
+    void take
+  take keys
+    like list
+      like native-string
+    note <The project keys to filter the results by. To include multiple keys, provide an ampersand-separated list. For example, `keys=PA&keys=PB`. Up to 50 project keys can be provided.>
+    void take
+  take query
+    like native-string
+    note <Filter the results using a literal string. Projects with a matching `key` or `name` are returned (case insensitive).>
+    void take
+  take type-key
+    like native-string
+    note <Orders results by the [project type](https://confluence.atlassian.com/x/GwiiLQ#Jiraapplicationsoverview-Productfeaturesandprojecttypes). This parameter accepts a comma-separated list. Valid values are `business`, `service_desk`, and `software`.>
+    void take
+  take category-id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the project's category. A complete list of category IDs is found using the [Get all project categories](#api-rest-api-3-projectCategory-get) operation.>
+    void take
+  take action
+    like native-string
+        fall <view>
+    note <Filter results by projects for which the user can: * `view` the project, meaning that they have one of the following permissions: * *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project. * *Administer projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project. * *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg). * `browse` the project, meaning that they have the *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project. * `edit` the project, meaning that they have one of the following permissions: * *Administer projects* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project. * *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+    void take
+  take expand
+    like native-string
+    note <Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Expanded options include: * `description` Returns the project description. * `projectKeys` Returns all project keys associated with a project. * `lead` Returns information about the project lead. * `issueTypes` Returns all issue types associated with the project. * `url` Returns the URL associated with the project. * `insight` EXPERIMENTAL. Returns the insight details of total issue count and last issue update time for the project.>
+    void take
+  take status
+    like list
+      like native-string
+          fall <live>
+    note <EXPERIMENTAL. Filter results by project status: * `live` Search live projects. * `archived` Search archived projects. * `deleted` Search deleted projects, those in the recycle bin.>
+    void take
+  take properties
+    like list
+      like string-list
+    note <EXPERIMENTAL. A list of project properties to return for the project. This parameter accepts a comma-separated list.>
+    void take
+  take property-query
+    like native-string
+    note <EXPERIMENTAL. A query string used to search properties. The query string cannot be specified using a JSON object. For example, to search for the value of `nested` from `{"something":{"nested":1,"other":2}}` use `[thepropertykey].something.nested=1`. Note that the propertyQuery key is enclosed in square brackets to enable searching where the propertyQuery key includes dot (.) or equals (=) characters. Note that `thepropertykey` is only returned when included in `properties`.>
+    void take
+
+  line </rest/api/3/project/search>
+
+  find <startAt>, loan start-at
+  find <maxResults>, loan max-results
+  find <orderBy>, loan order-by
+  find <id>, loan id
+  find <keys>, loan keys
+  find <query>, loan query
+  find <typeKey>, loan type-key
+  find <categoryId>, loan category-id
+  find <action>, loan action
+  find <expand>, loan expand
+  find <status>, loan status
+  find <properties>, loan properties
+  find <propertyQuery>, loan property-query
+
+  loot 200
+    seed json, like page-bean-project
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if the request is not valid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 404
+    note <Returned if no projects matching the search criteria are found.>

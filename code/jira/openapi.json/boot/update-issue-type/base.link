@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/issue-type-details
+  take form issue-type-details
+
+boot update-issue-type, name <updateIssueType>
+  deed put
+  note <Updates the issue type. **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take id
+    like native-string
+    note <The ID of the issue type.>
+  take issue-type-update-bean, like issue-type-update-bean
+
+  line </rest/api/3/issuetype/{id}>
+
+  seed json, loan issue-type-update-bean
+
+  loot 200
+    seed json, like issue-type-details
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if the request is invalid because: * no content is sent. * the issue type name exceeds 60 characters. * the avatar is not associated with this issue type.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    note <Returned if the user does not have the necessary permission.>
+  loot 404
+    note <Returned if the issue type is not found.>
+  loot 409
+    note <Returned if the issue type name is in use.>

@@ -1,0 +1,86 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/page-bean-contextual-configuration
+  take form page-bean-contextual-configuration
+
+boot get-custom-field-configuration, name <getCustomFieldConfiguration>
+  deed get
+  note <Returns a [paginated](#pagination) list of configurations for a custom field created by a [Forge app](https://developer.atlassian.com/platform/forge/). The result can be filtered by one of these criteria: * `id`. * `fieldContextId`. * `issueId`. * `projectKeyOrId` and `issueTypeId`. Otherwise, all configurations are returned. **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg). Jira permissions are not required for the Forge app that created the custom field.>
+
+  take field-id-or-key
+    like native-string
+    note <The ID or key of the custom field, for example `customfield_10000`.>
+  take id
+    like list
+      like native-integer
+        bind lace, lace int64
+    note <The list of configuration IDs. To include multiple configurations, separate IDs with an ampersand: `id=10000&id=10001`. Can't be provided with `fieldContextId`, `issueId`, `projectKeyOrId`, or `issueTypeId`.>
+    void take
+  take context-id
+    like list
+      like native-integer
+        bind lace, lace int64
+    note <DEPRECATED. Do not use.>
+    void take
+  take field-context-id
+    like list
+      like native-integer
+        bind lace, lace int64
+    note <The list of field context IDs. To include multiple field contexts, separate IDs with an ampersand: `fieldContextId=10000&fieldContextId=10001`. Can't be provided with `id`, `issueId`, `projectKeyOrId`, or `issueTypeId`.>
+    void take
+  take issue-id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the issue to filter results by. If the issue doesn't exist, an empty list is returned. Can't be provided with `contextIds`, `projectKeyOrId`, or `issueTypeId`.>
+    void take
+  take project-key-or-id
+    like native-string
+    note <The ID or key of the project to filter results by. Must be provided with `issueTypeId`. Can't be provided with `contextIds` or `issueId`.>
+    void take
+  take issue-type-id
+    like native-string
+    note <The ID of the issue type to filter results by. Must be provided with `projectKeyOrId`. Can't be provided with `contextIds` or `issueId`.>
+    void take
+  take start-at
+    like native-integer
+      bind lace, lace int64
+        fall <0>
+    note <The index of the first item to return in a page of results (page offset).>
+    void take
+  take max-results
+    like native-integer
+      bind lace, lace int32
+        fall <100>
+    note <The maximum number of items to return per page.>
+    void take
+
+  line </rest/api/3/app/field/{field-id-or-key}/context/configuration>
+
+  find <id>, loan id
+  find <contextId>, loan context-id
+  find <fieldContextId>, loan field-context-id
+  find <issueId>, loan issue-id
+  find <projectKeyOrId>, loan project-key-or-id
+  find <issueTypeId>, loan issue-type-id
+  find <startAt>, loan start-at
+  find <maxResults>, loan max-results
+
+  loot 200
+    seed json, like page-bean-contextual-configuration
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if the request is invalid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    note <Returned if the user is not a Jira admin or the request is not authenticated as from the app that provided the field.>
+  loot 404
+    note <Returned if the custom field is not found.>

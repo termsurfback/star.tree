@@ -1,0 +1,32 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot update-remote-issue-link, name <updateRemoteIssueLink>
+  deed put
+  note <Updates a remote issue link for an issue. Note: Fields without values in the request are set to null. This operation requires [issue linking to be active](https://confluence.atlassian.com/x/yoXKM). This operation can be accessed anonymously. **[Permissions](#permissions) required:** * *Browse projects* and *Link issues* [project permission](https://confluence.atlassian.com/x/yodKLg) for the project that the issue is in. * If [issue-level security](https://confluence.atlassian.com/x/J4lKLg) is configured, issue-level security permission to view the issue.>
+
+  take issue-id-or-key
+    like native-string
+    note <The ID or key of the issue.>
+  take link-id
+    like native-string
+    note <The ID of the remote issue link.>
+  take remote-issue-link-request, like remote-issue-link-request
+
+  line </rest/api/3/issue/{issue-id-or-key}/remotelink/{link-id}>
+
+  seed json, loan remote-issue-link-request
+
+  loot 204
+    seed json
+    note <Returned if the request is successful.>
+  loot 400
+    seed json
+    note <Returned if: * the link ID is invalid. * the remote issue link does not belong to the issue. * the request body is invalid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    note <Returned if the user does not have permission to link issues.>
+  loot 404
+    note <Returned if the issue or remote issue link is not found or the user does not have permission to view the issue.>

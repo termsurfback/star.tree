@@ -1,0 +1,42 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/auto-complete-suggestions
+  take form auto-complete-suggestions
+
+boot get-field-auto-complete-for-query-string, name <getFieldAutoCompleteForQueryString>
+  deed get
+  note <Returns the JQL search auto complete suggestions for a field. Suggestions can be obtained by providing: * `fieldName` to get a list of all values for the field. * `fieldName` and `fieldValue` to get a list of values containing the text in `fieldValue`. * `fieldName` and `predicateName` to get a list of all predicate values for the field. * `fieldName`, `predicateName`, and `predicateValue` to get a list of predicate values containing the text in `predicateValue`. This operation can be accessed anonymously. **[Permissions](#permissions) required:** None.>
+
+  take field-name
+    like native-string
+    note <The name of the field.>
+    void take
+  take field-value
+    like native-string
+    note <The partial field item name entered by the user.>
+    void take
+  take predicate-name
+    like native-string
+    note <The name of the [ CHANGED operator predicate](https://confluence.atlassian.com/x/hQORLQ#Advancedsearching-operatorsreference-CHANGEDCHANGED) for which the suggestions are generated. The valid predicate operators are *by*, *from*, and *to*.>
+    void take
+  take predicate-value
+    like native-string
+    note <The partial predicate item name entered by the user.>
+    void take
+
+  line </rest/api/3/jql/autocompletedata/suggestions>
+
+  find <fieldName>, loan field-name
+  find <fieldValue>, loan field-value
+  find <predicateName>, loan predicate-name
+  find <predicateValue>, loan predicate-value
+
+  loot 200
+    seed json, like auto-complete-suggestions
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if an invalid combination of parameters is passed.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect.>

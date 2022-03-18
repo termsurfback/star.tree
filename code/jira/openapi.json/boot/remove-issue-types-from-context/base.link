@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot remove-issue-types-from-context, name <removeIssueTypesFromContext>
+  deed post
+  note <Removes issue types from a custom field context. A custom field context without any issue types applies to all issue types. **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take field-id
+    like native-string
+    note <The ID of the custom field.>
+  take context-id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the context.>
+  take issue-type-ids, like issue-type-ids
+
+  line </rest/api/3/field/{field-id}/context/{context-id}/issuetype/remove>
+
+  seed json, loan issue-type-ids
+
+  loot 204
+    seed json
+    note <Returned if operation is successful.>
+  loot 400
+    seed json
+    note <Returned if the request is not valid.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    seed json
+    note <Returned if the user does not have the required permissions.>
+  loot 404
+    seed json
+    note <Returned if the custom field, context, or one or more issue types are not found.>

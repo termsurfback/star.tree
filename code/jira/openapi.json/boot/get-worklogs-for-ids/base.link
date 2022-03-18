@@ -1,0 +1,36 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/worklog
+  take form worklog
+
+boot get-worklogs-for-ids, name <getWorklogsForIds>
+  deed post
+  note <Returns worklog details for a list of worklog IDs. The returned list of worklogs is limited to 1000 items. **[Permissions](#permissions) required:** Permission to access Jira, however, worklogs are only returned where either of the following is true: * the worklog is set as *Viewable by All Users*. * the user is a member of a project role or group with permission to view the worklog.>
+
+  take expand
+    like native-string
+        fall <>
+    note <Use [expand](#expansion) to include additional information about worklogs in the response. This parameter accepts `properties` that returns the properties of each worklog.>
+    void take
+  take worklog-ids-request-bean, like worklog-ids-request-bean
+
+  line </rest/api/3/worklog/list>
+
+  find <expand>, loan expand
+
+  seed json, loan worklog-ids-request-bean
+
+  loot 200
+    seed json
+      like list
+        like worklog
+    note <Returned if the request is successful.>
+  loot 400
+    note <Returned if the request contains more than 1000 worklog IDs or is empty.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>

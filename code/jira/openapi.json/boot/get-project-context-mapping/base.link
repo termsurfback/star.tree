@@ -1,0 +1,56 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/page-bean-custom-field-context-project-mapping
+  take form page-bean-custom-field-context-project-mapping
+
+boot get-project-context-mapping, name <getProjectContextMapping>
+  deed get
+  note <Returns a [paginated](#pagination) list of context to project mappings for a custom field. The result can be filtered by `contextId`. Otherwise, all mappings are returned. Invalid IDs are ignored. **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).>
+
+  take field-id
+    like native-string
+    note <The ID of the custom field, for example `customfield\_10000`.>
+  take context-id
+    like list
+      like native-integer
+        bind lace, lace int64
+    note <The list of context IDs. To include multiple context, separate IDs with ampersand: `contextId=10000&contextId=10001`.>
+    void take
+  take start-at
+    like native-integer
+      bind lace, lace int64
+        fall <0>
+    note <The index of the first item to return in a page of results (page offset).>
+    void take
+  take max-results
+    like native-integer
+      bind lace, lace int32
+        fall <50>
+    note <The maximum number of items to return per page.>
+    void take
+
+  line </rest/api/3/field/{field-id}/context/projectmapping>
+
+  find <contextId>, loan context-id
+  find <startAt>, loan start-at
+  find <maxResults>, loan max-results
+
+  loot 200
+    seed json, like page-bean-custom-field-context-project-mapping
+    note <Returned if the request is successful.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 403
+    seed json
+    note <Returned if the user does not have the required permissions.>
+  loot 404
+    seed json
+    note <Returned if the custom field is not found.>

@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/jira/openapi.json/base/permission-grant
+  take form permission-grant
+
+boot get-permission-scheme-grant, name <getPermissionSchemeGrant>
+  deed get
+  note <Returns a permission grant. **[Permissions](#permissions) required:** Permission to access Jira.>
+
+  take scheme-id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the permission scheme.>
+  take permission-id
+    like native-integer
+      bind lace, lace int64
+    note <The ID of the permission grant.>
+  take expand
+    like native-string
+    note <Use expand to include additional information in the response. This parameter accepts a comma-separated list. Note that permissions are always included when you specify any value. Expand options include: * `all` Returns all expandable information. * `field` Returns information about the custom field granted the permission. * `group` Returns information about the group that is granted the permission. * `permissions` Returns all permission grants for each permission scheme. * `projectRole` Returns information about the project role granted the permission. * `user` Returns information about the user who is granted the permission.>
+    void take
+
+  line </rest/api/3/permissionscheme/{scheme-id}/permission/{permission-id}>
+
+  find <expand>, loan expand
+
+  loot 200
+    seed json, like permission-grant
+    note <Returned if the request is successful.>
+  loot 401
+    note <Returned if the authentication credentials are incorrect or missing.>
+  loot 404
+    note <Returned if the permission scheme or permission grant is not found or the user does not have the necessary permission.>
