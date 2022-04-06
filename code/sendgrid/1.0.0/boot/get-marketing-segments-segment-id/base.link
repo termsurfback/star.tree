@@ -1,0 +1,37 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/full-segment
+  take form full-segment
+
+boot get-marketing-segments-segment-id, name <GET_marketing-segments-segment_id>
+  deed get
+  note <**This endpoint allows you to retrieve a single segment by ID.**>
+
+  take segment-id
+    like native-string
+  take query-json
+    like native-boolean
+    note <Defaults to `false`. Set to `true` to return the parsed SQL AST as a JSON object in the field `query_json`>
+    void take
+
+  line </marketing/segments/{segment-id}>
+
+  find <query_json>, loan query-json
+
+  loot 200
+    seed json, like full-segment
+  loot 401
+  loot 403
+  loot 404
+    seed json
+      like form
+        take errors, name <errors>
+  loot 500
+    seed json
+      like form
+        take errors, name <errors>

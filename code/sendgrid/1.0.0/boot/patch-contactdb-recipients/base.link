@@ -1,0 +1,28 @@
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/contactdb-recipient-response
+  take form contactdb-recipient-response
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/global-error-response-schema
+  take form global-error-response-schema
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/patch-contactdb-recipients-body
+  take form patch-contactdb-recipients-body
+
+boot patch-contactdb-recipients, name <PATCH_contactdb-recipients>
+  deed patch
+  note <**This endpoint allows you to update one or more recipients.** The body of an API call to this endpoint must include an array of one or more recipient objects. It is of note that you can add custom field data as parameters on recipient objects. We have provided an example using some of the default custom fields SendGrid provides.>
+
+  take patch-contactdb-recipients-body, like patch-contactdb-recipients-body
+    void take
+
+  line </contactdb/recipients>
+
+  seed json, loan patch-contactdb-recipients-body
+
+  loot 201
+    seed json, like contactdb-recipient-response
+  loot 400
+    seed json, like global-error-response-schema
+    note <"" : "Returned if request body is not valid json">
+  loot 401
+    seed json, like global-error-response-schema

@@ -1,0 +1,29 @@
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/delete-contactdb-recipients-body
+  take form delete-contactdb-recipients-body
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/global-error-response-schema
+  take form global-error-response-schema
+
+boot delete-contactdb-recipients, name <DELETE_contactdb-recipients>
+  deed delete
+  note <**This endpoint allows you to deletes one or more recipients.** The body of an API call to this endpoint must include an array of recipient IDs of the recipients you want to delete.>
+
+  take delete-contactdb-recipients-body, like delete-contactdb-recipients-body
+    void take
+
+  line </contactdb/recipients>
+
+  seed json, loan delete-contactdb-recipients-body
+
+  loot 200
+    seed json
+      like form
+  loot 400
+    seed json, like global-error-response-schema
+    note <"" : "Returned if no recipients are deleted" "" : "Returned if all of the provided recipient ids are invalid" "" : "Returned if request body is not valid json">
+  loot 401
+    seed json, like global-error-response-schema

@@ -1,0 +1,23 @@
+
+load @drumwork/snow/openapi-directory/APIs/plaid.com/2020-09-14_1.20.6/base/bank-transfer-balance-get-response
+  take form bank-transfer-balance-get-response
+
+load @drumwork/snow/openapi-directory/APIs/plaid.com/2020-09-14_1.20.6/base/error
+  take form error
+
+boot bank-transfer-balance-get, name <bankTransferBalanceGet>
+  deed post
+  note <Use the `/bank_transfer/balance/get` endpoint to see the available balance in your bank transfer account. Debit transfers increase this balance once their status is posted. Credit transfers decrease this balance when they are created. The transactable balance shows the amount in your account that you are able to use for transfers, and is essentially your available balance minus your minimum balance. Note that this endpoint can only be used with FBO accounts, when using Bank Transfers in the Full Service configuration. It cannot be used on your own account when using Bank Transfers in the BTS Platform configuration.>
+
+  take bank-transfer-balance-get-request, like bank-transfer-balance-get-request
+
+  line </bank_transfer/balance/get>
+
+  seed json, loan bank-transfer-balance-get-request
+
+  loot 200
+    seed json, like bank-transfer-balance-get-response
+    note <OK>
+  loot fall
+    seed json, like error
+    note <Error response>

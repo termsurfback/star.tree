@@ -1,0 +1,23 @@
+
+load @drumwork/snow/openapi-directory/APIs/plaid.com/2020-09-14_1.20.6/base/accounts-get-response
+  take form accounts-get-response
+
+load @drumwork/snow/openapi-directory/APIs/plaid.com/2020-09-14_1.20.6/base/error
+  take form error
+
+boot accounts-get, name <accountsGet>
+  deed post
+  note <The `/accounts/get` endpoint can be used to retrieve information for any linked Item. Note that some information is nullable. Plaid will only return active bank accounts, i.e. accounts that are not closed and are capable of carrying a balance. This endpoint retrieves cached information, rather than extracting fresh information from the institution. As a result, balances returned may not be up-to-date; for realtime balance information, use `/accounts/balance/get` instead.>
+
+  take accounts-get-request, like accounts-get-request
+
+  line </accounts/get>
+
+  seed json, loan accounts-get-request
+
+  loot 200
+    seed json, like accounts-get-response
+    note <success>
+  loot fall
+    seed json, like error
+    note <Error response.>

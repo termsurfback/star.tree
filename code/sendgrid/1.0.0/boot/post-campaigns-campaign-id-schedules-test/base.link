@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/global-error-response-schema
+  take form global-error-response-schema
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/post-campaigns-campaign-id-schedules-test-body
+  take form post-campaigns-campaign-id-schedules-test-body
+
+boot post-campaigns-campaign-id-schedules-test, name <POST_campaigns-campaign_id-schedules-test>
+  deed post
+  note <**This endpoint allows you to send a test campaign.** To send to multiple addresses, use an array for the JSON "to" value ["one@address","two@address"]>
+
+  take campaign-id
+    like native-integer
+  take post-campaigns-campaign-id-schedules-test-body, like post-campaigns-campaign-id-schedules-test-body
+    void take
+
+  line </campaigns/{campaign-id}/schedules/test>
+
+  seed json, loan post-campaigns-campaign-id-schedules-test-body
+
+  loot 204
+    seed json
+      like form
+        take to, name <to>
+  loot 400
+    seed json, like global-error-response-schema
+    note <"": "The JSON you have submitted cannot be parsed." "to": "Please provide an email address to which the test should be sent." "to": "You can only send tests to 10 addresses at a time." "subject": "Please add a subject to your campaign before sending a test." "plain_content": "Plain content and html content can't both be blank. Please set one of these values before sending a test." "sender_id": "Please assign a sender identity to your campaign before sending a test.">
+  loot 404
+    seed json, like global-error-response-schema
+    note <"": "not found">

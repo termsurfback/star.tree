@@ -1,0 +1,25 @@
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/post-user-scheduled-sends-body
+  take form post-user-scheduled-sends-body
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/user-scheduled-send-status
+  take form user-scheduled-send-status
+
+boot post-user-scheduled-sends, name <POST_user-scheduled_sends>
+  deed post
+  note <**This endpoint allows you to cancel or pause a scheduled send associated with a `batch_id`.** Passing this endpoint a `batch_id` and status will cancel or pause the scheduled send. Once a scheduled send is set to `pause` or `cancel` you must use the "Update a scheduled send" endpoint to change its status or the "Delete a cancellation or pause from a scheduled send" endpoint to remove the status. Passing a status change to a scheduled send that has already been paused or cancelled will result in a `400` level status code. If the maximum number of cancellations/pauses are added to a send, a `400` level status code will be returned.>
+
+  take post-user-scheduled-sends-body, like post-user-scheduled-sends-body
+    void take
+
+  line </user/scheduled_sends>
+
+  seed json, loan post-user-scheduled-sends-body
+
+  loot 201
+    seed json, like user-scheduled-send-status
+  loot 400
+  loot 401
+  loot 403
+  loot 404
+  loot 500

@@ -1,0 +1,35 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-whitelabel-ips-id-validate, name <POST_whitelabel-ips-id-validate>
+  deed post
+  note <**This endpoint allows you to validate a reverse DNS record.** Always check the `valid` property of the response’s `validation_results.a_record` object. This field will indicate whether it was possible to validate the reverse DNS record. If the `validation_results.a_record.valid` is `false`, this indicates only that Twilio SendGrid could not determine the validity your reverse DNS record — it may still be valid. If validity couldn’t be determined, you can check the value of `validation_results.a_record.reason` to find out why. You can retrieve the IDs associated with all your reverse DNS records using the "Retrieve all reverse DNS records" endpoint.>
+
+  take id
+    like native-string
+    note <The ID of the reverse DNS record that you would like to validate.>
+
+  line </whitelabel/ips/{id}/validate>
+
+  loot 200
+    seed json
+      like form
+        take id, name <id>
+        take valid, name <valid>
+        take validation-results, name <validation_results>
+          like form
+            take a-record, name <a_record>
+              like form
+                take reason, name <reason>
+                take valid, name <valid>
+              void take
+  loot 404
+    seed json
+      like form
+        take errors, name <errors>
+    note <Unexpected error in API call. See HTTP response body for details.>
+  loot 500
+    seed json
+      like form
+        take errors, name <errors>

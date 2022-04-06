@@ -1,0 +1,34 @@
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/global-error-response-schema
+  take form global-error-response-schema
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/post-marketing-contacts-search-emails-body
+  take form post-marketing-contacts-search-emails-body
+
+boot post-marketing-contacts-search-emails, name <POST_marketing-contacts-search-emails>
+  deed post
+  note <**This endpoint allows you to retrieve up to 100 contacts matching the searched `email` address(es), including any `alternate_emails`.** Email addresses are unique to a contact, meaning this endpoint can treat an email address as a primary key to search by. The contact object associated with the address, whether it is their `email` or one of their `alternate_emails` will be returned if matched. Email addresses in the search request do not need to match the case in which they're stored, but the email addresses in the result will be all lower case. Empty strings are excluded from the search and will not be returned. This endpoint should be used in place of the "Search Contacts" endpoint when you can provide exact email addresses and do not need to include other [Segmentation Query Language (SGQL)](https://sendgrid.com/docs/for-developers/sending-email/segmentation-query-language/) filters when searching. If you need to access a large percentage of your contacts, we recommend exporting your contacts with the "Export Contacts" endpoint and filtering the results client side. This endpoint returns a `200` status code when any contacts match the address(es) you supplied. When searching multiple addresses in a single request, it is possible that some addresses will match a contact while others will not. When a partially successful search like this is made, the matching contacts are returned in an object and an error message is returned for the email address(es) that are not found. This endpoint returns a `404` status code when no contacts are found for the provided email address(es). A `400` status code is returned if any searched addresses are invalid.>
+
+  take post-marketing-contacts-search-emails-body, like post-marketing-contacts-search-emails-body
+    void take
+
+  line </marketing/contacts/search/emails>
+
+  seed json, loan post-marketing-contacts-search-emails-body
+
+  loot 200
+    seed json
+      like form
+        take result, name <result>
+          void take
+  loot 400
+    seed json, like global-error-response-schema
+  loot 401
+  loot 403
+  loot 404
+    seed json, like global-error-response-schema
+  loot 500
+    seed json
+      like form
+        take errors, name <errors>
+          void take

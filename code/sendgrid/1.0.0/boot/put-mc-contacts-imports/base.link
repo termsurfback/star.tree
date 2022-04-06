@@ -1,0 +1,35 @@
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/put-mc-contacts-imports-body
+  take form put-mc-contacts-imports-body
+
+boot put-mc-contacts-imports, name <PUT_mc-contacts-imports>
+  deed put
+  note <**This endpoint allows a CSV upload containing up to one million contacts or 5GB of data, whichever is smaller.** Imports take place asynchronously: the endpoint returns a URL (`upload_uri`) and HTTP headers (`upload_headers`) which can subsequently be used to `PUT` a file of contacts to be imported into our system. Uploaded CSV files may also be [gzip-compressed](https://en.wikipedia.org/wiki/Gzip). In either case, you must include the field `file_type` with the value `csv` in your request body. The `field_mappings` paramter is a respective list of field definition IDs to map the uploaded CSV columns to. It allows you to use CSVs where one or more columns are skipped (`null`) or remapped to the contact field. For example, if `field_mappings` is set to `[null, "w1", "_rf1"]`, this means skip column 0, map column 1 to the custom field with the ID `w1`, and map column 2 to the reserved field with the ID `_rf1`. See the "Get All Field Definitions" endpoint to fetch your custom and reserved field IDs to use with `field_mappings`. Once you recieve the response body you can then initiate a **second** API call where you use the supplied URL and HTTP header to upload your file. For example: `curl --upload-file "file/path.csv" "URL_GIVEN" -H 'HEADER_GIVEN'` If you'd like to monitor the status of your import job, use the `job_id` and the "Import Contacts Status" endpoint.>
+
+  take put-mc-contacts-imports-body, like put-mc-contacts-imports-body
+    void take
+
+  line </marketing/contacts/imports>
+
+  seed json, loan put-mc-contacts-imports-body
+
+  loot 200
+    seed json
+      like form
+        take job-id, name <job_id>
+          void take
+        take upload-headers, name <upload_headers>
+          void take
+        take upload-uri, name <upload_uri>
+          void take
+  loot 400
+    seed json
+      like form
+        take errors, name <errors>
+  loot 401
+  loot 403
+  loot 404
+    seed json
+      like form
+        take errors, name <errors>
+  loot 500

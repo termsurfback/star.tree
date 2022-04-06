@@ -1,0 +1,29 @@
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/post-marketing-contacts-batch-body
+  take form post-marketing-contacts-batch-body
+
+boot post-marketing-contacts-batch, name <POST_marketing-contacts-batch>
+  deed post
+  note <**This endpoint is used to retrieve a set of contacts identified by their IDs.** This can be more efficient endpoint to get contacts than making a series of individual `GET` requests to the "Get a Contact by ID" endpoint. You can supply up to 100 IDs. Pass them into the `ids` field in your request body as an array or one or more strings.>
+
+  take post-marketing-contacts-batch-body, like post-marketing-contacts-batch-body
+    void take
+
+  line </marketing/contacts/batch>
+
+  seed json, loan post-marketing-contacts-batch-body
+
+  loot 200
+    seed json
+      like form
+        take result, name <result>
+          void take
+  loot 401
+  loot 403
+  loot 404
+    seed json
+      like form
+  loot 500

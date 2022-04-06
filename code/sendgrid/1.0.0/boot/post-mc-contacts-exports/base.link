@@ -1,0 +1,34 @@
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/metadata
+  take form metadata
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/post-mc-contacts-exports-body
+  take form post-mc-contacts-exports-body
+
+boot post-mc-contacts-exports, name <POST_mc-contacts-exports>
+  deed post
+  note <**Use this endpoint to export lists or segments of contacts**. If you would just like to have a link to the exported list sent to your email set the `notifications.email` option to `true` in the `POST` payload. If you would like to download the list, take the `id` that is returned and use the "Export Contacts Status" endpoint to get the `urls`. Once you have the list of URLs, make a `GET` request to each URL provided to download your CSV file(s). You specify the segements and or/contact lists you wish to export by providing the relevant IDs in, respectively, the `segment_ids` and `list_ids` fields in the request body. The lists will be provided in either JSON or CSV files. To specify which of these you would required, set the request body `file_type` field to `json` or `csv`. You can also specify a maximum file size (in MB). If the export file is larger than this, it will be split into multiple files.>
+
+  take post-mc-contacts-exports-body, like post-mc-contacts-exports-body
+    void take
+
+  line </marketing/contacts/exports>
+
+  seed json, loan post-mc-contacts-exports-body
+
+  loot 202
+    seed json
+      like form
+        take metadata, name <_metadata>
+          like metadata
+        take id, name <id>
+          void take
+  loot 400
+    seed json
+      like form
+        take errors, name <errors>
+          void take
+  loot 401
+  loot 403
+  loot 404
+  loot 500

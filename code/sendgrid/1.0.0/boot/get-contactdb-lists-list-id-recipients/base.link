@@ -1,0 +1,47 @@
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/global-error-response-schema
+  take form global-error-response-schema
+
+boot get-contactdb-lists-list-id-recipients, name <GET_contactdb-lists-list_id-recipients>
+  deed get
+  note <**This endpoint allows you to retrieve all recipients on the list with the given ID.**>
+
+  take list-id
+    like native-integer
+    note <The id of the list of recipients you want to retrieve.>
+  take page
+    like native-integer
+    note <Page index of first recipient to return (must be a positive integer)>
+    void take
+  take page-size
+    like native-integer
+    note <Number of recipients to return at a time (must be a positive integer between 1 and 1000)>
+    void take
+  take list-id
+    like native-integer
+    note <The ID of the list whose recipients you are requesting.>
+
+  line </contactdb/lists/{list-id}/recipients>
+
+  find <page>, loan page
+  find <page_size>, loan page-size
+  find <list_id>, loan list-id
+
+  loot 200
+    seed json
+      like form
+        take recipients, name <recipients>
+          void take
+  loot 400
+    seed json, like global-error-response-schema
+    note <"list_id" : "Returned if list_id is not a valid integer" "page" : "Returned if page is not a valid integer" "page" : "Returned if page is less than 1" "page_size" : "Returned if page_size is not a valid integer" "page_size" : "Returned if page_size is less than 1 or greater than 1000">
+  loot 404
+    seed json
+      like form
+    note <"list_id" : "Returned if list_id does not exist">

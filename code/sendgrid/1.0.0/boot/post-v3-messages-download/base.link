@@ -1,0 +1,39 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot post-v3-messages-download, name <POST_v3-messages-download>
+  deed post
+  note <This is BETA functionality. You may not have access, and we reserve the right to change functionality without notice. This request will kick off a backend process to generate a CSV file. Once generated, the worker will then send an email for the user download the file. The link will expire in 3 days. The CSV fill contain the last 1 million messages. This endpoint will be rate limited to 1 request every 12 hours (rate limit may change). This endpoint is similar to the GET Single Message endpoint - the only difference is that /download is added to indicate that this is a CSV download requests but the same query is used to determine what the CSV should contain.>
+
+  take query
+    like native-string
+    note <Uses a SQL like syntax to indicate which messages to include in the CSV>
+    void take
+
+  line </messages/download>
+
+  find <query>, loan query
+
+  loot 202
+    seed json
+      like form
+        take message, name <message>
+          void take
+        take status, name <status>
+          void take
+  loot 400
+    seed json
+      like form
+        take errors, name <errors>
+          void take
+  loot 429
+    seed json
+      like form
+        take errors, name <errors>
+          void take
+  loot 500
+    seed json
+      like form
+        take errors, name <errors>
+          void take

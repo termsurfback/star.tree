@@ -1,0 +1,31 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-singlesend-stats-export, name <get-singlesend-stats-export>
+  deed get
+  note <**This endpoint allows you to export Single Send stats as .CSV data**. You can specify one Single Send or many: include as many Single Send IDs as you need, separating them with commas, as the value of the `ids` query string paramter. The data is returned as plain text response but in .CSV format, so your application making the call can present the information in whatever way is most appropriate, or just save the data as a .csv file.>
+
+  take ids
+    like list
+      like native-string
+    note <The IDs of Single Sends for which to export stats.>
+    void take
+  take timezone
+    like native-string
+        fall <UTC>
+    note <The [IANA Area/Region](https://en.wikipedia.org/wiki/Tz_database#Names_of_time_zones) string representing the timezone in which the stats are to be presented; i.e. `"America/Chicago"`. This parameter changes the timezone format only; it does not alter which stats are returned.>
+    void take
+
+  line </marketing/stats/singlesends/export>
+
+  find <ids>, loan ids
+  find <timezone>, loan timezone
+
+  loot 200
+    seed json
+      like native-string
+  loot 400

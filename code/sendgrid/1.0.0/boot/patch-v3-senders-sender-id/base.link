@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/sender-id
+  take form sender-id
+
+boot patch-v3-senders-sender-id, name <PATCH_v3-senders-sender_id>
+  deed patch
+  note <**This endpoint allows you to update a sender identity.** Updates to `from.email` require re-verification. Partial updates are allowed, but fields that are marked as "required" in the POST (create) endpoint must not be nil if that field is included in the PATCH request.>
+
+  take sender-id
+    like native-integer
+    note <The ID of the sender identity that you want to retrieve.>
+  take sender-id-request, like sender-id-request
+    void take
+
+  line </senders/{sender-id}>
+
+  seed json, loan sender-id-request
+
+  loot 200
+    seed json, like sender-id
+  loot 400
+    seed json
+      like form
+        take errors, name <errors>
+          void take
+  loot 403
+    seed json
+      like form
+        take errors, name <errors>
+          void take
+  loot 404
+    seed json
+      like form
+        take errors, name <errors>
+          void take

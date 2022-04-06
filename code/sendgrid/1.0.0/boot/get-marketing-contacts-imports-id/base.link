@@ -1,0 +1,31 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/contact-import
+  take form contact-import
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/error
+  take form error
+
+boot get-marketing-contacts-imports-id, name <GET_marketing-contacts-imports-id>
+  deed get
+  note <**This endpoint can be used to check the status of a contact import job**. Use the `job_id` from the "Improt Contacts," "Add or Update a Contact," or "Delete Contacts" endpoints as the `id` in the path parameter. If there is an error with your `PUT` request, download the `errors_url` file and open it to view more details. The job `status` field indicates whether the job is `pending`, `completed`, `errored`, or `failed`. Pending means not started. Completed means finished without any errors. Errored means finished with some errors. Failed means finshed with all errors, or the job was entirely unprocessable: for example, if you attempt to import file format we do not support. The `results` object will have fields depending on the job type.>
+
+  take id
+    like native-string
+
+  line </marketing/contacts/imports/{id}>
+
+  loot 200
+    seed json, like contact-import
+  loot 400
+    seed json
+      like form
+        take errors, name <errors>
+          like error
+          void take
+  loot 401
+  loot 403
+  loot 404
+  loot 500

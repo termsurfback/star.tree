@@ -1,0 +1,37 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/global-error-response-schema
+  take form global-error-response-schema
+
+boot delete-contactdb-segments-segment-id, name <DELETE_contactdb-segments-segment_id>
+  deed delete
+  note <**This endpoint allows you to delete a segment from your recipients database.** You also have the option to delete all the contacts from your Marketing Campaigns recipient database who were in this segment.>
+
+  take segment-id
+    like native-string
+  take delete-contacts
+    like native-boolean
+    note <True to delete all contacts matching the segment in addition to deleting the segment>
+    void take
+  take undefined, like undefined
+    void take
+
+  line </contactdb/segments/{segment-id}>
+
+  find <delete_contacts>, loan delete-contacts
+
+  loot 204
+    seed json
+  loot 400
+    seed json, like global-error-response-schema
+    note <"segment_id" : "Returned if segment_id is not valid" "delete_contacts" : "Returned if delete_contacts is not a valid boolean">
+  loot 401
+    seed json, like global-error-response-schema
+  loot 404
+    seed json, like global-error-response-schema
+    note <"segment_id" : "Returned if segment_id does not exist">

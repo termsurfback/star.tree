@@ -1,0 +1,35 @@
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/contactdb-recipient
+  take form contactdb-recipient
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/global-error-response-schema
+  take form global-error-response-schema
+
+boot get-contactdb-recipients-recipient-id, name <GET_contactdb-recipients-recipient_id>
+  deed get
+  note <**This endpoint allows you to retrieve a single recipient by ID from your contact database.**>
+
+  take recipient-id
+    like native-string
+    note <The ID of the recipient that you want to retrieve.>
+
+  line </contactdb/recipients/{recipient-id}>
+
+  loot 200
+    seed json, like contactdb-recipient
+  loot 400
+    seed json
+      like form
+    note <"recipient_id" : "Returned if recipient_id is not valid">
+  loot 401
+    seed json, like global-error-response-schema
+  loot 404
+    seed json
+      like form
+    note <"recipient_id" : "Returned if record for recipient id does not exist">

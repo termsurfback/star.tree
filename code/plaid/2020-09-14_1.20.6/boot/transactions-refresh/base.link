@@ -1,0 +1,23 @@
+
+load @drumwork/snow/openapi-directory/APIs/plaid.com/2020-09-14_1.20.6/base/error
+  take form error
+
+load @drumwork/snow/openapi-directory/APIs/plaid.com/2020-09-14_1.20.6/base/transactions-refresh-response
+  take form transactions-refresh-response
+
+boot transactions-refresh, name <transactionsRefresh>
+  deed post
+  note <`/transactions/refresh` is an optional endpoint for users of the Transactions product. It initiates an on-demand extraction to fetch the newest transactions for an Item. This on-demand extraction takes place in addition to the periodic extractions that automatically occur multiple times a day for any Transactions-enabled Item. If changes to transactions are discovered after calling `/transactions/refresh`, Plaid will fire a webhook: [`TRANSACTIONS_REMOVED`](https://plaid.com/docs/api/webhooks#deleted-transactions-detected) will be fired if any removed transactions are detected, and [`DEFAULT_UPDATE`](https://plaid.com/docs/api/webhooks#transactions-default_update) will be fired if any new transactions are detected. New transactions can be fetched by calling `/transactions/get`. Access to `/transactions/refresh` in Production is specific to certain pricing plans. If you cannot access `/transactions/refresh` in Production, [contact Sales](https://www.plaid.com/contact) for assistance.>
+
+  take transactions-refresh-request, like transactions-refresh-request
+
+  line </transactions/refresh>
+
+  seed json, loan transactions-refresh-request
+
+  loot 200
+    seed json, like transactions-refresh-response
+    note <OK>
+  loot fall
+    seed json, like error
+    note <Error response>

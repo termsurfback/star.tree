@@ -1,0 +1,28 @@
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/contactdb-list
+  take form contactdb-list
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/global-error-response-schema
+  take form global-error-response-schema
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/post-contactdb-lists-body
+  take form post-contactdb-lists-body
+
+boot post-contactdb-lists, name <POST_contactdb-lists>
+  deed post
+  note <**This endpoint allows you to create a list for your recipients.**>
+
+  take post-contactdb-lists-body, like post-contactdb-lists-body
+    void take
+
+  line </contactdb/lists>
+
+  seed json, loan post-contactdb-lists-body
+
+  loot 201
+    seed json, like contactdb-list
+  loot 400
+    seed json, like global-error-response-schema
+    note <"name" : "Returned if list name is a duplicate of an existing list or segment" "name" : "Returned if list name is not a string" "" : "Returned if request body is invalid JSON">
+  loot 401
+    seed json, like global-error-response-schema

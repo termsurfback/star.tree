@@ -1,0 +1,23 @@
+
+load @drumwork/snow/openapi-directory/APIs/plaid.com/2020-09-14_1.20.6/base/error
+  take form error
+
+load @drumwork/snow/openapi-directory/APIs/plaid.com/2020-09-14_1.20.6/base/signal-evaluate-response
+  take form signal-evaluate-response
+
+boot signal-evaluate, name <signalEvaluate>
+  deed post
+  note <Use `/signal/evaluate` to evaluate a planned ACH transaction to get a return risk assessment (such as a risk score and risk tier) and additional risk signals. In order to obtain a valid score for an ACH transaction, Plaid must have an access token for the account, and the Item must be healthy (receiving product updates) or have recently been in a healthy state. If the transaction does not meet eligibility requirements, an error will be returned corresponding to the underlying cause.>
+
+  take signal-evaluate-request, like signal-evaluate-request
+
+  line </signal/evaluate>
+
+  seed json, loan signal-evaluate-request
+
+  loot 200
+    seed json, like signal-evaluate-response
+    note <OK>
+  loot fall
+    seed json, like error
+    note <Error response.>

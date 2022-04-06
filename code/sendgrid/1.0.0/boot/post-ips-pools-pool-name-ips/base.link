@@ -1,0 +1,33 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/post-ips-pools-pool-name-ips-body
+  take form post-ips-pools-pool-name-ips-body
+
+boot post-ips-pools-pool-name-ips, name <POST_ips-pools-pool_name-ips>
+  deed post
+  note <**This endpoint allows you to add an IP address to an IP pool.** You can add the same IP address to multiple pools. It may take up to 60 seconds for your IP address to be added to a pool after your request is made. Before you can add an IP to a pool, you need to activate it in your SendGrid account: 1. Log into your SendGrid account. 1. Navigate to **Settings** and then select **IP Addresses**. 1. Find the IP address you want to activate and then click **Edit**. 1. Check **Allow my account to send mail using this IP address**. 1. Click **Save**. You can retrieve all of your available IP addresses from the "Retrieve all IP addresses" endpoint.>
+
+  take pool-name
+    like native-string
+    note <The name of the IP pool you want to add the address to. If the name contains spaces, they must be URL encoded (e.g., "Test Pool" becomes "Test%20Pool").>
+  take post-ips-pools-pool-name-ips-body, like post-ips-pools-pool-name-ips-body
+    void take
+
+  line </ips/pools/{pool-name}/ips>
+
+  seed json, loan post-ips-pools-pool-name-ips-body
+
+  loot 201
+    seed json
+      like form
+        take ip, name <ip>
+        take pools, name <pools>
+        take start-date, name <start_date>
+        take warmup, name <warmup>
+  loot 404
+    seed json
+      like form
+        take errors, name <errors>
+          void take

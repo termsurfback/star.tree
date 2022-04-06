@@ -1,0 +1,36 @@
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-marketing-segments, name <GET_marketing-segments>
+  deed get
+  note <**This endpoint allows you to retrieve a list of segments.** The query param `parent_list_ids` is treated as a filter. Any match will be returned. 0 matches will return a response code of 200 with an empty `results` array. `parent_list_ids` | `no_parent_list_id` | `result` -----------------:|:--------------------:|:------------- empty | false | all segments values | false | segments filtered by list_ids values | true | segments filtered by list_ids and segments with no parent list_ids empty | true | segments with no parent list_ids>
+
+  take parent-list-ids
+    like native-string
+    note <A comma separated list of list ids to be used when searching for segments with the specified parent_list_id, no more than 50 is allowed>
+    void take
+  take no-parent-list-id
+    like native-boolean
+    note <If set to `true` segments with an empty value of `parent_list_id` will be returned in the filter. If the value is not present it defaults to 'false'.>
+    void take
+
+  line </marketing/segments>
+
+  find <parent_list_ids>, loan parent-list-ids
+  find <no_parent_list_id>, loan no-parent-list-id
+
+  loot 200
+    seed json
+      like form
+        take results, name <results>
+  loot 401
+  loot 403
+  loot 404
+  loot 500
+    seed json
+      like form
+        take errors, name <errors>

@@ -1,0 +1,69 @@
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+boot get-ips, name <GET_ips>
+  deed get
+  note <**This endpoint allows you to retrieve a list of all assigned and unassigned IPs.** Response includes warm up status, pools, assigned subusers, and reverse DNS info. The start_date field corresponds to when warmup started for that IP. A single IP address or a range of IP addresses may be dedicated to an account in order to send email for multiple domains. The reputation of this IP is based on the aggregate performance of all the senders who use it.>
+
+  take ip
+    like native-string
+    note <The IP address to get>
+    void take
+  take exclude-whitelabels
+    like native-boolean
+    note <Should we exclude reverse DNS records (whitelabels)?>
+    void take
+  take limit
+    like native-integer
+        fall <10>
+    note <The number of IPs you want returned at the same time.>
+    void take
+  take offset
+    like native-integer
+        fall <0>
+    note <The offset for the number of IPs that you are requesting.>
+    void take
+  take subuser
+    like native-string
+    note <The subuser you are requesting for.>
+    void take
+  take sort-by-direction
+    like native-string
+    note <The direction to sort the results.>
+    void take
+
+  line </ips>
+
+  find <ip>, loan ip
+  find <exclude_whitelabels>, loan exclude-whitelabels
+  find <limit>, loan limit
+  find <offset>, loan offset
+  find <subuser>, loan subuser
+  find <sort_by_direction>, loan sort-by-direction
+
+  loot 200
+    seed json
+      like list
+        like form
+          take assigned-at, name <assigned_at>
+          take ip, name <ip>
+          take pools, name <pools>
+          take rdns, name <rdns>
+            void take
+          take start-date, name <start_date>
+          take subusers, name <subusers>
+          take warmup, name <warmup>
+          take whitelabeled, name <whitelabeled>

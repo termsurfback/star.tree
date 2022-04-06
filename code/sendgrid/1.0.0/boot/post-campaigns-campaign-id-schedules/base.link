@@ -1,0 +1,40 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/global-error-response-schema
+  take form global-error-response-schema
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/post-campaigns-campaign-id-schedules-body
+  take form post-campaigns-campaign-id-schedules-body
+
+boot post-campaigns-campaign-id-schedules, name <POST_campaigns-campaign_id-schedules>
+  deed post
+  note <**This endpoint allows you to schedule a specific date and time for your campaign to be sent.** If you have the flexibility, it's better to schedule mail for off-peak times. Most emails are scheduled and sent at the top of the hour or half hour. Scheduling email to avoid those times (for example, scheduling at 10:53) can result in lower deferral rates because it won't be going through our servers at the same times as everyone else's mail.>
+
+  take campaign-id
+    like native-integer
+  take post-campaigns-campaign-id-schedules-body, like post-campaigns-campaign-id-schedules-body
+    void take
+
+  line </campaigns/{campaign-id}/schedules>
+
+  seed json, loan post-campaigns-campaign-id-schedules-body
+
+  loot 201
+    seed json
+      like form
+        take id, name <id>
+        take send-at, name <send_at>
+        take status, name <status>
+  loot 400
+    seed json, like global-error-response-schema
+    note <"subject": "subject can't be blank" "sender_id": "sender_id can't be blank" "plain_content": "plain_content can't be blank, please provide plain text or html content" "list_ids": "You must select at least 1 segment or 1 list to send to." "send_at": "Please choose a future time for sending your campaign." "unsubscribe_tag": "An [unsubscribe] tag in both your html and plain content is required to send a campaign." "suppression_group_id": "Either a suppression_group_id or custom_unsubscribe_url is required to send a campaign." "": "The JSON you have submitted cannot be parsed." "":"You do not have enough credits to send this campaign. Upgrade your plan to send more: https://app.sendgrid.com/settings/billing">
+  loot 401
+    seed json, like global-error-response-schema
+  loot 403
+    seed json, like global-error-response-schema
+    note <"": "You cannot POST to a campaign that has already sent or scheduled. However you can update a scheduled campaign with a PATCH.">
+  loot 404
+    seed json, like global-error-response-schema
+    note <"": "not found">

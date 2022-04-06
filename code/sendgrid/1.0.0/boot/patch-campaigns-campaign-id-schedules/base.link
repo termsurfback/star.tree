@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/global-error-response-schema
+  take form global-error-response-schema
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/patch-campaigns-campaign-id-schedules-body
+  take form patch-campaigns-campaign-id-schedules-body
+
+boot patch-campaigns-campaign-id-schedules, name <PATCH_campaigns-campaign_id-schedules>
+  deed patch
+  note <**This endpoint allows to you change the scheduled time and date for a campaign to be sent.**>
+
+  take campaign-id
+    like native-integer
+  take patch-campaigns-campaign-id-schedules-body, like patch-campaigns-campaign-id-schedules-body
+    void take
+
+  line </campaigns/{campaign-id}/schedules>
+
+  seed json, loan patch-campaigns-campaign-id-schedules-body
+
+  loot 200
+    seed json
+      like form
+        take id, name <id>
+        take send-at, name <send_at>
+        take status, name <status>
+  loot 400
+    seed json, like global-error-response-schema
+    note <"": "The JSON you have submitted cannot be parsed." "send_at": "Please choose a future time for sending your campaign." "":"You do not have enough credits to send this campaign. Upgrade your plan to send more: https://app.sendgrid.com/settings/billing">
+  loot 403
+    seed json, like global-error-response-schema
+    note <"send_at": "You cannot update the send_at value of non-scheduled campaign.">
+  loot 404
+    seed json, like global-error-response-schema
+    note <"": "not found">

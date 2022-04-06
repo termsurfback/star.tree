@@ -1,0 +1,45 @@
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/campaign-response
+  take form campaign-response
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/global-error-response-schema
+  take form global-error-response-schema
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/patch-campaigns-campaign-id-body
+  take form patch-campaigns-campaign-id-body
+
+boot patch-campaigns-campaign-id, name <PATCH_campaigns-campaign_id>
+  deed patch
+  note <**This endpoint allows you to update a specific campaign.** This is especially useful if you only set up the campaign using POST /campaigns, but didn't set many of the parameters.>
+
+  take campaign-id
+    like native-integer
+    note <The id of the campaign you would like to retrieve.>
+  take patch-campaigns-campaign-id-body, like patch-campaigns-campaign-id-body
+    void take
+
+  line </campaigns/{campaign-id}>
+
+  seed json, loan patch-campaigns-campaign-id-body
+
+  loot 200
+    seed json, like campaign-response
+  loot 400
+    seed json
+      like form
+    note <"title": "title can't be blank" "title": "title is too long (maximum is 100 characters)" "categories": "categories exceeds 10 category limit" "html_content": "html_content exceeds the 1MB limit" "plain_content": "plain_content exceeds the 1MB limit" "sender_id": "sender_id does not exist" "sender_id": "sender_id is not a verified sender identity" "list_ids": "list_ids do not all exist" "segment_ids": "segment_ids do not all exist" "ip_pool": "The ip pool you provided is invalid" "suppression_group_id": "suppression_group_id does not exist" "unsubscribes": "Either suppression_group_id or custom_unsubscribe_url may be set/used, but not both. Please remove one before setting the other." "": "The JSON you have submitted cannot be parsed.">
+  loot 401
+    seed json, like global-error-response-schema
+  loot 403
+    seed json
+      like form
+    note <"": "You may only update a campaign when it is in draft mode.">
+  loot 404
+    seed json, like global-error-response-schema
+    note <"": "not found">

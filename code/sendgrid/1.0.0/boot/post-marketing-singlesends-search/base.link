@@ -1,0 +1,43 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/metadata
+  take form metadata
+
+boot post-marketing-singlesends-search, name <POST_marketing-singlesends-search>
+  deed post
+  note <**This endpoint allows you to search for Single Sends based on specified criteria.** You can search for Single Sends by passing a combination of values using the `name`, `status`, and `categories` request body fields. For example, if you want to search for all Single Sends that are "drafts" or "scheduled" and also associated with the category "shoes," your request body may look like the example below. ```javascript { "status": [ "draft", "scheduled" ], "categories": [ "shoes" ], } ```>
+
+  take page-size
+    like native-integer
+    void take
+  take page-token
+    like native-string
+    void take
+  take singlesend-search, like singlesend-search
+    void take
+
+  line </marketing/singlesends/search>
+
+  find <page_size>, loan page-size
+  find <page_token>, loan page-token
+
+  seed json, loan singlesend-search
+
+  loot 200
+    seed json
+      like form
+        take metadata, name <_metadata>
+          like metadata
+          void take
+        take result, name <result>
+          void take
+  loot 404
+    seed json
+      like form
+        take errors, name <errors>
+          void take

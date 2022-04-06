@@ -1,0 +1,46 @@
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-boolean
+  take form native-boolean
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/contact-details2
+  take form contact-details2
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/error
+  take form error
+
+boot get-mc-lists-id, name <GET_mc-lists-id>
+  deed get
+  note <**This endpoint returns data about a specific list.** Setting the optional parameter `contact_sample=true` returns the `contact_sample` in the response body. Up to fifty of the most recent contacts uploaded or attached to a list will be returned, sorted alphabetically, by email address. The full contact count is also returned.>
+
+  take id
+    like native-string
+  take contact-sample
+    like native-boolean
+    note <Setting this parameter to the true will cause the contact_sample to be returned>
+    void take
+
+  line </marketing/lists/{id}>
+
+  find <contact_sample>, loan contact-sample
+
+  loot 200
+    seed json
+      like link
+        like list
+        like form
+          take contact-sample, name <contact_sample>
+            like contact-details2
+            void take
+  loot 404
+    seed json
+      like list
+        like error

@@ -1,0 +1,46 @@
+
+load @drumwork/snow/base/list
+  take form list
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/global-error-response-schema
+  take form global-error-response-schema
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/subuser
+  take form subuser
+
+boot get-subusers, name <GET_subusers>
+  deed get
+  note <**This endpoint allows you to retrieve a list of all of your subusers.** You can choose to retrieve specific subusers as well as limit the results that come back from the API.>
+
+  take username
+    like native-string
+    note <The username of this subuser.>
+    void take
+  take limit
+    like native-integer
+    note <The number of results you would like to get in each request.>
+    void take
+  take offset
+    like native-integer
+    note <The number of subusers to skip.>
+    void take
+
+  line </subusers>
+
+  find <username>, loan username
+  find <limit>, loan limit
+  find <offset>, loan offset
+
+  loot 200
+    seed json
+      like list
+        like subuser
+  loot 401
+    seed json, like global-error-response-schema
+    note <Unexpected error in API call. See HTTP response body for details.>

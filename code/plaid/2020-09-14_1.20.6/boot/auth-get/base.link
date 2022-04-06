@@ -1,0 +1,23 @@
+
+load @drumwork/snow/openapi-directory/APIs/plaid.com/2020-09-14_1.20.6/base/auth-get-response
+  take form auth-get-response
+
+load @drumwork/snow/openapi-directory/APIs/plaid.com/2020-09-14_1.20.6/base/error
+  take form error
+
+boot auth-get, name <authGet>
+  deed post
+  note <The `/auth/get` endpoint returns the bank account and bank identification numbers (such as routing numbers, for US accounts) associated with an Item's checking and savings accounts, along with high-level account data and balances when available. Note: This request may take some time to complete if `auth` was not specified as an initial product when creating the Item. This is because Plaid must communicate directly with the institution to retrieve the data. Also note that `/auth/get` will not return data for any new accounts opened after the Item was created. To obtain data for new accounts, create a new Item.>
+
+  take auth-get-request, like auth-get-request
+
+  line </auth/get>
+
+  seed json, loan auth-get-request
+
+  loot 200
+    seed json, like auth-get-response
+    note <success>
+  loot fall
+    seed json, like error
+    note <Default error>

@@ -1,0 +1,26 @@
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/contactdb-custom-field-with-id
+  take form contactdb-custom-field-with-id
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/global-error-response-schema
+  take form global-error-response-schema
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/post-contactdb-custom-fields-body
+  take form post-contactdb-custom-fields-body
+
+boot post-contactdb-custom-fields, name <POST_contactdb-custom_fields>
+  deed post
+  note <**This endpoint allows you to create a custom field.** **You can create up to 120 custom fields.**>
+
+  take post-contactdb-custom-fields-body, like post-contactdb-custom-fields-body
+    void take
+
+  line </contactdb/custom_fields>
+
+  seed json, loan post-contactdb-custom-fields-body
+
+  loot 201
+    seed json, like contactdb-custom-field-with-id
+  loot 400
+    seed json, like global-error-response-schema
+    note <"" : "Returned if request body is invalid JSON" "type" : "Returned if custom field type is invalid or not provided" "name" : "Returned if custom field name is not provided">

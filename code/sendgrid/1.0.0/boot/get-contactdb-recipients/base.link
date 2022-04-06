@@ -1,0 +1,38 @@
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/global-error-response-schema
+  take form global-error-response-schema
+
+boot get-contactdb-recipients, name <GET_contactdb-recipients>
+  deed get
+  note <**This endpoint allows you to retrieve all of your Marketing Campaigns recipients.** Batch deletion of a page makes it possible to receive an empty page of recipients before reaching the end of the list of recipients. To avoid this issue; iterate over pages until a 404 is retrieved.>
+
+  take page
+    like native-integer
+    note <Page index of first recipients to return (must be a positive integer)>
+    void take
+  take page-size
+    like native-integer
+    note <Number of recipients to return at a time (must be a positive integer between 1 and 1000)>
+    void take
+
+  line </contactdb/recipients>
+
+  find <page>, loan page
+  find <page_size>, loan page-size
+
+  loot 200
+    seed json
+      like form
+        take recipients, name <recipients>
+  loot 400
+    seed json
+      like form
+    note <"page" : "Returned if page is not a valid integer" "page" : "Returned if page is less than 1" "page_size" : "Returned if page_size is not a valid integer" "page_size" : "Returned if page_size is less than 1 or greater than 1000">
+  loot 401
+    seed json, like global-error-response-schema

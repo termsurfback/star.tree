@@ -1,0 +1,34 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/global-error-response-schema
+  take form global-error-response-schema
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/post-contactdb-lists-list-id-recipients-body
+  take form post-contactdb-lists-list-id-recipients-body
+
+boot post-contactdb-lists-list-id-recipients, name <POST_contactdb-lists-list_id-recipients>
+  deed post
+  note <**This endpoint allows you to add multiple recipients to a list.** Adds existing recipients to a list, passing in the recipient IDs to add. Recipient IDs should be passed exactly as they are returned from recipient endpoints.>
+
+  take list-id
+    like native-integer
+    note <The id of the list of recipients you want to retrieve.>
+  take post-contactdb-lists-list-id-recipients-body, like post-contactdb-lists-list-id-recipients-body
+    void take
+
+  line </contactdb/lists/{list-id}/recipients>
+
+  seed json, loan post-contactdb-lists-list-id-recipients-body
+
+  loot 201
+    seed json
+  loot 400
+    seed json, like global-error-response-schema
+    note <"list_id" : "Returned if list_id is not a valid integer" "" : "Returned if no valid recipient ids were passed" "" : "Returned if no recipients were added" "" : "Returned if request body is invalid JSON">
+  loot 401
+    seed json, like global-error-response-schema
+  loot 404
+    seed json, like global-error-response-schema
+    note <"list_id": "Returned if list_id does not exist">

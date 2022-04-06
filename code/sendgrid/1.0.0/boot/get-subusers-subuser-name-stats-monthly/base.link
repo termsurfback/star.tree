@@ -1,0 +1,50 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/subuser-stats
+  take form subuser-stats
+
+boot get-subusers-subuser-name-stats-monthly, name <GET_subusers-subuser_name-stats-monthly>
+  deed get
+  note <**This endpoint allows you to retrive the monthly email statistics for a specific subuser.** When using the `sort_by_metric` to sort your stats by a specific metric, you can not sort by the following metrics: `bounce_drops`, `deferred`, `invalid_emails`, `processed`, `spam_report_drops`, `spam_reports`, or `unsubscribe_drops`.>
+
+  take subuser-name
+    like native-string
+  take date
+    like native-string
+    note <The date of the month to retrieve statistics for. Must be formatted YYYY-MM-DD>
+  take sort-by-metric
+    like native-string
+        fall <delivered>
+    note <The metric that you want to sort by. Metrics that you can sort by are: `blocks`, `bounces`, `clicks`, `delivered`, `opens`, `requests`, `unique_clicks`, `unique_opens`, and `unsubscribes`.'>
+    void take
+  take sort-by-direction
+    like native-string
+        fall <desc>
+    note <The direction you want to sort.>
+    void take
+  take limit
+    like native-integer
+        fall <5>
+    note <Optional field to limit the number of results returned.>
+    void take
+  take offset
+    like native-integer
+        fall <0>
+    note <Optional beginning point in the list to retrieve from.>
+    void take
+
+  line </subusers/{subuser-name}/stats/monthly>
+
+  find <date>, loan date
+  find <sort_by_metric>, loan sort-by-metric
+  find <sort_by_direction>, loan sort-by-direction
+  find <limit>, loan limit
+  find <offset>, loan offset
+
+  loot 200
+    seed json, like subuser-stats

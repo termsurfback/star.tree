@@ -7,7 +7,11 @@
 <br/>
 <br/>
 
-<h3 align='center'>snow</h3>
+<p align='center'>
+  <img src='https://github.com/drumworkteam/star/blob/make/view/view.svg?raw=true' height='312'>
+</p>
+
+<h3 align='center'>star</h3>
 <p align='center'>
   Link Text Third-Party API Integration
 </p>
@@ -16,9 +20,9 @@
 <br/>
 <br/>
 
-### Resources
+### Welcome
 
-- https://github.com/APIs-guru/openapi-directory
+The `star` project are the API definitions for several HTTP APIs, in Link Text. They are generic definitions which can be compiled into code eventually.
 
 ### License
 

@@ -1,0 +1,29 @@
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/campaign-response
+  take form campaign-response
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/global-error-response-schema
+  take form global-error-response-schema
+
+boot post-campaigns, name <POST_campaigns>
+  deed post
+  note <**This endpoint allows you to create a campaign.** In order to send or schedule the campaign, you will be required to provide a subject, sender ID, content (we suggest both html and plain text), and at least one list or segment ID. This information is not required when you create a campaign.>
+
+  take campaign-request, like campaign-request
+    void take
+
+  line </campaigns>
+
+  seed json, loan campaign-request
+
+  loot 201
+    seed json, like campaign-response
+  loot 400
+    seed json, like global-error-response-schema
+    note <"title": "title can't be blank" "title": "title is too long (maximum is 100 characters)" "categories": "categories exceeds 10 category limit" "html_content": "html_content exceeds the 1MB limit" "plain_content": "plain_content exceeds the 1MB limit" "sender_id": "sender_id does not exist" "sender_id": "sender_id is not a verified sender identity" "list_ids": "list_ids do not all exist" "segment_ids": "segment_ids do not all exist" "ip_pool": "The ip pool you provided is invalid" "suppression_group_id": "suppression_group_id does not exist" "unsubscribes": "Either suppression_group_id or custom_unsubscribe_url may be set/used, but not both. Please remove one before setting the other." "": "The JSON you have submitted cannot be parsed." "": "You've reached your limit of 250 campaigns. Please delete one or more and try again.">
+  loot 401
+    seed json
+      like form

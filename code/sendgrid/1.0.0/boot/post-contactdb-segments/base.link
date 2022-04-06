@@ -1,0 +1,25 @@
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/contactdb-segments-with-id
+  take form contactdb-segments-with-id
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/global-error-response-schema
+  take form global-error-response-schema
+
+boot post-contactdb-segments, name <POST_contactdb-segments>
+  deed post
+  note <**This endpoint allows you to create a new segment.** Valid operators for create and update depend on the type of the field for which you are searching. **Dates** - "eq", "ne", "lt" (before), "gt" (after) - You may use MM/DD/YYYY for day granularity or an epoch for second granularity. - "empty", "not_empty" - "is within" - You may use an [ISO 8601 date format](https://en.wikipedia.org/wiki/ISO_8601) or the # of days. **Text** - "contains" - "eq" (is/equals - matches the full field) - "ne" (is not/not equals - matches any field where the entire field is not the condition value) - "empty" - "not_empty" **Numbers** - "eq" (is/equals) - "lt" (is less than) - "gt" (is greater than) - "empty" - "not_empty" **Email Clicks and Opens** - "eq" (opened) - "ne" (not opened) All field values must be a string. Conditions using "eq" or "ne" for email clicks and opens should provide a "field" of either `clicks.campaign_identifier` or `opens.campaign_identifier`. The condition value should be a string containing the id of a completed campaign. The conditions list may contain multiple conditions, joined by an "and" or "or" in the "and_or" field. The first condition in the conditions list must have an empty "and_or", and subsequent conditions must all specify an "and_or".>
+
+  take contactdb-segments, like contactdb-segments
+    void take
+
+  line </contactdb/segments>
+
+  seed json, loan contactdb-segments
+
+  loot 200
+    seed json, like contactdb-segments-with-id
+  loot 400
+    seed json, like global-error-response-schema
+    note <"name" : "Returned if the name is not valid" "list_id" : "Returned if the list_id is not valid" "and_or" : "Returned if and_or and set value is not passed into the request body" "and_or" : "Returned if and_or is set on the only condition passed" "and_or" : "Returned if and_or is set on all conditions" "and_or" : "Returned if and_or is not set on more than one condition and less than all conditions" "operator" : "Returned if operator and set value is not passed into the request body" "value" : "Returned if value and set value is not passed into the request body" "field" : "Returned if field and set value is not passed into the request body" "" : "Returned if request body is not valid json" "" : "Returned if invalid value is passed into one of the request body parameters">
+  loot 401
+    seed json, like global-error-response-schema

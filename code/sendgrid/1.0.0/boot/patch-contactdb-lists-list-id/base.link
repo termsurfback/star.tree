@@ -1,0 +1,46 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/global-error-response-schema
+  take form global-error-response-schema
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/patch-contactdb-lists-list-id-body
+  take form patch-contactdb-lists-list-id-body
+
+boot patch-contactdb-lists-list-id, name <PATCH_contactdb-lists-list_id>
+  deed patch
+  note <**This endpoint allows you to update the name of one of your recipient lists.**>
+
+  take list-id
+    like native-string
+  take list-id
+    like native-integer
+    note <The ID of the list you are updating.>
+  take patch-contactdb-lists-list-id-body, like patch-contactdb-lists-list-id-body
+    void take
+
+  line </contactdb/lists/{list-id}>
+
+  find <list_id>, loan list-id
+
+  seed json, loan patch-contactdb-lists-list-id-body
+
+  loot 200
+    seed json
+      like form
+        take id, name <id>
+          void take
+        take name, name <name>
+          void take
+        take recipient-count, name <recipient_count>
+          void take
+  loot 400
+    seed json, like global-error-response-schema
+    note <"name" : "Returned if list name is a duplicate of existing list or segment" "name" : "Returned if list name is invalid or not provided" "list_id" : "Returned if list_id is not valid" "" : "Returned if request body is invalid JSON">
+  loot 404
+    seed json, like global-error-response-schema
+    note <"list_id" : "Returned if list_id does not exist">

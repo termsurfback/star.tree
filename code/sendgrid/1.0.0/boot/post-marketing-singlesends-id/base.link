@@ -1,0 +1,35 @@
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/post-marketing-singlesends-id-body
+  take form post-marketing-singlesends-id-body
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/singlesend-response
+  take form singlesend-response
+
+boot post-marketing-singlesends-id, name <POST_marketing-singlesends-id>
+  deed post
+  note <**This endpoint allows you to duplicate an existing Single Send using its Single Send ID.** Duplicating a Single Send is useful when you want to create a Single Send but don't want to start from scratch. Once duplicated, you can update or edit the Single Send by making a PATCH request to the `/marketing/singlesends/{id}` endpoint. If you leave the `name` field blank, your duplicate will be assigned the name of the Single Send it was copied from with the text “Copy of ” prepended to it. The `name` field length is limited to 100 characters, so the end of the new Single Send name, including “Copy of ”, will be trimmed if the name exceeds this limit.>
+
+  take id
+    like native-string
+  take post-marketing-singlesends-id-body, like post-marketing-singlesends-id-body
+    void take
+
+  line </marketing/singlesends/{id}>
+
+  seed json, loan post-marketing-singlesends-id-body
+
+  loot 201
+    seed json, like singlesend-response
+  loot 404
+    seed json
+      like form
+        take errors, name <errors>
+          void take
+  loot 500
+    seed json
+      like form
+        take errors, name <errors>
+          void take

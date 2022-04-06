@@ -1,0 +1,23 @@
+
+load @drumwork/snow/openapi-directory/APIs/plaid.com/2020-09-14_1.20.6/base/error
+  take form error
+
+load @drumwork/snow/openapi-directory/APIs/plaid.com/2020-09-14_1.20.6/base/signal-decision-report-response
+  take form signal-decision-report-response
+
+boot signal-decision-report, name <signalDecisionReport>
+  deed post
+  note <After calling `/signal/evaluate`, call `/signal/decision/report` to report whether the transaction was initiated. This endpoint will return an `INVALID_REQUEST` error if called a second time with a different value for `initiated`.>
+
+  take signal-decision-report-request, like signal-decision-report-request
+
+  line </signal/decision/report>
+
+  seed json, loan signal-decision-report-request
+
+  loot 200
+    seed json, like signal-decision-report-response
+    note <OK>
+  loot fall
+    seed json, like error
+    note <Error response.>

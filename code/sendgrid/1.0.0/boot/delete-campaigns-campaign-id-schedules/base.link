@@ -1,0 +1,24 @@
+
+load @drumwork/snow/base/native-integer
+  take form native-integer
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/global-error-response-schema
+  take form global-error-response-schema
+
+boot delete-campaigns-campaign-id-schedules, name <DELETE_campaigns-campaign_id-schedules>
+  deed delete
+  note <**This endpoint allows you to unschedule a campaign that has already been scheduled to be sent.** A successful unschedule will return a 204. If the specified campaign is in the process of being sent, the only option is to cancel (a different method).>
+
+  take campaign-id
+    like native-integer
+
+  line </campaigns/{campaign-id}/schedules>
+
+  loot 204
+    seed json
+  loot 403
+    seed json, like global-error-response-schema
+    note <"": "This campaign is already In Progress." "": "This campaign is already Sent." "": "This campaign is already Paused." "": "This campaign is already Canceled.">
+  loot 404
+    seed json, like global-error-response-schema
+    note <"": "not found">

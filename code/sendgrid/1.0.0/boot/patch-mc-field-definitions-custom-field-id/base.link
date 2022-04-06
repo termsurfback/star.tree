@@ -1,0 +1,45 @@
+
+load @drumwork/snow/base/form
+  take form form
+
+load @drumwork/snow/base/native-string
+  take form native-string
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/custom-field-definitions-response
+  take form custom-field-definitions-response
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/metadata
+  take form metadata
+
+load @drumwork/snow/openapi-directory/APIs/sendgrid.com/1.0.0/base/patch-mc-field-definitions-custom-field-id-body
+  take form patch-mc-field-definitions-custom-field-id-body
+
+boot patch-mc-field-definitions-custom-field-id, name <PATCH_mc-field_definitions-custom_field_id>
+  deed patch
+  note <**This endopoint allows you to update a defined Custom Field.** Only your Custom fields can be modified; Reserved Fields cannot be updated.>
+
+  take custom-field-id
+    like native-string
+  take patch-mc-field-definitions-custom-field-id-body, like patch-mc-field-definitions-custom-field-id-body
+    void take
+
+  line </marketing/field_definitions/{custom-field-id}>
+
+  seed json, loan patch-mc-field-definitions-custom-field-id-body
+
+  loot 200
+    seed json
+      like link
+        like custom-field-definitions-response
+        like form
+          take metadata, name <_metadata>
+            like metadata
+            void take
+  loot 400
+    seed json
+      like form
+        take errors, name <errors>
+  loot 404
+    seed json
+      like form
+        take errors, name <errors>
