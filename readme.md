@@ -12,7 +12,7 @@
 
 <h3 align='center'>star.link</h3>
 <p align='center'>
-  The Base Link Third-Party API Integration Library
+  The BaseLink Third-Party API Integration Library
 </p>
 
 <br/>
