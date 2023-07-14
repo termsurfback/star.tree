@@ -21,7 +21,7 @@
 
 ### Welcome
 
-The `star.link` project are the API definitions for several HTTP APIs, in Link Text. They are generic definitions which can be compiled into code eventually.
+The `star.link` project are the API definitions for several HTTP APIs, in LinkText. They are generic definitions which can be compiled into code eventually.
 
 ### License
 
