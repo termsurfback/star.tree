@@ -21,7 +21,7 @@
 
 ### Welcome
 
-The `star.note` project are the API definitions for several HTTP APIs, in LinkText. They are generic definitions which can be compiled into code eventually.
+The `star.note` project are the API definitions for several HTTP APIs, in NoteText. They are generic definitions which can be compiled into code eventually.
 
 ### License
 
