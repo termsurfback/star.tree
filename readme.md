@@ -7,10 +7,10 @@
 <br/>
 
 <p align='center'>
-  <img src='https://github.com/termsurf/star.link/blob/make/view/view.svg?raw=true' height='312'>
+  <img src='https://github.com/termsurf/star.note/blob/make/view/view.svg?raw=true' height='312'>
 </p>
 
-<h3 align='center'>star.link</h3>
+<h3 align='center'>star.note</h3>
 <p align='center'>
   The BaseLink Third-Party API Integration Library
 </p>
@@ -21,7 +21,7 @@
 
 ### Welcome
 
-The `star.link` project are the API definitions for several HTTP APIs, in LinkText. They are generic definitions which can be compiled into code eventually.
+The `star.note` project are the API definitions for several HTTP APIs, in LinkText. They are generic definitions which can be compiled into code eventually.
 
 ### License
 
