@@ -12,7 +12,7 @@
 
 <h3 align='center'>star.note</h3>
 <p align='center'>
-  The BaseLink Third-Party API Integration Library
+  The BaseNote Third-Party API Integration Library
 </p>
 
 <br/>
