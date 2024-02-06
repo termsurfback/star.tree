@@ -7,12 +7,12 @@
 <br/>
 
 <p align='center'>
-  <img src='https://github.com/termsurf/star.note/blob/make/view/view.svg?raw=true' height='312'>
+  <img src='https://github.com/termsurf/star.leaf/blob/make/view/view.svg?raw=true' height='312'>
 </p>
 
-<h3 align='center'>star.note</h3>
+<h3 align='center'>star.leaf</h3>
 <p align='center'>
-  The BaseNote Third-Party API Integration Library
+  The SeedLeaf Third-Party API Integration Library
 </p>
 
 <br/>
@@ -21,7 +21,7 @@
 
 ### Welcome
 
-The `star.note` project are the API definitions for several HTTP APIs, in NoteText. They are generic definitions which can be compiled into code eventually.
+The `star.leaf` project are the API definitions for several HTTP APIs, in NoteText. They are generic definitions which can be compiled into code eventually.
 
 ### License
 
