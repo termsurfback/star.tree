@@ -21,11 +21,11 @@
 
 ### Welcome
 
-The `star.leaf` project are the API definitions for several HTTP APIs, in NoteText. They are generic definitions which can be compiled into code eventually.
+The `star.leaf` project are the API definitions for several HTTP APIs, in LeafText. They are generic definitions which can be compiled into code eventually.
 
 ### License
 
-Copyright 2021-2023 <a href='https://tree.surf'>TermSurf</a>
+Copyright 2021-2024 <a href='https://tree.surf'>TermSurf</a>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
