@@ -12,7 +12,7 @@
 
 <h3 align='center'>star.leaf</h3>
 <p align='center'>
-  The SeedLeaf Third-Party API Integration Library
+  The Star Third-Party API Integration Library
 </p>
 
 <br/>
@@ -21,7 +21,7 @@
 
 ### Welcome
 
-The `star.leaf` project are the API definitions for several HTTP APIs, in LeafText. They are generic definitions which can be compiled into code eventually.
+The `star.leaf` project are the API definitions for several HTTP APIs, in NoteText. They are generic definitions which can be compiled into code eventually.
 
 ### License
 
